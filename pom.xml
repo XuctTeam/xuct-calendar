@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>cn.com.xuct</groupId>
+    <artifactId>xuct-calendar</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0</version>
+    <modules>
+        <module>xuct-calendar-auth</module>
+        <module>xuct-calendar-cms</module>
+        <module>xuct-calendar-common</module>
+        <module>xuct-calendar-dao</module>
+        <module>xuct-calendar-gateway</module>
+        <module>xuct-calendar-service</module>
+        <module>xuct-calendar-ums</module>
+    </modules>
+
+
+    <properties>
+        <maven.compiler.source>10</maven.compiler.source>
+        <maven.compiler.target>10</maven.compiler.target>
+        <spring.boot.version>2.4.2</spring.boot.version>
+        <calendar.project.version>1.0</calendar.project.version>
+
+        <!-- alibaba -->
+        <alibaba.cloud.version>2021.1</alibaba.cloud.version>
+        <spring.colud.version>2020.0.1</spring.colud.version>
+        <spring.colud.oauth.version>2.2.5.RELEASE</spring.colud.oauth.version>
+        <maven.compiler.source>10</maven.compiler.source>
+        <maven.compiler.target>10</maven.compiler.target>
+        <!--lib-->
+        <lib.jedis.version>3.7.0</lib.jedis.version>
+        <lib.common.pool.version>2.11.1</lib.common.pool.version>
+        <lib.mybaties.plus.version>3.4.3.4</lib.mybaties.plus.version>
+        <lib.mysql.version>8.0.27</lib.mysql.version>
+        <lib.servlet.version>4.0.1</lib.servlet.version>
+        <lib.nacos.client.version>2.0.3</lib.nacos.client.version>
+        <lib.jedis.lock.version>1.0.0</lib.jedis.lock.version>
+        <lib.caffeine.version>2.9.2</lib.caffeine.version>
+        <!-- compiler-->
+        <compiler.lombok.version>1.18.22</compiler.lombok.version>
+        <compiler.knife4j.verion>2.0.9</compiler.knife4j.verion>
+        <complier.swagger2.version>2.10.5</complier.swagger2.version>
+        <complier.swagger2.moudle.version>1.6.3</complier.swagger2.moudle.version>
+        <complier.jaxb.impl.version>3.0.2</complier.jaxb.impl.version>
+        <complier.log4j.version>1.7.32</complier.log4j.version>
+        <complier.okio.verison>2.10.0</complier.okio.verison>
+        <!-- utils -->
+        <utils.hutool.version>5.7.14</utils.hutool.version>
+        <utils.guava.version>31.0.1-jre</utils.guava.version>
+        <utils.wxjava.version>4.2.0</utils.wxjava.version>
+        <utils.jackson.version>2.12.2</utils.jackson.version>
+        <utils.nimbusds.jwt.version>9.15.2</utils.nimbusds.jwt.version>
+        <utils.tencentcloud.version>3.1.405</utils.tencentcloud.version>
+        <utils.biweekly.version>0.6.6</utils.biweekly.version>
+    </properties>
+
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring.boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring.colud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>${alibaba.cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>${lib.jedis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-pool2</artifactId>
+                <version>${lib.common.pool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${lib.mybaties.plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${lib.mysql.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>${lib.servlet.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.ben-manes.caffeine</groupId>
+                <artifactId>caffeine</artifactId>
+                <version>${lib.caffeine.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${compiler.lombok.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>knife4j-spring-boot-starter</artifactId>
+                <version>${compiler.knife4j.verion}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.swagger</groupId>
+                <artifactId>swagger-annotations</artifactId>
+                <version>${complier.swagger2.moudle.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${complier.log4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${utils.hutool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${utils.guava.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${utils.jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${utils.jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${utils.jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tencentcloudapi</groupId>
+                <artifactId>tencentcloud-sdk-java</artifactId>
+                <version>${utils.tencentcloud.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.sf.biweekly</groupId>
+                <artifactId>biweekly</artifactId>
+                <version>${utils.biweekly.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>
