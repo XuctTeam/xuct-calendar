@@ -24,6 +24,12 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.com.xuct</groupId>
+            <artifactId>xuct-calendar-common-module</artifactId>
+            <version>${calendar.project.version}</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 </project>

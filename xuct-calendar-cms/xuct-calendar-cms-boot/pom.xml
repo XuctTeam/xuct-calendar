@@ -98,6 +98,12 @@
         </dependency>
         <dependency>
             <groupId>cn.com.xuct</groupId>
+            <artifactId>xuct-calendar-cms-queue</artifactId>
+            <version>${calendar.project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-common-web</artifactId>
             <version>${calendar.project.version}</version>
             <scope>compile</scope>
