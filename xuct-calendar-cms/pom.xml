@@ -14,6 +14,7 @@
     <modules>
         <module>xuct-calendar-cms-api</module>
         <module>xuct-calendar-cms-boot</module>
+        <module>xuct-calendar-cms-queue</module>
     </modules>
 
     <properties>

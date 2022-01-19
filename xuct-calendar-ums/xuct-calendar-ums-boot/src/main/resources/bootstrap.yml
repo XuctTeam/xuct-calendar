@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: dav-ums
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${nacos.server}
+        username: ${nacos.username}
+        password: ${nacos.password}
+        namespace: f46a2ffa-4a48-4986-93bc-c3503dd030c6
+      config:
+        server-addr: ${nacos.server}
+        username: ${nacos.username}
+        password: ${nacos.password}
+        namespace: f46a2ffa-4a48-4986-93bc-c3503dd030c6
+        file-extension: yaml
+

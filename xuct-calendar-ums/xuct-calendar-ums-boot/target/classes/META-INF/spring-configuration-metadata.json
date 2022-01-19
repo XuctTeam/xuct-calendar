@@ -1,0 +1,17 @@
+{
+  "groups": [
+    {
+      "name": "wx.miniapp",
+      "type": "cn.com.xuct.calendar.ums.boot.config.WxMaProperties",
+      "sourceType": "cn.com.xuct.calendar.ums.boot.config.WxMaProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "wx.miniapp.configs",
+      "type": "java.util.List<cn.com.xuct.calendar.ums.boot.config.WxMaProperties$Config>",
+      "sourceType": "cn.com.xuct.calendar.ums.boot.config.WxMaProperties"
+    }
+  ],
+  "hints": []
+}
