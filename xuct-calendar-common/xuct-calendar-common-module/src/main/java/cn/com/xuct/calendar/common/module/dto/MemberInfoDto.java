@@ -33,10 +33,14 @@ public class MemberInfoDto implements Serializable {
 
     private Long userId;
 
+    private String name;
+
     private String username;
 
     private Integer status;
 
     private String password;
+
+    private String timeZone;
 
 }

@@ -13,6 +13,7 @@ package cn.com.xuct.calendar.cms.boot.controller.app;
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAlarm;
 import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
+import cn.com.xuct.calendar.cms.api.feign.MemberFeignClient;
 import cn.com.xuct.calendar.cms.boot.config.RabbitmqConfiguration;
 import cn.com.xuct.calendar.cms.boot.handler.RabbitmqOutChannel;
 import cn.com.xuct.calendar.cms.boot.service.IComponentService;
@@ -28,6 +29,7 @@ import cn.com.xuct.calendar.common.core.res.SvrResCode;
 import cn.com.xuct.calendar.common.core.utils.JsonUtils;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.dto.AlarmInfoDto;
+import cn.com.xuct.calendar.common.module.dto.MemberInfoDto;
 import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
 import cn.com.xuct.calendar.common.module.enums.ComponentRepeatTypeEnum;
 import cn.com.xuct.calendar.common.module.params.ComponentAddParam;
@@ -67,6 +69,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ComponentController {
 
+    private final MemberFeignClient memberFeignClient;
+
     private final IComponentService componentService;
 
     private final IMemberCalendarService memberCalendarService;
@@ -80,8 +84,9 @@ public class ComponentController {
     public R<List<ComponentListVo>> listByCalendarId(@RequestParam("calendarId") String calendarId, @RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date start,
                                                      @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date end) {
 
-        Member member = memberService.getById(JwtUtils.getUserId());
-        if (member == null) return R.data(Lists.newArrayList());
+        R<MemberInfoDto> rMember = memberFeignClient.getMemberById(JwtUtils.getUserId());
+        if (!rMember.isSuccess() || rMember.getData() == null) return R.data(Lists.newArrayList());
+        MemberInfoDto memberInfoDto = rMember.getData();
         List<Component> componentList = componentService.query(Long.valueOf(calendarId), start.getTime(), end.getTime());
         if (CollectionUtils.isEmpty(componentList)) return R.data(Lists.newArrayList());
         LinkedHashMap<String, List<Component>> componentListMap = Maps.newLinkedHashMap();
@@ -92,7 +97,7 @@ public class ComponentController {
             if ("0".equals(component.getRepeatStatus())) {
                 dayRanges.addAll(DateHelper.getRangeDateList(component.getDtstart(), component.getDtend()));
             } else {
-                dayRanges.addAll(DateHelper.getRepeatRangeDataList(member.getTimeZone(), component));
+                dayRanges.addAll(DateHelper.getRepeatRangeDataList(memberInfoDto.getTimeZone(), component));
             }
             if (dayRanges.size() == 0) return;
             for (int i = 0; i < dayRanges.size(); i++) {
@@ -120,10 +125,10 @@ public class ComponentController {
     public R<List<ComponentListVo>> getComponentDaysById(@PathVariable("id") String id) {
         Component component = componentService.getById(id);
         if (component == null) throw new SvrException(SvrResCode.CMS_COMPONENT_NOT_FOUND);
-        Member member = memberService.getById(JwtUtils.getUserId());
-        if (member == null) return R.data(Lists.newArrayList());
+        R<MemberInfoDto> rMember = memberFeignClient.getMemberById(JwtUtils.getUserId());
+        if (!rMember.isSuccess() || rMember.getData() == null) return R.data(Lists.newArrayList());
         final List<DateTime> dayRanges = "0".equals(component.getRepeatStatus()) ? DateHelper.getRangeDateList(component.getDtstart(), component.getDtend()) :
-                DateHelper.getRepeatRangeDataList(member.getTimeZone(), component);
+                DateHelper.getRepeatRangeDataList(rMember.getData().getTimeZone(), component);
         if (CollectionUtils.isEmpty(dayRanges)) throw new SvrException(SvrResCode.CMS_COMPONENT_DAY_LIST_EMPTY);
         List<ComponentListVo> componentListVos = Lists.newArrayList();
         ComponentListVo componentListVo = null;
@@ -200,7 +205,7 @@ public class ComponentController {
         if (!param.getRepeatStatus().equals("0") && param.getRepeatUntil() == null)
             throw new SvrException(SvrResCode.CMS_COMPONENT_REPEAT_UNTIL_EMPTY);
         this.setComponent(param, component);
-        return componentService.addComponent(JwtUtils.getUserId(), Long.valueOf(param.getCalendarId()), component, param.getAlarm().getAlarmType(), param.getAlarm().getAlarmTime());
+        return componentService.addComponent(JwtUtils.getUserId(), Long.valueOf(param.getCalendarId()), component, param.getAlarm().getAlarmType(), param.getAlarm().getAlarmTime(), rabbitmqConfiguration.getMaxDelay());
     }
 
     /**
@@ -232,7 +237,7 @@ public class ComponentController {
             changed = true;
         }
         this.setComponent(param, component);
-        return componentService.updateComponent(JwtUtils.getUserId(), component, param.getAlarm().getAlarmType(), param.getAlarm().getAlarmTime(), changed);
+        return componentService.updateComponent(JwtUtils.getUserId(), component, param.getAlarm().getAlarmType(), param.getAlarm().getAlarmTime(), changed, rabbitmqConfiguration.getMaxDelay());
     }
 
 
@@ -253,7 +258,7 @@ public class ComponentController {
 
     /**
      * 功能描述: <br>
-     * 〈〉
+     * 〈比较日程重复〉
      *
      * @param paramRepeatUntil
      * @param componentRepeatUntil

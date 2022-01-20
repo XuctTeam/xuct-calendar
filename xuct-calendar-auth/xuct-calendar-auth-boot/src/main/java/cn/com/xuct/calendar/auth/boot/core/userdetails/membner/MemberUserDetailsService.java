@@ -12,10 +12,10 @@ package cn.com.xuct.calendar.auth.boot.core.userdetails.membner;
 
 import cn.com.xuct.calendar.auth.api.client.MemberFeignClient;
 import cn.com.xuct.calendar.common.core.constant.AuthConstants;
-import cn.com.xuct.calendar.common.module.dto.MemberInfoDto;
-import cn.com.xuct.calendar.common.module.dto.WechatCodeDto;
 import cn.com.xuct.calendar.common.core.enums.AuthenticationMethodEnum;
 import cn.com.xuct.calendar.common.core.res.R;
+import cn.com.xuct.calendar.common.module.dto.MemberInfoDto;
+import cn.com.xuct.calendar.common.module.dto.WechatCodeDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -46,7 +46,7 @@ public class MemberUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         MemberUserDetails userDetails = null;
-        R<MemberInfoDto> result = memberFeignClient.loadUserByUserName(username);
+        R<MemberInfoDto> result = memberFeignClient.loadMemberByUserName(username);
         if (!R.isSuccess(result)) {
             throw new UsernameNotFoundException(AuthConstants.USER_NOT_EXIST);
         }
@@ -63,7 +63,7 @@ public class MemberUserDetailsService implements UserDetailsService {
     }
 
     public UserDetails loadUserByMobile(String mobile) {
-        R<MemberInfoDto> result = memberFeignClient.loadUserByMobile(mobile);
+        R<MemberInfoDto> result = memberFeignClient.loadMemberByMobile(mobile);
         if (!R.isSuccess(result) || result.getData() == null) {
             throw new UsernameNotFoundException(AuthConstants.USER_NOT_EXIST);
         }
@@ -74,7 +74,7 @@ public class MemberUserDetailsService implements UserDetailsService {
     }
 
     public UserDetails loadUserByWechatCode(String code, String iv, String encryptedData) {
-        R<MemberInfoDto> result = memberFeignClient.loadUserByWechatCode(WechatCodeDto.builder().code(code).iv(iv).encryptedData(encryptedData).build());
+        R<MemberInfoDto> result = memberFeignClient.loadMemberByWechatCode(WechatCodeDto.builder().code(code).iv(iv).encryptedData(encryptedData).build());
         if (!R.isSuccess(result) || result.getData() == null) {
             throw new UsernameNotFoundException(AuthConstants.USER_NOT_EXIST);
         }
@@ -85,7 +85,7 @@ public class MemberUserDetailsService implements UserDetailsService {
     }
 
     public UserDetails loadUserByOpenId(String openId) {
-        R<MemberInfoDto> result = memberFeignClient.loadUserByOpenId(openId);
+        R<MemberInfoDto> result = memberFeignClient.loadMemberByOpenId(openId);
         if (!R.isSuccess(result) || result.getData() == null) {
             throw new UsernameNotFoundException(AuthConstants.USER_NOT_EXIST);
         }

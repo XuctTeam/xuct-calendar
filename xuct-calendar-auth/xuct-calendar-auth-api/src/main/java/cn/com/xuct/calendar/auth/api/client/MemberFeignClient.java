@@ -34,16 +34,16 @@ public interface MemberFeignClient {
 
 
     @GetMapping("/api/feign/v1/member/get/phone")
-    R<MemberInfoDto> loadUserByMobile(@RequestParam("phone") String phone);
+    R<MemberInfoDto> loadMemberByMobile(@RequestParam("phone") String phone);
 
     @Headers({"Content-Type: application/json"})
     @PostMapping("/api/feign/v1/member/get/code")
-    R<MemberInfoDto> loadUserByWechatCode(WechatCodeDto wechatCodeDto);
+    R<MemberInfoDto> loadMemberByWechatCode(WechatCodeDto wechatCodeDto);
 
     @GetMapping("/api/feign/v1/member/get/openId")
-    R<MemberInfoDto> loadUserByOpenId(@RequestParam("openId") String openId);
+    R<MemberInfoDto> loadMemberByOpenId(@RequestParam("openId") String openId);
 
     @GetMapping("/api/feign/v1/member/get/username")
-    R<MemberInfoDto> loadUserByUserName(@RequestParam("username") String username);
+    R<MemberInfoDto> loadMemberByUserName(@RequestParam("username") String username);
 
 }

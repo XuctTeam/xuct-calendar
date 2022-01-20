@@ -14,19 +14,19 @@ import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
 import cn.com.xuct.calendar.common.core.constant.DictConstants;
-import cn.com.xuct.calendar.common.module.dto.MemberInfoDto;
-import cn.com.xuct.calendar.common.module.dto.WechatCodeDto;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.dto.CalendarInitDto;
+import cn.com.xuct.calendar.common.module.dto.MemberInfoDto;
+import cn.com.xuct.calendar.common.module.dto.WechatCodeDto;
 import cn.com.xuct.calendar.common.module.enums.IdentityTypeEnum;
 import cn.com.xuct.calendar.ums.api.entity.Member;
 import cn.com.xuct.calendar.ums.api.entity.MemberAuth;
-import cn.com.xuct.calendar.ums.boot.service.IMemberAuthService;
-import cn.com.xuct.calendar.ums.boot.service.IMemberService;
 import cn.com.xuct.calendar.ums.api.feign.CalendarFeignClient;
 import cn.com.xuct.calendar.ums.boot.config.DictCacheManager;
 import cn.com.xuct.calendar.ums.boot.config.WxMaConfiguration;
+import cn.com.xuct.calendar.ums.boot.service.IMemberAuthService;
+import cn.com.xuct.calendar.ums.boot.service.IMemberService;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -111,5 +111,13 @@ public class MemberFeignController {
         if (memberAuth == null) return R.fail("用户不存在");
         Member member = memberService.getById(memberAuth.getMemberId());
         return R.data(MemberInfoDto.builder().userId(member.getId()).username(memberAuth.getUsername()).password(memberAuth.getPassword()).status(member.getStatus()).build());
+    }
+
+    @ApiOperation(value = "通过ID查询会员")
+    @GetMapping("/get/id")
+    public R<MemberInfoDto> getUserById(@RequestParam("id") Long id) {
+        Member member = memberService.findMemberById(id);
+        if (member == null) return R.fail("用户不存在");
+        return R.data(MemberInfoDto.builder().userId(member.getId()).name(member.getName()).status(member.getStatus()).timeZone(member.getTimeZone()).build());
     }
 }

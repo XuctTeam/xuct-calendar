@@ -10,10 +10,13 @@
  */
 package cn.com.xuct.calendar.cms.boot;
 
+import cn.com.xuct.calendar.cms.api.feign.MemberFeignClient;
+import cn.com.xuct.calendar.common.http.annotation.EnableAutoOkFeign;
 import cn.com.xuct.calendar.common.swagger.annotation.EnableAutoSwagger2;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -25,11 +28,17 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @create 2021/11/24
  * @since 1.0.0
  */
-@ComponentScan(basePackages = {"cn.com.xuct.calendar.dao", "cn.com.xuct.calendar.service", "cn.com.xuct.calendar.cms.queue", "cn.com.xuct.calendar.cms.boot"})
+@ComponentScan(basePackages = {"cn.com.xuct.calendar.dao",
+        "cn.com.xuct.calendar.service",
+        "cn.com.xuct.calendar.common.web",
+        "cn.com.xuct.calendar.cms.queue",
+        "cn.com.xuct.calendar.cms.boot"})
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableAutoSwagger2
+@EnableAutoOkFeign
 @EnableTransactionManagement
+@EnableFeignClients(basePackageClasses = {MemberFeignClient.class})
 public class CmsApplication {
 
     public static void main(String[] args) {

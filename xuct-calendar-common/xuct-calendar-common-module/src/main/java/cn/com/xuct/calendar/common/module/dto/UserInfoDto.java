@@ -34,5 +34,7 @@ public class UserInfoDto implements Serializable {
 
     private Integer status;
 
+    private String timeZone;
+
     private List<String> roles;
 }

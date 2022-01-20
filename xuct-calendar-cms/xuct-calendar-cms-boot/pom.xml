@@ -98,7 +98,7 @@
         </dependency>
         <dependency>
             <groupId>cn.com.xuct</groupId>
-            <artifactId>xuct-calendar-cms-queue</artifactId>
+            <artifactId>xuct-calendar-common-okfeign</artifactId>
             <version>${calendar.project.version}</version>
             <scope>compile</scope>
         </dependency>
@@ -110,9 +110,16 @@
         </dependency>
         <dependency>
             <groupId>cn.com.xuct</groupId>
+            <artifactId>xuct-calendar-cms-queue</artifactId>
+            <version>${calendar.project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-cms-api</artifactId>
             <version>${calendar.project.version}</version>
             <scope>compile</scope>
         </dependency>
+
     </dependencies>
 </project>

@@ -14,9 +14,9 @@ import biweekly.component.VEvent;
 import biweekly.util.DayOfWeek;
 import biweekly.util.Frequency;
 import biweekly.util.Recurrence;
+import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.common.core.utils.EnumUtil;
 import cn.com.xuct.calendar.common.module.enums.ComponentRepeatTypeEnum;
-import cn.com.xuct.calendar.dao.entity.Component;
 import com.google.common.collect.Sets;
 import org.springframework.util.StringUtils;
 
