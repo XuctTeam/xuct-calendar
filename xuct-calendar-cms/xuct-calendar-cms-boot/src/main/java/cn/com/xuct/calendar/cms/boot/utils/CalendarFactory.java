@@ -18,7 +18,6 @@ import cn.com.xuct.calendar.common.core.utils.EnumUtil;
 import cn.com.xuct.calendar.common.module.enums.ComponentRepeatTypeEnum;
 import cn.com.xuct.calendar.dao.entity.Component;
 import com.google.common.collect.Sets;
-import io.swagger.models.auth.In;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;

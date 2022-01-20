@@ -10,8 +10,8 @@
  */
 package cn.com.xuct.calendar.ums.boot.vo;
 
-import cn.com.xuct.calendar.dao.entity.Member;
-import cn.com.xuct.calendar.dao.entity.MemberAuth;
+import cn.com.xuct.calendar.ums.api.entity.Member;
+import cn.com.xuct.calendar.ums.api.entity.MemberAuth;
 import lombok.Data;
 
 import java.util.List;

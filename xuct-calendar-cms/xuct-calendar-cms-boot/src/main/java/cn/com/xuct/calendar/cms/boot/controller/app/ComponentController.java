@@ -10,10 +10,15 @@
  */
 package cn.com.xuct.calendar.cms.boot.controller.app;
 
+import cn.com.xuct.calendar.cms.api.entity.Component;
+import cn.com.xuct.calendar.cms.api.entity.ComponentAlarm;
+import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
+import cn.com.xuct.calendar.cms.boot.config.RabbitmqConfiguration;
 import cn.com.xuct.calendar.cms.boot.handler.RabbitmqOutChannel;
+import cn.com.xuct.calendar.cms.boot.service.IComponentService;
+import cn.com.xuct.calendar.cms.boot.service.IMemberCalendarService;
 import cn.com.xuct.calendar.cms.boot.utils.DateHelper;
 import cn.com.xuct.calendar.cms.boot.vo.ComponentListVo;
-
 import cn.com.xuct.calendar.cms.boot.vo.ComponentVo;
 import cn.com.xuct.calendar.common.core.constant.DateConstants;
 import cn.com.xuct.calendar.common.core.constant.RabbitmqConstants;
@@ -23,14 +28,10 @@ import cn.com.xuct.calendar.common.core.res.SvrResCode;
 import cn.com.xuct.calendar.common.core.utils.JsonUtils;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.dto.AlarmInfoDto;
-import cn.com.xuct.calendar.common.module.enums.ComponentRepeatTypeEnum;
 import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
+import cn.com.xuct.calendar.common.module.enums.ComponentRepeatTypeEnum;
 import cn.com.xuct.calendar.common.module.params.ComponentAddParam;
 import cn.com.xuct.calendar.common.web.utils.JwtUtils;
-import cn.com.xuct.calendar.dao.entity.*;
-import cn.com.xuct.calendar.service.IComponentService;
-import cn.com.xuct.calendar.service.IMemberCalendarService;
-import cn.com.xuct.calendar.service.IMemberService;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import com.google.common.collect.Lists;
@@ -66,13 +67,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ComponentController {
 
-    private final IMemberService memberService;
-
     private final IComponentService componentService;
 
     private final IMemberCalendarService memberCalendarService;
 
     private final RabbitmqOutChannel rabbitmqOutChannel;
+
+    private final RabbitmqConfiguration rabbitmqConfiguration;
 
     @ApiOperation(value = "按天查询日历下日程")
     @GetMapping("/list/calendar/days")

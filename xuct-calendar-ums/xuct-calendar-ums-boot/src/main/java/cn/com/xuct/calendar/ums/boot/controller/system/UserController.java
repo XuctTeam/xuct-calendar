@@ -12,7 +12,7 @@ package cn.com.xuct.calendar.ums.boot.controller.system;
 
 import cn.com.xuct.calendar.common.module.dto.UserInfoDto;
 import cn.com.xuct.calendar.common.core.res.R;
-import cn.com.xuct.calendar.service.IUserRoleService;
+import cn.com.xuct.calendar.ums.boot.service.IUserRoleService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

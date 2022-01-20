@@ -39,6 +39,16 @@
             <version>${calendar.project.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>cn.com.xuct</groupId>
+            <artifactId>xuct-calendar-dao</artifactId>
+            <version>${calendar.project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

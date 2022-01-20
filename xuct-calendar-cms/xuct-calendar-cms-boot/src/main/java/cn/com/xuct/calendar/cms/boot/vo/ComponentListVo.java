@@ -10,10 +10,9 @@
  */
 package cn.com.xuct.calendar.cms.boot.vo;
 
-import cn.com.xuct.calendar.dao.entity.Component;
+import cn.com.xuct.calendar.cms.api.entity.Component;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;

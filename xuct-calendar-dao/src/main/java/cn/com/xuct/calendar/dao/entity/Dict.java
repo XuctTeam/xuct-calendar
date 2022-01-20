@@ -10,6 +10,7 @@
  */
 package cn.com.xuct.calendar.dao.entity;
 
+import cn.com.xuct.calendar.dao.base.SuperEntity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 

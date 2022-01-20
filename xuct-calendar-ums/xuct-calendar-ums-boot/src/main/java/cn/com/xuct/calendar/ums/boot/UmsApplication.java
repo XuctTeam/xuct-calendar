@@ -13,7 +13,7 @@ package cn.com.xuct.calendar.ums.boot;
 import cn.com.xuct.calendar.common.http.annotation.EnableAutoOkFeign;
 import cn.com.xuct.calendar.common.redis.annotation.EnableAutoRedis;
 import cn.com.xuct.calendar.common.swagger.annotation.EnableAutoSwagger2;
-import cn.com.xuct.calendar.ums.api.CalendarFeignClient;
+import cn.com.xuct.calendar.ums.api.feign.CalendarFeignClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;

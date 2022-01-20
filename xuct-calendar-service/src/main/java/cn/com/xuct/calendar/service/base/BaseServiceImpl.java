@@ -15,7 +15,7 @@ import cn.com.xuct.calendar.common.core.enums.ColumnEnum;
 import cn.com.xuct.calendar.common.core.enums.SortEnum;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.core.vo.Sort;
-import cn.com.xuct.calendar.dao.entity.SuperEntity;
+import cn.com.xuct.calendar.dao.base.SuperEntity;
 import cn.com.xuct.calendar.dao.vo.PageData;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
