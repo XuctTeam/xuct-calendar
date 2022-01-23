@@ -69,24 +69,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ComponentController {
 
-    private final MemberFeignClient memberFeignClient;
-
     private final IComponentService componentService;
 
     private final IMemberCalendarService memberCalendarService;
 
     private final RabbitmqOutChannel rabbitmqOutChannel;
 
-    private final RabbitmqConfiguration rabbitmqConfiguration;
 
     @ApiOperation(value = "按天查询日历下日程")
     @GetMapping("/list/calendar/days")
     public R<List<ComponentListVo>> listByCalendarId(@RequestParam("calendarId") String calendarId, @RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date start,
                                                      @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date end) {
 
-        R<MemberInfoDto> rMember = memberFeignClient.getMemberById(JwtUtils.getUserId());
-        if (!rMember.isSuccess() || rMember.getData() == null) return R.data(Lists.newArrayList());
-        MemberInfoDto memberInfoDto = rMember.getData();
         List<Component> componentList = componentService.query(Long.valueOf(calendarId), start.getTime(), end.getTime());
         if (CollectionUtils.isEmpty(componentList)) return R.data(Lists.newArrayList());
         LinkedHashMap<String, List<Component>> componentListMap = Maps.newLinkedHashMap();
@@ -97,7 +91,7 @@ public class ComponentController {
             if ("0".equals(component.getRepeatStatus())) {
                 dayRanges.addAll(DateHelper.getRangeDateList(component.getDtstart(), component.getDtend()));
             } else {
-                dayRanges.addAll(DateHelper.getRepeatRangeDataList(memberInfoDto.getTimeZone(), component));
+                dayRanges.addAll(DateHelper.getRepeatRangeDataList(JwtUtils.getTimeZone(), component));
             }
             if (dayRanges.size() == 0) return;
             for (int i = 0; i < dayRanges.size(); i++) {
@@ -125,10 +119,8 @@ public class ComponentController {
     public R<List<ComponentListVo>> getComponentDaysById(@PathVariable("id") String id) {
         Component component = componentService.getById(id);
         if (component == null) throw new SvrException(SvrResCode.CMS_COMPONENT_NOT_FOUND);
-        R<MemberInfoDto> rMember = memberFeignClient.getMemberById(JwtUtils.getUserId());
-        if (!rMember.isSuccess() || rMember.getData() == null) return R.data(Lists.newArrayList());
         final List<DateTime> dayRanges = "0".equals(component.getRepeatStatus()) ? DateHelper.getRangeDateList(component.getDtstart(), component.getDtend()) :
-                DateHelper.getRepeatRangeDataList(rMember.getData().getTimeZone(), component);
+                DateHelper.getRepeatRangeDataList(JwtUtils.getTimeZone(), component);
         if (CollectionUtils.isEmpty(dayRanges)) throw new SvrException(SvrResCode.CMS_COMPONENT_DAY_LIST_EMPTY);
         List<ComponentListVo> componentListVos = Lists.newArrayList();
         ComponentListVo componentListVo = null;
@@ -176,8 +168,8 @@ public class ComponentController {
                 componentAlarm = componentAlarmList.get(i);
                 rabbitmqOutChannel.pushAlarmDelayedMessage(
                         RabbitmqConstants.COMPONENT_ALARM_TYPE,
-                        JsonUtils.obj2json(AlarmInfoDto.builder().componentId(String.valueOf(componentAlarm.getComponentId())).alarmId(String.valueOf(componentAlarm.getId())).componentAlarmDate(component.getAlarmTime()).build()),
-                        componentAlarm.getAlarmTime().getTime());
+                        JsonUtils.obj2json(AlarmInfoDto.builder().componentId(String.valueOf(componentAlarm.getComponentId())).alarmId(String.valueOf(componentAlarm.getId())).build()),
+                        componentAlarm.getDelayTime());
             }
         }
         return R.data(String.valueOf(component.getId()));
@@ -205,7 +197,7 @@ public class ComponentController {
         if (!param.getRepeatStatus().equals("0") && param.getRepeatUntil() == null)
             throw new SvrException(SvrResCode.CMS_COMPONENT_REPEAT_UNTIL_EMPTY);
         this.setComponent(param, component);
-        return componentService.addComponent(JwtUtils.getUserId(), Long.valueOf(param.getCalendarId()), component, param.getAlarm().getAlarmType(), param.getAlarm().getAlarmTime(), rabbitmqConfiguration.getMaxDelay());
+        return componentService.addComponent(JwtUtils.getUserId(), JwtUtils.getTimeZone(), Long.valueOf(param.getCalendarId()), component, param.getAlarmType(), param.getAlarmTimes());
     }
 
     /**
@@ -233,11 +225,11 @@ public class ComponentController {
                 !param.getRepeatBymonthday().equals(component.getRepeatBymonthday()) ||
                 param.getRepeatInterval() != component.getRepeatInterval() ||
                 !this.getRepeatUntilEqale(param.getRepeatUntil(), component.getRepeatUntil()) ||
-                !param.getAlarm().getAlarmType().equals(component.getAlarmType().getCode())) {
+                !param.getAlarmType().equals(component.getAlarmType().getCode())) {
             changed = true;
         }
         this.setComponent(param, component);
-        return componentService.updateComponent(JwtUtils.getUserId(), component, param.getAlarm().getAlarmType(), param.getAlarm().getAlarmTime(), changed, rabbitmqConfiguration.getMaxDelay());
+        return componentService.updateComponent(JwtUtils.getUserId(), JwtUtils.getTimeZone(), component, param.getAlarmType(), param.getAlarmTimes(), changed);
     }
 
 

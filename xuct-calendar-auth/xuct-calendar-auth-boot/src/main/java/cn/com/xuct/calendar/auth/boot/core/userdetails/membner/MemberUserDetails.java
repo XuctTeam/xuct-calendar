@@ -36,6 +36,7 @@ public class MemberUserDetails implements UserDetails {
     private String username;
     private String password;
     private Boolean enabled;
+    private String timeZone;
 
     /**
      * 认证方式
@@ -53,6 +54,7 @@ public class MemberUserDetails implements UserDetails {
         this.setUsername(member.getUsername());
         this.setPassword(PasswordEncoderTypeEnum.BCRYPT.getPrefix() + member.getPassword());
         this.setEnabled(GlobalConstants.STATUS_YES.equals(member.getStatus()));
+        this.setTimeZone(member.getTimeZone());
     }
 
     @Override

@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 1.0.0
  */
 @Configuration
-@MapperScan("cn.com.xuct.calendar.dao.mapper*")
+@MapperScan(basePackages = {"cn.com.xuct.calendar.*.boot.mapper*", "cn.com.xuct.calendar.dao.mapper*"})
 public class MybatisPlusConfig {
 
     @Bean

@@ -13,6 +13,7 @@ package cn.com.xuct.calendar.cms.boot;
 import cn.com.xuct.calendar.cms.api.feign.MemberFeignClient;
 import cn.com.xuct.calendar.common.http.annotation.EnableAutoOkFeign;
 import cn.com.xuct.calendar.common.swagger.annotation.EnableAutoSwagger2;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;

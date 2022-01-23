@@ -31,6 +31,8 @@ public interface SecurityConstants {
 
     String USER_PASSWORD_KEY = "password";
 
+    String TIME_ZONE = "timeZone";
+
     /**
      * JWT令牌前缀
      */

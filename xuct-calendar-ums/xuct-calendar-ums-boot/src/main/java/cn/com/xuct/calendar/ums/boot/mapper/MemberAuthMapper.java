@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.ums.boot.mapper;
 
-import cn.com.xuct.calendar.dao.entity.MemberAuth;
+import cn.com.xuct.calendar.ums.api.entity.MemberAuth;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

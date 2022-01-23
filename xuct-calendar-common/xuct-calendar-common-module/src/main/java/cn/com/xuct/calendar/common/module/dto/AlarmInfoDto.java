@@ -35,6 +35,4 @@ public class AlarmInfoDto implements Serializable {
     private String componentId;
 
     private String alarmId;
-    
-    private Date componentAlarmDate;
 }

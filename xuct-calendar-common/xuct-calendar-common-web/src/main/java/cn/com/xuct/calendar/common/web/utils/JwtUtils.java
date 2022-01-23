@@ -16,6 +16,7 @@ import cn.com.xuct.calendar.common.core.res.SvrResCode;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import lombok.SneakyThrows;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -49,8 +50,7 @@ public class JwtUtils {
      * @return
      */
     public static Long getUserId() {
-        Long id = getJwtPayload().getLong(SecurityConstants.USER_ID_KEY);
-        return id;
+        return getJwtPayload().getLong(SecurityConstants.USER_ID_KEY);
     }
 
     /**
@@ -59,8 +59,17 @@ public class JwtUtils {
      * @return
      */
     public static String getUsername() {
-        String username = getJwtPayload().getStr(SecurityConstants.USER_NAME_KEY);
-        return username;
+        return getJwtPayload().getStr(SecurityConstants.USER_NAME_KEY);
+    }
+
+    /**
+     * 解析JWT获取时区
+     *
+     * @return
+     */
+    public static String getTimeZone() {
+        String timeZone = getJwtPayload().getStr(SecurityConstants.TIME_ZONE);
+        return StringUtils.hasText(timeZone) ? timeZone : "Asia/Shanghai";
     }
 
 

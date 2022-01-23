@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.cms.boot.vo;
 
-import cn.com.xuct.calendar.dao.entity.Component;
+import cn.com.xuct.calendar.cms.api.entity.Component;
 import lombok.Data;
 
 /**

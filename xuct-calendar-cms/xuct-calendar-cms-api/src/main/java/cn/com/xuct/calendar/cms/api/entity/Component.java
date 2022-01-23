@@ -10,10 +10,10 @@
  */
 package cn.com.xuct.calendar.cms.api.entity;
 
+import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
 import cn.com.xuct.calendar.common.module.enums.ComponentAlarmEnum;
 import cn.com.xuct.calendar.common.module.enums.ComponentPowerEnum;
 import cn.com.xuct.calendar.common.module.enums.ComponentRepeatTypeEnum;
-import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
 import cn.com.xuct.calendar.dao.base.SuperEntity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -95,8 +95,9 @@ public class Component extends SuperEntity<Component> {
     private ComponentAlarmEnum alarmType;
 
     @ApiModelProperty("提醒时间")
-    @TableField("alarm_time")
-    private Date alarmTime;
+    @TableField("alarm_times")
+    private String alarmTimes;
+
 
     @ApiModelProperty("循环间隔")
     @TableField("repeat_interval")

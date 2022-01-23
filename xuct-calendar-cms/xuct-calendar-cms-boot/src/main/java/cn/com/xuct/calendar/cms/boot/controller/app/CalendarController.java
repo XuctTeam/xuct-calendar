@@ -10,10 +10,10 @@
  */
 package cn.com.xuct.calendar.cms.boot.controller.app;
 
+import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
 import cn.com.xuct.calendar.common.module.req.MemberCalendarUpdateReq;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.web.utils.JwtUtils;
-import cn.com.xuct.calendar.dao.entity.MemberCalendar;
 import cn.com.xuct.calendar.cms.boot.service.IMemberCalendarService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

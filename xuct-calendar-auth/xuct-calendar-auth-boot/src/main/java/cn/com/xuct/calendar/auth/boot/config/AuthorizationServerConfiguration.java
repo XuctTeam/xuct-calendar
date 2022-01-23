@@ -221,15 +221,16 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
             Object principal = authentication.getUserAuthentication().getPrincipal();
             if (principal instanceof SysUserDetails) {
                 SysUserDetails sysUserDetails = (SysUserDetails) principal;
-                additionalInfo.put("userId", sysUserDetails.getUserId());
-                additionalInfo.put("username", sysUserDetails.getUsername());
+                additionalInfo.put(SecurityConstants.USER_ID_KEY, sysUserDetails.getUserId());
+                additionalInfo.put(SecurityConstants.USER_NAME_KEY, sysUserDetails.getUsername());
                 if (StrUtil.isNotBlank(sysUserDetails.getAuthenticationMethod())) {
                     additionalInfo.put("authenticationMethod", sysUserDetails.getAuthenticationMethod());
                 }
             } else if (principal instanceof MemberUserDetails) {
                 MemberUserDetails memberUserDetails = (MemberUserDetails) principal;
-                additionalInfo.put("userId", memberUserDetails.getUserId());
-                additionalInfo.put("username", memberUserDetails.getUsername());
+                additionalInfo.put(SecurityConstants.USER_ID_KEY, memberUserDetails.getUserId());
+                additionalInfo.put(SecurityConstants.USER_NAME_KEY, memberUserDetails.getUsername());
+                additionalInfo.put(SecurityConstants.TIME_ZONE, memberUserDetails.getTimeZone());
                 if (StrUtil.isNotBlank(memberUserDetails.getAuthenticationMethod())) {
                     additionalInfo.put("authenticationMethod", memberUserDetails.getAuthenticationMethod());
                 }

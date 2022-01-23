@@ -18,6 +18,7 @@ import lombok.Data;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -66,8 +67,11 @@ public class ComponentAddParam implements Serializable {
     private String repeatType;
 
 
-    @ApiModelProperty("提醒设置")
-    private ComponentAddAlarmData alarm;
+    @ApiModelProperty(value = "提醒设置", notes = "不提醒, ")
+    private String alarmType;
+
+    @ApiModelProperty(value = "提醒时间", notes = "时间逗号分割")
+    private List<Integer> alarmTimes;
 
 
     /** 循环指定某个月份的第几周 */

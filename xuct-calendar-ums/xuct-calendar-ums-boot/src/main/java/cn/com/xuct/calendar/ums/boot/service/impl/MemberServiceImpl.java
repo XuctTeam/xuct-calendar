@@ -22,6 +22,7 @@ import cn.hutool.core.util.RandomUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,8 +38,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MemberServiceImpl extends BaseServiceImpl<MemberMapper, Member> implements IMemberService {
 
-
     private final IMemberAuthService memberAuthService;
+
+    private final StringRedisTemplate stringRedisTemplate;
 
     @Override
     @Cacheable(value = RedisConstants.MEMBER_INFO_KEY, key = "#id", unless = "#result == null")

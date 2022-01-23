@@ -45,10 +45,10 @@ public interface IComponentService extends IBaseService<ComponentMapper, Compone
      * @param calendarId
      * @param component
      * @param alarmType
+     * @param timeZone   用户时区
      * @param alarmTimes
-     * @param maxDelay   mq的最大延迟时间
      */
-    List<ComponentAlarm> addComponent(final Long memberId, final Long calendarId, final Component component, final String alarmType, final List<Integer> alarmTimes, Long maxDelay);
+    List<ComponentAlarm> addComponent(final Long memberId, final String timeZone, final Long calendarId, final Component component, final String alarmType, final List<Integer> alarmTimes);
 
     /**
      * 更新日程
@@ -58,10 +58,10 @@ public interface IComponentService extends IBaseService<ComponentMapper, Compone
      * @param alarmType
      * @param alarmTimes
      * @param change     是否有提醒更新
-     * @param maxDelay   mq的最大延迟时间
+     * @param timeZone   用户时区
      * @return
      */
-    List<ComponentAlarm> updateComponent(final Long memberId, final Component component, final String alarmType, final List<Integer> alarmTimes, boolean change, Long maxDelay);
+    List<ComponentAlarm> updateComponent(final Long memberId, final String timeZone, final Component component, final String alarmType, final List<Integer> alarmTimes, boolean change);
 
     /**
      * 删除日程

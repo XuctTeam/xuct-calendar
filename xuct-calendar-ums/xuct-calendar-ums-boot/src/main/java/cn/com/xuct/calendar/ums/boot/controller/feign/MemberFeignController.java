@@ -63,7 +63,7 @@ public class MemberFeignController {
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", phone), Column.of("identity_type", IdentityTypeEnum.phone)));
         if (memberAuth == null) return R.fail("用户不存在");
         Member member = memberService.getById(memberAuth.getMemberId());
-        return R.data(MemberInfoDto.builder().userId(member.getId()).username(memberAuth.getUsername()).password(memberAuth.getPassword()).status(member.getStatus()).build());
+        return R.data(MemberInfoDto.builder().userId(member.getId()).username(memberAuth.getUsername()).password(memberAuth.getPassword()).status(member.getStatus()).timeZone(member.getTimeZone()).build());
     }
 
 
@@ -89,7 +89,7 @@ public class MemberFeignController {
         calendarInitDto.setMemberId(member.getId());
         calendarInitDto.setMemberNickName(member.getName());
         calendarFeignClient.addCarendar(calendarInitDto);
-        return R.data(MemberInfoDto.builder().userId(member.getId()).username(session.getOpenid()).status(member.getStatus()).build());
+        return R.data(MemberInfoDto.builder().userId(member.getId()).username(session.getOpenid()).status(member.getStatus()).timeZone(member.getTimeZone()).build());
     }
 
     @ApiOperation(value = "通过微信openId查询会员")
@@ -98,7 +98,7 @@ public class MemberFeignController {
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", openId), Column.of("identity_type", IdentityTypeEnum.open_id)));
         if (memberAuth == null) return R.fail("用户不存在");
         Member member = memberService.getById(memberAuth.getMemberId());
-        return R.data(MemberInfoDto.builder().userId(member.getId()).username(memberAuth.getUsername()).password(memberAuth.getPassword()).status(member.getStatus()).build());
+        return R.data(MemberInfoDto.builder().userId(member.getId()).username(memberAuth.getUsername()).password(memberAuth.getPassword()).timeZone(member.getTimeZone()).status(member.getStatus()).build());
     }
 
     @ApiOperation(value = "通过登录用户名或手机号查询会员")
@@ -110,7 +110,7 @@ public class MemberFeignController {
         }
         if (memberAuth == null) return R.fail("用户不存在");
         Member member = memberService.getById(memberAuth.getMemberId());
-        return R.data(MemberInfoDto.builder().userId(member.getId()).username(memberAuth.getUsername()).password(memberAuth.getPassword()).status(member.getStatus()).build());
+        return R.data(MemberInfoDto.builder().userId(member.getId()).username(memberAuth.getUsername()).password(memberAuth.getPassword()).timeZone(member.getTimeZone()).status(member.getStatus()).build());
     }
 
     @ApiOperation(value = "通过ID查询会员")
