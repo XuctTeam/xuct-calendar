@@ -12,22 +12,21 @@ package cn.com.xuct.calendar.cms.boot.service.impl;
 
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAlarm;
+import cn.com.xuct.calendar.cms.api.vo.ComponentDayVo;
 import cn.com.xuct.calendar.cms.boot.config.RabbitmqConfiguration;
+import cn.com.xuct.calendar.cms.boot.mapper.ComponentMapper;
 import cn.com.xuct.calendar.cms.boot.service.IComponentAlarmService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentService;
 import cn.com.xuct.calendar.cms.boot.utils.DateHelper;
 import cn.com.xuct.calendar.common.core.vo.Column;
-import cn.com.xuct.calendar.common.module.enums.ComponentAlarmEnum;
 import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
-import cn.com.xuct.calendar.cms.boot.mapper.ComponentMapper;
-import cn.com.xuct.calendar.common.web.utils.JwtUtils;
+import cn.com.xuct.calendar.common.module.enums.ComponentAlarmEnum;
 import cn.com.xuct.calendar.service.base.BaseServiceImpl;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.common.collect.Lists;
-import io.swagger.models.auth.In;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,6 +61,11 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
                         .or(lessWrapper -> lessWrapper.le("start_time", end).ge("end_time", end))
                         .or(normalWrapper -> normalWrapper.ge("start_time", start).le("end_time", end)));
         return super.getBaseMapper().selectList(mapper);
+    }
+
+    @Override
+    public List<ComponentDayVo> search(String word, Integer page, Integer limit) {
+        return ((ComponentMapper) super.getBaseMapper()).searchByWord(word, page, limit);
     }
 
     @Override

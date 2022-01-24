@@ -9,15 +9,15 @@
     <packaging>pom</packaging>
     <version>1.0</version>
     <modules>
-        <module>xuct-calendar-auth</module>
-        <module>xuct-calendar-cms</module>
         <module>xuct-calendar-common</module>
         <module>xuct-calendar-dao</module>
-        <module>xuct-calendar-gateway</module>
         <module>xuct-calendar-service</module>
+        <module>xuct-calendar-gateway</module>
+        <module>xuct-calendar-auth</module>
+        <module>xuct-calendar-cms</module>
         <module>xuct-calendar-ums</module>
+        <module>xuct-calendar-sequence</module>
     </modules>
-
 
     <properties>
         <maven.compiler.source>10</maven.compiler.source>

@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>xuct-calendar-uuid</artifactId>
+    <artifactId>xuct-calendar-sequence</artifactId>
 
     <properties>
         <maven.compiler.source>10</maven.compiler.source>

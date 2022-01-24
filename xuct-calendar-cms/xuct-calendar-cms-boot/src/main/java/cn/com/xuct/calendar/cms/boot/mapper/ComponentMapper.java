@@ -12,10 +12,14 @@ package cn.com.xuct.calendar.cms.boot.mapper;
 
 
 import cn.com.xuct.calendar.cms.api.entity.Component;
+import cn.com.xuct.calendar.cms.api.vo.ComponentDayVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
- * 〈一句话功能简述〉<br> 
+ * 〈一句话功能简述〉<br>
  * 〈〉
  *
  * @author Derek Xu
@@ -24,4 +28,13 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface ComponentMapper extends BaseMapper<Component> {
 
+    /**
+     * 通过关键词分页查询
+     *
+     * @param word
+     * @param page
+     * @param limit
+     * @return
+     */
+    List<ComponentDayVo> searchByWord(@Param("word") String word, @Param("page") Integer page, @Param("limit") Integer limit);
 }

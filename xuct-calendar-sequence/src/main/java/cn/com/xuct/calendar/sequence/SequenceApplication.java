@@ -8,7 +8,7 @@
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package cn.com.xuct.calendar.uuid;
+package cn.com.xuct.calendar.sequence;
 
 import cn.com.xuct.calendar.common.swagger.annotation.EnableAutoSwagger2;
 import com.sankuai.inf.leaf.plugin.annotation.EnableLeafServer;
@@ -28,9 +28,9 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 @EnableDiscoveryClient
 @EnableLeafServer
 @EnableAutoSwagger2
-public class UuidApplication {
+public class SequenceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(UuidApplication.class, args);
+        SpringApplication.run(SequenceApplication.class, args);
     }
 }

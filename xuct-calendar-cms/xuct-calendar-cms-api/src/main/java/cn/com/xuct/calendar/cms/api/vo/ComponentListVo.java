@@ -8,7 +8,7 @@
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package cn.com.xuct.calendar.cms.boot.vo;
+package cn.com.xuct.calendar.cms.api.vo;
 
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import com.google.common.collect.Lists;
