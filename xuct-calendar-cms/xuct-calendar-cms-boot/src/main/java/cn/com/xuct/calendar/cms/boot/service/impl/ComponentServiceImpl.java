@@ -187,11 +187,7 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
         } else {
             componentAlarmList = repeatAlarm(memberId, timeZone, calendarId, component, alarmTimes);
         }
-        if (!CollectionUtils.isEmpty(componentAlarmList)) {
-            componentAlarmList.stream().forEach(alarm -> {
-                componentAlarmService.save(alarm);
-            });
-        }
+        componentAlarmService.saveBatch(componentAlarmList);
         return componentAlarmList;
     }
 
@@ -250,20 +246,22 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
         DateTime repeatDate = null;
         ComponentAlarm componentAlarm = null;
         for (int i = 0, j = alarmTimes.size(); i < j; i++) {
-            final Integer trigger = alarmTimes.get(i);
+            final Integer trigger = alarmTimes.get(i) * 60 * 1000;
             componentAlarm = this.getDefaultAlarm(memberId, calendarId, component.getId());
             componentAlarm.setTriggerSec(trigger);
             for (int m = 0, n = dateTimes.size(); m < n; m++) {
                 repeatDate = dateTimes.get(m);
-                if (repeatDate.getTime() - now.getTime() - trigger < 0) continue;
-                componentAlarm.setAlarmTime(DateUtil.date(repeatDate.getTime() - now.getTime() - trigger));
-                if (repeatDate.getTime() - now.getTime() - trigger > rabbitmqConfiguration.getMaxDelay()) {
+                long nextTime = repeatDate.getTime() - now.getTime() - trigger;
+                if (nextTime < 0) continue;
+                componentAlarm.setAlarmTime(DateUtil.date(repeatDate.getTime() - trigger));
+                if (nextTime > rabbitmqConfiguration.getMaxDelay()) {
                     componentAlarm.setDelayTime(rabbitmqConfiguration.getMaxDelay());
                     alarmDatas.add(componentAlarm);
                     break;
                 }
                 alarmDatas.add(componentAlarm);
-                componentAlarm.setDelayTime(repeatDate.getTime() - now.getTime() - trigger);
+                componentAlarm.setDelayTime(nextTime);
+                break;
             }
         }
         return alarmDatas;
