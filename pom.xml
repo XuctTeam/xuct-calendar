@@ -48,6 +48,7 @@
         <complier.jaxb.impl.version>3.0.2</complier.jaxb.impl.version>
         <complier.log4j.version>1.7.32</complier.log4j.version>
         <complier.okio.verison>2.10.0</complier.okio.verison>
+        <complier.jaxb.runtime.version>2.3.5</complier.jaxb.runtime.version>
         <!-- utils -->
         <utils.hutool.version>5.7.14</utils.hutool.version>
         <utils.guava.version>31.0.1-jre</utils.guava.version>
@@ -134,6 +135,7 @@
                 <artifactId>slf4j-api</artifactId>
                 <version>${complier.log4j.version}</version>
             </dependency>
+
 
             <dependency>
                 <groupId>cn.hutool</groupId>
