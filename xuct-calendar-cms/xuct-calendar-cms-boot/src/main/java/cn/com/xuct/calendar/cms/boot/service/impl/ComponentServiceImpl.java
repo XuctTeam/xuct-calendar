@@ -12,7 +12,7 @@ package cn.com.xuct.calendar.cms.boot.service.impl;
 
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAlarm;
-import cn.com.xuct.calendar.cms.api.vo.ComponentDayVo;
+import cn.com.xuct.calendar.cms.api.vo.CalendarComponentVo;
 import cn.com.xuct.calendar.cms.boot.config.RabbitmqConfiguration;
 import cn.com.xuct.calendar.cms.boot.mapper.ComponentMapper;
 import cn.com.xuct.calendar.cms.boot.service.IComponentAlarmService;
@@ -64,8 +64,8 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
     }
 
     @Override
-    public List<ComponentDayVo> search(String word, Integer page, Integer limit) {
-        return ((ComponentMapper) super.getBaseMapper()).searchByWord(word, page, limit);
+    public List<CalendarComponentVo> search(String word, Integer page, Integer limit) {
+        return ((ComponentMapper) super.getBaseMapper()).searchByWord(word, page * (limit - 1), limit);
     }
 
     @Override

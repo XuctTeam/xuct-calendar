@@ -12,7 +12,7 @@ package cn.com.xuct.calendar.cms.boot.mapper;
 
 
 import cn.com.xuct.calendar.cms.api.entity.Component;
-import cn.com.xuct.calendar.cms.api.vo.ComponentDayVo;
+import cn.com.xuct.calendar.cms.api.vo.CalendarComponentVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -36,5 +36,5 @@ public interface ComponentMapper extends BaseMapper<Component> {
      * @param limit
      * @return
      */
-    List<ComponentDayVo> searchByWord(@Param("word") String word, @Param("page") Integer page, @Param("limit") Integer limit);
+    List<CalendarComponentVo> searchByWord(@Param("word") String word, @Param("page") Integer page, @Param("limit") Integer limit);
 }

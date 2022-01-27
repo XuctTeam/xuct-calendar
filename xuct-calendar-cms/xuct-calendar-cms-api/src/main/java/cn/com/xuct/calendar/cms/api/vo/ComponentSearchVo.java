@@ -1,8 +1,8 @@
 /**
  * Copyright (C), 2015-2022, XXX有限公司
- * FileName: ComponentVo
+ * FileName: ComponentSearchVo
  * Author:   Derek Xu
- * Date:     2022/1/10 20:12
+ * Date:     2022/1/27 12:53
  * Description:
  * History:
  * <author>          <time>          <version>          <desc>
@@ -10,21 +10,23 @@
  */
 package cn.com.xuct.calendar.cms.api.vo;
 
-import cn.com.xuct.calendar.cms.api.entity.Component;
 import lombok.Data;
 
+import java.io.Serializable;
+import java.util.List;
+
 /**
- * 〈一句话功能简述〉<br> 
+ * 〈一句话功能简述〉<br>
  * 〈〉
  *
  * @author Derek Xu
- * @create 2022/1/10
+ * @create 2022/1/27
  * @since 1.0.0
  */
 @Data
-public class ComponentDayVo extends Component {
+public class ComponentSearchVo implements Serializable {
 
-    private String color;
+    private boolean finished = false;
 
-    private String calendarName;
+    private List<CalendarComponentVo> components;
 }

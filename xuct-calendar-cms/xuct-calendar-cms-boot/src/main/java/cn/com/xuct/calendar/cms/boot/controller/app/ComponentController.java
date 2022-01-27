@@ -13,9 +13,9 @@ package cn.com.xuct.calendar.cms.boot.controller.app;
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAlarm;
 import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
-import cn.com.xuct.calendar.cms.api.vo.ComponentDayListVo;
-import cn.com.xuct.calendar.cms.api.vo.ComponentDayVo;
+import cn.com.xuct.calendar.cms.api.vo.CalendarComponentVo;
 import cn.com.xuct.calendar.cms.api.vo.ComponentListVo;
+import cn.com.xuct.calendar.cms.api.vo.ComponentSearchVo;
 import cn.com.xuct.calendar.cms.boot.handler.RabbitmqOutChannel;
 import cn.com.xuct.calendar.cms.boot.service.IComponentService;
 import cn.com.xuct.calendar.cms.boot.service.IMemberCalendarService;
@@ -73,7 +73,7 @@ public class ComponentController {
     private final RabbitmqOutChannel rabbitmqOutChannel;
 
 
-    @ApiOperation(value = "通过日历查询日程")
+    @ApiOperation(value = "通过日历查询日程-天分组")
     @GetMapping("/list/calendar/days")
     public R<List<ComponentListVo>> listByCalendarId(@RequestParam("calendarId") String calendarId, @RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date start,
                                                      @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date end) {
@@ -95,7 +95,7 @@ public class ComponentController {
         return R.data(componentListVos);
     }
 
-    @ApiOperation(value = "通过ID查询日程")
+    @ApiOperation(value = "通过ID查询日程-天分组")
     @GetMapping("/days/{id}")
     public R<List<ComponentListVo>> getComponentDaysById(@PathVariable("id") String id) {
         Component component = componentService.getById(id);
@@ -117,39 +117,33 @@ public class ComponentController {
 
 
     @ApiOperation(value = "通过关键字查询日程")
-    @GetMapping("/list/search/days")
-    public R<List<ComponentDayListVo>> listBySearch(@RequestParam("word") String word, @RequestParam("limit") Integer limit, @RequestParam("page") Integer page) {
-        List<ComponentDayVo> componentDayVos = componentService.search(word, page, limit);
-        if (CollectionUtils.isEmpty(componentDayVos)) return R.data(Lists.newArrayList());
-        LinkedHashMap<String, List<ComponentDayVo>> componentListMap = Maps.newLinkedHashMap();
-        this.covertComponentMaps(componentDayVos, componentListMap);
-        List<ComponentDayListVo> list = Lists.newArrayList();
-        if (MapUtil.isEmpty(componentListMap)) return R.data(list);
-        ComponentDayListVo componentDayVo = null;
-        for (Map.Entry<String, List<ComponentDayVo>> entry : componentListMap.entrySet()) {
-            componentDayVo = new ComponentDayListVo();
-            componentDayVo.setDay(entry.getKey());
-            componentDayVo.setComponents(entry.getValue());
-            list.add(componentDayVo);
+    @GetMapping("/list/search")
+    public R<ComponentSearchVo> listBySearch(@RequestParam("word") String word, @RequestParam("limit") Integer limit, @RequestParam("page") Integer page) {
+        ComponentSearchVo componentSearchVo = new ComponentSearchVo();
+        List<CalendarComponentVo> calendarComponentVos = componentService.search(word, page, limit + 1);
+        if (calendarComponentVos.size() <= limit) {
+            componentSearchVo.setFinished(true);
+            componentSearchVo.setComponents(calendarComponentVos);
+            return R.data(componentSearchVo);
         }
-        Collections.sort(list, (o1, o2) -> DateUtil.parse(o2.getDay()).compareTo(DateUtil.parse(o1.getDay())));
-        return R.data(list);
+        calendarComponentVos.remove(limit.intValue());
+        componentSearchVo.setComponents(calendarComponentVos);
+        return R.data(componentSearchVo);
     }
 
 
     @ApiOperation(value = "获取日程详情")
     @GetMapping("/{id}")
-    public R<ComponentDayVo> getComponentById(@PathVariable("id") String id) {
+    public R<CalendarComponentVo> getComponentById(@PathVariable("id") String id) {
         Component component = componentService.getById(id);
         if (component == null) throw new SvrException(SvrResCode.CMS_COMPONENT_NOT_FOUND);
-        ComponentDayVo componentDayVo = new ComponentDayVo();
-        BeanUtils.copyProperties(component, componentDayVo);
+        CalendarComponentVo calendarComponentVo = new CalendarComponentVo();
+        BeanUtils.copyProperties(component, calendarComponentVo);
         MemberCalendar memberCalendar = memberCalendarService.get(Lists.newArrayList(Column.of("member_id", JwtUtils.getUserId()), Column.of("calendar_id", component.getCalendarId())));
-        componentDayVo.setColor(memberCalendar.getColor());
-        componentDayVo.setCalendarName(memberCalendar.getName());
-        return R.data(componentDayVo);
+        calendarComponentVo.setColor(memberCalendar.getColor());
+        calendarComponentVo.setCalendarName(memberCalendar.getName());
+        return R.data(calendarComponentVo);
     }
-
 
     @ApiOperation(value = "新增或修改日程")
     @PostMapping

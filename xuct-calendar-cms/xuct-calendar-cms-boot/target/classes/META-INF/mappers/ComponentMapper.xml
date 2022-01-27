@@ -6,7 +6,7 @@
 <mapper namespace="cn.com.xuct.calendar.cms.boot.mapper.ComponentMapper">
 
 
-    <select id="searchByWord" resultType="cn.com.xuct.calendar.cms.api.vo.ComponentDayVo">
+    <select id="searchByWord" resultType="cn.com.xuct.calendar.cms.api.vo.CalendarComponentVo">
         SELECT c.id,
                c.calendar_id,
                c.status,
