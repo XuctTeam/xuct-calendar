@@ -17,19 +17,16 @@ import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.res.SvrResCode;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.enums.IdentityTypeEnum;
-import cn.com.xuct.calendar.common.module.params.MemberNameParam;
-import cn.com.xuct.calendar.common.module.params.MemberPasswordParam;
-import cn.com.xuct.calendar.common.module.params.MemberPhoneParam;
-import cn.com.xuct.calendar.common.module.params.MemberPhoneUnbindParam;
+import cn.com.xuct.calendar.common.module.params.*;
 import cn.com.xuct.calendar.common.module.req.MemberGetPhoneReq;
 import cn.com.xuct.calendar.common.module.vo.MemberPhoneAuthVo;
 import cn.com.xuct.calendar.common.web.utils.JwtUtils;
 import cn.com.xuct.calendar.ums.api.entity.Member;
 import cn.com.xuct.calendar.ums.api.entity.MemberAuth;
-import cn.com.xuct.calendar.ums.boot.service.IMemberAuthService;
-import cn.com.xuct.calendar.ums.boot.service.IMemberService;
 import cn.com.xuct.calendar.ums.api.feign.CalendarFeignClient;
 import cn.com.xuct.calendar.ums.boot.config.WxMaConfiguration;
+import cn.com.xuct.calendar.ums.boot.service.IMemberAuthService;
+import cn.com.xuct.calendar.ums.boot.service.IMemberService;
 import cn.com.xuct.calendar.ums.boot.vo.MemberInfoVo;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
@@ -37,7 +34,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
@@ -68,6 +64,8 @@ public class MemberAppController {
     private final StringRedisTemplate stringRedisTemplate;
 
     private final WxMaConfiguration wxMaConfiguration;
+
+    private final PasswordEncoder passwordEncoder;
 
     private final CalendarFeignClient calendarFeignClient;
 
@@ -187,9 +185,22 @@ public class MemberAppController {
         return R.status(true);
     }
 
+    @ApiOperation(value = "账号绑定")
+    @PostMapping("/username/bind")
+    public R<String> bindUserName(@RequestBody MemberUsernameParam param) {
+        MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", param.getUsername()), Column.of("identity_type", IdentityTypeEnum.user_name)));
+        if (memberAuth != null) return R.fail("账号已存在");
+        Long userId = JwtUtils.getUserId();
+        memberAuth = new MemberAuth();
+        memberAuth.setMemberId(userId);
+        memberAuth.setUsername(param.getUsername());
+        memberAuth.setPassword(delegatingPassword(param.getPassword()));
+        memberAuth.setIdentityType(IdentityTypeEnum.user_name);
+        memberAuthService.save(memberAuth);
+        return R.status(true);
+    }
 
     private String delegatingPassword(String password) {
-        PasswordEncoder pd = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        return pd.encode(password);
+        return passwordEncoder.encode(password);
     }
 }
