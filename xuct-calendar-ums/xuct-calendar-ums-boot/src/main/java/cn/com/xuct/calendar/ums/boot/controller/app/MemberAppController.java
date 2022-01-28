@@ -12,6 +12,7 @@ package cn.com.xuct.calendar.ums.boot.controller.app;
 
 import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
+import cn.com.xuct.calendar.common.core.enums.PasswordEncoderTypeEnum;
 import cn.com.xuct.calendar.common.core.exception.SvrException;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.res.SvrResCode;
@@ -201,6 +202,6 @@ public class MemberAppController {
     }
 
     private String delegatingPassword(String password) {
-        return passwordEncoder.encode(password);
+        return passwordEncoder.encode(password).replace(PasswordEncoderTypeEnum.BCRYPT.getPrefix(), "");
     }
 }
