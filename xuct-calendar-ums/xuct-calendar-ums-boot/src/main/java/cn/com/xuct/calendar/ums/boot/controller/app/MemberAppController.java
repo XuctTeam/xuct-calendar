@@ -28,7 +28,7 @@ import cn.com.xuct.calendar.ums.api.feign.CalendarFeignClient;
 import cn.com.xuct.calendar.ums.boot.config.WxMaConfiguration;
 import cn.com.xuct.calendar.ums.boot.service.IMemberAuthService;
 import cn.com.xuct.calendar.ums.boot.service.IMemberService;
-import cn.com.xuct.calendar.ums.boot.vo.MemberInfoVo;
+import cn.com.xuct.calendar.ums.api.vo.MemberInfoVo;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
