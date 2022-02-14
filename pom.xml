@@ -37,7 +37,7 @@
         <lib.mybaties.plus.version>3.4.3.4</lib.mybaties.plus.version>
         <lib.mysql.version>8.0.27</lib.mysql.version>
         <lib.servlet.version>4.0.1</lib.servlet.version>
-        <lib.nacos.client.version>2.0.3</lib.nacos.client.version>
+        <lib.nacos.client.version>2.0.4</lib.nacos.client.version>
         <lib.jedis.lock.version>1.0.0</lib.jedis.lock.version>
         <lib.caffeine.version>2.9.2</lib.caffeine.version>
         <!-- compiler-->
@@ -57,6 +57,7 @@
         <utils.nimbusds.jwt.version>9.15.2</utils.nimbusds.jwt.version>
         <utils.tencentcloud.version>3.1.405</utils.tencentcloud.version>
         <utils.biweekly.version>0.6.6</utils.biweekly.version>
+        <utils.okhttp3.version>0.0.3-SNAPSHOT</utils.okhttp3.version>
     </properties>
 
 

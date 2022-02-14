@@ -10,11 +10,15 @@
  */
 package cn.com.xuct.calendar.ums.boot.mapper;
 
+import cn.com.xuct.calendar.ums.api.dto.GroupCountDto;
 import cn.com.xuct.calendar.ums.api.entity.Group;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
- * 〈一句话功能简述〉<br> 
+ * 〈一句话功能简述〉<br>
  * 〈〉
  *
  * @author Derek Xu
@@ -23,4 +27,11 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface GroupMapper extends BaseMapper<Group> {
 
+    /**
+     * 通过会员id查询群组
+     *
+     * @param memberId
+     * @return
+     */
+    List<GroupCountDto> findGroupCountByMember(@Param("memberId") Long memberId);
 }

@@ -40,8 +40,6 @@ public class MemberServiceImpl extends BaseServiceImpl<MemberMapper, Member> imp
 
     private final IMemberAuthService memberAuthService;
 
-    private final StringRedisTemplate stringRedisTemplate;
-
     @Override
     @Cacheable(value = RedisConstants.MEMBER_INFO_KEY, key = "#id", unless = "#result == null")
     public Member findMemberById(Long id) {

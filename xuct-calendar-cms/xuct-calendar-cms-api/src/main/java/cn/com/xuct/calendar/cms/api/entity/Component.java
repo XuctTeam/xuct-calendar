@@ -12,7 +12,7 @@ package cn.com.xuct.calendar.cms.api.entity;
 
 import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
 import cn.com.xuct.calendar.common.module.enums.ComponentAlarmEnum;
-import cn.com.xuct.calendar.common.module.enums.ComponentPowerEnum;
+import cn.com.xuct.calendar.common.module.enums.CommonPowerEnum;
 import cn.com.xuct.calendar.common.module.enums.ComponentRepeatTypeEnum;
 import cn.com.xuct.calendar.dao.base.SuperEntity;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -51,7 +51,7 @@ public class Component extends SuperEntity<Component> {
     private CommonStatusEnum status;
 
     /* 数据权限*/
-    private ComponentPowerEnum power;
+    private CommonPowerEnum power;
 
     @ApiModelProperty("标题")
     private String summary;

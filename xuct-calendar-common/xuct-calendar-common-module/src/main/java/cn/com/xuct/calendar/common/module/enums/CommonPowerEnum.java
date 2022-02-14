@@ -18,7 +18,7 @@ package cn.com.xuct.calendar.common.module.enums;
  * @create 2021/12/21
  * @since 1.0.0
  */
-public enum ComponentPowerEnum {
+public enum CommonPowerEnum {
 
     PRIVATE,
 

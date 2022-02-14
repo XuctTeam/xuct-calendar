@@ -20,6 +20,7 @@
         <module>xuct-calendar-common-swagger</module>
         <module>xuct-calendar-common-tencent</module>
         <module>xuct-calendar-common-web</module>
+        <module>xuct-calendar-common-smms</module>
     </modules>
 
     <properties>

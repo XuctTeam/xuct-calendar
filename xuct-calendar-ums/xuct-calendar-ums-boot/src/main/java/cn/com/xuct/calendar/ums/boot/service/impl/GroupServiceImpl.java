@@ -10,14 +10,24 @@
  */
 package cn.com.xuct.calendar.ums.boot.service.impl;
 
+import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
+import cn.com.xuct.calendar.common.web.utils.JwtUtils;
 import cn.com.xuct.calendar.service.base.BaseServiceImpl;
+import cn.com.xuct.calendar.ums.api.dto.GroupCountDto;
 import cn.com.xuct.calendar.ums.api.entity.Group;
+import cn.com.xuct.calendar.ums.api.entity.MemberGroup;
 import cn.com.xuct.calendar.ums.boot.mapper.GroupMapper;
 import cn.com.xuct.calendar.ums.boot.service.IGroupService;
+import cn.com.xuct.calendar.ums.boot.service.IMemberGroupService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
+import java.util.List;
 
 /**
- * 〈一句话功能简述〉<br> 
+ * 〈一句话功能简述〉<br>
  * 〈〉
  *
  * @author Derek Xu
@@ -25,6 +35,30 @@ import org.springframework.stereotype.Service;
  * @since 1.0.0
  */
 @Service
+@RequiredArgsConstructor
 public class GroupServiceImpl extends BaseServiceImpl<GroupMapper, Group> implements IGroupService {
 
+    private final IMemberGroupService memberGroupService;
+
+    @Override
+    public List<GroupCountDto> findGroupCountByMember(Long memberId) {
+        return ((GroupMapper) super.getBaseMapper()).findGroupCountByMember(memberId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void addGroup(Long memberId, String name, String imageUrl) {
+        Group group = new Group();
+        group.setName(name);
+        if (StringUtils.hasLength(imageUrl)) {
+            group.setImages(imageUrl);
+        }
+        group.setMemberId(memberId);
+        group.setStatus(CommonStatusEnum.NORMAL);
+        this.save(group);
+        MemberGroup memberGroup = new MemberGroup();
+        memberGroup.setGroupId(group.getId());
+        memberGroup.setMemberId(memberId);
+        memberGroupService.save(memberGroup);
+    }
 }

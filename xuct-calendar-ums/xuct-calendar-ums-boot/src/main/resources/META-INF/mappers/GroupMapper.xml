@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.com.xuct.calendar.ums.boot.mapper.GroupMapper">
+
+    <select id="findGroupCountByMember" resultType="cn.com.xuct.calendar.ums.api.dto.GroupCountDto">
+        select g.id, g.`name`, g.images, mg.member_id as create_member_id, g.count
+        from sys_member_group mg
+                 left join (
+            select g.id, g.name, g.images, gc.count
+            from sys_group g
+                     left join (select id, count(1) as count from sys_group group by id) gc on g.id = gc.id
+        ) g on mg.group_id = g.id
+        where mg.member_id = #{memberId}
+    </select>
+</mapper>

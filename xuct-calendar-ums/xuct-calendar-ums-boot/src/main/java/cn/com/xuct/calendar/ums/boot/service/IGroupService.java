@@ -11,17 +11,36 @@
 package cn.com.xuct.calendar.ums.boot.service;
 
 import cn.com.xuct.calendar.service.base.IBaseService;
+import cn.com.xuct.calendar.ums.api.dto.GroupCountDto;
 import cn.com.xuct.calendar.ums.api.entity.Group;
 import cn.com.xuct.calendar.ums.boot.mapper.GroupMapper;
 
+import java.util.List;
+
 /**
- * 〈一句话功能简述〉<br> 
+ * 〈一句话功能简述〉<br>
  * 〈〉
  *
  * @author Derek Xu
  * @create 2022/2/7
  * @since 1.0.0
  */
-public interface IGroupService extends IBaseService<GroupMapper , Group> {
+public interface IGroupService extends IBaseService<GroupMapper, Group> {
 
+    /**
+     * 查询会员下组，包括人数
+     *
+     * @param memberId
+     * @return
+     */
+    List<GroupCountDto> findGroupCountByMember(Long memberId);
+
+    /**
+     * 添加组
+     *
+     * @param memberId
+     * @param name
+     * @param imageUrl
+     */
+    void addGroup(Long memberId, String name, String imageUrl);
 }

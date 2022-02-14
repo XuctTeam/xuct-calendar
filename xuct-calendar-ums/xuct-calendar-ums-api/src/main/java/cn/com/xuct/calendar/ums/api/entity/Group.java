@@ -11,6 +11,7 @@
 package cn.com.xuct.calendar.ums.api.entity;
 
 import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
+import cn.com.xuct.calendar.common.module.enums.CommonPowerEnum;
 import cn.com.xuct.calendar.dao.base.SuperEntity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -30,9 +31,16 @@ public class Group extends SuperEntity<Group> {
 
     private String name;
 
+    private String images;
+
     @TableField("member_id")
     private Long memberId;
 
     @TableField("status")
     private CommonStatusEnum status;
+
+    private CommonPowerEnum power;
+
+    @TableField(exist = false)
+    private Integer count;
 }
