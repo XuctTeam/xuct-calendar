@@ -5,13 +5,14 @@
 
 <mapper namespace="cn.com.xuct.calendar.ums.boot.mapper.GroupMapper">
 
-    <select id="findGroupCountByMember" resultType="cn.com.xuct.calendar.ums.api.entity.Group">
-        select g.id, g.name, g.images, mg.count
-        from sys_group g
-                 left join (select group_id, count(1) as count
-                            from sys_member_group mg
-                            where mg.member_id = #{memberId}
-                            group by group_id) mg on mg.group_id = g.id
-        where g.member_id = #{memberId}
+    <select id="findGroupCountByMember" resultType="cn.com.xuct.calendar.ums.api.dto.GroupCountDto">
+        select g.id, g.`name`, g.images, g.member_id, mg.member_id as create_member_id, g.count
+        from sys_member_group mg
+                 left join (
+            select g.id, g.name, g.images, g.member_id, gc.count
+            from sys_group g
+                     left join (select id, count(1) as count from sys_group group by id) gc on g.id = gc.id
+        ) g on mg.group_id = g.id
+        where mg.member_id = #{memberId}
     </select>
 </mapper>

@@ -10,6 +10,8 @@
  */
 package cn.com.xuct.calendar.ums.api.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -25,14 +27,17 @@ import java.io.Serializable;
 @Data
 public class GroupCountDto implements Serializable {
 
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     private String name;
 
     private String images;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long memberId;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long createMemberId;
 
     private Integer count;
