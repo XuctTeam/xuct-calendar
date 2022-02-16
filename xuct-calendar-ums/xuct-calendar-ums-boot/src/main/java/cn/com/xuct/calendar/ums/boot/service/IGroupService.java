@@ -36,6 +36,14 @@ public interface IGroupService extends IBaseService<GroupMapper, Group> {
     List<GroupCountDto> findGroupCountByMember(Long memberId);
 
     /**
+     * 关键字查询组
+     *
+     * @param word
+     * @return
+     */
+    List<GroupCountDto> findGroupBySearch(String word);
+
+    /**
      * 添加组
      *
      * @param memberId

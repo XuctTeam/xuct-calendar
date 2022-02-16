@@ -49,9 +49,15 @@ public class GroupController {
     private final SmmsClient smmsClient;
 
     @GetMapping("")
-    @ApiOperation(value = "获取用户群组")
+    @ApiOperation(value = "获取用户所在群组")
     public R<List<GroupCountDto>> list() {
         return R.data(groupService.findGroupCountByMember(JwtUtils.getUserId()));
+    }
+
+    @GetMapping("/search")
+    @ApiOperation(value = "搜索群组")
+    public R<List<GroupCountDto>> search(@RequestParam("word") String word) {
+        return R.data(groupService.findGroupBySearch(word));
     }
 
     @PostMapping(value = "/upload", consumes = "multipart/form-data")

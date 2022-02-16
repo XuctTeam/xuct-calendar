@@ -15,4 +15,12 @@
         ) g on mg.group_id = g.id
         where mg.member_id = #{memberId}
     </select>
+
+    <select id="findGroupBySearch" resultType="cn.com.xuct.calendar.ums.api.dto.GroupCountDto">
+        select g.id, g.name, g.member_id as createMemberId, s.name as createMemberName
+        from sys_group g
+                 left join sys_member s on g.member_id = s.id
+        where 1 = 1
+          and g.name LIKE CONCAT(CONCAT('%', #{word}), '%')
+    </select>
 </mapper>

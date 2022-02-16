@@ -40,5 +40,7 @@ public class GroupCountDto implements Serializable {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long createMemberId;
 
+    private String createMemberName;
+
     private Integer count;
 }

@@ -46,6 +46,11 @@ public class GroupServiceImpl extends BaseServiceImpl<GroupMapper, Group> implem
     }
 
     @Override
+    public List<GroupCountDto> findGroupBySearch(String word) {
+        return ((GroupMapper) super.getBaseMapper()).findGroupBySearch(word);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void addGroup(Long memberId, String name, String imageUrl) {
         Group group = new Group();
