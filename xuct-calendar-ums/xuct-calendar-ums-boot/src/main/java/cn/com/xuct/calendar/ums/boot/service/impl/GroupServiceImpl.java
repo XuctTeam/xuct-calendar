@@ -19,6 +19,7 @@ import cn.com.xuct.calendar.ums.api.entity.MemberGroup;
 import cn.com.xuct.calendar.ums.boot.mapper.GroupMapper;
 import cn.com.xuct.calendar.ums.boot.service.IGroupService;
 import cn.com.xuct.calendar.ums.boot.service.IMemberGroupService;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +44,11 @@ public class GroupServiceImpl extends BaseServiceImpl<GroupMapper, Group> implem
     @Override
     public List<GroupCountDto> findGroupCountByMember(Long memberId) {
         return ((GroupMapper) super.getBaseMapper()).findGroupCountByMember(memberId);
+    }
+
+    @Override
+    public GroupCountDto getGroupCountByGroupId(Long id) {
+        return ((GroupMapper) super.getBaseMapper()).getGroupCountByGroupId(id);
     }
 
     @Override

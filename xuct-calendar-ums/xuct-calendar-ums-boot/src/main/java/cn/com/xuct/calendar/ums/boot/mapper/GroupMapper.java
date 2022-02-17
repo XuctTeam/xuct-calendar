@@ -36,10 +36,18 @@ public interface GroupMapper extends BaseMapper<Group> {
     List<GroupCountDto> findGroupCountByMember(@Param("memberId") Long memberId);
 
     /**
-     * 关键字查询
+     * 通过id查询群组
      *
-     * @param wrod
+     * @param id
      * @return
      */
-    List<GroupCountDto> findGroupBySearch(@Param("word") String wrod);
+    GroupCountDto getGroupCountByGroupId(@Param("id") Long id);
+
+    /**
+     * 关键字查询
+     *
+     * @param word
+     * @return
+     */
+    List<GroupCountDto> findGroupBySearch(@Param("word") String word);
 }

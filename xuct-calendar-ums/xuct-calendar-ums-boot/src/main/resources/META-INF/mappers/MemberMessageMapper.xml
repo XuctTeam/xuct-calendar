@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.com.xuct.calendar.ums.boot.mapper.MemberMessageMapper">
+
+    <select id="pages" resultType="cn.com.xuct.calendar.ums.api.entity.MemberMessage">
+        select id , member_id , type , operation , content from sys_member_message
+        where 1=1
+          and member_id =  #{memberId}
+        order by status desc , create_time desc
+            limit #{page}, #{limit}
+    </select>
+</mapper>

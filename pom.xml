@@ -34,12 +34,13 @@
         <!--lib-->
         <lib.jedis.version>3.7.0</lib.jedis.version>
         <lib.common.pool.version>2.11.1</lib.common.pool.version>
-        <lib.mybaties.plus.version>3.4.3.4</lib.mybaties.plus.version>
+        <lib.mybaties.plus.version>3.5.1</lib.mybaties.plus.version>
         <lib.mysql.version>8.0.27</lib.mysql.version>
         <lib.servlet.version>4.0.1</lib.servlet.version>
         <lib.nacos.client.version>2.0.4</lib.nacos.client.version>
         <lib.jedis.lock.version>1.0.0</lib.jedis.lock.version>
         <lib.caffeine.version>2.9.2</lib.caffeine.version>
+        <lib.jackson.version>20211205</lib.jackson.version>
         <!-- compiler-->
         <compiler.lombok.version>1.18.22</compiler.lombok.version>
         <compiler.knife4j.verion>2.0.9</compiler.knife4j.verion>

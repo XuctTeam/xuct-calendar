@@ -10,14 +10,23 @@
  */
 package cn.com.xuct.calendar.ums.boot.service.impl;
 
+import cn.com.xuct.calendar.common.module.enums.GroupMemberStatusEnum;
+import cn.com.xuct.calendar.common.module.enums.MemberMessageTypeEnum;
 import cn.com.xuct.calendar.service.base.BaseServiceImpl;
+import cn.com.xuct.calendar.ums.api.dto.GroupCountDto;
+import cn.com.xuct.calendar.ums.api.entity.Group;
 import cn.com.xuct.calendar.ums.api.entity.MemberGroup;
+import cn.com.xuct.calendar.ums.api.entity.MemberMessage;
 import cn.com.xuct.calendar.ums.boot.mapper.MemberGroupMapper;
 import cn.com.xuct.calendar.ums.boot.service.IMemberGroupService;
+import cn.com.xuct.calendar.ums.boot.service.IMemberMessageService;
+import lombok.RequiredArgsConstructor;
+import org.json.JSONObject;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 〈一句话功能简述〉<br> 
+ * 〈一句话功能简述〉<br>
  * 〈〉
  *
  * @author Derek Xu
@@ -25,6 +34,26 @@ import org.springframework.stereotype.Service;
  * @since 1.0.0
  */
 @Service
-public class MemberGroupServiceImpl extends BaseServiceImpl<MemberGroupMapper , MemberGroup> implements IMemberGroupService {
+@RequiredArgsConstructor
+public class MemberGroupServiceImpl extends BaseServiceImpl<MemberGroupMapper, MemberGroup> implements IMemberGroupService {
 
+    private final IMemberMessageService memberMessageService;
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void applyJoinGroup(GroupCountDto group, MemberGroup memberGroup) {
+        memberGroup.setStatus(GroupMemberStatusEnum.APPLY);
+        this.save(memberGroup);
+
+        MemberMessage memberMessage = new MemberMessage();
+        memberMessage.setMemberId(group.getMemberId());
+        memberMessage.setType(MemberMessageTypeEnum.GROUP);
+        memberMessage.setOperation(1);
+        memberMessage.setStatus(0);
+        JSONObject content = new JSONObject();
+        content.append("member_id", memberGroup.getMemberId());
+        memberMessage.setContent(content);
+        memberMessageService.save(memberMessage);
+    }
 }
