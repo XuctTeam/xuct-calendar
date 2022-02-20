@@ -32,7 +32,7 @@ public interface CalendarFeignClient {
 
     @PostMapping("/api/feign/v1/calendar")
     @Headers("Content-Type: application/json")
-    R<String> addCarendar(CalendarInitDto calendarInitDto);
+    R<String> addCalendar(CalendarInitDto calendarInitDto);
 
 }
 

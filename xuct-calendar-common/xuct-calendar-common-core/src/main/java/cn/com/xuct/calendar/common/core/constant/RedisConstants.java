@@ -38,7 +38,7 @@ public interface RedisConstants {
     /* 短信验证码 */
     public static final String MEMBER_PHONE_LOGIN_CODE_KEY = "member::login::sms:code:";
 
-    /* 手机号注册 */
+    /* 注册验证码 */
     public static final String MEMBER_PHONE_REGISTER_CODE_KEY = "member::register::sms:code:";
 
     /* 手机号绑定 */

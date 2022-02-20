@@ -11,22 +11,28 @@
 package cn.com.xuct.calendar.ums.boot.controller.app;
 
 import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
+import cn.com.xuct.calendar.common.core.constant.DictConstants;
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.enums.PasswordEncoderTypeEnum;
 import cn.com.xuct.calendar.common.core.exception.SvrException;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.res.SvrResCode;
 import cn.com.xuct.calendar.common.core.vo.Column;
+import cn.com.xuct.calendar.common.module.dto.CalendarInitDto;
 import cn.com.xuct.calendar.common.module.enums.IdentityTypeEnum;
+import cn.com.xuct.calendar.common.module.enums.MemberMessageTypeEnum;
 import cn.com.xuct.calendar.common.module.params.*;
 import cn.com.xuct.calendar.common.module.req.MemberGetPhoneReq;
 import cn.com.xuct.calendar.common.module.vo.MemberPhoneAuthVo;
 import cn.com.xuct.calendar.common.web.utils.JwtUtils;
 import cn.com.xuct.calendar.ums.api.entity.Member;
 import cn.com.xuct.calendar.ums.api.entity.MemberAuth;
+import cn.com.xuct.calendar.ums.api.entity.MemberMessage;
 import cn.com.xuct.calendar.ums.api.feign.CalendarFeignClient;
+import cn.com.xuct.calendar.ums.boot.config.DictCacheManager;
 import cn.com.xuct.calendar.ums.boot.config.WxMaConfiguration;
 import cn.com.xuct.calendar.ums.boot.service.IMemberAuthService;
+import cn.com.xuct.calendar.ums.boot.service.IMemberMessageService;
 import cn.com.xuct.calendar.ums.boot.service.IMemberService;
 import cn.com.xuct.calendar.ums.api.vo.MemberInfoVo;
 import com.google.common.collect.Lists;
@@ -34,6 +40,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONObject;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
@@ -61,6 +68,8 @@ public class MemberAppController {
     private final IMemberService memberService;
 
     private final IMemberAuthService memberAuthService;
+
+    private final IMemberMessageService memberMessageService;
 
     private final StringRedisTemplate stringRedisTemplate;
 
@@ -200,6 +209,45 @@ public class MemberAppController {
         memberAuthService.save(memberAuth);
         return R.status(true);
     }
+
+    /**
+     * 功能描述: <br>
+     * 〈会员注册，该方法不需要认证，在gateway中进行排除〉
+     *
+     * @param param
+     * @return:cn.com.xuct.calendar.common.core.res.R<java.lang.String>
+     * @since: 1.0.0
+     * @Author:
+     * @Date: 2022/2/19 20:15
+     */
+    @ApiOperation(value = "会员注册")
+    @PostMapping("/register")
+    public R<String> register(@Validated @RequestBody MemberRegisterParam param) {
+        MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", param.getUsername()), Column.of("identity_type", IdentityTypeEnum.user_name)));
+        if (memberAuth != null) return R.fail("账号已存在");
+        String verCode = stringRedisTemplate.opsForValue().get(RedisConstants.MEMBER_PHONE_REGISTER_CODE_KEY.concat(param.getKey()));
+        if (!StringUtils.hasLength(verCode) || !verCode.toLowerCase().equals(param.getCaptcha().toLowerCase()))
+            return R.fail("验证码错误");
+        String password = this.delegatingPassword(param.getPassword()).replace("{bcrypt}", "");
+        Member member = memberService.saveMemberByUserName(param.getUsername(), password, DictCacheManager.getDictByCode(DictConstants.TIME_ZONE_TYPE, DictConstants.EAST_8_CODE).getValue());
+        /* 添加日历 */
+        CalendarInitDto calendarInitDto = new CalendarInitDto();
+        calendarInitDto.setMemberId(member.getId());
+        calendarInitDto.setMemberNickName(member.getName());
+        calendarFeignClient.addCalendar(calendarInitDto);
+        /* 添加注册消息到用户 */
+        MemberMessage memberMessage = new MemberMessage();
+        memberMessage.setMemberId(member.getId());
+        memberMessage.setStatus(0);
+        memberMessage.setOperation(0);
+        memberMessage.setType(MemberMessageTypeEnum.SYSTEM);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.append("user_name", member.getName());
+        memberMessage.setContent(jsonObject);
+        memberMessageService.save(memberMessage);
+        return R.status(true);
+    }
+
 
     private String delegatingPassword(String password) {
         return passwordEncoder.encode(password).replace(PasswordEncoderTypeEnum.BCRYPT.getPrefix(), "");

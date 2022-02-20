@@ -14,7 +14,6 @@ import cn.com.xuct.calendar.common.module.enums.MemberMessageTypeEnum;
 import cn.com.xuct.calendar.dao.base.SuperEntity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.Data;
 import org.json.JSONObject;
 
@@ -27,7 +26,7 @@ import org.json.JSONObject;
  * @since 1.0.0
  */
 @Data
-@TableName(value = "sys_member_message", autoResultMap = true)
+@TableName(value = "sys_member_message")
 public class MemberMessage extends SuperEntity<MemberMessage> {
 
     @TableField("member_id")
@@ -38,10 +37,10 @@ public class MemberMessage extends SuperEntity<MemberMessage> {
     /* 分类 */
     private Integer operation;
 
-
     private Integer status;
 
-    /* 具体数据 */
-    @TableField(value = "content", typeHandler = JacksonTypeHandler.class)
+
     private JSONObject content;
+
 }
+

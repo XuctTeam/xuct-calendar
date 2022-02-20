@@ -5,7 +5,15 @@
 
 <mapper namespace="cn.com.xuct.calendar.ums.boot.mapper.MemberMessageMapper">
 
-    <select id="pages" resultType="cn.com.xuct.calendar.ums.api.entity.MemberMessage">
+    <resultMap id="ResultMapWithBLOBs" type="cn.com.xuct.calendar.ums.api.entity.MemberMessage">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Long" jdbcType="INTEGER" />
+            <arg column="member_id" javaType="java.lang.Long" jdbcType="VARCHAR" />
+            <arg column="content" javaType="org.json.JSONObject" jdbcType="LONGVARCHAR" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        </constructor>
+    </resultMap>
+
+    <select id="pages" resultMap="ResultMapWithBLOBs">
         select id , member_id , type , operation , content from sys_member_message
         where 1=1
           and member_id =  #{memberId}

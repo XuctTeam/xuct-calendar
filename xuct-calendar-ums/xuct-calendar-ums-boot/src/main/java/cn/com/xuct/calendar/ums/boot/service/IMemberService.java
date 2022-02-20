@@ -40,7 +40,7 @@ public interface IMemberService extends IBaseService<MemberMapper, Member> {
     Member updateMember(Member member);
 
     /**
-     * 新建账号
+     * 通过openId保存用户
      *
      * @param openId
      * @param nickName
@@ -50,4 +50,14 @@ public interface IMemberService extends IBaseService<MemberMapper, Member> {
      * @return
      */
     Member saveMemberByOpenId(String openId, String nickName, String avatar, String sessionKey, String timeZone);
+
+    /**
+     * 通过账号保存用户
+     *
+     * @param username
+     * @param password
+     * @param timeZone
+     * @return
+     */
+    Member saveMemberByUserName(String username, String password, String timeZone);
 }

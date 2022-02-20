@@ -88,7 +88,7 @@ public class MemberFeignController {
         CalendarInitDto calendarInitDto = new CalendarInitDto();
         calendarInitDto.setMemberId(member.getId());
         calendarInitDto.setMemberNickName(member.getName());
-        calendarFeignClient.addCarendar(calendarInitDto);
+        calendarFeignClient.addCalendar(calendarInitDto);
         return R.data(MemberInfoDto.builder().userId(member.getId()).username(session.getOpenid()).status(member.getStatus()).timeZone(member.getTimeZone()).build());
     }
 

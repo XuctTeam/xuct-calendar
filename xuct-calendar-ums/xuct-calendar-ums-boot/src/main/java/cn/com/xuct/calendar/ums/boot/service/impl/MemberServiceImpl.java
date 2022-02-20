@@ -72,5 +72,20 @@ public class MemberServiceImpl extends BaseServiceImpl<MemberMapper, Member> imp
         return member;
     }
 
-
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Member saveMemberByUserName(String username, String password, String timeZone) {
+        Member member = new Member();
+        member.setStatus(0);
+        member.setTimeZone(timeZone);
+        member.setName("用户" + RandomUtil.randomString(6));
+        this.save(member);
+        MemberAuth memberAuth = new MemberAuth();
+        memberAuth.setMemberId(member.getId());
+        memberAuth.setIdentityType(IdentityTypeEnum.user_name);
+        memberAuth.setUsername(username);
+        memberAuth.setPassword(password);
+        memberAuthService.save(memberAuth);
+        return member;
+    }
 }

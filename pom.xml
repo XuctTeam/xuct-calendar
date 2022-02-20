@@ -51,7 +51,7 @@
         <complier.okio.verison>2.10.0</complier.okio.verison>
         <complier.jaxb.runtime.version>2.3.5</complier.jaxb.runtime.version>
         <!-- utils -->
-        <utils.hutool.version>5.7.14</utils.hutool.version>
+        <utils.hutool.version>5.7.21</utils.hutool.version>
         <utils.guava.version>31.0.1-jre</utils.guava.version>
         <utils.wxjava.version>4.2.0</utils.wxjava.version>
         <utils.jackson.version>2.12.2</utils.jackson.version>
@@ -59,6 +59,7 @@
         <utils.tencentcloud.version>3.1.405</utils.tencentcloud.version>
         <utils.biweekly.version>0.6.6</utils.biweekly.version>
         <utils.okhttp3.version>0.0.3-SNAPSHOT</utils.okhttp3.version>
+        <utils.easy.captcha.version>1.6.2</utils.easy.captcha.version>
     </properties>
 
 

@@ -109,7 +109,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 //开启授权认证
                 .authorizeRequests()
-                .antMatchers("/oauth/**", "/sms/**", AuthConstants.LOGIN_PAGE, AuthConstants.REDIRECT_URL).permitAll()
+                .antMatchers("/oauth/**", "/sms/**" , "/captcha/**", AuthConstants.LOGIN_PAGE, AuthConstants.REDIRECT_URL).permitAll()
                 .antMatchers(ignoreUrls).permitAll()
                 .anyRequest()
                 .authenticated()
