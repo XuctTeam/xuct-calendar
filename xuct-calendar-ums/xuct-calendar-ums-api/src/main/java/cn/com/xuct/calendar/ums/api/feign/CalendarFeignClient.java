@@ -29,10 +29,26 @@ import org.springframework.web.bind.annotation.PostMapping;
 @FeignClient(name = "dav-cms", contextId = "cms", configuration = FeignConfiguration.class)
 public interface CalendarFeignClient {
 
-
+    /**
+     * 新增日历
+     *
+     * @param calendarInitDto
+     * @return
+     */
     @PostMapping("/api/feign/v1/calendar")
     @Headers("Content-Type: application/json")
     R<String> addCalendar(CalendarInitDto calendarInitDto);
+
+
+    /**
+     * 更新用户日历的显示名称
+     *
+     * @param calendarInitDto
+     * @return
+     */
+    @PostMapping("/api/feign/v1/calendar/modify/name")
+    @Headers("Content-Type: application/json")
+    R<String> updateMemberCalendarName(CalendarInitDto calendarInitDto);
 
 }
 

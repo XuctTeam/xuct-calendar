@@ -52,7 +52,15 @@ public class CalendarFeignController {
         updateReq.setCreateMemberName(calendarInitDto.getMemberNickName());
         updateReq.setDisplay(1);
         memberCalendarService.createMemberCalendar(calendarInitDto.getMemberId(), updateReq);
-        return R.success("新增成功");
+        return R.status(true);
+    }
+
+    @ApiOperation(value = "更新日历创建用户名称")
+    @PostMapping("/modify/name")
+    @ApiImplicitParam(value = "实体JSON对象", required = true, paramType = "body", dataType = "CalendarInitDto")
+    public R<String> updateMemberCalendarName(@RequestBody CalendarInitDto calendarInitDto) {
+        memberCalendarService.updateMemberCalendarName(calendarInitDto.getMemberId(), calendarInitDto.getMemberNickName());
+        return R.status(true);
     }
 
 
@@ -63,4 +71,6 @@ public class CalendarFeignController {
         //memberCalendarService.mergeMemberCalendar(calendarMergeDto.getMemberId(), calendarMergeDto.getFromMemberId());
         return R.status(true);
     }
+
+
 }

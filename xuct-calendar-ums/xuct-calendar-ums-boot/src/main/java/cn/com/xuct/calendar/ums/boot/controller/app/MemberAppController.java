@@ -40,6 +40,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.C;
 import org.json.JSONObject;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -129,6 +130,12 @@ public class MemberAppController {
         Long userId = JwtUtils.getUserId();
         Member member = memberService.findMemberById(userId);
         if (member == null) return R.fail("获取用户信息失败");
+        /*1. 更新日历的名称 */
+        CalendarInitDto calendarInitDto = new CalendarInitDto();
+        calendarInitDto.setMemberId(userId);
+        calendarInitDto.setMemberNickName(param.getName());
+        calendarFeignClient.updateMemberCalendarName(calendarInitDto);
+        /*2. 更新用户名称 */
         member.setName(param.getName());
         memberService.updateMember(member);
         return R.status(true);

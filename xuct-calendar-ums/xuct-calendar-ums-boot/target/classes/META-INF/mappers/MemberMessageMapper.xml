@@ -8,8 +8,8 @@
 
     <resultMap id="jsonResult" type="cn.com.xuct.calendar.ums.api.entity.MemberMessage">
         <id column="id" jdbcType="BIGINT" property="id"/>
-        <result column="create_time" jdbcType="DATE" property="createTime"/>
-        <result column="update_time" jdbcType="NUMERIC" property="updateTime"/>
+        <result column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP" property="updateTime"/>
         <result column="member_id" jdbcType="BIGINT" property="memberId"/>
         <result column="type" jdbcType="VARCHAR" property="type"/>
         <result column="operation" jdbcType="INTEGER" property="operation"/>
@@ -27,7 +27,18 @@
         <if test="status != null and status != 2">
             and status = #{status}
         </if>
-        order by status desc, create_time desc
+        <choose>
+            <when test="sort != null and sort == 1">
+                order by create_time desc
+            </when>
+            <when test="sort != null and sort == 2">
+                order by type asc, status desc
+            </when>
+            <otherwise>
+                order by status desc, create_time desc
+            </otherwise>
+        </choose>
+
         limit #{page}, #{limit}
     </select>
 </mapper>

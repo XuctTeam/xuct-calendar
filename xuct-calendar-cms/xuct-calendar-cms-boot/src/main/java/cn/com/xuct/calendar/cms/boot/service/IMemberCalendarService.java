@@ -52,6 +52,14 @@ public interface IMemberCalendarService extends IBaseService<MemberCalendarMappe
      */
     void createMemberCalendar(Long memberId, MemberCalendarUpdateReq memberCalendarUpdateReq);
 
+    /**
+     * 更新日历创建用户显示名称
+     *
+     * @param createMemberId
+     * @param createMemberName
+     */
+    void updateMemberCalendarName(Long createMemberId, String createMemberName);
+
 
     /**
      * 修改日历

@@ -15,6 +15,7 @@ import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
 import cn.com.xuct.calendar.cms.boot.mapper.MemberCalendarMapper;
 import cn.com.xuct.calendar.cms.boot.service.ICalendarService;
 import cn.com.xuct.calendar.cms.boot.service.IMemberCalendarService;
+import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.req.MemberCalendarUpdateReq;
 import cn.com.xuct.calendar.service.base.BaseServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -71,6 +72,14 @@ public class MemberCalendarServiceImpl extends BaseServiceImpl<MemberCalendarMap
         this.save(memberCalendar);
     }
 
+    @Override
+    public void updateMemberCalendarName(Long createMemberId, String createMemberName) {
+        MemberCalendar updateMemberCalendar = new MemberCalendar();
+        updateMemberCalendar.setCreateTime(null);
+        updateMemberCalendar.setUpdateTime(null);
+        updateMemberCalendar.setCreateMemberName(createMemberName);
+        this.update(updateMemberCalendar, Column.of("create_member_id", createMemberId));
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
