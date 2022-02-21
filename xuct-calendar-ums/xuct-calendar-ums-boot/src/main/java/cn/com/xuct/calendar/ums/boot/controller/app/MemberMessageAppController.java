@@ -48,10 +48,12 @@ public class MemberMessageAppController {
 
     @GetMapping("")
     @ApiOperation(value = "分页查询消息")
-    public R<MemberMessagePageVo> list(@RequestParam("page") Integer page, @RequestParam("limit") Integer limit) {
+    public R<MemberMessagePageVo> list(@RequestParam("page") Integer page, @RequestParam("limit") Integer limit,
+                                       @RequestParam(value = "status", required = false) Integer status,
+                                       @RequestParam(value = "sort", required = false) Integer sort) {
         MemberMessagePageVo memberMessagePageVo = new MemberMessagePageVo();
         memberMessagePageVo.setFinished(false);
-        List<MemberMessage> memberMessageList = memberMessageService.pages(JwtUtils.getUserId(), page, limit + 1);
+        List<MemberMessage> memberMessageList = memberMessageService.pages(JwtUtils.getUserId(), page, limit + 1, status, sort);
         if (CollectionUtils.isEmpty(memberMessageList)) {
             memberMessagePageVo.setFinished(true);
             memberMessagePageVo.setMessages(Lists.newArrayList());

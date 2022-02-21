@@ -33,7 +33,7 @@ public class MemberMessageServiceImpl extends BaseServiceImpl<MemberMessageMappe
 
 
     @Override
-    public List<MemberMessage> pages(Long memberId, Integer page, Integer limit) {
-        return ((MemberMessageMapper) super.getBaseMapper()).pages(memberId, page, limit);
+    public List<MemberMessage> pages(Long memberId, Integer page, Integer limit, Integer status, Integer sort) {
+        return ((MemberMessageMapper) super.getBaseMapper()).pages(memberId, page, limit, status, sort);
     }
 }

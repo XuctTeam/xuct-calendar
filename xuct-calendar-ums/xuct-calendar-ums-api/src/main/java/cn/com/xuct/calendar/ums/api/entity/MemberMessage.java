@@ -12,9 +12,14 @@ package cn.com.xuct.calendar.ums.api.entity;
 
 import cn.com.xuct.calendar.common.module.enums.MemberMessageTypeEnum;
 import cn.com.xuct.calendar.dao.base.SuperEntity;
+import cn.com.xuct.calendar.ums.api.handler.JsonObjectStdSerializer;
+import cn.com.xuct.calendar.ums.api.handler.JsonObjectTypeHandler;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
+import lombok.experimental.Accessors;
 import org.json.JSONObject;
 
 /**
@@ -26,7 +31,8 @@ import org.json.JSONObject;
  * @since 1.0.0
  */
 @Data
-@TableName(value = "sys_member_message")
+@Accessors(chain = true)
+@TableName(value = "sys_member_message" , autoResultMap = true)
 public class MemberMessage extends SuperEntity<MemberMessage> {
 
     @TableField("member_id")
@@ -39,7 +45,8 @@ public class MemberMessage extends SuperEntity<MemberMessage> {
 
     private Integer status;
 
-
+    @TableField(typeHandler = JsonObjectTypeHandler.class)
+    @JsonSerialize(using = JsonObjectStdSerializer.class)
     private JSONObject content;
 
 }

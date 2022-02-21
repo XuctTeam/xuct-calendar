@@ -5,19 +5,29 @@
 
 <mapper namespace="cn.com.xuct.calendar.ums.boot.mapper.MemberMessageMapper">
 
-    <resultMap id="ResultMapWithBLOBs" type="cn.com.xuct.calendar.ums.api.entity.MemberMessage">
-        <constructor>
-            <idArg column="id" javaType="java.lang.Long" jdbcType="INTEGER" />
-            <arg column="member_id" javaType="java.lang.Long" jdbcType="VARCHAR" />
-            <arg column="content" javaType="org.json.JSONObject" jdbcType="LONGVARCHAR" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
-        </constructor>
+
+    <resultMap id="jsonResult" type="cn.com.xuct.calendar.ums.api.entity.MemberMessage">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="create_time" jdbcType="DATE" property="createTime"/>
+        <result column="update_time" jdbcType="NUMERIC" property="updateTime"/>
+        <result column="member_id" jdbcType="BIGINT" property="memberId"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+        <result column="operation" jdbcType="INTEGER" property="operation"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="content" property="content"
+                typeHandler="cn.com.xuct.calendar.ums.api.handler.JsonObjectTypeHandler"/>
     </resultMap>
 
-    <select id="pages" resultMap="ResultMapWithBLOBs">
-        select id , member_id , type , operation , content from sys_member_message
-        where 1=1
-          and member_id =  #{memberId}
-        order by status desc , create_time desc
-            limit #{page}, #{limit}
+
+    <select id="pages" resultType="cn.com.xuct.calendar.ums.api.entity.MemberMessage" resultMap="jsonResult">
+        select id, create_time, member_id, type, status, operation, content
+        from sys_member_message
+        where 1 = 1
+        and member_id = #{memberId}
+        <if test="status != null and status != 2">
+            and status = #{status}
+        </if>
+        order by status desc, create_time desc
+        limit #{page}, #{limit}
     </select>
 </mapper>

@@ -33,7 +33,9 @@ public interface IMemberMessageService extends IBaseService<MemberMessageMapper,
      * @param memberId
      * @param page
      * @param limit
+     * @param status
+     * @param sort
      * @return
      */
-    List<MemberMessage> pages(Long memberId, Integer page, Integer limit);
+    List<MemberMessage> pages(Long memberId, Integer page, Integer limit , Integer status , Integer sort);
 }
