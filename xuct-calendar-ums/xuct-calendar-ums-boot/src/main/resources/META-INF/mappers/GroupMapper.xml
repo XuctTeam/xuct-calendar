@@ -14,6 +14,7 @@
                      left join (select id, count(1) as count from sys_group group by id) gc on g.id = gc.id
         ) g on mg.group_id = g.id
         where mg.member_id = #{memberId}
+          and mg.status = 'NORMAL'
     </select>
 
     <select id="getGroupCountByGroupId" resultType="cn.com.xuct.calendar.ums.api.dto.GroupCountDto">
