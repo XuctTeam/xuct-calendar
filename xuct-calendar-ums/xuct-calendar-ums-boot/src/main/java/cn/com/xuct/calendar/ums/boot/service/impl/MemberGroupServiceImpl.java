@@ -25,6 +25,8 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
+
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
@@ -44,15 +46,15 @@ public class MemberGroupServiceImpl extends BaseServiceImpl<MemberGroupMapper, M
     @Transactional(rollbackFor = Exception.class)
     public void applyJoinGroup(GroupCountDto group, MemberGroup memberGroup) {
         memberGroup.setStatus(GroupMemberStatusEnum.APPLY);
+        memberGroup.setCreateTime(new Date());
         this.save(memberGroup);
-
         MemberMessage memberMessage = new MemberMessage();
         memberMessage.setMemberId(group.getMemberId());
         memberMessage.setType(MemberMessageTypeEnum.GROUP);
-        memberMessage.setOperation(1);
+        memberMessage.setOperation(0);
         memberMessage.setStatus(0);
         JSONObject content = new JSONObject();
-        content.append("member_id", memberGroup.getMemberId());
+        content.append("member_id", String.valueOf(memberGroup.getMemberId()));
         memberMessage.setContent(content);
         memberMessageService.save(memberMessage);
     }
