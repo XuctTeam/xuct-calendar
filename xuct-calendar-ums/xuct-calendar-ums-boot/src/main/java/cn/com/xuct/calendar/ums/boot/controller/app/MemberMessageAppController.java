@@ -11,6 +11,7 @@
 package cn.com.xuct.calendar.ums.boot.controller.app;
 
 import cn.com.xuct.calendar.common.core.res.R;
+import cn.com.xuct.calendar.common.module.params.MessageReadParam;
 import cn.com.xuct.calendar.common.web.utils.JwtUtils;
 import cn.com.xuct.calendar.ums.api.entity.MemberMessage;
 import cn.com.xuct.calendar.ums.api.vo.MemberMessagePageVo;
@@ -21,10 +22,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -45,8 +44,7 @@ public class MemberMessageAppController {
 
     private final IMemberMessageService memberMessageService;
 
-
-    @GetMapping("")
+    @GetMapping("/list")
     @ApiOperation(value = "分页查询消息")
     public R<MemberMessagePageVo> list(@RequestParam("page") Integer page, @RequestParam("limit") Integer limit,
                                        @RequestParam(value = "status", required = false) Integer status,
@@ -64,5 +62,21 @@ public class MemberMessageAppController {
         }
         memberMessagePageVo.setMessages(memberMessageList);
         return R.data(memberMessagePageVo);
+    }
+
+    @GetMapping("")
+    @ApiOperation(value = "获取消息")
+    public R<MemberMessage> get(@RequestParam("id") Long id) {
+        return R.data(memberMessageService.getById(id));
+    }
+
+    @PostMapping("")
+    @ApiOperation(value = "已读消息")
+    public R<String> read(@Validated @RequestBody MessageReadParam param) {
+        MemberMessage memberMessage = new MemberMessage();
+        memberMessage.setId(Long.valueOf(param.getId()));
+        memberMessage.setStatus(1);
+        memberMessageService.updateById(memberMessage);
+        return R.status(true);
     }
 }
