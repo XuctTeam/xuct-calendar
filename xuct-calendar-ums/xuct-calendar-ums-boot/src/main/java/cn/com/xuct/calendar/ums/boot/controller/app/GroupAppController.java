@@ -53,9 +53,6 @@ public class GroupAppController {
 
     private final IGroupService groupService;
 
-    private final IMemberGroupService memberGroupService;
-
-
     private final SmmsClient smmsClient;
 
     @GetMapping("")
@@ -103,32 +100,5 @@ public class GroupAppController {
         return R.status(true);
     }
 
-    @PostMapping("/apply")
-    @ApiOperation(value = "申请入群")
-    public R<String> applyGroup(@RequestBody @Validated GroupJoinParam joinParam) {
-        MemberGroup memberGroup = memberGroupService.get(Lists.newArrayList(Column.of("group_id", joinParam.getId()), Column.of("member_id", JwtUtils.getUserId())));
-        if (memberGroup != null) {
-            if (memberGroup.getStatus().equals(GroupMemberStatusEnum.APPLY)) return R.fail("已在申请中");
-            return R.fail("已在群组");
-        }
-        GroupInfoDto groupInfoDto = groupService.getGroupCountByGroupId(Long.valueOf(joinParam.getId()));
-        if (groupInfoDto == null) return R.fail("群组不存在");
-        if (groupInfoDto.getCount() > 200) return R.fail("群组已满");
-        memberGroupService.applyJoinGroup(groupInfoDto.getId(), groupInfoDto.getName(), groupInfoDto.getCreateMemberId(), JwtUtils.getUserId());
-        return R.status(true);
-    }
 
-    @PostMapping("/apply/agree")
-    @ApiOperation(value = "同意入群")
-    public R<String> applyAgreeJoinGroup(@RequestBody @Validated GroupApplyParam groupApplyParam) {
-        memberGroupService.applyAgreeJoinGroup(groupApplyParam.getGroupId(), groupApplyParam.getMemberId());
-        return R.status(true);
-    }
-
-    @PostMapping("/apply/refuse")
-    @ApiOperation(value = "拒绝入群")
-    public R<String> applyRefuseJoinGroup(@RequestBody @Validated GroupApplyParam groupApplyParam) {
-        memberGroupService.applyRefuseJoinGroup(groupApplyParam.getGroupId(), groupApplyParam.getMemberId());
-        return R.status(true);
-    }
 }
