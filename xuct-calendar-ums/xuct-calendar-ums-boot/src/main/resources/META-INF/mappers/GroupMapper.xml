@@ -5,7 +5,8 @@
 
 <mapper namespace="cn.com.xuct.calendar.ums.boot.mapper.GroupMapper">
 
-    <select id="findGroupCountByMember" resultType="cn.com.xuct.calendar.ums.api.dto.GroupCountDto">
+
+    <select id="findGroupCountByMember" resultType="cn.com.xuct.calendar.ums.api.dto.GroupInfoDto">
         select g.id, g.`name`, g.images, g.member_id, mg.member_id as create_member_id, g.count
         from sys_member_group mg
                  left join (
@@ -17,8 +18,8 @@
           and mg.status = 'NORMAL'
     </select>
 
-    <select id="getGroupCountByGroupId" resultType="cn.com.xuct.calendar.ums.api.dto.GroupCountDto">
-        select g.id, g.name, mg.count, g.member_id
+    <select id="getGroupCountByGroupId" resultType="cn.com.xuct.calendar.ums.api.dto.GroupInfoDto">
+        select g.id, g.name, mg.count, g.member_id as createMemberId
         from sys_group g
                  left join (select group_id, count(1) as count
                             from sys_member_group
@@ -29,7 +30,7 @@
 
     </select>
 
-    <select id="findGroupBySearch" resultType="cn.com.xuct.calendar.ums.api.dto.GroupCountDto">
+    <select id="findGroupBySearch" resultType="cn.com.xuct.calendar.ums.api.dto.GroupInfoDto">
         select g.id, g.name, g.images, g.member_id as createMemberId, s.name as createMemberName
         from sys_group g
                  left join sys_member s on g.member_id = s.id
@@ -37,5 +38,45 @@
           and g.power = 'PUBLIC'
           and g.name LIKE CONCAT(CONCAT('%', #{word}), '%')
     </select>
+
+
+    <select id="mineApplyGroup" resultType="cn.com.xuct.calendar.ums.api.dto.GroupInfoDto">
+        select s.id, s.name, s.member_id as createMemberId, m.name as createMemberName, mg.member_id
+        from sys_member_group mg
+                 left join sys_group s on mg.group_id = s.id
+                 left join sys_member m on mg.member_id = m.id
+        where 1 = 1
+          and mg.member_id = #{memberId}
+          and mg.status = 'APPLY'
+    </select>
+
+    <select id="applyMineGroup" resultType="cn.com.xuct.calendar.ums.api.dto.GroupInfoDto">
+        select s.id, s.name, s.member_id as createMemberId, m.name as createMemberName, mg.member_id
+        from sys_member_group mg
+                 left join sys_group s on mg.group_id = s.id
+                 left join sys_member m on mg.member_id = m.id
+        where 1 = 1
+          and s.member_id = #{memberId}
+          and mg.status = 'APPLY'
+    </select>
+
+    <update id="applyAgreeJoinGroup">
+        update sys_member_group
+        set status = 'NORMAL'
+        where 1 = 1
+          and group_id = #{groupId}
+          and member_id = #{memberId}
+          and mg.status = 'APPLY'
+
+    </update>
+
+    <delete id="applyRefuseJoinGroup">
+        delete
+        from sys_member_group
+        where 1 = 1
+          and group_id = #{groupId}
+          and member_id = #{memberId}
+          and mg.status = 'APPLY'
+    </delete>
 
 </mapper>

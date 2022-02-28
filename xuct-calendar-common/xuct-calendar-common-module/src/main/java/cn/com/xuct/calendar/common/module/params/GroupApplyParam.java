@@ -1,8 +1,8 @@
 /**
  * Copyright (C), 2015-2022, XXX有限公司
- * FileName: GroupJoinParam
+ * FileName: GroupApplyParam
  * Author:   Derek Xu
- * Date:     2022/2/17 10:56
+ * Date:     2022/2/28 14:45
  * Description:
  * History:
  * <author>          <time>          <version>          <desc>
@@ -12,7 +12,6 @@ package cn.com.xuct.calendar.common.module.params;
 
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -20,12 +19,13 @@ import java.io.Serializable;
  * 〈〉
  *
  * @author Derek Xu
- * @create 2022/2/17
+ * @create 2022/2/28
  * @since 1.0.0
  */
 @Data
-public class GroupJoinParam implements Serializable {
+public class GroupApplyParam implements Serializable {
 
-    @NotNull
-    private Long id;
+    private Long groupId;
+
+    private Long memberId;
 }

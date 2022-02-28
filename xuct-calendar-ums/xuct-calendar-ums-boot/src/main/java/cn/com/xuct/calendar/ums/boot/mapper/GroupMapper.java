@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.ums.boot.mapper;
 
-import cn.com.xuct.calendar.ums.api.dto.GroupCountDto;
+import cn.com.xuct.calendar.ums.api.dto.GroupInfoDto;
 import cn.com.xuct.calendar.ums.api.entity.Group;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
@@ -33,7 +33,7 @@ public interface GroupMapper extends BaseMapper<Group> {
      * @param memberId
      * @return
      */
-    List<GroupCountDto> findGroupCountByMember(@Param("memberId") Long memberId);
+    List<GroupInfoDto> findGroupCountByMember(@Param("memberId") Long memberId);
 
     /**
      * 通过id查询群组
@@ -41,7 +41,7 @@ public interface GroupMapper extends BaseMapper<Group> {
      * @param id
      * @return
      */
-    GroupCountDto getGroupCountByGroupId(@Param("id") Long id);
+    GroupInfoDto getGroupCountByGroupId(@Param("id") Long id);
 
     /**
      * 关键字查询
@@ -49,5 +49,21 @@ public interface GroupMapper extends BaseMapper<Group> {
      * @param word
      * @return
      */
-    List<GroupCountDto> findGroupBySearch(@Param("word") String word);
+    List<GroupInfoDto> findGroupBySearch(@Param("word") String word);
+
+    /**
+     * 我申请的群组
+     *
+     * @param memberId
+     * @return
+     */
+    List<GroupInfoDto> mineApplyGroup(@Param("memberId") Long memberId);
+
+    /**
+     * 申请我的群组
+     *
+     * @param memberId
+     * @return
+     */
+    List<GroupInfoDto> applyMineGroup(@Param("memberId") Long memberId);
 }

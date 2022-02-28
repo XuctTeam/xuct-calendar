@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.com.xuct.calendar.ums.boot.mapper.MemberGroupMapper">
+
+    <update id="applyAgreeJoinGroup">
+        update sys_member_group
+        set status = 'NORMAL'
+        where 1 = 1
+          and group_id = #{groupId}
+          and member_id = #{memberId}
+          and status = 'APPLY'
+
+    </update>
+
+    <delete id="applyRefuseJoinGroup">
+        delete
+        from sys_member_group
+        where 1 = 1
+          and group_id = #{groupId}
+          and member_id = #{memberId}
+          and status = 'APPLY'
+    </delete>
+
+</mapper>

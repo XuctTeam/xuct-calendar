@@ -25,7 +25,7 @@ import java.io.Serializable;
  * @since 1.0.0
  */
 @Data
-public class GroupCountDto implements Serializable {
+public class GroupInfoDto implements Serializable {
 
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;

@@ -11,15 +11,13 @@
 package cn.com.xuct.calendar.ums.boot.service.impl;
 
 import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
-import cn.com.xuct.calendar.common.web.utils.JwtUtils;
 import cn.com.xuct.calendar.service.base.BaseServiceImpl;
-import cn.com.xuct.calendar.ums.api.dto.GroupCountDto;
+import cn.com.xuct.calendar.ums.api.dto.GroupInfoDto;
 import cn.com.xuct.calendar.ums.api.entity.Group;
 import cn.com.xuct.calendar.ums.api.entity.MemberGroup;
 import cn.com.xuct.calendar.ums.boot.mapper.GroupMapper;
 import cn.com.xuct.calendar.ums.boot.service.IGroupService;
 import cn.com.xuct.calendar.ums.boot.service.IMemberGroupService;
-import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,18 +40,28 @@ public class GroupServiceImpl extends BaseServiceImpl<GroupMapper, Group> implem
     private final IMemberGroupService memberGroupService;
 
     @Override
-    public List<GroupCountDto> findGroupCountByMember(Long memberId) {
+    public List<GroupInfoDto> findGroupCountByMember(Long memberId) {
         return ((GroupMapper) super.getBaseMapper()).findGroupCountByMember(memberId);
     }
 
     @Override
-    public GroupCountDto getGroupCountByGroupId(Long id) {
+    public GroupInfoDto getGroupCountByGroupId(Long id) {
         return ((GroupMapper) super.getBaseMapper()).getGroupCountByGroupId(id);
     }
 
     @Override
-    public List<GroupCountDto> findGroupBySearch(String word) {
+    public List<GroupInfoDto> findGroupBySearch(String word) {
         return ((GroupMapper) super.getBaseMapper()).findGroupBySearch(word);
+    }
+
+    @Override
+    public List<GroupInfoDto> mineApplyGroup(Long memberId) {
+        return ((GroupMapper) super.getBaseMapper()).mineApplyGroup(memberId);
+    }
+
+    @Override
+    public List<GroupInfoDto> applyMineGroup(Long memberId) {
+        return ((GroupMapper) super.getBaseMapper()).applyMineGroup(memberId);
     }
 
     @Override

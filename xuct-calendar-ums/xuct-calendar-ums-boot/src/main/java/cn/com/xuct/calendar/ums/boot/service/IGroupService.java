@@ -11,7 +11,7 @@
 package cn.com.xuct.calendar.ums.boot.service;
 
 import cn.com.xuct.calendar.service.base.IBaseService;
-import cn.com.xuct.calendar.ums.api.dto.GroupCountDto;
+import cn.com.xuct.calendar.ums.api.dto.GroupInfoDto;
 import cn.com.xuct.calendar.ums.api.entity.Group;
 import cn.com.xuct.calendar.ums.boot.mapper.GroupMapper;
 
@@ -33,7 +33,7 @@ public interface IGroupService extends IBaseService<GroupMapper, Group> {
      * @param memberId
      * @return
      */
-    List<GroupCountDto> findGroupCountByMember(Long memberId);
+    List<GroupInfoDto> findGroupCountByMember(Long memberId);
 
     /**
      * 查询群组下总数
@@ -41,7 +41,7 @@ public interface IGroupService extends IBaseService<GroupMapper, Group> {
      * @param id
      * @return
      */
-    GroupCountDto getGroupCountByGroupId(Long id);
+    GroupInfoDto getGroupCountByGroupId(Long id);
 
     /**
      * 关键字查询组
@@ -49,7 +49,23 @@ public interface IGroupService extends IBaseService<GroupMapper, Group> {
      * @param word
      * @return
      */
-    List<GroupCountDto> findGroupBySearch(String word);
+    List<GroupInfoDto> findGroupBySearch(String word);
+
+    /**
+     * 我申请的群组
+     *
+     * @param memberId
+     * @return
+     */
+    List<GroupInfoDto> mineApplyGroup(Long memberId);
+
+    /**
+     * 申请我的群组
+     *
+     * @param memberId
+     * @return
+     */
+    List<GroupInfoDto> applyMineGroup(Long memberId);
 
     /**
      * 添加组
@@ -59,4 +75,5 @@ public interface IGroupService extends IBaseService<GroupMapper, Group> {
      * @param imageUrl
      */
     void addGroup(Long memberId, String name, String imageUrl);
+
 }

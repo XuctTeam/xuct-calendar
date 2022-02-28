@@ -11,8 +11,6 @@
 package cn.com.xuct.calendar.ums.boot.service;
 
 import cn.com.xuct.calendar.service.base.IBaseService;
-import cn.com.xuct.calendar.ums.api.dto.GroupCountDto;
-import cn.com.xuct.calendar.ums.api.entity.Group;
 import cn.com.xuct.calendar.ums.api.entity.MemberGroup;
 import cn.com.xuct.calendar.ums.boot.mapper.MemberGroupMapper;
 
@@ -28,9 +26,25 @@ public interface IMemberGroupService extends IBaseService<MemberGroupMapper, Mem
 
     /**
      * 申请加入群组
-     *
-     * @param group       申请加入群组
-     * @param memberGroup
+     * @param groupId
+     * @param groupName
+     * @param memberId
      */
-    void applyJoinGroup(GroupCountDto group, MemberGroup memberGroup);
+    void applyJoinGroup(Long groupId , String groupName , Long groupCreateMemberId,  Long memberId);
+
+    /**
+     * 同意入组
+     *
+     * @param groupId
+     * @param memberId
+     */
+    void applyAgreeJoinGroup(Long groupId, Long memberId);
+
+    /**
+     * 拒绝入组
+     *
+     * @param groupId
+     * @param memberId
+     */
+    void applyRefuseJoinGroup(Long groupId, Long memberId);
 }

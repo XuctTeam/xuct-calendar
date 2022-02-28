@@ -10,12 +10,9 @@
  */
 package cn.com.xuct.calendar.ums.boot.mapper;
 
-import cn.com.xuct.calendar.ums.api.entity.Group;
 import cn.com.xuct.calendar.ums.api.entity.MemberGroup;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -27,4 +24,19 @@ import java.util.List;
  */
 public interface MemberGroupMapper extends BaseMapper<MemberGroup> {
 
+    /**
+     * 同意入组
+     *
+     * @param groupId
+     * @param memberId
+     */
+    void applyAgreeJoinGroup(@Param("groupId") Long groupId, @Param("memberId") Long memberId);
+
+    /**
+     * 拒绝入组
+     *
+     * @param groupId
+     * @param memberId
+     */
+    void applyRefuseJoinGroup(@Param("groupId") Long groupId, @Param("memberId") Long memberId);
 }
