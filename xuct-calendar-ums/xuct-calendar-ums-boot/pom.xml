@@ -87,7 +87,6 @@
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
-
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

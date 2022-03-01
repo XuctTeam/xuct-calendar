@@ -60,6 +60,7 @@
         <utils.biweekly.version>0.6.6</utils.biweekly.version>
         <utils.okhttp3.version>0.0.3-SNAPSHOT</utils.okhttp3.version>
         <utils.easy.captcha.version>1.6.2</utils.easy.captcha.version>
+        <utils.pinyin.version>2.6.1</utils.pinyin.version>
     </properties>
 
 
@@ -138,7 +139,6 @@
                 <artifactId>swagger-annotations</artifactId>
                 <version>${complier.swagger2.moudle.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
@@ -156,7 +156,11 @@
                 <artifactId>guava</artifactId>
                 <version>${utils.guava.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>io.github.tokenjan</groupId>
+                <artifactId>pinyin4j</artifactId>
+                <version>${utils.pinyin.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
@@ -182,10 +186,6 @@
                 <artifactId>biweekly</artifactId>
                 <version>${utils.biweekly.version}</version>
             </dependency>
-
-
-
-
         </dependencies>
     </dependencyManagement>
 

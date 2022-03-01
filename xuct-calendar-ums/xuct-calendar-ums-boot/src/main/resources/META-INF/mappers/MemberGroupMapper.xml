@@ -5,6 +5,16 @@
 
 <mapper namespace="cn.com.xuct.calendar.ums.boot.mapper.MemberGroupMapper">
 
+    <select id="list" resultType="cn.com.xuct.calendar.ums.api.dto.GroupMemberInfoDto">
+
+        select m.name, mg.member_id, m.avatar , g.id as groupId, g.name as groupName
+        from sys_member_group mg
+                 left join sys_group g on mg.group_id = g.id
+                 left join sys_member m on mg.member_id = m.id
+        where group_id in
+              (select group_id from sys_member_group where member_id = #{memberId} and status = 'NORMAL')
+    </select>
+
     <update id="applyAgreeJoinGroup">
         update sys_member_group
         set status = 'NORMAL'
@@ -23,5 +33,6 @@
           and member_id = #{memberId}
           and status = 'APPLY'
     </delete>
+
 
 </mapper>

@@ -13,7 +13,7 @@ package cn.com.xuct.calendar.ums.boot.service.impl;
 import cn.com.xuct.calendar.common.module.enums.GroupMemberStatusEnum;
 import cn.com.xuct.calendar.common.module.enums.MemberMessageTypeEnum;
 import cn.com.xuct.calendar.service.base.BaseServiceImpl;
-import cn.com.xuct.calendar.ums.api.dto.GroupInfoDto;
+import cn.com.xuct.calendar.ums.api.dto.GroupMemberInfoDto;
 import cn.com.xuct.calendar.ums.api.entity.MemberGroup;
 import cn.com.xuct.calendar.ums.api.entity.MemberMessage;
 import cn.com.xuct.calendar.ums.boot.mapper.MemberGroupMapper;
@@ -24,7 +24,7 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
+import java.util.List;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -40,6 +40,11 @@ public class MemberGroupServiceImpl extends BaseServiceImpl<MemberGroupMapper, M
 
     private final IMemberMessageService memberMessageService;
 
+
+    @Override
+    public List<GroupMemberInfoDto> list(Long memberId) {
+        return ((MemberGroupMapper) super.getBaseMapper()).list(memberId);
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)

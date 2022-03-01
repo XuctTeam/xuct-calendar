@@ -38,6 +38,11 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.github.tokenjan</groupId>
+            <artifactId>pinyin4j</artifactId>
+            <version>${utils.pinyin.version}</version>
+        </dependency>
 
     </dependencies>
 
