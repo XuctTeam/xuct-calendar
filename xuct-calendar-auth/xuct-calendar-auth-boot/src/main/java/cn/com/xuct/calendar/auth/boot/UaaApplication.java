@@ -21,7 +21,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
-import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -33,7 +32,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
  */
 @EnableAutoRedis
 @EnableAutoSwagger2
-@EnableSwagger2WebMvc
 @EnableAutoOkFeign
 @EnableAutoLocalStoreCache
 @EnableAutoTencentSdk

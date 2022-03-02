@@ -141,6 +141,16 @@ public class MemberAppController {
         return R.status(true);
     }
 
+    @ApiOperation(value = "修改头像")
+    @PostMapping("/avatar")
+    public R<String> modifyAvatar(@Validated @RequestBody MemberAvatarParam param) {
+        Member member = memberService.findMemberById(JwtUtils.getUserId());
+        if (member == null) return R.fail("获取用户信息失败");
+        member.setAvatar(param.getAvatar());
+        memberService.updateMember(member);
+        return R.status(true);
+    }
+
     @ApiOperation(value = "获取微信手机号")
     @PostMapping("/phone/get")
     public R<String> getWxPhone(@RequestBody MemberGetPhoneReq getPhoneReq) {
