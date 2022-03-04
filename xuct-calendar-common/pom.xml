@@ -21,6 +21,7 @@
         <module>xuct-calendar-common-tencent</module>
         <module>xuct-calendar-common-web</module>
         <module>xuct-calendar-common-smms</module>
+        <module>xuct-calendar-common-nacos</module>
     </modules>
 
     <properties>

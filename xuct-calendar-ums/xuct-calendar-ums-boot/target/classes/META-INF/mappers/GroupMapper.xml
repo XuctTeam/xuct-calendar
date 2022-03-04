@@ -19,12 +19,13 @@
     </select>
 
     <select id="getGroupCountByGroupId" resultType="cn.com.xuct.calendar.ums.api.dto.GroupInfoDto">
-        select g.id, g.name, mg.count, g.member_id as createMemberId
+        select g.id, g.name, g.images, mg.count, g.member_id as createMemberId, m.name as createMemberName
         from sys_group g
                  left join (select group_id, count(1) as count
                             from sys_member_group
                             where group_id = #{id}
                             group by group_id) mg on g.id = mg.group_id
+                 left join sys_member m on g.member_id = m.id
         where 1 = 1
           and g.id = #{id}
 

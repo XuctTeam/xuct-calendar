@@ -80,4 +80,5 @@ public class GroupServiceImpl extends BaseServiceImpl<GroupMapper, Group> implem
         memberGroup.setMemberId(memberId);
         memberGroupService.save(memberGroup);
     }
+
 }

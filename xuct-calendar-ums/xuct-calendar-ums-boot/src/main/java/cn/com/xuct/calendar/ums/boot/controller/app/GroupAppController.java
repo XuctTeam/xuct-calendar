@@ -14,11 +14,13 @@ import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.module.params.GroupAddParam;
 import cn.com.xuct.calendar.common.web.utils.JwtUtils;
 import cn.com.xuct.calendar.ums.api.dto.GroupInfoDto;
+import cn.com.xuct.calendar.ums.api.entity.Group;
 import cn.com.xuct.calendar.ums.boot.service.IGroupService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,6 +49,13 @@ public class GroupAppController {
         return R.data(groupService.findGroupCountByMember(JwtUtils.getUserId()));
     }
 
+
+    @GetMapping("/get")
+    @ApiOperation(value = "查询群组信息")
+    public R<GroupInfoDto> get(@RequestParam("id") Long id) {
+        return R.data(groupService.getGroupCountByGroupId(id));
+    }
+
     @GetMapping("/search")
     @ApiOperation(value = "搜索群组")
     public R<List<GroupInfoDto>> search(@RequestParam("word") String word) {
@@ -67,8 +76,18 @@ public class GroupAppController {
 
 
     @PostMapping
-    @ApiOperation(value = "添加群组")
+    @ApiOperation(value = "添加/修改群组")
     public R<String> addGroup(@RequestBody @Validated GroupAddParam addParam) {
+        if (addParam.getId() != null) {
+            Group group = groupService.getById(addParam.getId());
+            if (group == null) return R.fail("群组不存在");
+            group.setName(addParam.getName());
+            if (StringUtils.hasLength(addParam.getImageUrl())) {
+                group.setImages(addParam.getImageUrl());
+            }
+            groupService.updateById(group);
+            return R.status(true);
+        }
         groupService.addGroup(JwtUtils.getUserId(), addParam.getName(), addParam.getImageUrl());
         return R.status(true);
     }

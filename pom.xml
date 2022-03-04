@@ -26,7 +26,7 @@
         <calendar.project.version>1.0</calendar.project.version>
 
         <!-- alibaba -->
-        <alibaba.cloud.version>2021.1</alibaba.cloud.version>
+        <alibaba.cloud.version>2021.0.1.0</alibaba.cloud.version>
         <spring.colud.version>2021.0.1</spring.colud.version>
         <spring.colud.oauth.version>2.2.5.RELEASE</spring.colud.oauth.version>
         <maven.compiler.source>10</maven.compiler.source>

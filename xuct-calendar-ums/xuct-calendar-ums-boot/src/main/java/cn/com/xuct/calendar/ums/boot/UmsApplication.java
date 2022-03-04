@@ -15,12 +15,14 @@ import cn.com.xuct.calendar.common.redis.annotation.EnableAutoRedis;
 import cn.com.xuct.calendar.common.smms.annotation.EnableSmmsClient;
 import cn.com.xuct.calendar.common.swagger.annotation.EnableAutoSwagger2;
 import cn.com.xuct.calendar.ums.api.feign.CalendarFeignClient;
+import com.alibaba.nacos.common.utils.StringUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
@@ -40,6 +42,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableCaching
 @EnableTransactionManagement
 @EnableSmmsClient
+@Import(StringUtils.class)
 @EnableFeignClients(basePackageClasses = {CalendarFeignClient.class})
 public class UmsApplication {
 
