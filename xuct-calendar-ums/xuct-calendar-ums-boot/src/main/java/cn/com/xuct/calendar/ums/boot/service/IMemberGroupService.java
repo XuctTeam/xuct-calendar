@@ -59,4 +59,10 @@ public interface IMemberGroupService extends IBaseService<MemberGroupMapper, Mem
      * @param memberId
      */
     void applyRefuseJoinGroup(Long groupId, Long memberId);
+
+    /**
+     * 通过群组删除用户
+     * @param groupId
+     */
+    List<Long> deleteAllByGroupId(Long groupId);
 }

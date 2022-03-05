@@ -12,14 +12,18 @@ package cn.com.xuct.calendar.ums.boot.controller.app;
 
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.module.params.GroupAddParam;
+import cn.com.xuct.calendar.common.module.params.GroupDeleteParam;
 import cn.com.xuct.calendar.common.web.utils.JwtUtils;
+import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
 import cn.com.xuct.calendar.ums.api.dto.GroupInfoDto;
 import cn.com.xuct.calendar.ums.api.entity.Group;
 import cn.com.xuct.calendar.ums.boot.service.IGroupService;
+import cn.com.xuct.calendar.ums.boot.event.GroupEvent;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -92,5 +96,15 @@ public class GroupAppController {
         return R.status(true);
     }
 
-
+    @PostMapping("/delete")
+    @ApiOperation(value = "解散群组")
+    public R<String> deleteGroup(@RequestBody @Validated GroupDeleteParam param) {
+        Group group = groupService.getById(param.getId());
+        if (group == null || !String.valueOf(group.getMemberId()).equals(String.valueOf(JwtUtils.getUserId())))
+            return R.fail("群组不存在或权限不够");
+        List<Long> memberIds = groupService.deleteGroup(param.getId());
+        if (CollectionUtils.isEmpty(memberIds)) return R.status(true);
+        SpringContextHolder.publishEvent(new GroupEvent(this, group.getName(), group.getId(), JwtUtils.getUserId(), memberIds));
+        return R.status(true);
+    }
 }

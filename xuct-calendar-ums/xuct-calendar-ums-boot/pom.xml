@@ -73,7 +73,6 @@
             </exclusions>
         </dependency>
 
-
         <dependency>
             <groupId>com.github.binarywang</groupId>
             <artifactId>weixin-java-miniapp</artifactId>
@@ -139,9 +138,13 @@
             <version>${calendar.project.version}</version>
             <scope>compile</scope>
         </dependency>
-
+        <dependency>
+            <groupId>cn.com.xuct</groupId>
+            <artifactId>xuct-calendar-ums-event</artifactId>
+            <version>${calendar.project.version}</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>

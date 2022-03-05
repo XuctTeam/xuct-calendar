@@ -19,11 +19,14 @@ import cn.com.xuct.calendar.ums.api.entity.MemberMessage;
 import cn.com.xuct.calendar.ums.boot.mapper.MemberGroupMapper;
 import cn.com.xuct.calendar.ums.boot.service.IMemberGroupService;
 import cn.com.xuct.calendar.ums.boot.service.IMemberMessageService;
+import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -78,6 +81,16 @@ public class MemberGroupServiceImpl extends BaseServiceImpl<MemberGroupMapper, M
     public void applyRefuseJoinGroup(Long groupId, Long memberId) {
         ((MemberGroupMapper) super.getBaseMapper()).applyRefuseJoinGroup(groupId, memberId);
         this.saveApplyGroup(groupId, memberId, 2);
+    }
+
+    @Override
+    public List<Long> deleteAllByGroupId(Long groupId) {
+        List<Long> memberIds = ((MemberGroupMapper) super.getBaseMapper()).findMemberIdsByGroupId(groupId);
+        if (CollectionUtils.isEmpty(memberIds)) return Lists.newArrayList();
+        super.getBaseMapper().deleteByMap(new HashMap<>() {{
+            put("group_id", groupId);
+        }});
+        return memberIds;
     }
 
     /**

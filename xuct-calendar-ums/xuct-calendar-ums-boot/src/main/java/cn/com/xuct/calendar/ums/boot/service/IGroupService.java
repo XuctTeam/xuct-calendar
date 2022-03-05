@@ -75,4 +75,11 @@ public interface IGroupService extends IBaseService<GroupMapper, Group> {
      * @param imageUrl
      */
     void addGroup(Long memberId, String name, String imageUrl);
+
+    /**
+     * 解散群组
+     *
+     * @param id
+     */
+    List<Long> deleteGroup(Long id);
 }

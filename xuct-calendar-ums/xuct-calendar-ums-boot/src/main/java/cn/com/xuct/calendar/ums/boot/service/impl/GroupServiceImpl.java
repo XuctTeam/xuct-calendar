@@ -81,4 +81,11 @@ public class GroupServiceImpl extends BaseServiceImpl<GroupMapper, Group> implem
         memberGroupService.save(memberGroup);
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public List<Long> deleteGroup(Long id) {
+        List<Long> memberIds = memberGroupService.deleteAllByGroupId(id);
+        super.removeById(id);
+        return memberIds;
+    }
 }

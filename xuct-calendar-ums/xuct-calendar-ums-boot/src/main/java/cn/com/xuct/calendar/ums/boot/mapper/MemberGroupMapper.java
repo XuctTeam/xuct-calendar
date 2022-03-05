@@ -50,4 +50,12 @@ public interface MemberGroupMapper extends BaseMapper<MemberGroup> {
      * @param memberId
      */
     void applyRefuseJoinGroup(@Param("groupId") Long groupId, @Param("memberId") Long memberId);
+
+    /**
+     * 查询组下所有用户
+     *
+     * @param groupId
+     * @return
+     */
+    List<Long> findMemberIdsByGroupId(@Param("groupId") Long groupId);
 }

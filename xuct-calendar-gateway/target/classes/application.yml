@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: dav-gateway
+  cloud:
+    nacos:
+      config:
+        group: DEFAULT_GROUP
+        server-addr: ${nacos.server}
+        username: ${nacos.username}
+        password: ${nacos.password}
+        namespace: f46a2ffa-4a48-4986-93bc-c3503dd030c6
+      discovery:
+        server-addr: ${nacos.server}
+        username: ${nacos.username}
+        password: ${nacos.password}
+        namespace: f46a2ffa-4a48-4986-93bc-c3503dd030c6
+  config:
+    import:
+      - optional:nacos:dav-gateway.yaml  # 监听 DEFAULT_GROUP:test.yml
