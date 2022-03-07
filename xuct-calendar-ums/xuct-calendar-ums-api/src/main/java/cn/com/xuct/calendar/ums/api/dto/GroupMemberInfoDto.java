@@ -32,4 +32,6 @@ public class GroupMemberInfoDto {
     private String groupId;
 
     private String groupName;
+
+    private String groupCreateMemberId;
 }

@@ -58,6 +58,7 @@ public class MemberGroupAppController {
     private final IMemberGroupService memberGroupService;
 
     @GetMapping("")
+    @ApiOperation(value = "按拼音分组用户")
     public R<List<GroupMemberPinYinVo>> list() {
         List<GroupMemberInfoDto> memberInfoDtos = memberGroupService.list(JwtUtils.getUserId());
         if (CollectionUtils.isEmpty(memberInfoDtos)) return R.data(Lists.newArrayList());
@@ -87,6 +88,11 @@ public class MemberGroupAppController {
         return R.data(groupMemberPinYinVos);
     }
 
+    @ApiOperation(value = "通过群组查询")
+    @GetMapping("/query")
+    public R<List<GroupMemberInfoDto>> queryMembers(@RequestParam("groupId") Long groupId) {
+        return R.data(memberGroupService.queryMembersByGroupId(groupId));
+    }
 
     @PostMapping("/apply")
     @ApiOperation(value = "申请入群")

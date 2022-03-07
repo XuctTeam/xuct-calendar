@@ -51,7 +51,7 @@ public class GroupEventListener {
         for (int i = 0, j = memberIds.size(); i < j; i++) {
             memberMessage = new MemberMessage();
             memberMessage.setType(MemberMessageTypeEnum.GROUP);
-            memberMessage.setOperation(2);
+            memberMessage.setOperation(3);
             memberMessage.setStatus(0);
             memberMessage.setMemberId(memberIds.get(i));
             jsonObject = new JSONObject();

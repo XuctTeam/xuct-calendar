@@ -21,6 +21,15 @@
           and group_id = #{groupId}
     </select>
 
+    <select id="queryMembersByGroupId" resultType="cn.com.xuct.calendar.ums.api.dto.GroupMemberInfoDto">
+        select s.name, s.avatar, s.id as memberId , g.member_id as groupCreateMemberId
+        from sys_member_group mg
+                 left join sys_member s on mg.member_id = s.id
+                 left join sys_group g on mg.group_id = g.id
+        where 1 = 1
+          and mg.group_id = #{groupId}
+    </select>
+
     <update id="applyAgreeJoinGroup">
         update sys_member_group
         set status = 'NORMAL'

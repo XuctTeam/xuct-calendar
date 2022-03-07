@@ -50,6 +50,11 @@ public class MemberGroupServiceImpl extends BaseServiceImpl<MemberGroupMapper, M
     }
 
     @Override
+    public List<GroupMemberInfoDto> queryMembersByGroupId(Long groupId) {
+        return ((MemberGroupMapper) super.getBaseMapper()).queryMembersByGroupId(groupId);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void applyJoinGroup(Long groupId, String groupName, Long groupCreateMemberId, Long memberId) {
         MemberGroup memberGroup = new MemberGroup();

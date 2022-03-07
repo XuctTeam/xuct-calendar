@@ -35,7 +35,7 @@
                 order by type asc, status desc
             </when>
             <otherwise>
-                order by status desc, create_time desc
+                order by status asc, create_time desc
             </otherwise>
         </choose>
 

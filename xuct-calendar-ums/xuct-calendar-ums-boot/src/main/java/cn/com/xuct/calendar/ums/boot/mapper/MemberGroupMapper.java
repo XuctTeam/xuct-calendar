@@ -58,4 +58,12 @@ public interface MemberGroupMapper extends BaseMapper<MemberGroup> {
      * @return
      */
     List<Long> findMemberIdsByGroupId(@Param("groupId") Long groupId);
+
+    /**
+     * 通过群组查询下所有用户
+     *
+     * @param groupId
+     * @return
+     */
+    List<GroupMemberInfoDto> queryMembersByGroupId(@Param("groupId") Long groupId);
 }
