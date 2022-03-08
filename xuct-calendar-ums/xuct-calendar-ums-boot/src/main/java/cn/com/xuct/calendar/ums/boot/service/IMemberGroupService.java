@@ -74,4 +74,12 @@ public interface IMemberGroupService extends IBaseService<MemberGroupMapper, Mem
      * @param groupId
      */
     List<Long> deleteAllByGroupId(Long groupId);
+
+    /**
+     * 请离用户
+     *
+     * @param groupId
+     * @param memberId
+     */
+    void leaveOut(Long groupId, Long memberId);
 }

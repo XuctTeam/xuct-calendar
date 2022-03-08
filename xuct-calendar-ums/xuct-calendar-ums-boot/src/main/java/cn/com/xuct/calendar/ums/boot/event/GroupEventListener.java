@@ -39,14 +39,25 @@ public class GroupEventListener {
 
     private final IMemberMessageService memberMessageService;
 
+    /**
+     * 功能描述: <br>
+     * 〈群组删除消息〉
+     *
+     * @param deleteEvent
+     * @return:void
+     * @since: 1.0.0
+     * @Author:Derek Xu
+     * @Date: 2022/3/8 18:04
+     */
     @Async
     @EventListener
-    public void listenerEvent(GroupEvent groupEvent) {
-        log.info("group event:: event = {}", groupEvent.toString());
+    public void listenerDeleteEvent(GroupDeleteEvent deleteEvent) {
+
+        log.info("group event:: event = {}", deleteEvent.toString());
         MemberMessage memberMessage = null;
         JSONObject jsonObject = null;
-        Long createMemberId = groupEvent.getCreateMemberId();
-        List<Long> memberIds = groupEvent.getMemberIds();
+        Long createMemberId = deleteEvent.getCreateMemberId();
+        List<Long> memberIds = deleteEvent.getMemberIds();
         List<MemberMessage> memberMessages = Lists.newArrayList();
         for (int i = 0, j = memberIds.size(); i < j; i++) {
             memberMessage = new MemberMessage();
@@ -55,7 +66,7 @@ public class GroupEventListener {
             memberMessage.setStatus(0);
             memberMessage.setMemberId(memberIds.get(i));
             jsonObject = new JSONObject();
-            jsonObject.put("groupId", groupEvent.getGroupId()).put("groupName", groupEvent.getGroupName()).put("createMemberId", createMemberId);
+            jsonObject.put("groupId", deleteEvent.getGroupId()).put("groupName", deleteEvent.getGroupName()).put("createMemberId", createMemberId);
             memberMessage.setContent(jsonObject);
             memberMessages.add(memberMessage);
         }
@@ -63,4 +74,53 @@ public class GroupEventListener {
         memberMessageService.saveBatch(memberMessages);
     }
 
+    /**
+     * 功能描述: <br>
+     * 〈申请入群消息〉
+     *
+     * @param applyEvent
+     * @return:void
+     * @since: 1.0.0
+     * @Author:Derek Xu
+     * @Date: 2022/3/8 18:03
+     */
+    @Async
+    @EventListener
+    public void listenerApplyEvent(GroupApplyEvent applyEvent) {
+        MemberMessage memberMessage = new MemberMessage();
+        memberMessage.setMemberId(applyEvent.getApplyMemberId());
+        memberMessage.setType(MemberMessageTypeEnum.GROUP);
+        memberMessage.setOperation(0);
+        memberMessage.setStatus(0);
+        JSONObject content = new JSONObject();
+        content.put("group_id", String.valueOf(applyEvent.getGroupId()))
+                .put("group_name", applyEvent.getGroupName())
+                .put("member_id", String.valueOf(applyEvent.getApplyMemberId()));
+        memberMessage.setContent(content);
+        memberMessageService.save(memberMessage);
+    }
+
+    /**
+     * 功能描述: <br>
+     * 〈群组同意、拒绝入群操作〉
+     *
+     * @param optionEvent
+     * @return:void
+     * @since: 1.0.0
+     * @Author:Derek Xu
+     * @Date: 2022/3/8 18:03
+     */
+    @Async
+    @EventListener
+    public void listenerApplyOptionEvent(GroupApplyOptionEvent optionEvent) {
+        MemberMessage memberMessage = new MemberMessage();
+        memberMessage.setMemberId(optionEvent.getMemberId());
+        memberMessage.setType(MemberMessageTypeEnum.GROUP);
+        memberMessage.setOperation(optionEvent.getOperate());
+        memberMessage.setStatus(0);
+        JSONObject content = new JSONObject();
+        content.put("group_id", String.valueOf(optionEvent.getGroupId()));
+        memberMessage.setContent(content);
+        memberMessageService.save(memberMessage);
+    }
 }

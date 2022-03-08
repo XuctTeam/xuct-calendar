@@ -18,7 +18,7 @@ import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
 import cn.com.xuct.calendar.ums.api.dto.GroupInfoDto;
 import cn.com.xuct.calendar.ums.api.entity.Group;
 import cn.com.xuct.calendar.ums.boot.service.IGroupService;
-import cn.com.xuct.calendar.ums.boot.event.GroupEvent;
+import cn.com.xuct.calendar.ums.boot.event.GroupDeleteEvent;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -104,7 +104,8 @@ public class GroupAppController {
             return R.fail("群组不存在或权限不够");
         List<Long> memberIds = groupService.deleteGroup(param.getId());
         if (CollectionUtils.isEmpty(memberIds)) return R.status(true);
-        SpringContextHolder.publishEvent(new GroupEvent(this, group.getName(), group.getId(), JwtUtils.getUserId(), memberIds));
+        /* 发出结算群组消息 */
+        SpringContextHolder.publishEvent(new GroupDeleteEvent(this, group.getName(), group.getId(), JwtUtils.getUserId(), memberIds));
         return R.status(true);
     }
 }

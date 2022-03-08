@@ -17,14 +17,17 @@ import cn.com.xuct.calendar.common.module.enums.GroupMemberStatusEnum;
 import cn.com.xuct.calendar.common.module.params.GroupApplyParam;
 import cn.com.xuct.calendar.common.module.params.GroupJoinParam;
 import cn.com.xuct.calendar.common.web.utils.JwtUtils;
+import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
 import cn.com.xuct.calendar.ums.api.dto.GroupInfoDto;
 import cn.com.xuct.calendar.ums.api.dto.GroupMemberInfoDto;
+import cn.com.xuct.calendar.ums.api.entity.Group;
 import cn.com.xuct.calendar.ums.api.entity.MemberGroup;
 import cn.com.xuct.calendar.ums.api.vo.GroupMemberPinYinVo;
+import cn.com.xuct.calendar.ums.boot.event.GroupApplyEvent;
+import cn.com.xuct.calendar.ums.boot.event.GroupApplyOptionEvent;
 import cn.com.xuct.calendar.ums.boot.service.IGroupService;
 import cn.com.xuct.calendar.ums.boot.service.IMemberGroupService;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +37,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -106,6 +108,8 @@ public class MemberGroupAppController {
         if (groupInfoDto == null) return R.fail("群组不存在");
         if (groupInfoDto.getCount() > 200) return R.fail("群组已满");
         memberGroupService.applyJoinGroup(groupInfoDto.getId(), groupInfoDto.getName(), groupInfoDto.getCreateMemberId(), JwtUtils.getUserId());
+        /* 发出申请入群消息 */
+        SpringContextHolder.publishEvent(new GroupApplyEvent(this, JwtUtils.getUserId(), groupInfoDto.getId(), groupInfoDto.getName(), groupInfoDto.getCreateMemberId()));
         return R.status(true);
     }
 
@@ -113,6 +117,8 @@ public class MemberGroupAppController {
     @ApiOperation(value = "同意入群")
     public R<String> applyAgreeJoinGroup(@RequestBody @Validated GroupApplyParam groupApplyParam) {
         memberGroupService.applyAgreeJoinGroup(groupApplyParam.getGroupId(), groupApplyParam.getMemberId());
+        /* 发出入群同意消息 */
+        SpringContextHolder.publishEvent(new GroupApplyOptionEvent(this, groupApplyParam.getGroupId(), groupApplyParam.getMemberId(), 1));
         return R.status(true);
     }
 
@@ -120,6 +126,17 @@ public class MemberGroupAppController {
     @ApiOperation(value = "拒绝入群")
     public R<String> applyRefuseJoinGroup(@RequestBody @Validated GroupApplyParam groupApplyParam) {
         memberGroupService.applyRefuseJoinGroup(groupApplyParam.getGroupId(), groupApplyParam.getMemberId());
+        /* 发出入群拒绝消息 */
+        SpringContextHolder.publishEvent(new GroupApplyOptionEvent(this, groupApplyParam.getGroupId(), groupApplyParam.getMemberId(), 2));
+        return R.status(true);
+    }
+
+    @PostMapping("/goOut")
+    @ApiOperation(value = "请离组员")
+    public R<String> goAway(@RequestBody @Validated GroupApplyParam param) {
+        Group group = groupService.getById(param.getGroupId());
+        if (group == null || !String.valueOf(group.getMemberId()).equals(String.valueOf(JwtUtils.getUserId())))
+            return R.fail("组不存在或非管理员");
         return R.status(true);
     }
 }

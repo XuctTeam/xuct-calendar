@@ -28,7 +28,7 @@ import java.util.List;
 @Setter
 @Getter
 @ToString
-public class GroupEvent extends ApplicationEvent {
+public class GroupDeleteEvent extends ApplicationEvent {
 
     private String groupName;
 
@@ -38,11 +38,11 @@ public class GroupEvent extends ApplicationEvent {
 
     private List<Long> memberIds;
 
-    public GroupEvent(Object source) {
+    public GroupDeleteEvent(Object source) {
         super(source);
     }
 
-    public GroupEvent(Object source, String groupName, Long groupId, Long createMemberId, List<Long> memberIds) {
+    public GroupDeleteEvent(Object source, String groupName, Long groupId, Long createMemberId, List<Long> memberIds) {
         super(source);
         this.groupName = groupName;
         this.groupId = groupId;
