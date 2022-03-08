@@ -44,8 +44,8 @@ public class MemberMessageAppController {
 
     private final IMemberMessageService memberMessageService;
 
-    @GetMapping("/list")
     @ApiOperation(value = "分页查询消息")
+    @GetMapping("/list")
     public R<MemberMessagePageVo> list(@RequestParam("page") Integer page, @RequestParam("limit") Integer limit,
                                        @RequestParam(value = "status", required = false) Integer status,
                                        @RequestParam(value = "sort", required = false) Integer sort) {
@@ -70,8 +70,8 @@ public class MemberMessageAppController {
         return R.data(memberMessageService.getById(id));
     }
 
-    @PostMapping("")
     @ApiOperation(value = "已读消息")
+    @PostMapping("")
     public R<String> read(@Validated @RequestBody MessageReadParam param) {
         MemberMessage memberMessage = new MemberMessage();
         memberMessage.setId(Long.valueOf(param.getId()));

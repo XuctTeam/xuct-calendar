@@ -47,40 +47,40 @@ public class GroupAppController {
 
     private final IGroupService groupService;
 
-    @GetMapping("")
     @ApiOperation(value = "获取用户所在群组")
+    @GetMapping("")
     public R<List<GroupInfoDto>> list() {
         return R.data(groupService.findGroupCountByMember(JwtUtils.getUserId()));
     }
 
 
-    @GetMapping("/get")
     @ApiOperation(value = "查询群组信息")
+    @GetMapping("/get")
     public R<GroupInfoDto> get(@RequestParam("id") Long id) {
         return R.data(groupService.getGroupCountByGroupId(id));
     }
 
-    @GetMapping("/search")
     @ApiOperation(value = "搜索群组")
+    @GetMapping("/search")
     public R<List<GroupInfoDto>> search(@RequestParam("word") String word) {
         return R.data(groupService.findGroupBySearch(word));
     }
 
-    @GetMapping("/mine/apply")
     @ApiOperation(value = "我申请的群组")
+    @GetMapping("/mine/apply")
     public R<List<GroupInfoDto>> mineApplyGroup() {
         return R.data(groupService.mineApplyGroup(JwtUtils.getUserId()));
     }
 
-    @GetMapping("/apply/mine")
     @ApiOperation(value = "申请我的群组")
+    @GetMapping("/apply/mine")
     public R<List<GroupInfoDto>> applyMineGroup() {
         return R.data(groupService.applyMineGroup(JwtUtils.getUserId()));
     }
 
 
-    @PostMapping
     @ApiOperation(value = "添加/修改群组")
+    @PostMapping
     public R<String> addGroup(@RequestBody @Validated GroupAddParam addParam) {
         if (addParam.getId() != null) {
             Group group = groupService.getById(addParam.getId());
@@ -96,8 +96,8 @@ public class GroupAppController {
         return R.status(true);
     }
 
-    @PostMapping("/delete")
     @ApiOperation(value = "解散群组")
+    @PostMapping("/delete")
     public R<String> deleteGroup(@RequestBody @Validated GroupDeleteParam param) {
         Group group = groupService.getById(param.getId());
         if (group == null || !String.valueOf(group.getMemberId()).equals(String.valueOf(JwtUtils.getUserId())))

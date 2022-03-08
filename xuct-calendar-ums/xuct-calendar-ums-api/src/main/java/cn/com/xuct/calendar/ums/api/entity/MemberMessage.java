@@ -40,7 +40,7 @@ public class MemberMessage extends SuperEntity<MemberMessage> {
 
     private MemberMessageTypeEnum type;
 
-    /* 分类 */
+    /* 类型 */
     private Integer operation;
 
     private Integer status;

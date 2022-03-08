@@ -123,4 +123,28 @@ public class GroupEventListener {
         memberMessage.setContent(content);
         memberMessageService.save(memberMessage);
     }
+
+    /**
+     * 功能描述: <br>
+     * 〈群组人员离开〉
+     *
+     * @param leaveEvent
+     * @return:void
+     * @since: 1.0.0
+     * @Author:
+     * @Date: 2022/3/8 20:59
+     */
+    @Async
+    @EventListener
+    public void listenerLeaveOutEvent(GroupLeaveEvent leaveEvent) {
+        MemberMessage memberMessage = new MemberMessage();
+        memberMessage.setMemberId(leaveEvent.getMemberId());
+        memberMessage.setType(MemberMessageTypeEnum.GROUP);
+        memberMessage.setOperation(leaveEvent.getOperate());
+        memberMessage.setStatus(0);
+        JSONObject content = new JSONObject();
+        content.put("group_id", leaveEvent.getGroupId()).put("name", leaveEvent.getName());
+        memberMessage.setContent(content);
+        memberMessageService.save(memberMessage);
+    }
 }

@@ -16,6 +16,7 @@ import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.enums.GroupMemberStatusEnum;
 import cn.com.xuct.calendar.common.module.params.GroupApplyParam;
 import cn.com.xuct.calendar.common.module.params.GroupJoinParam;
+import cn.com.xuct.calendar.common.module.params.GroupLeaveParam;
 import cn.com.xuct.calendar.common.web.utils.JwtUtils;
 import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
 import cn.com.xuct.calendar.ums.api.dto.GroupInfoDto;
@@ -25,6 +26,7 @@ import cn.com.xuct.calendar.ums.api.entity.MemberGroup;
 import cn.com.xuct.calendar.ums.api.vo.GroupMemberPinYinVo;
 import cn.com.xuct.calendar.ums.boot.event.GroupApplyEvent;
 import cn.com.xuct.calendar.ums.boot.event.GroupApplyOptionEvent;
+import cn.com.xuct.calendar.ums.boot.event.GroupLeaveEvent;
 import cn.com.xuct.calendar.ums.boot.service.IGroupService;
 import cn.com.xuct.calendar.ums.boot.service.IMemberGroupService;
 import com.google.common.collect.Lists;
@@ -32,6 +34,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -59,8 +62,8 @@ public class MemberGroupAppController {
 
     private final IMemberGroupService memberGroupService;
 
-    @GetMapping("")
     @ApiOperation(value = "按拼音分组用户")
+    @GetMapping("")
     public R<List<GroupMemberPinYinVo>> list() {
         List<GroupMemberInfoDto> memberInfoDtos = memberGroupService.list(JwtUtils.getUserId());
         if (CollectionUtils.isEmpty(memberInfoDtos)) return R.data(Lists.newArrayList());
@@ -96,8 +99,8 @@ public class MemberGroupAppController {
         return R.data(memberGroupService.queryMembersByGroupId(groupId));
     }
 
-    @PostMapping("/apply")
     @ApiOperation(value = "申请入群")
+    @PostMapping("/apply")
     public R<String> applyGroup(@RequestBody @Validated GroupJoinParam joinParam) {
         MemberGroup memberGroup = memberGroupService.get(Lists.newArrayList(Column.of("group_id", joinParam.getId()), Column.of("member_id", JwtUtils.getUserId())));
         if (memberGroup != null) {
@@ -113,8 +116,8 @@ public class MemberGroupAppController {
         return R.status(true);
     }
 
-    @PostMapping("/apply/agree")
     @ApiOperation(value = "同意入群")
+    @PostMapping("/apply/agree")
     public R<String> applyAgreeJoinGroup(@RequestBody @Validated GroupApplyParam groupApplyParam) {
         memberGroupService.applyAgreeJoinGroup(groupApplyParam.getGroupId(), groupApplyParam.getMemberId());
         /* 发出入群同意消息 */
@@ -122,8 +125,8 @@ public class MemberGroupAppController {
         return R.status(true);
     }
 
-    @PostMapping("/apply/refuse")
     @ApiOperation(value = "拒绝入群")
+    @PostMapping("/apply/refuse")
     public R<String> applyRefuseJoinGroup(@RequestBody @Validated GroupApplyParam groupApplyParam) {
         memberGroupService.applyRefuseJoinGroup(groupApplyParam.getGroupId(), groupApplyParam.getMemberId());
         /* 发出入群拒绝消息 */
@@ -131,12 +134,17 @@ public class MemberGroupAppController {
         return R.status(true);
     }
 
-    @PostMapping("/goOut")
-    @ApiOperation(value = "请离组员")
-    public R<String> goAway(@RequestBody @Validated GroupApplyParam param) {
+    @ApiOperation(value = "请离或主动退组")
+    @PostMapping("/leave")
+    public R<String> leave(@RequestBody @Validated GroupLeaveParam param) {
         Group group = groupService.getById(param.getGroupId());
         if (group == null || !String.valueOf(group.getMemberId()).equals(String.valueOf(JwtUtils.getUserId())))
             return R.fail("组不存在或非管理员");
+        Long mId = param.getAction() == 3 ? JwtUtils.getUserId() : param.getMemberId();
+        Assert.isTrue(param.getAction() == 4 && mId != null, "会员ID不能为空");
+        memberGroupService.leaveOut(param.getGroupId(), mId);
+        /* 发出清理消息 */
+        SpringContextHolder.publishEvent(new GroupLeaveEvent(this, group.getId(), group.getName(), mId, param.getAction()));
         return R.status(true);
     }
 }

@@ -89,6 +89,9 @@ public class MemberGroupServiceImpl extends BaseServiceImpl<MemberGroupMapper, M
 
     @Override
     public void leaveOut(Long groupId, Long memberId) {
-
+        super.removeByMap(new HashMap<String, Object>() {{
+            put("group_id", groupId);
+            put("member_id", memberId);
+        }});
     }
 }
