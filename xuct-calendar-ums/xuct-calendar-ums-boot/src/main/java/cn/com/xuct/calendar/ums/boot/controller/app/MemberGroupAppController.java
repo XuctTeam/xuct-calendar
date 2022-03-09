@@ -36,6 +36,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -138,10 +139,13 @@ public class MemberGroupAppController {
     @PostMapping("/leave")
     public R<String> leave(@RequestBody @Validated GroupLeaveParam param) {
         Group group = groupService.getById(param.getGroupId());
-        if (group == null || !String.valueOf(group.getMemberId()).equals(String.valueOf(JwtUtils.getUserId())))
-            return R.fail("组不存在或非管理员");
+        Assert.notNull(group, "组不存在或非管理员");
+        if (param.getAction() == 4) {
+            if (!String.valueOf(group.getMemberId()).equals(String.valueOf(JwtUtils.getUserId())))
+                return R.fail("非管理员");
+            if (param.getMemberId() == null) return R.fail("会员ID不能为空");
+        }
         Long mId = param.getAction() == 3 ? JwtUtils.getUserId() : param.getMemberId();
-        Assert.isTrue(param.getAction() == 4 && mId != null, "会员ID不能为空");
         memberGroupService.leaveOut(param.getGroupId(), mId);
         /* 发出清理消息 */
         SpringContextHolder.publishEvent(new GroupLeaveEvent(this, group.getId(), group.getName(), mId, param.getAction()));
