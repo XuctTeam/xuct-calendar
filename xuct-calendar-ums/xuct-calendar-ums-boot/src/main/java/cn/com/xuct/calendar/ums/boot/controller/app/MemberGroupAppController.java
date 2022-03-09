@@ -100,6 +100,12 @@ public class MemberGroupAppController {
         return R.data(memberGroupService.queryMembersByGroupId(groupId));
     }
 
+    @ApiOperation(value = "按组内用户去重查询")
+    @GetMapping("/distinct")
+    public R<List<GroupMemberInfoDto>> distinctGroupMembers() {
+        return R.data(memberGroupService.distinctGroupMembers(JwtUtils.getUserId()));
+    }
+
     @ApiOperation(value = "申请入群")
     @PostMapping("/apply")
     public R<String> applyGroup(@RequestBody @Validated GroupJoinParam joinParam) {

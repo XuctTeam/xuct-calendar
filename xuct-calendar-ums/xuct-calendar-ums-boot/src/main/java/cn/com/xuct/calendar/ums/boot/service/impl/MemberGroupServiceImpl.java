@@ -41,9 +41,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberGroupServiceImpl extends BaseServiceImpl<MemberGroupMapper, MemberGroup> implements IMemberGroupService {
 
-    private final IMemberMessageService memberMessageService;
-
-
     @Override
     public List<GroupMemberInfoDto> list(Long memberId) {
         return ((MemberGroupMapper) super.getBaseMapper()).list(memberId);
@@ -52,6 +49,11 @@ public class MemberGroupServiceImpl extends BaseServiceImpl<MemberGroupMapper, M
     @Override
     public List<GroupMemberInfoDto> queryMembersByGroupId(Long groupId) {
         return ((MemberGroupMapper) super.getBaseMapper()).queryMembersByGroupId(groupId);
+    }
+
+    @Override
+    public List<GroupMemberInfoDto> distinctGroupMembers(Long memberId) {
+        return null;
     }
 
     @Override
