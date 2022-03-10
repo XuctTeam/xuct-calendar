@@ -53,7 +53,7 @@ public class MemberGroupServiceImpl extends BaseServiceImpl<MemberGroupMapper, M
 
     @Override
     public List<GroupMemberInfoDto> distinctGroupMembers(Long memberId) {
-        return null;
+        return ((MemberGroupMapper) super.getBaseMapper()).distinctGroupMembers(memberId);
     }
 
     @Override
