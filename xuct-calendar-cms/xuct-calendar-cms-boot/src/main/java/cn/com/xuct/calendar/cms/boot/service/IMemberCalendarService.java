@@ -10,6 +10,7 @@
  */
 package cn.com.xuct.calendar.cms.boot.service;
 
+import cn.com.xuct.calendar.cms.api.dodo.MemberMarjoCalendarDo;
 import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
 import cn.com.xuct.calendar.cms.boot.mapper.MemberCalendarMapper;
 import cn.com.xuct.calendar.common.module.req.MemberCalendarUpdateReq;
@@ -34,6 +35,14 @@ public interface IMemberCalendarService extends IBaseService<MemberCalendarMappe
      * @return
      */
     List<MemberCalendar> queryMemberCalendar(Long memberId);
+
+    /**
+     * 查询用户主日历
+     *
+     * @param memberIds
+     * @return
+     */
+    List<MemberMarjoCalendarDo> queryMarjoCalendarIds(List<String> memberIds);
 
     /**
      * 获取日历详情

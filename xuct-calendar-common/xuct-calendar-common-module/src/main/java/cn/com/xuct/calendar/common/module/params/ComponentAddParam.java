@@ -66,7 +66,6 @@ public class ComponentAddParam implements Serializable {
     @ApiModelProperty("循环类型")
     private String repeatType;
 
-
     @ApiModelProperty(value = "提醒设置", notes = "不提醒, ")
     private String alarmType;
 
@@ -111,5 +110,6 @@ public class ComponentAddParam implements Serializable {
     @ApiModelProperty("循环截止时间")
     private Date repeatUntil;
 
-
+    @ApiModelProperty("邀请人")
+    private List<String> memberIds;
 }

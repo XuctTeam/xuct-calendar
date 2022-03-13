@@ -10,6 +10,7 @@
  */
 package cn.com.xuct.calendar.cms.boot.service.impl;
 
+import cn.com.xuct.calendar.cms.api.dodo.MemberMarjoCalendarDo;
 import cn.com.xuct.calendar.cms.api.entity.Calendar;
 import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
 import cn.com.xuct.calendar.cms.boot.mapper.MemberCalendarMapper;
@@ -38,18 +39,21 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberCalendarServiceImpl extends BaseServiceImpl<MemberCalendarMapper, MemberCalendar> implements IMemberCalendarService {
 
-    private final MemberCalendarMapper memberCalendarMapper;
-
     private final ICalendarService calendarService;
 
     @Override
     public List<MemberCalendar> queryMemberCalendar(Long memberId) {
-        return memberCalendarMapper.queryMemberCalendar(memberId);
+        return ((MemberCalendarMapper) super.getBaseMapper()).queryMemberCalendar(memberId);
+    }
+
+    @Override
+    public List<MemberMarjoCalendarDo> queryMarjoCalendarIds(List<String> memberIds) {
+        return ((MemberCalendarMapper) super.getBaseMapper()).queryMarjoCalendarIds(memberIds);
     }
 
     @Override
     public MemberCalendar getMemberCalendar(Long id) {
-        return memberCalendarMapper.getMemberCalendar(id);
+        return ((MemberCalendarMapper) super.getBaseMapper()).getMemberCalendar(id);
     }
 
     @Override

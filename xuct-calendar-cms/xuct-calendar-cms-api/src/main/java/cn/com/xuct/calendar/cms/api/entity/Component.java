@@ -139,5 +139,7 @@ public class Component extends SuperEntity<Component> {
     @TableField("repeat_until")
     private Date repeatUntil;
 
-
+    /* 参与者数量 */
+    @TableField(exist = false)
+    private Integer attends;
 }

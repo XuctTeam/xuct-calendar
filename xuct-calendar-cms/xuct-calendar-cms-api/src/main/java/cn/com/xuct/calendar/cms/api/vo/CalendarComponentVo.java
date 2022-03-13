@@ -13,8 +13,10 @@ package cn.com.xuct.calendar.cms.api.vo;
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import lombok.Data;
 
+import java.util.List;
+
 /**
- * 〈一句话功能简述〉<br> 
+ * 〈一句话功能简述〉<br>
  * 〈〉
  *
  * @author Derek Xu
@@ -27,4 +29,6 @@ public class CalendarComponentVo extends Component {
     private String color;
 
     private String calendarName;
+
+    private List<String> memberIds;
 }

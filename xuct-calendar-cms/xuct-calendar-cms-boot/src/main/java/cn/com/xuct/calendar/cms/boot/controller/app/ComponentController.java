@@ -17,6 +17,7 @@ import cn.com.xuct.calendar.cms.api.vo.CalendarComponentVo;
 import cn.com.xuct.calendar.cms.api.vo.ComponentListVo;
 import cn.com.xuct.calendar.cms.api.vo.ComponentSearchVo;
 import cn.com.xuct.calendar.cms.boot.handler.RabbitmqOutChannel;
+import cn.com.xuct.calendar.cms.boot.service.IComponentAttendService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentService;
 import cn.com.xuct.calendar.cms.boot.service.IMemberCalendarService;
 import cn.com.xuct.calendar.cms.boot.utils.DateHelper;
@@ -68,6 +69,8 @@ public class ComponentController {
 
     private final IComponentService componentService;
 
+    private final IComponentAttendService componentAttendService;
+
     private final IMemberCalendarService memberCalendarService;
 
     private final RabbitmqOutChannel rabbitmqOutChannel;
@@ -77,8 +80,7 @@ public class ComponentController {
     @GetMapping("/list/calendar/days")
     public R<List<ComponentListVo>> listByCalendarId(@RequestParam("calendarId") String calendarId, @RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date start,
                                                      @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date end) {
-
-        List<Component> componentList = componentService.query(Long.valueOf(calendarId), start.getTime(), end.getTime());
+        List<Component> componentList = componentAttendService.listByCalendarId(Long.valueOf(calendarId), start.getTime(), end.getTime());
         if (CollectionUtils.isEmpty(componentList)) return R.data(Lists.newArrayList());
         LinkedHashMap<String, List<Component>> componentListMap = Maps.newLinkedHashMap();
         this.covertComponentMaps(componentList, componentListMap);
@@ -120,7 +122,7 @@ public class ComponentController {
     @GetMapping("/list/search")
     public R<ComponentSearchVo> listBySearch(@RequestParam("word") String word, @RequestParam("limit") Integer limit, @RequestParam("page") Integer page) {
         ComponentSearchVo componentSearchVo = new ComponentSearchVo();
-        List<CalendarComponentVo> calendarComponentVos = componentService.search(word, page, limit + 1);
+        List<CalendarComponentVo> calendarComponentVos = componentAttendService.searchWord(JwtUtils.getUserId(), word, page, limit + 1);
         if (calendarComponentVos.size() <= limit) {
             componentSearchVo.setFinished(true);
             componentSearchVo.setComponents(calendarComponentVos);
@@ -194,7 +196,7 @@ public class ComponentController {
         if (!param.getRepeatStatus().equals("0") && param.getRepeatUntil() == null)
             throw new SvrException(SvrResCode.CMS_COMPONENT_REPEAT_UNTIL_EMPTY);
         this.setComponent(param, component);
-        return componentService.addComponent(JwtUtils.getUserId(), JwtUtils.getTimeZone(), Long.valueOf(param.getCalendarId()), component, param.getAlarmType(), param.getAlarmTimes());
+        return componentService.addComponent(JwtUtils.getUserId(), JwtUtils.getTimeZone(), Long.valueOf(param.getCalendarId()), component, param.getMemberIds(), param.getAlarmType(), param.getAlarmTimes());
     }
 
     /**
@@ -226,7 +228,7 @@ public class ComponentController {
             changed = true;
         }
         this.setComponent(param, component);
-        return componentService.updateComponent(JwtUtils.getUserId(), JwtUtils.getTimeZone(), component, param.getAlarmType(), param.getAlarmTimes(), changed);
+        return componentService.updateComponent(JwtUtils.getUserId(), JwtUtils.getTimeZone(), component, param.getMemberIds(), param.getAlarmType(), param.getAlarmTimes(), changed);
     }
 
 

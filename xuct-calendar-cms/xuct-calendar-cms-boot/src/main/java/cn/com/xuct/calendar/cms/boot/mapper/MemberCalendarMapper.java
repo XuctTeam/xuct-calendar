@@ -10,6 +10,7 @@
  */
 package cn.com.xuct.calendar.cms.boot.mapper;
 
+import cn.com.xuct.calendar.cms.api.dodo.MemberMarjoCalendarDo;
 import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
@@ -41,4 +42,12 @@ public interface MemberCalendarMapper extends BaseMapper<MemberCalendar> {
      * @return
      */
     MemberCalendar getMemberCalendar(@Param("id") Long id);
+
+    /**
+     * 查询主日历
+     *
+     * @param memberIds
+     * @return
+     */
+    List<MemberMarjoCalendarDo> queryMarjoCalendarIds(@Param("memberIds") List<String> memberIds);
 }

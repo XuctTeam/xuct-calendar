@@ -10,13 +10,17 @@
  */
 package cn.com.xuct.calendar.cms.boot.service.impl;
 
+import cn.com.xuct.calendar.cms.api.dodo.MemberMarjoCalendarDo;
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAlarm;
+import cn.com.xuct.calendar.cms.api.entity.ComponentAttend;
 import cn.com.xuct.calendar.cms.api.vo.CalendarComponentVo;
 import cn.com.xuct.calendar.cms.boot.config.RabbitmqConfiguration;
 import cn.com.xuct.calendar.cms.boot.mapper.ComponentMapper;
 import cn.com.xuct.calendar.cms.boot.service.IComponentAlarmService;
+import cn.com.xuct.calendar.cms.boot.service.IComponentAttendService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentService;
+import cn.com.xuct.calendar.cms.boot.service.IMemberCalendarService;
 import cn.com.xuct.calendar.cms.boot.utils.DateHelper;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
@@ -49,43 +53,39 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Component> implements IComponentService {
 
+    private final IMemberCalendarService calendarService;
+
+    private final IComponentAttendService componentAttendService;
+
     private final IComponentAlarmService componentAlarmService;
 
     private final RabbitmqConfiguration rabbitmqConfiguration;
 
-    @Override
-    public List<Component> query(Long calendarId, Long start, Long end) {
-        QueryWrapper<Component> mapper = super.getQuery();
-        mapper.eq("calendar_id", calendarId).
-                and(wrapper -> wrapper.le("start_time", start).ge("end_time", start)
-                        .or(lessWrapper -> lessWrapper.le("start_time", end).ge("end_time", end))
-                        .or(normalWrapper -> normalWrapper.ge("start_time", start).le("end_time", end)));
-        return super.getBaseMapper().selectList(mapper);
-    }
-
-    @Override
-    public List<CalendarComponentVo> search(String word, Integer page, Integer limit) {
-        return ((ComponentMapper) super.getBaseMapper()).searchByWord(word, page * (limit - 1), limit);
-    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<ComponentAlarm> addComponent(final Long memberId, final String timeZone, final Long calendarId, final Component component, final String alarmType, final List<Integer> alarmTimes) {
+    public List<ComponentAlarm> addComponent(final Long memberId, final String timeZone, final Long calendarId, final Component component, final List<String> memberIds, final String alarmType, final List<Integer> alarmTimes) {
         List<ComponentAlarm> componentAlarmList = null;
         component.setAlarmType(ComponentAlarmEnum.getByCode(alarmType));
         if (alarmTimes.size() != 0) {
             component.setAlarmTimes(ArrayUtil.join(alarmTimes.toArray(new Integer[alarmTimes.size()]), ","));
         }
         this.save(component);
+        /* 增加邀请人数据 */
+        this.addComponentAttends(memberId, calendarId, component, memberIds, false);
+        /* 增加提醒数据 */
         if (!alarmType.equals(ComponentAlarmEnum.UNKNOWN.name()) && alarmTimes.size() != 0) {
             componentAlarmList = this.addAlarm(memberId, timeZone, calendarId, component, alarmTimes);
         }
         return componentAlarmList;
     }
 
+
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<ComponentAlarm> updateComponent(final Long memberId, final String timeZone, final Component component, final String alarmType, final List<Integer> alarmTimes, boolean change) {
+    public List<ComponentAlarm> updateComponent(final Long memberId, final String timeZone, final Component component, final List<String> memberIds, final String alarmType, final List<Integer> alarmTimes, boolean change) {
+        /* 更新邀请人信息 */
+        this.updateComponentAttend(memberId, component.getCalendarId(), component, memberIds);
         //有更新
         if (change) {
             return updateComponentAlarm(memberId, timeZone, component, alarmType, alarmTimes);
@@ -94,7 +94,6 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
             this.updateById(component);
             return Lists.newArrayList();
         }
-
         final List<Integer> triggers = Lists.newArrayList();
         if (StringUtils.hasText(component.getAlarmTimes())) {
             triggers.addAll(Arrays.asList(component.getAlarmTimes().split(",")).stream().map(x -> Integer.parseInt(x)).collect(Collectors.toList()));
@@ -132,6 +131,8 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
     @Transactional(rollbackFor = Exception.class)
     public void delete(final Long componentId) {
         componentAlarmService.delete(Column.of("component_id", componentId));
+        /* TODO 增加邀请删除消息 */
+        componentAttendService.delete(Column.of("component_id", componentId));
         super.removeById(componentId);
     }
 
@@ -167,6 +168,35 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
 
     /**
      * 功能描述: <br>
+     * 〈更新邀请人〉
+     *
+     * @param
+     * @return:void
+     * @since: 1.0.0
+     * @Author:
+     * @Date: 2022/3/13 21:00
+     */
+    private void updateComponentAttend(Long memberId, Long calendarId, Component component, List<String> memberIds) {
+        List<Long> attends = componentAttendService.listByComponentId(memberId, component.getId());
+        if (CollectionUtils.isEmpty(attends)) {
+            this.addComponentAttends(memberId, calendarId, component, memberIds, true);
+            return;
+        }
+        List<String> addReduce = memberIds.stream().filter(item -> !attends.contains(Long.valueOf(item))).collect(Collectors.toList());
+        List<Long> deleteReduce = attends.stream().filter(item -> !memberIds.contains(String.valueOf(item))).collect(Collectors.toList());
+        /* TODO 增加邀请消息 */
+        if (!CollectionUtils.isEmpty(addReduce)) {
+            this.addComponentAttends(memberId, calendarId, component, addReduce, true);
+        }
+        if (!CollectionUtils.isEmpty(deleteReduce)) {
+
+        }
+        /* TODO 增加删除消息 */
+
+    }
+
+    /**
+     * 功能描述: <br>
      * 〈封装日程提醒〉
      *
      * @param memberId
@@ -190,6 +220,47 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
         componentAlarmService.saveBatch(componentAlarmList);
         return componentAlarmList;
     }
+
+    /**
+     * 功能描述: <br>
+     * 〈添加邀请参与人〉
+     *
+     * @param memberId
+     * @param calendarId
+     * @param component
+     * @param memberIds
+     * @return:void
+     * @since: 1.0.0
+     * @Author:
+     * @Date: 2022/3/13 18:27
+     */
+    private void addComponentAttends(Long memberId, Long calendarId, Component component, List<String> memberIds, boolean up) {
+        List<ComponentAttend> componentAttends = Lists.newArrayList();
+        ComponentAttend componentAttend = null;
+        MemberMarjoCalendarDo calendarDo = null;
+        if (!CollectionUtils.isEmpty(memberIds)) {
+            List<MemberMarjoCalendarDo> memberMarjoCalendarDos = calendarService.queryMarjoCalendarIds(memberIds);
+            for (int i = 0, j = memberMarjoCalendarDos.size(); i < j; i++) {
+                calendarDo = memberMarjoCalendarDos.get(i);
+                componentAttend = new ComponentAttend();
+                componentAttend.setComponentId(component.getId());
+                componentAttend.setCalendarId(calendarId);
+                componentAttend.setAttendCalendarId(calendarDo.getCalendarId());
+                componentAttend.setMemberId(calendarDo.getMemberId());
+                componentAttends.add(componentAttend);
+            }
+        }
+        if (!up) {
+            componentAttend = new ComponentAttend();
+            componentAttend.setComponentId(component.getId());
+            componentAttend.setCalendarId(calendarId);
+            componentAttend.setAttendCalendarId(calendarId);
+            componentAttend.setComponentId(memberId);
+            componentAttends.add(componentAttend);
+        }
+        componentAttendService.saveBatch(componentAttends);
+    }
+
 
     /**
      * 功能描述: <br>

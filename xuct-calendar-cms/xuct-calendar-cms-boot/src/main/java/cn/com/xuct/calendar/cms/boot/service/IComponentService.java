@@ -29,37 +29,17 @@ import java.util.List;
 public interface IComponentService extends IBaseService<ComponentMapper, Component> {
 
     /**
-     * 查询日程列表
-     *
-     * @param calendarId
-     * @param start
-     * @param end
-     * @return
-     */
-    List<Component> query(final Long calendarId, final Long start, Long end);
-
-    /**
-     * 分页根据关键词查询
-     *
-     * @param word
-     * @param page
-     * @param limit
-     * @return
-     */
-    List<CalendarComponentVo> search(final String word, final Integer page, final Integer limit);
-
-
-    /**
      * 添加日程
      *
      * @param memberId
      * @param calendarId
+     * @param memberIds
      * @param component
      * @param alarmType
      * @param timeZone   用户时区
      * @param alarmTimes
      */
-    List<ComponentAlarm> addComponent(final Long memberId, final String timeZone, final Long calendarId, final Component component, final String alarmType, final List<Integer> alarmTimes);
+    List<ComponentAlarm> addComponent(final Long memberId, final String timeZone, final Long calendarId, final Component component, final List<String> memberIds, final String alarmType, final List<Integer> alarmTimes);
 
     /**
      * 更新日程
@@ -72,7 +52,7 @@ public interface IComponentService extends IBaseService<ComponentMapper, Compone
      * @param timeZone   用户时区
      * @return
      */
-    List<ComponentAlarm> updateComponent(final Long memberId, final String timeZone, final Component component, final String alarmType, final List<Integer> alarmTimes, boolean change);
+    List<ComponentAlarm> updateComponent(final Long memberId, final String timeZone, final Component component, final List<String> memberIds, final String alarmType, final List<Integer> alarmTimes, boolean change);
 
     /**
      * 删除日程
@@ -80,6 +60,4 @@ public interface IComponentService extends IBaseService<ComponentMapper, Compone
      * @param componentId
      */
     void delete(final Long componentId);
-
-
 }

@@ -46,16 +46,6 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T extends SuperEntity<T>> 
         return (Class<BaseMapper<T>>) type.getActualTypeArguments()[0];
     }
 
-
-//    @Override
-//    protected String getSqlStatement(SqlMethod sqlMethod) {
-//        Class<?> clazz = mapperClass;
-//        if (ObjectUtil.isNotNull(this.baseMapper) && ObjectUtil.isNotNull(this.baseMapper.getClass())) {
-//            clazz = this.baseMapper.getClass().getInterfaces()[0];
-//        }
-//        return SqlHelper.getSqlStatement(clazz, sqlMethod);
-//    }
-
     /**
      * 获取对象
      *

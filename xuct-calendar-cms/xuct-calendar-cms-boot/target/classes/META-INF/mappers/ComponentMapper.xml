@@ -28,13 +28,57 @@
                c.repeat_byday,
                c.repeat_bymonth,
                c.repeat_bymonthday,
+               a.attends,
                mc.name as calendarName,
                mc.color
         FROM cms_component c
-                 LEFT JOIN cms_member_calendar mc on c.calendar_id = mc.calendar_id
+                 LEFT JOIN cms_member_calendar mc ON c.calendar_id = mc.calendar_id
+                 LEFT JOIN (SELECT component_id, count(1) as attends
+                            FROM calendar.cms_component_attend
+                            group by component_id) a ON c.id = a.component_id
         WHERE c.summary LIKE CONCAT('%', #{word}, '%')
           AND mc.display = 1
         ORDER BY c.start_time DESC
             limit #{page}, #{limit}
+    </select>
+
+
+    <select id="listByCalendarIdAndTime" resultType="cn.com.xuct.calendar.cms.api.entity.Component">
+
+        SELECT c.id,
+               c.calendar_id,
+               c.status,
+               c.dtstart,
+               c.creator_member_id,
+               c.dtend,
+               c.power,
+               c.summary,
+               c.location,
+               c.description,
+               c.start_time,
+               c.end_time,
+               c.full_day,
+               c.alarm_type,
+               c.alarm_times,
+               c.repeat_status,
+               c.repeat_type,
+               c.repeat_interval,
+               c.repeat_until,
+               c.repeat_byday,
+               c.repeat_bymonth,
+               c.repeat_bymonthday,
+               a.attends
+        FROM calendar.cms_component c
+                 LEFT JOIN (SELECT component_id, count(1) as attends
+                            FROM cms_component_attend
+                            WHERE calendar_id = #{calendarId}
+                            GROUP BY component_id) a on c.id = a.component_id
+
+        WHERE 1 = 1
+            AND c.calendar_id = #{calendarId}
+            AND ((c.start_time &gt;= #{start} AND c.end_time &gt;= #{start})
+           or (c.start_time &lt;= #{end} AND c.end_time &gt;= #{end})
+           or (c.start_time &gt; #{start} and c.end_time &lt;= #{end}))
+
     </select>
 </mapper>
