@@ -25,12 +25,14 @@ import cn.com.xuct.calendar.common.module.params.*;
 import cn.com.xuct.calendar.common.module.req.MemberGetPhoneReq;
 import cn.com.xuct.calendar.common.module.vo.MemberPhoneAuthVo;
 import cn.com.xuct.calendar.common.web.utils.JwtUtils;
+import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
 import cn.com.xuct.calendar.ums.api.entity.Member;
 import cn.com.xuct.calendar.ums.api.entity.MemberAuth;
 import cn.com.xuct.calendar.ums.api.entity.MemberMessage;
 import cn.com.xuct.calendar.ums.api.feign.CalendarFeignClient;
 import cn.com.xuct.calendar.ums.boot.config.DictCacheManager;
 import cn.com.xuct.calendar.ums.boot.config.WxMaConfiguration;
+import cn.com.xuct.calendar.ums.boot.event.MemberModifyNameEvent;
 import cn.com.xuct.calendar.ums.boot.service.IMemberAuthService;
 import cn.com.xuct.calendar.ums.boot.service.IMemberMessageService;
 import cn.com.xuct.calendar.ums.boot.service.IMemberService;
@@ -124,21 +126,25 @@ public class MemberAppController {
         return R.status(true);
     }
 
-    @ApiOperation(value = "修改名称")
+    @ApiOperation(value = "修改名字")
     @PostMapping("/name")
     public R<String> modifyName(@Validated @RequestBody MemberNameParam param) {
         Long userId = JwtUtils.getUserId();
         Member member = memberService.findMemberById(userId);
         if (member == null) return R.fail("获取用户信息失败");
-        /*1. 更新日历的名称 */
-        CalendarInitDto calendarInitDto = new CalendarInitDto();
-        calendarInitDto.setMemberId(userId);
-        calendarInitDto.setMemberNickName(param.getName());
-        calendarFeignClient.updateMemberCalendarName(calendarInitDto);
-        /*2. 更新用户名称 */
         member.setName(param.getName());
         memberService.updateMember(member);
+        /* 发送修改名称事件 */
+        SpringContextHolder.publishEvent(new MemberModifyNameEvent(this, userId, param.getName()));
         return R.status(true);
+    }
+
+    @ApiOperation(value = "查询名字")
+    @GetMapping("/name")
+    public R<String> getName(@RequestParam("memberId") Long memberId) {
+        Member member = memberService.findMemberById(memberId);
+        if (member == null) return R.fail("获取用户信息失败");
+        return R.data(member.getName());
     }
 
     @ApiOperation(value = "修改头像")

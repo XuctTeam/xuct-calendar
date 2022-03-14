@@ -12,6 +12,7 @@ package cn.com.xuct.calendar.cms.boot.controller.app;
 
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAlarm;
+import cn.com.xuct.calendar.cms.api.entity.ComponentAttend;
 import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
 import cn.com.xuct.calendar.cms.api.vo.CalendarComponentVo;
 import cn.com.xuct.calendar.cms.api.vo.ComponentListVo;
@@ -51,6 +52,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -141,7 +143,15 @@ public class ComponentController {
         if (component == null) throw new SvrException(SvrResCode.CMS_COMPONENT_NOT_FOUND);
         CalendarComponentVo calendarComponentVo = new CalendarComponentVo();
         BeanUtils.copyProperties(component, calendarComponentVo);
-        MemberCalendar memberCalendar = memberCalendarService.get(Lists.newArrayList(Column.of("member_id", JwtUtils.getUserId()), Column.of("calendar_id", component.getCalendarId())));
+        Long calendarId = component.getCalendarId();
+        if (!String.valueOf(component.getCreatorMemberId()).equals(String.valueOf(JwtUtils.getUserId()))) {
+            ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", id), Column.of("member_id", JwtUtils.getUserId())));
+            if (attend == null) throw new SvrException(SvrResCode.CMS_COMPONENT_NOT_FOUND);
+            calendarId = attend.getAttendCalendarId();
+
+        }
+        MemberCalendar memberCalendar = memberCalendarService.get(Lists.newArrayList(Column.of("calendar_id", calendarId), Column.of("member_id", JwtUtils.getUserId())));
+        if (memberCalendar == null) throw new SvrException(SvrResCode.CMS_CALENDAR_NOT_FOUND);
         calendarComponentVo.setColor(memberCalendar.getColor());
         calendarComponentVo.setCalendarName(memberCalendar.getName());
         return R.data(calendarComponentVo);
@@ -180,6 +190,14 @@ public class ComponentController {
     public R<String> delete(@PathVariable("id") String id) {
         componentService.delete(Long.valueOf(id));
         return R.status(true);
+    }
+
+    @ApiOperation(value = "通过事件查询邀请人")
+    @GetMapping("/query/member/ids")
+    public R<List<String>> queryComponentMemberIds(@RequestParam("componentId") Long componentId) {
+        List<Long> ids = componentAttendService.listByComponentId(JwtUtils.getUserId(), componentId);
+        if (CollectionUtils.isEmpty(ids)) return R.data(Lists.newArrayList());
+        return R.data(ids.stream().map(x -> String.valueOf(x)).collect(Collectors.toList()));
     }
 
     /**

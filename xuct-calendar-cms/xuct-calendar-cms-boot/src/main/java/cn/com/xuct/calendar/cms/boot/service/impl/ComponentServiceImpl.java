@@ -255,7 +255,7 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
             componentAttend.setComponentId(component.getId());
             componentAttend.setCalendarId(calendarId);
             componentAttend.setAttendCalendarId(calendarId);
-            componentAttend.setComponentId(memberId);
+            componentAttend.setMemberId(memberId);
             componentAttends.add(componentAttend);
         }
         componentAttendService.saveBatch(componentAttends);

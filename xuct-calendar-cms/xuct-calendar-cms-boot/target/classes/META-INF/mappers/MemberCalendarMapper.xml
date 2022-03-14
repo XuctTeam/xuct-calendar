@@ -6,18 +6,53 @@
 <mapper namespace="cn.com.xuct.calendar.cms.boot.mapper.MemberCalendarMapper">
 
     <select id="queryMemberCalendar" resultType="cn.com.xuct.calendar.cms.api.entity.MemberCalendar">
-        SELECT mc.id , mc.name , mc.calendar_id , mc.member_id , mc.create_member_id , mc.create_member_name , mc.color , mc.display , mc.major , mc.description,
-               c.alarm_time , c.alarm_type, c.is_share
-        FROM `cms_member_calendar`  mc
+        SELECT mc.id,
+               mc.name,
+               mc.calendar_id,
+               mc.member_id,
+               mc.create_member_id,
+               mc.create_member_name,
+               mc.color,
+               mc.display,
+               mc.major,
+               mc.description,
+               c.alarm_time,
+               c.alarm_type,
+               c.is_share
+        FROM `cms_member_calendar` mc
                  left join cms_calendar c on mc.calendar_id = c.id
         where mc.member_id = #{memberId}
 
     </select>
     <select id="getMemberCalendar" resultType="cn.com.xuct.calendar.cms.api.entity.MemberCalendar">
-        SELECT mc.id , mc.name , mc.calendar_id , mc.member_id , mc.create_member_id , mc.create_member_name , mc.color , mc.display , mc.major ,mc.description,
-               c.alarm_time , c.alarm_type, c.is_share
-        FROM `cms_member_calendar`  mc
+        SELECT mc.id,
+               mc.name,
+               mc.calendar_id,
+               mc.member_id,
+               mc.create_member_id,
+               mc.create_member_name,
+               mc.color,
+               mc.display,
+               mc.major,
+               mc.description,
+               c.alarm_time,
+               c.alarm_type,
+               c.is_share
+        FROM `cms_member_calendar` mc
                  left join cms_calendar c on mc.calendar_id = c.id
         where mc.id = #{id}
+    </select>
+
+
+    <select id="queryMarjoCalendarIds" resultType="cn.com.xuct.calendar.cms.api.dodo.MemberMarjoCalendarDo">
+        select member_id , calendar_id
+        from cms_member_calendar
+        where 1=1
+        And major = 1
+        and member_id in
+        <foreach collection="memberIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+
     </select>
 </mapper>
