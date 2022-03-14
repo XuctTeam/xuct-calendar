@@ -38,6 +38,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -189,9 +190,11 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
             this.addComponentAttends(memberId, calendarId, component, addReduce, true);
         }
         if (!CollectionUtils.isEmpty(deleteReduce)) {
-
+            componentAttendService.remove(componentAttendService.getQuery()
+                    .lambda().eq(ComponentAttend::getComponentId, component.getId()).in(ComponentAttend::getMemberId, deleteReduce));
+            /* TODO 增加删除消息 */
         }
-        /* TODO 增加删除消息 */
+
 
     }
 
@@ -247,6 +250,7 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
                 componentAttend.setCalendarId(calendarId);
                 componentAttend.setAttendCalendarId(calendarDo.getCalendarId());
                 componentAttend.setMemberId(calendarDo.getMemberId());
+                componentAttend.setStatus(0);
                 componentAttends.add(componentAttend);
             }
         }
@@ -256,6 +260,7 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
             componentAttend.setCalendarId(calendarId);
             componentAttend.setAttendCalendarId(calendarId);
             componentAttend.setMemberId(memberId);
+            componentAttend.setStatus(1);
             componentAttends.add(componentAttend);
         }
         componentAttendService.saveBatch(componentAttends);
