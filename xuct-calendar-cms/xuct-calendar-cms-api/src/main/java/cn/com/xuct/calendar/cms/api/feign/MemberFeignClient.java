@@ -15,7 +15,11 @@ import cn.com.xuct.calendar.common.module.dto.MemberInfoDto;
 import cn.com.xuct.calendar.common.web.web.FeignConfiguration;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -26,11 +30,24 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @since 1.0.0
  */
 
-@FeignClient(name = "dav-cms", contextId = "members", configuration = FeignConfiguration.class)
+@FeignClient(name = "dav-ums", contextId = "members", configuration = FeignConfiguration.class)
 public interface MemberFeignClient {
 
-
+    /**
+     * 通过id查询会员信息
+     *
+     * @param id
+     * @return
+     */
     @GetMapping("/api/feign/v1/member/get/id")
     R<MemberInfoDto> getMemberById(@RequestParam("id") Long id);
 
+    /**
+     * 通过ids数组查询会员信息
+     *
+     * @param ids
+     * @return
+     */
+    @PostMapping("/api/feign/v1/member/list/ids")
+    R<List<MemberInfoDto>> listMemberByIds(@RequestBody List<Long> ids);
 }

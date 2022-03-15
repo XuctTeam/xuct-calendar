@@ -73,12 +73,11 @@
             limit #{page}, #{limit}
     </select>
 
-    <select id="listByComponentId" resultType="java.lang.Long">
+    <select id="listByComponentIdNoMemberId" resultType="java.lang.Long">
         select member_id
         from cms_component_attend
         where 1 = 1
           and component_id = #{componentId}
           and member_id &lt;&gt; #{memberId}
     </select>
-
 </mapper>

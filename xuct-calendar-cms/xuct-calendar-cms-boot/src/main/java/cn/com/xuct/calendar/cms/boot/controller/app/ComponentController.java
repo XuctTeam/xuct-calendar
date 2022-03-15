@@ -14,7 +14,9 @@ import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAlarm;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAttend;
 import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
+import cn.com.xuct.calendar.cms.api.feign.MemberFeignClient;
 import cn.com.xuct.calendar.cms.api.vo.CalendarComponentVo;
+import cn.com.xuct.calendar.cms.api.vo.ComponentAttendVo;
 import cn.com.xuct.calendar.cms.api.vo.ComponentListVo;
 import cn.com.xuct.calendar.cms.api.vo.ComponentSearchVo;
 import cn.com.xuct.calendar.cms.queue.event.ComponentDelEvent;
@@ -31,9 +33,11 @@ import cn.com.xuct.calendar.common.core.res.SvrResCode;
 import cn.com.xuct.calendar.common.core.utils.JsonUtils;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.dto.AlarmInfoDto;
+import cn.com.xuct.calendar.common.module.dto.MemberInfoDto;
 import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
 import cn.com.xuct.calendar.common.module.enums.ComponentRepeatTypeEnum;
 import cn.com.xuct.calendar.common.module.params.ComponentAddParam;
+import cn.com.xuct.calendar.common.module.params.ComponentAttendParam;
 import cn.com.xuct.calendar.common.web.utils.JwtUtils;
 import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
 import cn.hutool.core.date.DateTime;
@@ -77,6 +81,8 @@ public class ComponentController {
     private final IComponentAttendService componentAttendService;
 
     private final IMemberCalendarService memberCalendarService;
+
+    private final MemberFeignClient memberFeignClient;
 
     private final RabbitmqOutChannel rabbitmqOutChannel;
 
@@ -188,8 +194,8 @@ public class ComponentController {
 
     @ApiOperation(value = "删除日程")
     @ApiImplicitParam(name = "id", value = "日程ID")
-    @DeleteMapping
-    public R<String> delete(@RequestParam("id") Long id) {
+    @DeleteMapping("/{id}")
+    public R<String> delete(@PathVariable("id") Long id) {
         Component component = componentService.getById(id);
         Assert.notNull(component, "事件不存在");
         List<Long> memberIds = componentService.deleteByComponentId(JwtUtils.getUserId(), id);
@@ -199,13 +205,30 @@ public class ComponentController {
         return R.status(true);
     }
 
-    @ApiOperation(value = "查询所有邀请人")
+    @ApiOperation(value = "查询所有邀请人ID")
     @GetMapping("/attend/member/ids")
     public R<List<String>> queryComponentMemberIds(@RequestParam("componentId") Long componentId) {
-        List<Long> ids = componentAttendService.listByComponentId(JwtUtils.getUserId(), componentId);
-        if (CollectionUtils.isEmpty(ids)) return R.data(Lists.newArrayList());
-        return R.data(ids.stream().map(x -> String.valueOf(x)).collect(Collectors.toList()));
+        List<Long> memberIds = componentAttendService.listByComponentIdNoMemberId(JwtUtils.getUserId(), componentId);
+        if (CollectionUtils.isEmpty(memberIds)) return R.data(Lists.newArrayList());
+        return R.data(memberIds.stream().map(x -> String.valueOf(x)).collect(Collectors.toList()));
     }
+
+    @ApiOperation(value = "查询所有邀请人")
+    @GetMapping("/attend/member")
+    public R<List<ComponentAttendVo>> queryComponentAttend(@RequestParam("componentId") Long componentId, @RequestParam("createMemberId") Long createMemberId) {
+        List<Long> memberIds = componentAttendService.listByComponentIdNoMemberId(createMemberId, componentId);
+        if (CollectionUtils.isEmpty(memberIds)) return R.data(Lists.newArrayList());
+        R<List<MemberInfoDto>> memberInfoResult = memberFeignClient.listMemberByIds(memberIds);
+        if (memberInfoResult == null || !memberInfoResult.isSuccess()) return R.data(Lists.newArrayList());
+        return R.data(memberInfoResult.getData().stream().map(info -> {
+            ComponentAttendVo attendVo = new ComponentAttendVo();
+            attendVo.setAvatar(info.getAvatar());
+            attendVo.setMemberId(String.valueOf(info.getUserId()));
+            attendVo.setName(info.getName());
+            return attendVo;
+        }).collect(Collectors.toList()));
+    }
+
 
     @ApiOperation(value = "获取邀请状态")
     @GetMapping("/attend/status")
@@ -215,6 +238,25 @@ public class ComponentController {
         ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", componentId), Column.of("member_id", JwtUtils.getUserId())));
         Assert.notNull(attend, "邀请数据错误");
         return R.data(attend.getStatus());
+    }
+
+    @ApiOperation(value = "更新邀请状态")
+    @PostMapping("/attend/status")
+    public R<String> updateComponentAttendStatus(@RequestBody ComponentAttendParam param) {
+        ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", param.getComponentId()), Column.of("member_id", JwtUtils.getUserId())));
+        Assert.notNull(attend, "邀请数据错误");
+        attend.setStatus(param.getStatus());
+        componentAttendService.updateById(attend);
+        return R.status(true);
+    }
+
+    @ApiOperation(value = "删除邀请")
+    @DeleteMapping("/attend/{componentId}")
+    public R<String> deleteComponentAttend(@PathVariable("componentId") Long componentId) {
+        ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", componentId), Column.of("member_id", JwtUtils.getUserId())));
+        Assert.notNull(attend, "邀请数据错误");
+        componentAttendService.removeById(attend);
+        return R.status(true);
     }
 
     /**

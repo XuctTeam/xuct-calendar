@@ -17,6 +17,7 @@ import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.core.vo.Sort;
 import cn.com.xuct.calendar.common.db.dao.base.SuperEntity;
 import cn.com.xuct.calendar.common.db.dao.vo.PageData;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -24,8 +25,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.ParameterizedType;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -292,7 +295,7 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T extends SuperEntity<T>> 
             queryWrapper.ne(column.getColumn(), Lists.newArrayList(column.getValue()).get(0));
         }
         if (column.getColumnEnum().equals(ColumnEnum.in)) {
-            queryWrapper.in(column.getColumn(), column.getValue().toArray());
+            queryWrapper.in(column.getColumn(), StrUtil.join(",", column.getValue()));
         }
         if (column.getColumnEnum().equals(ColumnEnum.like)) {
             queryWrapper.like(column.getColumn(), Lists.newArrayList(column.getValue()).get(0));

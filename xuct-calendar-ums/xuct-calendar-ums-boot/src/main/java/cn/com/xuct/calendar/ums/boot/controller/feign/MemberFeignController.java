@@ -14,6 +14,7 @@ import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
 import cn.com.xuct.calendar.common.core.constant.DictConstants;
+import cn.com.xuct.calendar.common.core.enums.ColumnEnum;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.dto.CalendarInitDto;
@@ -27,12 +28,18 @@ import cn.com.xuct.calendar.ums.boot.config.DictCacheManager;
 import cn.com.xuct.calendar.ums.boot.config.WxMaConfiguration;
 import cn.com.xuct.calendar.ums.boot.service.IMemberAuthService;
 import cn.com.xuct.calendar.ums.boot.service.IMemberService;
+import cn.hutool.core.util.StrUtil;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import me.chanjar.weixin.common.error.WxErrorException;
+import org.springframework.beans.BeanUtils;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -65,7 +72,6 @@ public class MemberFeignController {
         Member member = memberService.getById(memberAuth.getMemberId());
         return R.data(MemberInfoDto.builder().userId(member.getId()).username(memberAuth.getUsername()).password(memberAuth.getPassword()).status(member.getStatus()).timeZone(member.getTimeZone()).build());
     }
-
 
     @ApiOperation(value = "通过微信code查询会员")
     @PostMapping("/get/code")
@@ -119,5 +125,18 @@ public class MemberFeignController {
         Member member = memberService.findMemberById(id);
         if (member == null) return R.fail("用户不存在");
         return R.data(MemberInfoDto.builder().userId(member.getId()).name(member.getName()).status(member.getStatus()).timeZone(member.getTimeZone()).build());
+    }
+
+    @ApiOperation(value = "通过IDS查询会员")
+    @PostMapping("/list/ids")
+    public R<List<MemberInfoDto>> listMemberByIds(@RequestBody List<String> ids) {
+        List<Member> members = memberService.find(Column.of("id", ids, ColumnEnum.in));
+        if (CollectionUtils.isEmpty(members)) return R.data(Lists.newArrayList());
+        return R.data(members.stream().map(member -> {
+            MemberInfoDto memberInfoDto = new MemberInfoDto();
+            memberInfoDto.setName(member.getName());
+            memberInfoDto.setAvatar(member.getAvatar());
+            return memberInfoDto;
+        }).collect(Collectors.toList()));
     }
 }

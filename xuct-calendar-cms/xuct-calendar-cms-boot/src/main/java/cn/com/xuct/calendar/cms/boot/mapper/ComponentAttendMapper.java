@@ -13,6 +13,7 @@ package cn.com.xuct.calendar.cms.boot.mapper;
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAttend;
 import cn.com.xuct.calendar.cms.api.vo.CalendarComponentVo;
+import cn.com.xuct.calendar.cms.api.vo.ComponentAttendVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -50,11 +51,11 @@ public interface ComponentAttendMapper extends BaseMapper<ComponentAttend> {
     List<CalendarComponentVo> searchWord(@Param("memberId") Long memberId, @Param("word") String word, @Param("page") Integer page, @Param("limit") Integer limit);
 
     /**
-     * 通过事件ID查询
+     * 查询不包括memberId的邀请
      *
      * @param memberId
      * @param componentId
      * @return
      */
-    List<Long> listByComponentId(@Param("memberId") Long memberId, @Param("componentId") Long componentId);
+    List<Long> listByComponentIdNoMemberId(@Param("memberId") Long memberId, @Param("componentId") Long componentId);
 }

@@ -182,7 +182,7 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
      * @Date: 2022/3/13 21:00
      */
     private void updateComponentAttend(Long memberId, Long calendarId, Component component, List<String> memberIds) {
-        List<Long> attends = componentAttendService.listByComponentId(memberId, component.getId());
+        List<Long> attends = componentAttendService.listByComponentIdNoMemberId(memberId, component.getId());
         if (CollectionUtils.isEmpty(attends)) {
             this.addComponentAttends(memberId, calendarId, component, memberIds, true);
             return;

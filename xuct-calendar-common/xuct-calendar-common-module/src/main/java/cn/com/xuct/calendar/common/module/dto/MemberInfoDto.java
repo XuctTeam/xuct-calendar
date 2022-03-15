@@ -10,6 +10,8 @@
  */
 package cn.com.xuct.calendar.common.module.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,18 +31,28 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ApiModel(value = "会员类")
 public class MemberInfoDto implements Serializable {
 
+    @ApiModelProperty(value = "会员ID")
     private Long userId;
 
+    @ApiModelProperty(value = "名称")
     private String name;
 
+    @ApiModelProperty(value = "头像")
+    private String avatar;
+
+    @ApiModelProperty(value = "账号")
     private String username;
 
+    @ApiModelProperty(value = "状态")
     private Integer status;
 
+    @ApiModelProperty(value = "密码")
     private String password;
 
+    @ApiModelProperty(value = "时区")
     private String timeZone;
 
 }

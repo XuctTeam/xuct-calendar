@@ -50,11 +50,12 @@ public interface IComponentAttendService extends IBaseService<ComponentAttendMap
     List<CalendarComponentVo> searchWord(final Long memberId, String word, Integer page, Integer limit);
 
     /**
-     * 查询不包括自己的邀请
+     * 查询不包括memberId的邀请
      *
      * @param memberId
      * @param componentId
      * @return
      */
-    List<Long> listByComponentId(Long memberId, Long componentId);
+    List<Long> listByComponentIdNoMemberId(Long memberId, Long componentId);
+
 }

@@ -13,6 +13,7 @@ package cn.com.xuct.calendar.cms.boot.service.impl;
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAttend;
 import cn.com.xuct.calendar.cms.api.vo.CalendarComponentVo;
+import cn.com.xuct.calendar.cms.api.vo.ComponentAttendVo;
 import cn.com.xuct.calendar.cms.boot.mapper.ComponentAttendMapper;
 import cn.com.xuct.calendar.cms.boot.service.IComponentAttendService;
 import cn.com.xuct.calendar.common.db.service.BaseServiceImpl;
@@ -42,7 +43,7 @@ public class ComponentAttendServiceImpl extends BaseServiceImpl<ComponentAttendM
     }
 
     @Override
-    public List<Long> listByComponentId(Long memberId, Long componentId) {
-        return ((ComponentAttendMapper) super.getBaseMapper()).listByComponentId(memberId, componentId);
+    public List<Long> listByComponentIdNoMemberId(Long memberId, Long componentId) {
+        return ((ComponentAttendMapper) super.getBaseMapper()).listByComponentIdNoMemberId(memberId, componentId);
     }
 }
