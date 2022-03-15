@@ -12,7 +12,7 @@ package cn.com.xuct.calendar.ums.boot.service.impl;
 
 import cn.com.xuct.calendar.ums.api.entity.User;
 import cn.com.xuct.calendar.ums.boot.mapper.UserMapper;
-import cn.com.xuct.calendar.service.base.BaseServiceImpl;
+import cn.com.xuct.calendar.common.db.service.BaseServiceImpl;
 import cn.com.xuct.calendar.ums.boot.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -14,7 +14,6 @@ import cn.com.xuct.calendar.cms.api.dodo.MemberMarjoCalendarDo;
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAlarm;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAttend;
-import cn.com.xuct.calendar.cms.api.vo.CalendarComponentVo;
 import cn.com.xuct.calendar.cms.boot.config.RabbitmqConfiguration;
 import cn.com.xuct.calendar.cms.boot.mapper.ComponentMapper;
 import cn.com.xuct.calendar.cms.boot.service.IComponentAlarmService;
@@ -22,14 +21,14 @@ import cn.com.xuct.calendar.cms.boot.service.IComponentAttendService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentService;
 import cn.com.xuct.calendar.cms.boot.service.IMemberCalendarService;
 import cn.com.xuct.calendar.cms.boot.utils.DateHelper;
+import cn.com.xuct.calendar.common.core.enums.ColumnEnum;
 import cn.com.xuct.calendar.common.core.vo.Column;
+import cn.com.xuct.calendar.common.db.service.BaseServiceImpl;
 import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
 import cn.com.xuct.calendar.common.module.enums.ComponentAlarmEnum;
-import cn.com.xuct.calendar.service.base.BaseServiceImpl;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -38,7 +37,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -130,11 +128,17 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void delete(final Long componentId) {
+    public List<Long> deleteByComponentId(final Long memberId, final Long componentId) {
+        List<Long> memberIds = Lists.newArrayList();
         componentAlarmService.delete(Column.of("component_id", componentId));
-        /* TODO 增加邀请删除消息 */
-        componentAttendService.delete(Column.of("component_id", componentId));
+        List<ComponentAttend> componentAttends = componentAttendService.find(Lists.newArrayList(Column.of("component_id", componentId), Column.of("member_id", memberId, ColumnEnum.nq)));
+        if (!CollectionUtils.isEmpty(componentAttends)) {
+            memberIds = componentAttends.stream().map(ComponentAttend::getMemberId).collect(Collectors.toList());
+            /* TODO 增加邀请删除消息 */
+            componentAttendService.removeBatchByIds(componentAttends.stream().map(ComponentAttend::getId).collect(Collectors.toList()));
+        }
         super.removeById(componentId);
+        return memberIds;
     }
 
     /**

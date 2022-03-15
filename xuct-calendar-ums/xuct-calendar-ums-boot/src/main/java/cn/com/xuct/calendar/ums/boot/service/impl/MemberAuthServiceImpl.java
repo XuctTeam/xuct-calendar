@@ -12,7 +12,7 @@ package cn.com.xuct.calendar.ums.boot.service.impl;
 
 import cn.com.xuct.calendar.ums.api.entity.MemberAuth;
 import cn.com.xuct.calendar.ums.boot.mapper.MemberAuthMapper;
-import cn.com.xuct.calendar.service.base.BaseServiceImpl;
+import cn.com.xuct.calendar.common.db.service.BaseServiceImpl;
 import cn.com.xuct.calendar.ums.boot.service.IMemberAuthService;
 import org.springframework.stereotype.Service;
 

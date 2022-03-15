@@ -10,10 +10,8 @@
  */
 package cn.com.xuct.calendar.cms.boot.config;
 
-import cn.com.xuct.calendar.dao.entity.Dict;
 import com.google.common.collect.Maps;
 
-import java.util.List;
 import java.util.TimeZone;
 import java.util.concurrent.ConcurrentMap;
 

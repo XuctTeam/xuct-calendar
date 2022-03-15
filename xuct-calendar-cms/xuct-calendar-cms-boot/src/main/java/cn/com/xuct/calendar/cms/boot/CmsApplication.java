@@ -11,14 +11,16 @@
 package cn.com.xuct.calendar.cms.boot;
 
 import cn.com.xuct.calendar.cms.api.feign.MemberFeignClient;
+import cn.com.xuct.calendar.common.db.dao.config.MybatisPlusConfig;
 import cn.com.xuct.calendar.common.http.annotation.EnableAutoOkFeign;
 import cn.com.xuct.calendar.common.swagger.annotation.EnableAutoSwagger2;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
@@ -29,8 +31,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @create 2021/11/24
  * @since 1.0.0
  */
-@ComponentScan(basePackages = {"cn.com.xuct.calendar.dao",
-        "cn.com.xuct.calendar.service",
+@EnableAsync
+@ComponentScan(basePackages = {
         "cn.com.xuct.calendar.common.web",
         "cn.com.xuct.calendar.cms.queue",
         "cn.com.xuct.calendar.cms.boot"})
@@ -40,6 +42,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableAutoOkFeign
 @EnableTransactionManagement
 @EnableFeignClients(basePackageClasses = {MemberFeignClient.class})
+@Import(MybatisPlusConfig.class)
 public class CmsApplication {
 
     public static void main(String[] args) {

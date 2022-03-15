@@ -10,6 +10,7 @@
  */
 package cn.com.xuct.calendar.ums.boot;
 
+import cn.com.xuct.calendar.common.db.dao.config.MybatisPlusConfig;
 import cn.com.xuct.calendar.common.http.annotation.EnableAutoOkFeign;
 import cn.com.xuct.calendar.common.redis.annotation.EnableAutoRedis;
 import cn.com.xuct.calendar.common.smms.annotation.EnableSmmsClient;
@@ -21,7 +22,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -37,14 +37,13 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableAutoRedis
 @EnableAutoSwagger2
 @EnableAutoOkFeign
-@ComponentScan(basePackages = {"cn.com.xuct.calendar.dao", "cn.com.xuct.calendar.service", "cn.com.xuct.calendar.ums.boot"})
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableCaching
 @EnableTransactionManagement
 @EnableSmmsClient
 @EnableAsync
-@Import(SpringContextHolder.class)
+@Import({MybatisPlusConfig.class, SpringContextHolder.class})
 @EnableFeignClients(basePackageClasses = {CalendarFeignClient.class})
 public class UmsApplication {
 

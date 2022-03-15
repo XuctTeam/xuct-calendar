@@ -11,17 +11,13 @@
 package cn.com.xuct.calendar.ums.boot.service.impl;
 
 import cn.com.xuct.calendar.common.module.enums.GroupMemberStatusEnum;
-import cn.com.xuct.calendar.common.module.enums.MemberMessageTypeEnum;
-import cn.com.xuct.calendar.service.base.BaseServiceImpl;
+import cn.com.xuct.calendar.common.db.service.BaseServiceImpl;
 import cn.com.xuct.calendar.ums.api.dto.GroupMemberInfoDto;
 import cn.com.xuct.calendar.ums.api.entity.MemberGroup;
-import cn.com.xuct.calendar.ums.api.entity.MemberMessage;
 import cn.com.xuct.calendar.ums.boot.mapper.MemberGroupMapper;
 import cn.com.xuct.calendar.ums.boot.service.IMemberGroupService;
-import cn.com.xuct.calendar.ums.boot.service.IMemberMessageService;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
-import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;

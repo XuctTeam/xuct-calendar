@@ -10,10 +10,10 @@
  */
 package cn.com.xuct.calendar.ums.boot.service;
 
+import cn.com.xuct.calendar.common.db.service.IBaseService;
 import cn.com.xuct.calendar.common.module.dto.UserInfoDto;
 import cn.com.xuct.calendar.ums.api.entity.UserRole;
 import cn.com.xuct.calendar.ums.boot.mapper.UserRoleMapper;
-import cn.com.xuct.calendar.service.base.IBaseService;
 import org.apache.ibatis.annotations.Param;
 
 /**

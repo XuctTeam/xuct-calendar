@@ -13,7 +13,7 @@ package cn.com.xuct.calendar.cms.boot.service.impl;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAlarm;
 import cn.com.xuct.calendar.cms.boot.mapper.ComponentAlarmMapper;
 import cn.com.xuct.calendar.cms.boot.service.IComponentAlarmService;
-import cn.com.xuct.calendar.service.base.BaseServiceImpl;
+import cn.com.xuct.calendar.common.db.service.BaseServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**

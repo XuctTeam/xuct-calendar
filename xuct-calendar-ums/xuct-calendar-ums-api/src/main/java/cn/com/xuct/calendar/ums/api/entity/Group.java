@@ -12,7 +12,7 @@ package cn.com.xuct.calendar.ums.api.entity;
 
 import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
 import cn.com.xuct.calendar.common.module.enums.CommonPowerEnum;
-import cn.com.xuct.calendar.dao.base.SuperEntity;
+import cn.com.xuct.calendar.common.db.dao.base.SuperEntity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;

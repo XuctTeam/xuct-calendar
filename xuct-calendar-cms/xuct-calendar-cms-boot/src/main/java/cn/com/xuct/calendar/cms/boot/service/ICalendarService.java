@@ -12,7 +12,7 @@ package cn.com.xuct.calendar.cms.boot.service;
 
 import cn.com.xuct.calendar.cms.api.entity.Calendar;
 import cn.com.xuct.calendar.cms.boot.mapper.CalendarMapper;
-import cn.com.xuct.calendar.service.base.IBaseService;
+import cn.com.xuct.calendar.common.db.service.IBaseService;
 
 /**
  * 〈一句话功能简述〉<br>

@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.ums.boot.service.impl;
 
-import cn.com.xuct.calendar.service.base.BaseServiceImpl;
+import cn.com.xuct.calendar.common.db.service.BaseServiceImpl;
 import cn.com.xuct.calendar.ums.api.entity.MemberMessage;
 import cn.com.xuct.calendar.ums.boot.mapper.MemberMessageMapper;
 import cn.com.xuct.calendar.ums.boot.service.IMemberMessageService;

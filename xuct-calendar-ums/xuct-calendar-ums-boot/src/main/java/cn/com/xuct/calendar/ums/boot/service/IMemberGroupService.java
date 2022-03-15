@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.ums.boot.service;
 
-import cn.com.xuct.calendar.service.base.IBaseService;
+import cn.com.xuct.calendar.common.db.service.IBaseService;
 import cn.com.xuct.calendar.ums.api.dto.GroupMemberInfoDto;
 import cn.com.xuct.calendar.ums.api.entity.MemberGroup;
 import cn.com.xuct.calendar.ums.boot.mapper.MemberGroupMapper;

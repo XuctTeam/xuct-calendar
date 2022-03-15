@@ -10,9 +10,9 @@
  */
 package cn.com.xuct.calendar.ums.boot.service;
 
+import cn.com.xuct.calendar.common.db.service.IBaseService;
 import cn.com.xuct.calendar.ums.api.entity.User;
 import cn.com.xuct.calendar.ums.boot.mapper.UserMapper;
-import cn.com.xuct.calendar.service.base.IBaseService;
 
 /**
  * 〈一句话功能简述〉<br>

@@ -10,8 +10,6 @@
     <version>1.0</version>
     <modules>
         <module>xuct-calendar-common</module>
-        <module>xuct-calendar-dao</module>
-        <module>xuct-calendar-service</module>
         <module>xuct-calendar-gateway</module>
         <module>xuct-calendar-auth</module>
         <module>xuct-calendar-cms</module>

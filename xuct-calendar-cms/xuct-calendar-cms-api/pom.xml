@@ -26,8 +26,14 @@
             <artifactId>lombok</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-annotation</artifactId>
+            <version>${lib.mybaties.plus.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>cn.com.xuct</groupId>
-            <artifactId>xuct-calendar-dao</artifactId>
+            <artifactId>xuct-calendar-common-db</artifactId>
             <version>${calendar.project.version}</version>
             <scope>compile</scope>
         </dependency>

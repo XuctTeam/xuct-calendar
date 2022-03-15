@@ -89,13 +89,14 @@
         </dependency>
         <dependency>
             <groupId>cn.com.xuct</groupId>
-            <artifactId>xuct-calendar-common-swagger</artifactId>
+            <artifactId>xuct-calendar-common-db</artifactId>
             <version>${calendar.project.version}</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>cn.com.xuct</groupId>
-            <artifactId>xuct-calendar-service</artifactId>
+            <artifactId>xuct-calendar-common-swagger</artifactId>
             <version>${calendar.project.version}</version>
             <scope>compile</scope>
         </dependency>

@@ -14,7 +14,7 @@ import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAttend;
 import cn.com.xuct.calendar.cms.api.vo.CalendarComponentVo;
 import cn.com.xuct.calendar.cms.boot.mapper.ComponentAttendMapper;
-import cn.com.xuct.calendar.service.base.IBaseService;
+import cn.com.xuct.calendar.common.db.service.IBaseService;
 
 import java.util.List;
 

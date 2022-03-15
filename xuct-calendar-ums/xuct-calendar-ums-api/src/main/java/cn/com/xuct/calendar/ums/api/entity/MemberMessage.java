@@ -11,13 +11,12 @@
 package cn.com.xuct.calendar.ums.api.entity;
 
 import cn.com.xuct.calendar.common.module.enums.MemberMessageTypeEnum;
-import cn.com.xuct.calendar.dao.base.SuperEntity;
+import cn.com.xuct.calendar.common.db.dao.base.SuperEntity;
 import cn.com.xuct.calendar.ums.api.handler.JsonObjectStdSerializer;
 import cn.com.xuct.calendar.ums.api.handler.JsonObjectTypeHandler;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.json.JSONObject;

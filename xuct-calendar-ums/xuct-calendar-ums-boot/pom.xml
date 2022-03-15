@@ -104,6 +104,12 @@
 
         <dependency>
             <groupId>cn.com.xuct</groupId>
+            <artifactId>xuct-calendar-common-db</artifactId>
+            <version>${calendar.project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-common-redis</artifactId>
             <version>${calendar.project.version}</version>
             <scope>compile</scope>
@@ -117,12 +123,6 @@
         <dependency>
             <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-ums-api</artifactId>
-            <version>${calendar.project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>cn.com.xuct</groupId>
-            <artifactId>xuct-calendar-service</artifactId>
             <version>${calendar.project.version}</version>
             <scope>compile</scope>
         </dependency>

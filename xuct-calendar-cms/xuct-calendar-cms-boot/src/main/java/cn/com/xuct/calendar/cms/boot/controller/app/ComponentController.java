@@ -17,6 +17,7 @@ import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
 import cn.com.xuct.calendar.cms.api.vo.CalendarComponentVo;
 import cn.com.xuct.calendar.cms.api.vo.ComponentListVo;
 import cn.com.xuct.calendar.cms.api.vo.ComponentSearchVo;
+import cn.com.xuct.calendar.cms.queue.event.ComponentDelEvent;
 import cn.com.xuct.calendar.cms.boot.handler.RabbitmqOutChannel;
 import cn.com.xuct.calendar.cms.boot.service.IComponentAttendService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentService;
@@ -34,6 +35,7 @@ import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
 import cn.com.xuct.calendar.common.module.enums.ComponentRepeatTypeEnum;
 import cn.com.xuct.calendar.common.module.params.ComponentAddParam;
 import cn.com.xuct.calendar.common.web.utils.JwtUtils;
+import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.map.MapUtil;
@@ -46,6 +48,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
@@ -140,18 +143,17 @@ public class ComponentController {
     @GetMapping("/{id}")
     public R<CalendarComponentVo> getComponentById(@PathVariable("id") String id) {
         Component component = componentService.getById(id);
-        if (component == null) throw new SvrException(SvrResCode.CMS_COMPONENT_NOT_FOUND);
+        Assert.notNull(component, "事件不存在");
         CalendarComponentVo calendarComponentVo = new CalendarComponentVo();
         BeanUtils.copyProperties(component, calendarComponentVo);
         Long calendarId = component.getCalendarId();
         if (!String.valueOf(component.getCreatorMemberId()).equals(String.valueOf(JwtUtils.getUserId()))) {
             ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", id), Column.of("member_id", JwtUtils.getUserId())));
-            if (attend == null) throw new SvrException(SvrResCode.CMS_COMPONENT_NOT_FOUND);
+            Assert.notNull(attend, "邀请数据错误");
             calendarId = attend.getAttendCalendarId();
-
         }
         MemberCalendar memberCalendar = memberCalendarService.get(Lists.newArrayList(Column.of("calendar_id", calendarId), Column.of("member_id", JwtUtils.getUserId())));
-        if (memberCalendar == null) throw new SvrException(SvrResCode.CMS_CALENDAR_NOT_FOUND);
+        Assert.notNull(memberCalendar, "日历不存在");
         calendarComponentVo.setColor(memberCalendar.getColor());
         calendarComponentVo.setCalendarName(memberCalendar.getName());
         return R.data(calendarComponentVo);
@@ -186,18 +188,33 @@ public class ComponentController {
 
     @ApiOperation(value = "删除日程")
     @ApiImplicitParam(name = "id", value = "日程ID")
-    @DeleteMapping("/{id}")
-    public R<String> delete(@PathVariable("id") String id) {
-        componentService.delete(Long.valueOf(id));
+    @DeleteMapping
+    public R<String> delete(@RequestParam("id") Long id) {
+        Component component = componentService.getById(id);
+        Assert.notNull(component, "事件不存在");
+        List<Long> memberIds = componentService.deleteByComponentId(JwtUtils.getUserId(), id);
+        if (!CollectionUtils.isEmpty(memberIds)) {
+            SpringContextHolder.publishEvent(new ComponentDelEvent(this, component.getId(), component.getSummary(), memberIds));
+        }
         return R.status(true);
     }
 
-    @ApiOperation(value = "通过事件查询邀请人")
-    @GetMapping("/query/member/ids")
+    @ApiOperation(value = "查询所有邀请人")
+    @GetMapping("/attend/member/ids")
     public R<List<String>> queryComponentMemberIds(@RequestParam("componentId") Long componentId) {
         List<Long> ids = componentAttendService.listByComponentId(JwtUtils.getUserId(), componentId);
         if (CollectionUtils.isEmpty(ids)) return R.data(Lists.newArrayList());
         return R.data(ids.stream().map(x -> String.valueOf(x)).collect(Collectors.toList()));
+    }
+
+    @ApiOperation(value = "获取邀请状态")
+    @GetMapping("/attend/status")
+    public R<Integer> getComponentAttendStatus(@RequestParam("componentId") Long componentId) {
+        Component component = componentService.getById(componentId);
+        Assert.notNull(component, "事件不存在");
+        ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", componentId), Column.of("member_id", JwtUtils.getUserId())));
+        Assert.notNull(attend, "邀请数据错误");
+        return R.data(attend.getStatus());
     }
 
     /**

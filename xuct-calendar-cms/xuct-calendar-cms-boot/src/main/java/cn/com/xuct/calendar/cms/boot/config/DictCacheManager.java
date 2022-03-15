@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.cms.boot.config;
 
-import cn.com.xuct.calendar.dao.entity.Dict;
+import cn.com.xuct.calendar.cms.api.entity.Dict;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;

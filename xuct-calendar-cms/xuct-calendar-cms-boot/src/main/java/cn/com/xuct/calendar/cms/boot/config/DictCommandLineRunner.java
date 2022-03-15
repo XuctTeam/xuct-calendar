@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.cms.boot.config;
 
-import cn.com.xuct.calendar.service.IDictService;
+import cn.com.xuct.calendar.cms.boot.service.IDictService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;

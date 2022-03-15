@@ -12,9 +12,8 @@ package cn.com.xuct.calendar.cms.boot.service;
 
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAlarm;
-import cn.com.xuct.calendar.cms.api.vo.CalendarComponentVo;
 import cn.com.xuct.calendar.cms.boot.mapper.ComponentMapper;
-import cn.com.xuct.calendar.service.base.IBaseService;
+import cn.com.xuct.calendar.common.db.service.IBaseService;
 
 import java.util.List;
 
@@ -57,7 +56,8 @@ public interface IComponentService extends IBaseService<ComponentMapper, Compone
     /**
      * 删除日程
      *
+     * @param memberId
      * @param componentId
      */
-    void delete(final Long componentId);
+    List<Long> deleteByComponentId(final Long memberId, final Long componentId);
 }

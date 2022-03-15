@@ -22,6 +22,21 @@
             <artifactId>spring-cloud-openfeign-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.com.xuct</groupId>
+            <artifactId>xuct-calendar-common-db</artifactId>
+            <version>${calendar.project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-common-core</artifactId>
             <version>${calendar.project.version}</version>
@@ -39,20 +54,7 @@
             <version>${calendar.project.version}</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>cn.com.xuct</groupId>
-            <artifactId>xuct-calendar-dao</artifactId>
-            <version>${calendar.project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-        </dependency>
+
     </dependencies>
 
 </project>

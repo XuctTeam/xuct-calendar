@@ -13,8 +13,8 @@ package cn.com.xuct.calendar.cms.boot.service;
 import cn.com.xuct.calendar.cms.api.dodo.MemberMarjoCalendarDo;
 import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
 import cn.com.xuct.calendar.cms.boot.mapper.MemberCalendarMapper;
+import cn.com.xuct.calendar.common.db.service.IBaseService;
 import cn.com.xuct.calendar.common.module.req.MemberCalendarUpdateReq;
-import cn.com.xuct.calendar.service.base.IBaseService;
 
 import java.util.List;
 
