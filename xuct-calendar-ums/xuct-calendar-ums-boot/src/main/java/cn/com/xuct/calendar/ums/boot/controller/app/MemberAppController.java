@@ -33,6 +33,7 @@ import cn.com.xuct.calendar.ums.api.feign.CalendarFeignClient;
 import cn.com.xuct.calendar.ums.boot.config.DictCacheManager;
 import cn.com.xuct.calendar.ums.boot.config.WxMaConfiguration;
 import cn.com.xuct.calendar.ums.boot.event.MemberModifyNameEvent;
+import cn.com.xuct.calendar.ums.boot.event.MemberRegisterEvent;
 import cn.com.xuct.calendar.ums.boot.service.IMemberAuthService;
 import cn.com.xuct.calendar.ums.boot.service.IMemberMessageService;
 import cn.com.xuct.calendar.ums.boot.service.IMemberService;
@@ -71,8 +72,6 @@ public class MemberAppController {
     private final IMemberService memberService;
 
     private final IMemberAuthService memberAuthService;
-
-    private final IMemberMessageService memberMessageService;
 
     private final StringRedisTemplate stringRedisTemplate;
 
@@ -259,15 +258,7 @@ public class MemberAppController {
         calendarInitDto.setMemberNickName(member.getName());
         calendarFeignClient.addCalendar(calendarInitDto);
         /* 添加注册消息到用户 */
-        MemberMessage memberMessage = new MemberMessage();
-        memberMessage.setMemberId(member.getId());
-        memberMessage.setStatus(0);
-        memberMessage.setOperation(0);
-        memberMessage.setType(MemberMessageTypeEnum.SYSTEM);
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.append("user_name", member.getName());
-        memberMessage.setContent(jsonObject);
-        memberMessageService.save(memberMessage);
+        SpringContextHolder.publishEvent(new MemberRegisterEvent(this, member.getName(), JwtUtils.getUserId()));
         return R.status(true);
     }
 
