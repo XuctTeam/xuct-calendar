@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
- * 〈一句话功能简述〉<br> 
+ * 〈一句话功能简述〉<br>
  * 〈〉
  *
  * @author Derek Xu
@@ -31,5 +31,5 @@ public class MemberPhoneParam implements Serializable {
 
     private String code;
 
-    private Boolean edit;
+    private Integer type;
 }

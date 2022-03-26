@@ -79,8 +79,6 @@ public class MemberAppController {
 
     private final PasswordEncoder passwordEncoder;
 
-    private final CalendarFeignClient calendarFeignClient;
-
 
     @ApiOperation(value = "获取用户基础信息及所有认证")
     @GetMapping("/info/all")
@@ -231,37 +229,6 @@ public class MemberAppController {
         memberAuthService.save(memberAuth);
         return R.status(true);
     }
-
-    /**
-     * 功能描述: <br>
-     * 〈会员注册，该方法不需要认证，在gateway中进行排除〉
-     *
-     * @param param
-     * @return:cn.com.xuct.calendar.common.core.res.R<java.lang.String>
-     * @since: 1.0.0
-     * @Author:
-     * @Date: 2022/2/19 20:15
-     */
-    @ApiOperation(value = "会员注册")
-    @PostMapping("/register")
-    public R<String> register(@Validated @RequestBody MemberRegisterParam param) {
-        MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", param.getUsername()), Column.of("identity_type", IdentityTypeEnum.user_name)));
-        if (memberAuth != null) return R.fail("账号已存在");
-        String verCode = stringRedisTemplate.opsForValue().get(RedisConstants.MEMBER_PHONE_REGISTER_CODE_KEY.concat(param.getKey()));
-        if (!StringUtils.hasLength(verCode) || !verCode.toLowerCase().equals(param.getCaptcha().toLowerCase()))
-            return R.fail("验证码错误");
-        String password = this.delegatingPassword(param.getPassword()).replace("{bcrypt}", "");
-        Member member = memberService.saveMemberByUserName(param.getUsername(), password, DictCacheManager.getDictByCode(DictConstants.TIME_ZONE_TYPE, DictConstants.EAST_8_CODE).getValue());
-        /* 添加日历 */
-        CalendarInitDto calendarInitDto = new CalendarInitDto();
-        calendarInitDto.setMemberId(member.getId());
-        calendarInitDto.setMemberNickName(member.getName());
-        calendarFeignClient.addCalendar(calendarInitDto);
-        /* 添加注册消息到用户 */
-        SpringContextHolder.publishEvent(new MemberRegisterEvent(this, member.getName(), JwtUtils.getUserId()));
-        return R.status(true);
-    }
-
 
     private String delegatingPassword(String password) {
         return passwordEncoder.encode(password).replace(PasswordEncoderTypeEnum.BCRYPT.getPrefix(), "");

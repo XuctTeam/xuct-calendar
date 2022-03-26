@@ -47,27 +47,47 @@ import java.util.concurrent.TimeUnit;
 @Controller
 public class SmsCodeEndpoint {
 
-
     private final TencentSmsClient tencentSmsClient;
 
     private final TencentProperties tencentProperties;
 
     private final StringRedisTemplate stringRedisTemplate;
 
-    @ApiOperation(value = "登录验证码")
+    @ApiOperation(value = "短信验证码服务")
     @ApiImplicitParam(name = "phoneNumber", example = "17621590365", value = "手机号", required = true)
     @PostMapping
     public R<String> sendSmsCode(@Validated @RequestBody MemberPhoneParam param) {
+        switch (param.getType()) {
+            case 0:
+                return this.sendLoginCode(param.getPhone());
+            case 1:
+            case 2:
+                return this.sendBindCode(param.getPhone(), param.getType());
+            default:
+                return R.status(false);
+        }
+    }
+
+
+    private R<String> sendLoginCode(String phone) {
         String code = RandomUtil.randomNumbers(4);
-        String redisKey = RedisConstants.MEMBER_PHONE_LOGIN_CODE_KEY.concat(param.getPhone());
+        String redisKey = RedisConstants.MEMBER_PHONE_LOGIN_CODE_KEY.concat(phone);
         stringRedisTemplate.opsForValue().set(redisKey, code, 60 * 2, TimeUnit.SECONDS);
-//        try {
+        //        try {
 //            tencentSmsClient.sendSmsCode(tencentProperties.getSms().getTemplateId().get("login"), new String[]{"+86".concat(smsCodeRep.getPhoneNumber())}, code);
 //        } catch (TencentCloudSDKException e) {
 //            e.printStackTrace();
 //            stringRedisTemplate.delete(redisKey);
 //            return R.fail(ResultCode.SMS_SEND_ERROR, e.getMessage());
 //        }
+        return R.success("发送成功");
+    }
+
+
+    private R<String> sendBindCode(String phone, Integer type) {
+        String key = type == 1 ? RedisConstants.MEMBER_UNBIND_PHONE_CODE_KEY : RedisConstants.MEMBER_BIND_PHONE_CODE_KEY;
+        String code = RandomUtil.randomNumbers(6);
+        stringRedisTemplate.opsForValue().set(key.concat(phone), code, 60 * 2, TimeUnit.SECONDS);
         return R.success("发送成功");
     }
 }

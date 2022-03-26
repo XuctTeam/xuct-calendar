@@ -13,6 +13,7 @@ package cn.com.xuct.calendar.auth.boot.endpoint;
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.res.R;
 import com.wf.captcha.SpecCaptcha;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -22,8 +23,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -39,6 +38,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @RestController
+@Api(tags = "【通用】图形码服务")
 @RequestMapping("/captcha")
 @RequiredArgsConstructor
 public class CaptchaEndpoint {
@@ -54,9 +54,10 @@ public class CaptchaEndpoint {
         String key = UUID.randomUUID().toString();
         String redisKey = RedisConstants.MEMBER_PHONE_REGISTER_CODE_KEY.concat(key);
         stringRedisTemplate.opsForValue().set(redisKey, verCode, 60 * 2, TimeUnit.SECONDS);
+
         return R.data(new HashMap<String, String>() {{
             put("key", key);
-            put("image", specCaptcha.toBase64());
+            put("image", specCaptcha.toBase64(""));
         }});
     }
 

@@ -10,9 +10,10 @@
  */
 package cn.com.xuct.calendar.auth.api.client;
 
-import cn.com.xuct.calendar.common.module.dto.MemberInfoDto;
-import cn.com.xuct.calendar.common.module.dto.WechatCodeDto;
 import cn.com.xuct.calendar.common.core.res.R;
+import cn.com.xuct.calendar.common.module.dto.MemberInfoDto;
+import cn.com.xuct.calendar.common.module.dto.MemberRegisterDto;
+import cn.com.xuct.calendar.common.module.dto.WechatCodeDto;
 import cn.com.xuct.calendar.common.web.web.FeignConfiguration;
 import feign.Headers;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -32,7 +33,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "dav-ums", contextId = "members", configuration = FeignConfiguration.class)
 public interface MemberFeignClient {
 
-
     @GetMapping("/api/feign/v1/member/get/phone")
     R<MemberInfoDto> loadMemberByMobile(@RequestParam("phone") String phone);
 
@@ -45,5 +45,9 @@ public interface MemberFeignClient {
 
     @GetMapping("/api/feign/v1/member/get/username")
     R<MemberInfoDto> loadMemberByUserName(@RequestParam("username") String username);
+
+    @PostMapping("/api/feign/v1/member/register")
+    @Headers("Content-Type: application/json")
+    R<String> registerMember(MemberRegisterDto registerDto);
 
 }

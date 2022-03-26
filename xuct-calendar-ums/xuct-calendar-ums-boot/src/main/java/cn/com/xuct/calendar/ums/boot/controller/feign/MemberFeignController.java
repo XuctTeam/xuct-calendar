@@ -14,18 +14,25 @@ import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
 import cn.com.xuct.calendar.common.core.constant.DictConstants;
+import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.enums.ColumnEnum;
+import cn.com.xuct.calendar.common.core.enums.PasswordEncoderTypeEnum;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.dto.CalendarInitDto;
 import cn.com.xuct.calendar.common.module.dto.MemberInfoDto;
+import cn.com.xuct.calendar.common.module.dto.MemberRegisterDto;
 import cn.com.xuct.calendar.common.module.dto.WechatCodeDto;
 import cn.com.xuct.calendar.common.module.enums.IdentityTypeEnum;
+import cn.com.xuct.calendar.common.module.params.MemberRegisterParam;
+import cn.com.xuct.calendar.common.web.utils.JwtUtils;
+import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
 import cn.com.xuct.calendar.ums.api.entity.Member;
 import cn.com.xuct.calendar.ums.api.entity.MemberAuth;
 import cn.com.xuct.calendar.ums.api.feign.CalendarFeignClient;
 import cn.com.xuct.calendar.ums.boot.config.DictCacheManager;
 import cn.com.xuct.calendar.ums.boot.config.WxMaConfiguration;
+import cn.com.xuct.calendar.ums.boot.event.MemberRegisterEvent;
 import cn.com.xuct.calendar.ums.boot.service.IMemberAuthService;
 import cn.com.xuct.calendar.ums.boot.service.IMemberService;
 import cn.hutool.core.util.StrUtil;
@@ -35,7 +42,10 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -62,6 +72,8 @@ public class MemberFeignController {
     private final IMemberAuthService memberAuthService;
 
     private final CalendarFeignClient calendarFeignClient;
+
+    private final PasswordEncoder passwordEncoder;
 
 
     @ApiOperation(value = "通过手机号查询会员")
@@ -138,5 +150,26 @@ public class MemberFeignController {
             memberInfoDto.setAvatar(member.getAvatar());
             return memberInfoDto;
         }).collect(Collectors.toList()));
+    }
+
+    @ApiOperation(value = "会员注册")
+    @PostMapping("/register")
+    public R<String> register(MemberRegisterDto registerDto) {
+        MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", registerDto.getUsername()), Column.of("identity_type", IdentityTypeEnum.user_name)));
+        if (memberAuth != null) return R.fail("账号已存在");
+        String password = this.delegatingPassword(registerDto.getPassword()).replace("{bcrypt}", "");
+        Member member = memberService.saveMemberByUserName(registerDto.getUsername(), password, DictCacheManager.getDictByCode(DictConstants.TIME_ZONE_TYPE, DictConstants.EAST_8_CODE).getValue());
+        /* 添加日历 */
+        CalendarInitDto calendarInitDto = new CalendarInitDto();
+        calendarInitDto.setMemberId(member.getId());
+        calendarInitDto.setMemberNickName(member.getName());
+        calendarFeignClient.addCalendar(calendarInitDto);
+        /* 添加注册消息到用户 */
+        SpringContextHolder.publishEvent(new MemberRegisterEvent(this, member.getName(), JwtUtils.getUserId()));
+        return R.status(true);
+    }
+
+    private String delegatingPassword(String password) {
+        return passwordEncoder.encode(password).replace(PasswordEncoderTypeEnum.BCRYPT.getPrefix(), "");
     }
 }
