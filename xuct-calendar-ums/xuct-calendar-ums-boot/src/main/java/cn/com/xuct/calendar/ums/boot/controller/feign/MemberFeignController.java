@@ -19,10 +19,7 @@ import cn.com.xuct.calendar.common.core.enums.ColumnEnum;
 import cn.com.xuct.calendar.common.core.enums.PasswordEncoderTypeEnum;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.vo.Column;
-import cn.com.xuct.calendar.common.module.dto.CalendarInitDto;
-import cn.com.xuct.calendar.common.module.dto.MemberInfoDto;
-import cn.com.xuct.calendar.common.module.dto.MemberRegisterDto;
-import cn.com.xuct.calendar.common.module.dto.WechatCodeDto;
+import cn.com.xuct.calendar.common.module.dto.*;
 import cn.com.xuct.calendar.common.module.enums.IdentityTypeEnum;
 import cn.com.xuct.calendar.common.module.params.MemberRegisterParam;
 import cn.com.xuct.calendar.common.web.utils.JwtUtils;
@@ -131,6 +128,15 @@ public class MemberFeignController {
         return R.data(MemberInfoDto.builder().userId(member.getId()).username(memberAuth.getUsername()).password(memberAuth.getPassword()).timeZone(member.getTimeZone()).status(member.getStatus()).build());
     }
 
+    @ApiOperation(value = "通过邮箱查询会员")
+    @GetMapping("/get/email")
+    public R<MemberInfoDto> getUserByEmail(@RequestParam("email") String email) {
+        MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", email), Column.of("identity_type", IdentityTypeEnum.email)));
+        if (memberAuth == null) return R.fail("用户不存在");
+        Member member = memberService.getById(memberAuth.getMemberId());
+        return R.data(MemberInfoDto.builder().userId(member.getId()).username(memberAuth.getUsername()).password(memberAuth.getPassword()).status(member.getStatus()).timeZone(member.getTimeZone()).build());
+    }
+
     @ApiOperation(value = "通过ID查询会员")
     @GetMapping("/get/id")
     public R<MemberInfoDto> getUserById(@RequestParam("id") Long id) {
@@ -154,7 +160,7 @@ public class MemberFeignController {
 
     @ApiOperation(value = "会员注册")
     @PostMapping("/register")
-    public R<String> register(MemberRegisterDto registerDto) {
+    public R<String> register(@RequestBody MemberRegisterDto registerDto) {
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", registerDto.getUsername()), Column.of("identity_type", IdentityTypeEnum.user_name)));
         if (memberAuth != null) return R.fail("账号已存在");
         String password = this.delegatingPassword(registerDto.getPassword()).replace("{bcrypt}", "");
@@ -166,6 +172,18 @@ public class MemberFeignController {
         calendarFeignClient.addCalendar(calendarInitDto);
         /* 添加注册消息到用户 */
         SpringContextHolder.publishEvent(new MemberRegisterEvent(this, member.getName(), JwtUtils.getUserId()));
+        return R.status(true);
+    }
+
+    @ApiOperation(value = "修改密码")
+    @PostMapping("/modify/password")
+    public R<String> modifyPassword(@RequestBody MemberModifyPasswordDto memberModifyPasswordDto) {
+        Member member = memberService.getById(memberModifyPasswordDto.getMemberId());
+        if (member == null) return R.fail("用户不存在");
+        final String password = this.delegatingPassword(memberModifyPasswordDto.getPassword());
+        List<MemberAuth> memberAuths = memberAuthService.find(Column.of("member_id", member.getId()));
+        memberAuths.stream().forEach(item -> item.setPassword(password));
+        memberAuthService.updateBatchById(memberAuths, memberAuths.size());
         return R.status(true);
     }
 

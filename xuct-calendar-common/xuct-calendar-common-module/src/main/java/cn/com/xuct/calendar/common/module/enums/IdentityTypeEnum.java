@@ -26,6 +26,6 @@ public enum IdentityTypeEnum {
 
     open_id,
 
-    mail
+    email
 
 }

@@ -47,4 +47,10 @@ public interface RedisConstants {
     /* 手机号解绑 */
     public static final String MEMBER_UNBIND_PHONE_CODE_KEY = "member::unbind::phone::sms:code:";
 
+    /* 手机号忘记密码 */
+    public static final String MEMBER_FORGET_PASSWORD_PHONE_CODE_KEY = "member::forget::password::phone::code:";
+
+    /* 邮箱忘记密码 */
+    public static final String MEMBER_FORGET_PASSWORD_EMAIL_CODE_KEY = "member::forget::password::email::code:";
+
 }
