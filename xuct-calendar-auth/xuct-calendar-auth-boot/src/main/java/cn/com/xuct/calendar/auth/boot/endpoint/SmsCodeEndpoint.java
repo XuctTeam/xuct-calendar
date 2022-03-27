@@ -68,7 +68,6 @@ public class SmsCodeEndpoint {
         }
     }
 
-
     private R<String> sendLoginCode(String phone) {
         String code = RandomUtil.randomNumbers(4);
         String redisKey = RedisConstants.MEMBER_PHONE_LOGIN_CODE_KEY.concat(phone);
@@ -82,7 +81,6 @@ public class SmsCodeEndpoint {
 //        }
         return R.success("发送成功");
     }
-
 
     private R<String> sendBindCode(String phone, Integer type) {
         String key = type == 1 ? RedisConstants.MEMBER_UNBIND_PHONE_CODE_KEY : RedisConstants.MEMBER_BIND_PHONE_CODE_KEY;

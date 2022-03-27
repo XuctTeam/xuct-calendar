@@ -102,34 +102,29 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         http.csrf()
                 .disable()
-                .formLogin().loginPage("/authentication/login")
-                .loginProcessingUrl("/authentication/form").failureHandler(authenticationFailureHandler())
-                .passwordParameter(SecurityConstants.USER_PASSWORD_KEY)
-                .usernameParameter(SecurityConstants.USER_NAME_KEY)
-                .and()
                 //开启授权认证
                 .authorizeRequests()
-                .antMatchers("/oauth/**", "/sms/**", "/captcha/**", "/register/**", "/forget/**", AuthConstants.LOGIN_PAGE, AuthConstants.REDIRECT_URL).permitAll()
+                .antMatchers("/oauth/**", "/sms/**", "/captcha/**", "/register/**", "/forget/**").permitAll()
                 .antMatchers(ignoreUrls).permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
                 //登陆配置
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
-//
-//                .httpBasic()
-//                //密码错误返回在这里配置，用户名在自定义userDetail里配置
-//                .authenticationEntryPoint((request, response, authException) -> {
-//                    this.sendResponse(response, authException);
-//                })
-//                .and()
-//                .exceptionHandling()
-//                .authenticationEntryPoint((request, response, authException) -> {
-//                    this.sendResponse(response, authException);
-//                })
-//                .accessDeniedHandler((request, response, accessDeniedException) -> {
-//                    this.sendResponse(response, accessDeniedException);
-//                })
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                .and()
+                .httpBasic()
+                //密码错误返回在这里配置，用户名在自定义userDetail里配置
+                .authenticationEntryPoint((request, response, authException) -> {
+                    this.sendResponse(response, authException);
+                })
+                .and()
+                .exceptionHandling()
+                .authenticationEntryPoint((request, response, authException) -> {
+                    this.sendResponse(response, authException);
+                })
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                    this.sendResponse(response, accessDeniedException);
+                });
     }
 
     @Bean // 密码模式需要此bean

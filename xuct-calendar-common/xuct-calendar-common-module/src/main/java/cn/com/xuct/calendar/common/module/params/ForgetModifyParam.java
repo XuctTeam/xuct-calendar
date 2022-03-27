@@ -33,7 +33,4 @@ public class ForgetModifyParam {
 
     @NotNull
     private String code;
-
-    @NotNull
-    private Integer type;
 }
