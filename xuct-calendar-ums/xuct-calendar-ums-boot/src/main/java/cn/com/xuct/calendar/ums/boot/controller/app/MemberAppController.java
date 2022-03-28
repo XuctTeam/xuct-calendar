@@ -38,6 +38,7 @@ import cn.com.xuct.calendar.ums.boot.service.IMemberAuthService;
 import cn.com.xuct.calendar.ums.boot.service.IMemberMessageService;
 import cn.com.xuct.calendar.ums.boot.service.IMemberService;
 import cn.com.xuct.calendar.ums.api.vo.MemberInfoVo;
+import cn.com.xuct.calendar.ums.boot.support.SmsCodeValidateSupport;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -47,6 +48,7 @@ import org.checkerframework.checker.units.qual.C;
 import org.json.JSONObject;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -73,9 +75,9 @@ public class MemberAppController {
 
     private final IMemberAuthService memberAuthService;
 
-    private final StringRedisTemplate stringRedisTemplate;
-
     private final WxMaConfiguration wxMaConfiguration;
+
+    private final SmsCodeValidateSupport smsCodeValidateSupport;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -168,12 +170,12 @@ public class MemberAppController {
     @PostMapping("/phone/bind")
     public R<MemberPhoneAuthVo> bindPhone(@Validated @RequestBody MemberPhoneParam param) {
         Long userId = JwtUtils.getUserId();
+        /* 1.验证验证码 */
+        smsCodeValidateSupport.validateCode(1, String.valueOf(param.getPhone()), param.getCode());
+        /* 2.查询绑定*/
         MemberPhoneAuthVo memberPhoneAuthVo = new MemberPhoneAuthVo();
-        String redisCodeKey = RedisConstants.MEMBER_BIND_PHONE_CODE_KEY.concat(userId.toString()).concat(":").concat(param.getPhone());
-        String cacheCode = stringRedisTemplate.opsForValue().get(redisCodeKey);
-        if (!StringUtils.hasLength(param.getCode()) || !StringUtils.hasLength(cacheCode) || !param.getCode().equals(cacheCode))
-            throw new SvrException(SvrResCode.UMS_BING_PHONE_ERROR);
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", param.getPhone()), Column.of("identity_type", IdentityTypeEnum.phone)));
+        /* 3. 不存在直接绑定 */
         if (memberAuth == null) {
             memberPhoneAuthVo.setExist(false);
             memberAuth = new MemberAuth();
@@ -181,36 +183,33 @@ public class MemberAppController {
             memberAuth.setUsername(param.getPhone());
             memberAuth.setIdentityType(IdentityTypeEnum.phone);
             memberAuthService.save(memberAuth);
-            stringRedisTemplate.delete(redisCodeKey);
             return R.data(memberPhoneAuthVo);
         }
-        /*1. 如果有则判断是否是唯一登录方式 */
+        /*4. 判断电话下是否为唯一认证方式 */
         memberPhoneAuthVo.setExist(true);
         List<MemberAuth> memberAuths = memberAuthService.find(Column.of("member_id", memberAuth.getMemberId()));
         if (memberAuths.size() == 1) {
-            stringRedisTemplate.delete(redisCodeKey);
             memberPhoneAuthVo.setMerge(true);
             return R.data(memberPhoneAuthVo);
         }
-        /*2.如果不唯一，则更新到新的用户下*/
+        /*5.如果不唯一，则更新到新的用户下*/
         memberAuth.setMemberId(userId);
         memberAuthService.updateById(memberAuth);
         memberPhoneAuthVo.setMerge(false);
-        stringRedisTemplate.delete(redisCodeKey);
         return R.data(memberPhoneAuthVo);
     }
 
     @ApiOperation(value = "手机号解绑")
     @PostMapping("/phone/unbind")
-    public R<String> unbindPhone(@Validated @RequestBody MemberPhoneUnbindParam param) {
+    public R<String> unbindPhone(@Validated @RequestBody MemberPhoneParam param) {
         Long userId = JwtUtils.getUserId();
+        /* 1.验证验证码 */
+        smsCodeValidateSupport.validateCode(1, String.valueOf(param.getPhone()), param.getCode());
+        /* 2.校验登陆方式 */
         List<MemberAuth> memberAuths = memberAuthService.find(Lists.newArrayList(Column.of("member_id", userId)));
+        if (CollectionUtils.isEmpty(memberAuths) || memberAuths.size() == 1) return R.fail("仅存在唯一登陆方式");
         Optional<MemberAuth> optPhoneAuth = memberAuths.stream().filter(x -> x.getIdentityType().equals(IdentityTypeEnum.phone)).findFirst();
-        if (!optPhoneAuth.isPresent()) return R.fail("不存在手机绑定");
-        if (memberAuths.size() == 1) return R.fail("账号只存在手机绑定登录");
-        String smsCode = stringRedisTemplate.opsForValue().get(RedisConstants.MEMBER_UNBIND_PHONE_CODE_KEY.concat(userId.toString()).concat(":").concat(optPhoneAuth.get().getUsername()));
-        if (!StringUtils.hasText(smsCode) || !param.getCode().equals(smsCode))
-            return R.fail("短信验证码错误");
+        if (!optPhoneAuth.isPresent()) return R.fail("未绑定手机");
         memberAuthService.removeById(optPhoneAuth.get().getId());
         return R.status(true);
     }
@@ -229,6 +228,37 @@ public class MemberAppController {
         memberAuthService.save(memberAuth);
         return R.status(true);
     }
+
+    @ApiOperation(value = "邮箱绑定")
+    @PostMapping("/email/bind")
+    public R<String> bindEmail(@Validated @RequestBody EmailCodeParam param) {
+        /* 1.验证验证码 */
+        smsCodeValidateSupport.validateCode(3, String.valueOf(param.getEmail()), param.getCode());
+        /* 2.读取记录 */
+        MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", param.getEmail()), Column.of("identity_type", IdentityTypeEnum.email)));
+        if (memberAuth != null) return R.fail("邮箱已存在");
+        memberAuth = new MemberAuth();
+        memberAuth.setMemberId(JwtUtils.getUserId());
+        memberAuth.setUsername(param.getEmail());
+        memberAuth.setIdentityType(IdentityTypeEnum.email);
+        memberAuthService.save(memberAuth);
+        return R.status(true);
+    }
+
+    @ApiOperation(value = "邮箱解绑")
+    @PostMapping("/email/unbind")
+    public R<String> unbindEmail(@Validated @RequestBody EmailCodeParam param) {
+        /* 1.验证验证码 */
+        smsCodeValidateSupport.validateCode(4, String.valueOf(param.getEmail()), param.getCode());
+        /* 2.校验登陆方式 */
+        List<MemberAuth> memberAuths = memberAuthService.find(Lists.newArrayList(Column.of("member_id", String.valueOf(JwtUtils.getUserId()))));
+        if (CollectionUtils.isEmpty(memberAuths) || memberAuths.size() == 1) return R.fail("仅存在唯一登陆方式");
+        Optional<MemberAuth> optPhoneAuth = memberAuths.stream().filter(x -> x.getIdentityType().equals(IdentityTypeEnum.email)).findFirst();
+        if (!optPhoneAuth.isPresent()) return R.fail("未绑定邮箱");
+        memberAuthService.removeById(optPhoneAuth.get().getId());
+        return R.status(true);
+    }
+
 
     private String delegatingPassword(String password) {
         return passwordEncoder.encode(password).replace(PasswordEncoderTypeEnum.BCRYPT.getPrefix(), "");

@@ -10,6 +10,7 @@
  */
 package cn.com.xuct.calendar.common.module.params;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -25,9 +26,12 @@ import javax.validation.constraints.NotNull;
 @Data
 public class EmailCodeParam {
 
-    @NotNull
     private String code;
 
     @NotNull
     private String email;
+
+    @ApiModelProperty(name = "类型", notes = "1.绑定邮箱 2.解绑邮箱")
+    private Integer type;
+
 }

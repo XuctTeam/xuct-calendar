@@ -53,11 +53,7 @@
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>cn.com.xuct</groupId>
-            <artifactId>xuct-calendar-common-nacos</artifactId>
-            <version>${calendar.project.version}</version>
-        </dependency>
+
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
@@ -77,6 +73,11 @@
                     <artifactId>nacos-client</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>cn.com.xuct</groupId>
+            <artifactId>xuct-calendar-common-nacos</artifactId>
+            <version>${calendar.project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba.nacos</groupId>

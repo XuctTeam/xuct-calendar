@@ -29,18 +29,15 @@ public enum SvrResCode implements IResultCode {
 
     UMS_MEMBER_YET_EXIST(5002, "ums:用户已经存在"),
 
-    UMS_REGISTER_SMS_CODE_ERROR(5003, "注册验证码无效"),
-
-    UMS_BING_PHONE_ERROR(5004, "绑定手机验证码无效"),
+    UMS_SMS_CODE_ERROR(5003, "验证码无效"),
 
     UMS_MEMBER_AUTH_TYPE_ERROR(5005, "获取认证方式无效"),
-
 
     CMS_SERVER_ERROR(6000, "日程中心异常"),
 
     CMS_CALENDAR_NOT_FOUND(6001, "日历不存在"),
 
-    CMS_COMPONENT_REPEAT_UNTIL_EMPTY(6101 , "循环截止日期为空"),
+    CMS_COMPONENT_REPEAT_UNTIL_EMPTY(6101, "循环截止日期为空"),
 
     CMS_COMPONENT_NOT_FOUND(6102, "日程不存在"),
 
