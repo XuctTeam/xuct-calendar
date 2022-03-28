@@ -8,7 +8,7 @@
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package cn.com.xuct.calendar.auth.boot.services;
+package cn.com.xuct.calendar.inner.services.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +21,7 @@ import org.thymeleaf.context.Context;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,13 +50,13 @@ public class MailService {
      * @param params   html格式的邮件内容
      * @param template
      */
-    public void sendTemplate(String from, String to, String subject, Map<String, String> params, String template) {
+    public void sendTemplate(String from, List<String> to, List<String> cc, String subject, Map<String, Object> params, String template) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
             helper.setSubject(subject);
             helper.setFrom(from);
-            helper.setTo(to);
+            helper.setTo(to.toArray(new String[to.size()]));
             helper.setSentDate(new Date());
             // 这里引入的是Template的Context
             Context context = new Context();

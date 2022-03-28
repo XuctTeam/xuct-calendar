@@ -33,15 +33,6 @@
             <artifactId>spring-boot-starter-undertow</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-mail</artifactId>
-        </dependency>
-
         <!--security、oauth2-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -146,12 +137,7 @@
             <version>${calendar.project.version}</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>cn.com.xuct</groupId>
-            <artifactId>xuct-calendar-common-tencent</artifactId>
-            <version>${calendar.project.version}</version>
-            <scope>compile</scope>
-        </dependency>
+
         <dependency>
             <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-auth-api</artifactId>

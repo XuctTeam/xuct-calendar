@@ -56,8 +56,6 @@ public class RegisterEndpoint {
         String verCode = stringRedisTemplate.opsForValue().get(RedisConstants.MEMBER_PHONE_REGISTER_CODE_KEY.concat(param.getKey()));
         if (!StringUtils.hasLength(verCode) || !verCode.toLowerCase().equals(param.getCaptcha().toLowerCase()))
             return R.fail("验证码错误");
-        R<String> result = memberFeignClient.registerMember(MemberRegisterDto.builder().username(param.getUsername()).password(param.getPassword()).build());
-        if (result == null || !result.isSuccess()) return R.fail(result.getMsg());
-        return R.status(true);
+        return memberFeignClient.registerMember(MemberRegisterDto.builder().username(param.getUsername()).password(param.getPassword()).build());
     }
 }

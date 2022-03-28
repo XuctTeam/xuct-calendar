@@ -10,6 +10,7 @@
  */
 package cn.com.xuct.calendar.common.module.params;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -31,5 +32,6 @@ public class MemberPhoneParam implements Serializable {
 
     private String code;
 
+    @ApiModelProperty(name = "类型", notes = "1.绑定手机 2.解绑手机")
     private Integer type;
 }

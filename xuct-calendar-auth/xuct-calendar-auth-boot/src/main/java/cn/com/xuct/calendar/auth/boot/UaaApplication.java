@@ -16,7 +16,6 @@ import cn.com.xuct.calendar.common.http.annotation.EnableAutoOkFeign;
 import cn.com.xuct.calendar.common.localstore.annotation.EnableAutoLocalStoreCache;
 import cn.com.xuct.calendar.common.redis.annotation.EnableAutoRedis;
 import cn.com.xuct.calendar.common.swagger.annotation.EnableAutoSwagger2;
-import cn.com.xuct.calendar.common.tencent.annotation.EnableAutoTencentSdk;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -34,7 +33,6 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableAutoSwagger2
 @EnableAutoOkFeign
 @EnableAutoLocalStoreCache
-@EnableAutoTencentSdk
 @SpringBootApplication(scanBasePackages = {"cn.com.xuct.calendar.auth.boot", "cn.com.xuct.calendar.common.web"})
 @EnableDiscoveryClient
 @EnableFeignClients(basePackageClasses = {MemberFeignClient.class, UserFeignClient.class})

@@ -1,8 +1,8 @@
 /**
- * Copyright (C), 2015-2021, XXX有限公司
- * FileName: MmemberPhoneUnbindParam
- * Author:   Administrator
- * Date:     2021/12/18 15:56
+ * Copyright (C), 2015-2022, XXX有限公司
+ * FileName: EmailCodeParam
+ * Author:   Derek Xu
+ * Date:     2022/3/28 10:10
  * Description:
  * History:
  * <author>          <time>          <version>          <desc>
@@ -15,17 +15,19 @@ import lombok.Data;
 import javax.validation.constraints.NotNull;
 
 /**
- * 〈一句话功能简述〉<br> 
+ * 〈一句话功能简述〉<br>
  * 〈〉
  *
  * @author Derek Xu
- * @create 2021/12/18
+ * @create 2022/3/28
  * @since 1.0.0
  */
 @Data
-public class MemberPhoneUnbindParam {
+public class EmailCodeParam {
 
     @NotNull
     private String code;
 
+    @NotNull
+    private String email;
 }

@@ -36,7 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @Api(tags = "【所有端】上传接口")
 @RestController
-@RequestMapping("/api/app/v1/common")
+@RequestMapping("/api/app/v1/common/file")
 @RequiredArgsConstructor
 public class UploadController {
 

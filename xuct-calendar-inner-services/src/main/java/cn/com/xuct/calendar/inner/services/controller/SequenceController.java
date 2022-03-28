@@ -8,7 +8,7 @@
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package cn.com.xuct.calendar.sequence.controller.feign;
+package cn.com.xuct.calendar.inner.services.controller;
 
 import cn.com.xuct.calendar.common.core.res.R;
 import com.sankuai.inf.leaf.common.Result;
@@ -33,10 +33,10 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Slf4j
 @RestController
-@Api(tags = "【远程调用】Sequence接口")
+@Api(tags = "【基础服务】Sequence接口")
 @RequiredArgsConstructor
-@RequestMapping("/api/feign/uuid")
-public class SequenceFeignController {
+@RequestMapping("/api/inner/uuid")
+public class SequenceController {
 
 
     private final SegmentService segmentService;

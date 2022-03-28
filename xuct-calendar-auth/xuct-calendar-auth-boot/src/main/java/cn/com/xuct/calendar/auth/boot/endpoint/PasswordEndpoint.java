@@ -10,24 +10,22 @@
  */
 package cn.com.xuct.calendar.auth.boot.endpoint;
 
+import cn.com.xuct.calendar.auth.api.client.InnerServicesFeignClient;
 import cn.com.xuct.calendar.auth.api.client.MemberFeignClient;
-import cn.com.xuct.calendar.auth.boot.services.MailService;
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.res.R;
+import cn.com.xuct.calendar.common.module.dto.EmailDto;
 import cn.com.xuct.calendar.common.module.dto.MemberInfoDto;
 import cn.com.xuct.calendar.common.module.dto.MemberModifyPasswordDto;
 import cn.com.xuct.calendar.common.module.params.ForgetModifyParam;
 import cn.com.xuct.calendar.common.module.params.ForgetPasswordParam;
 import cn.hutool.core.util.RandomUtil;
-import cn.hutool.extra.template.TemplateEngine;
+import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.mail.MailProperties;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -36,7 +34,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.thymeleaf.context.Context;
 
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
@@ -61,10 +58,7 @@ public class PasswordEndpoint {
 
     private final MemberFeignClient memberFeignClient;
 
-    private final MailService mailService;
-
-    private final MailProperties mailProperties;
-
+    private final InnerServicesFeignClient innerServicesFeignClient;
 
     @ApiOperation(value = "发送验证码")
     @PostMapping("/code")
@@ -122,9 +116,6 @@ public class PasswordEndpoint {
         String userId = String.valueOf(memberResult.getData().getUserId());
         String mail = memberResult.getData().getUsername();
         stringRedisTemplate.opsForValue().set(RedisConstants.MEMBER_FORGET_PASSWORD_PHONE_CODE_KEY.concat(phone), code, 120, TimeUnit.SECONDS);
-        mailService.sendTemplate(mailProperties.getUsername(), mail, "重置密码", new HashMap<>() {{
-            put("code", code);
-        }}, "emailTemplate");
         return userId;
     }
 
@@ -134,7 +125,10 @@ public class PasswordEndpoint {
         String code = RandomUtil.randomNumbers(4);
         String userId = String.valueOf(memberResult.getData().getUserId());
         stringRedisTemplate.opsForValue().set(RedisConstants.MEMBER_FORGET_PASSWORD_EMAIL_CODE_KEY.concat(email), code);
-        /* TODO 发送邮件 */
+        innerServicesFeignClient.emailCode(EmailDto.builder().template("emailTemplate").tos(Lists.newArrayList(email)).subject("重置密码").params(
+                new HashMap<>() {{
+                    put("code", code);
+                }}).build());
         return userId;
     }
 }

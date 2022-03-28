@@ -1,29 +1,26 @@
 /**
- * Copyright (C), 2015-2021, XXX有限公司
- * FileName: SmsCodeEndpoin
+ * Copyright (C), 2015-2022, XXX有限公司
+ * FileName: SmsCodeController
  * Author:   Derek Xu
- * Date:     2021/11/29 16:16
+ * Date:     2022/3/28 11:46
  * Description:
  * History:
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package cn.com.xuct.calendar.auth.boot.endpoint;
+package cn.com.xuct.calendar.ums.boot.controller.common;
 
-import cn.com.xuct.calendar.auth.api.client.InnerServicesFeignClient;
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.module.dto.SmsCodeDto;
 import cn.com.xuct.calendar.common.module.params.MemberPhoneParam;
+import cn.com.xuct.calendar.ums.api.feign.InnerServicesFeignClient;
 import cn.hutool.core.util.RandomUtil;
-import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,28 +34,34 @@ import java.util.concurrent.TimeUnit;
  * 〈〉
  *
  * @author Derek Xu
- * @create 2021/11/29
+ * @create 2022/3/28
  * @since 1.0.0
  */
 @Slf4j
-@Api(tags = "【通用】登陆短信")
+@Api(tags = "【所有端】短信接口")
 @RestController
-@RequestMapping("/sms")
+@RequestMapping("/api/app/v1/common/sms")
 @RequiredArgsConstructor
-@Controller
-public class SmsCodeEndpoint {
+public class SmsCodeController {
 
     private final StringRedisTemplate stringRedisTemplate;
 
     private final InnerServicesFeignClient innerServicesFeignClient;
 
-    @ApiOperation(value = "短信验证码")
-    @ApiImplicitParam(name = "phoneNumber", example = "17621590365", value = "手机号", required = true)
-    @PostMapping
+    @ApiOperation(value = "发送短信")
+    @PostMapping("")
     public R<String> sendSmsCode(@Validated @RequestBody MemberPhoneParam param) {
-        String code = RandomUtil.randomNumbers(4);
-        String redisKey = RedisConstants.MEMBER_PHONE_LOGIN_CODE_KEY.concat(param.getPhone());
-        stringRedisTemplate.opsForValue().set(redisKey, code, 60 * 2, TimeUnit.SECONDS);
-        return innerServicesFeignClient.smsCode(SmsCodeDto.builder().code(code).phones(Lists.newArrayList(param.getPhone())).template("login").build());
+        if (param.getType() == 1 || param.getType() == 2) {
+            String code = this.sendBindCode(param.getPhone(), param.getType());
+            return innerServicesFeignClient.smsCode(SmsCodeDto.builder().code(code).template("bind").build());
+        }
+        return R.fail("发送错误");
+    }
+
+    private String sendBindCode(String phone, Integer type) {
+        String key = type == 1 ? RedisConstants.MEMBER_UNBIND_PHONE_CODE_KEY : RedisConstants.MEMBER_BIND_PHONE_CODE_KEY;
+        String code = RandomUtil.randomNumbers(6);
+        stringRedisTemplate.opsForValue().set(key.concat(phone), code, 60 * 2, TimeUnit.SECONDS);
+        return code;
     }
 }

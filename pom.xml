@@ -14,7 +14,7 @@
         <module>xuct-calendar-auth</module>
         <module>xuct-calendar-cms</module>
         <module>xuct-calendar-ums</module>
-        <module>xuct-calendar-sequence</module>
+        <module>xuct-calendar-inner-services</module>
     </modules>
 
     <properties>

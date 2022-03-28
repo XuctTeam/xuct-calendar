@@ -1,18 +1,20 @@
 spring:
   application:
-    name: dav-sequence
+    name: dav-inner-services
   cloud:
     nacos:
+      config:
+        group: DEFAULT_GROUP
+        server-addr: ${nacos.server}
+        username: ${nacos.username}
+        password: ${nacos.password}
+        namespace: f46a2ffa-4a48-4986-93bc-c3503dd030c6
       discovery:
         server-addr: ${nacos.server}
         username: ${nacos.username}
         password: ${nacos.password}
         namespace: f46a2ffa-4a48-4986-93bc-c3503dd030c6
-      config:
-        server-addr: ${nacos.server}
-        username: ${nacos.username}
-        password: ${nacos.password}
-        namespace: f46a2ffa-4a48-4986-93bc-c3503dd030c6
-        file-extension: yaml
-        shared-configs:
-          - leaf.properties
+  config:
+    import:
+      - optional:nacos:dav-inner-services.yaml  # 监听 DEFAULT_GROUP:test.yml
+      - optional:nacos:leaf.properties
