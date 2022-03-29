@@ -12,6 +12,8 @@ package cn.com.xuct.calendar.cms.boot.service.impl;
 
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.boot.service.IAlarmNotifyService;
+import cn.com.xuct.calendar.cms.boot.service.IComponentAttendService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -24,8 +26,11 @@ import org.springframework.stereotype.Service;
  * @since 1.0.0
  */
 @Service
+@RequiredArgsConstructor
 public class AlarmNotifyServiceImpl implements IAlarmNotifyService {
 
+
+    private final IComponentAttendService componentAttendService;
 
     @Async("taskExecutor")
     @Override
