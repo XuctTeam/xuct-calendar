@@ -52,6 +52,6 @@ public class ComponentAlarm extends SuperEntity<ComponentAlarm> {
     /**
      * 延迟时间
      */
-    @TableField("delay_time")
+    @TableField(value = "delay_time", exist = false)
     private Long delayTime;
 }

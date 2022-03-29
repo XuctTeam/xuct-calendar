@@ -11,7 +11,7 @@
 package cn.com.xuct.calendar.ums.boot.service;
 
 import cn.com.xuct.calendar.common.db.service.IBaseService;
-import cn.com.xuct.calendar.common.module.dto.UserInfoDto;
+import cn.com.xuct.calendar.common.module.feign.UserInfoFeignInfo;
 import cn.com.xuct.calendar.ums.api.entity.UserRole;
 import cn.com.xuct.calendar.ums.boot.mapper.UserRoleMapper;
 import org.apache.ibatis.annotations.Param;
@@ -32,5 +32,5 @@ public interface IUserRoleService extends IBaseService<UserRoleMapper, UserRole>
      * @param userName
      * @return
      */
-    UserInfoDto selectUserByUserName(@Param("userName") String userName);
+    UserInfoFeignInfo selectUserByUserName(@Param("userName") String userName);
 }

@@ -12,11 +12,12 @@ package cn.com.xuct.calendar.ums.boot.controller.common;
 
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.res.R;
-import cn.com.xuct.calendar.common.module.dto.SmsCodeDto;
+import cn.com.xuct.calendar.common.module.feign.SmsCodeFeignInfo;
 import cn.com.xuct.calendar.common.module.params.MemberPhoneParam;
 import cn.com.xuct.calendar.common.web.utils.JwtUtils;
-import cn.com.xuct.calendar.ums.api.feign.InnerServicesFeignClient;
+import cn.com.xuct.calendar.ums.api.feign.BasicServicesFeignClient;
 import cn.hutool.core.util.RandomUtil;
+import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -47,14 +48,14 @@ public class SmsCodeController {
 
     private final StringRedisTemplate stringRedisTemplate;
 
-    private final InnerServicesFeignClient innerServicesFeignClient;
+    private final BasicServicesFeignClient basicServicesFeignClient;
 
     @ApiOperation(value = "发送短信")
     @PostMapping("")
     public R<String> sendSmsCode(@Validated @RequestBody MemberPhoneParam param) {
         if (param.getType() == 1 || param.getType() == 2) {
             String code = this.sendBindCode(param.getPhone(), param.getType());
-            return innerServicesFeignClient.smsCode(SmsCodeDto.builder().code(code).template("bind").build());
+            return basicServicesFeignClient.smsCode(SmsCodeFeignInfo.builder().phones(Lists.newArrayList(param.getPhone())).code(code).template("bind").build());
         }
         return R.fail("发送错误");
     }

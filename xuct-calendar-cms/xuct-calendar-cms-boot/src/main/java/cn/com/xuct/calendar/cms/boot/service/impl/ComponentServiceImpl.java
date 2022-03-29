@@ -194,8 +194,7 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
             this.addComponentAttends(memberId, calendarId, component, addReduce, true);
         }
         if (!CollectionUtils.isEmpty(deleteReduce)) {
-            componentAttendService.remove(componentAttendService.getQuery()
-                    .lambda().eq(ComponentAttend::getComponentId, component.getId()).in(ComponentAttend::getMemberId, deleteReduce));
+            componentAttendService.remove(componentAttendService.getQuery().lambda().eq(ComponentAttend::getComponentId, component.getId()).in(ComponentAttend::getMemberId, deleteReduce));
             /* TODO 增加删除消息 */
         }
 
@@ -236,10 +235,11 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
      * @param calendarId
      * @param component
      * @param memberIds
+     * @param up        是否是更新，更新则不更新自己的事件
      * @return:void
      * @since: 1.0.0
-     * @Author:
-     * @Date: 2022/3/13 18:27
+     * @Author:Derek Xu
+     * @Date: 2022/3/29 13:03
      */
     private void addComponentAttends(Long memberId, Long calendarId, Component component, List<String> memberIds, boolean up) {
         List<ComponentAttend> componentAttends = Lists.newArrayList();
@@ -339,8 +339,8 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
                     alarmDatas.add(componentAlarm);
                     break;
                 }
-                alarmDatas.add(componentAlarm);
                 componentAlarm.setDelayTime(nextTime);
+                alarmDatas.add(componentAlarm);
                 break;
             }
         }

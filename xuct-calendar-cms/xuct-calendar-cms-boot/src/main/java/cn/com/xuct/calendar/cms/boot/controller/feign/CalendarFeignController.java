@@ -13,7 +13,7 @@ package cn.com.xuct.calendar.cms.boot.controller.feign;
 import cn.com.xuct.calendar.cms.boot.config.DictCacheManager;
 import cn.com.xuct.calendar.common.core.constant.DictConstants;
 import cn.com.xuct.calendar.common.core.res.R;
-import cn.com.xuct.calendar.common.module.dto.CalendarInitDto;
+import cn.com.xuct.calendar.common.module.feign.CalendarInitFeignInfo;
 import cn.com.xuct.calendar.common.module.dto.CalendarMergeDto;
 import cn.com.xuct.calendar.common.module.req.MemberCalendarUpdateReq;
 import cn.com.xuct.calendar.cms.boot.service.IMemberCalendarService;
@@ -43,23 +43,23 @@ public class CalendarFeignController {
     @ApiOperation(value = "新建主日历")
     @PostMapping
     @ApiImplicitParam(value = "实体JSON对象", required = true, paramType = "body", dataType = "CalendarInitDto")
-    public R<String> createCalendar(@RequestBody CalendarInitDto calendarInitDto) {
+    public R<String> createCalendar(@RequestBody CalendarInitFeignInfo calendarInitFeignInfo) {
         MemberCalendarUpdateReq updateReq = new MemberCalendarUpdateReq();
         updateReq.setName("日程");
         updateReq.setColor(DictCacheManager.getDictByCode(DictConstants.COLOR_TYPE, DictConstants.RED_COLOR_CODE).getValue());
         updateReq.setAlarmTime("0");
         updateReq.setAlarmType("0");
-        updateReq.setCreateMemberName(calendarInitDto.getMemberNickName());
+        updateReq.setCreateMemberName(calendarInitFeignInfo.getMemberNickName());
         updateReq.setDisplay(1);
-        memberCalendarService.createMemberCalendar(calendarInitDto.getMemberId(), updateReq);
+        memberCalendarService.createMemberCalendar(calendarInitFeignInfo.getMemberId(), updateReq);
         return R.status(true);
     }
 
     @ApiOperation(value = "更新日历创建用户名称")
     @PostMapping("/modify/name")
     @ApiImplicitParam(value = "实体JSON对象", required = true, paramType = "body", dataType = "CalendarInitDto")
-    public R<String> updateMemberCalendarName(@RequestBody CalendarInitDto calendarInitDto) {
-        memberCalendarService.updateMemberCalendarName(calendarInitDto.getMemberId(), calendarInitDto.getMemberNickName());
+    public R<String> updateMemberCalendarName(@RequestBody CalendarInitFeignInfo calendarInitFeignInfo) {
+        memberCalendarService.updateMemberCalendarName(calendarInitFeignInfo.getMemberId(), calendarInitFeignInfo.getMemberNickName());
         return R.status(true);
     }
 

@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.ums.boot.controller.system;
 
-import cn.com.xuct.calendar.common.module.dto.UserInfoDto;
+import cn.com.xuct.calendar.common.module.feign.UserInfoFeignInfo;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.ums.boot.service.IUserRoleService;
 import io.swagger.annotations.Api;
@@ -37,7 +37,7 @@ public class UserController {
     private final IUserRoleService userRoleService;
 
     @GetMapping("/get/username")
-    public R<UserInfoDto> getUserByUserName(@RequestParam("username") String username) {
+    public R<UserInfoFeignInfo> getUserByUserName(@RequestParam("username") String username) {
         return R.data(userRoleService.selectUserByUserName(username));
     }
 }

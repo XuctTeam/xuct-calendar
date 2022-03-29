@@ -11,16 +11,13 @@
 package cn.com.xuct.calendar.ums.boot.controller.app;
 
 import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
-import cn.com.xuct.calendar.common.core.constant.DictConstants;
-import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.enums.PasswordEncoderTypeEnum;
 import cn.com.xuct.calendar.common.core.exception.SvrException;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.res.SvrResCode;
 import cn.com.xuct.calendar.common.core.vo.Column;
-import cn.com.xuct.calendar.common.module.dto.CalendarInitDto;
 import cn.com.xuct.calendar.common.module.enums.IdentityTypeEnum;
-import cn.com.xuct.calendar.common.module.enums.MemberMessageTypeEnum;
+import cn.com.xuct.calendar.common.module.feign.WxUserPhoneFeignInfo;
 import cn.com.xuct.calendar.common.module.params.*;
 import cn.com.xuct.calendar.common.module.req.MemberGetPhoneReq;
 import cn.com.xuct.calendar.common.module.vo.MemberPhoneAuthVo;
@@ -28,28 +25,19 @@ import cn.com.xuct.calendar.common.web.utils.JwtUtils;
 import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
 import cn.com.xuct.calendar.ums.api.entity.Member;
 import cn.com.xuct.calendar.ums.api.entity.MemberAuth;
-import cn.com.xuct.calendar.ums.api.entity.MemberMessage;
-import cn.com.xuct.calendar.ums.api.feign.CalendarFeignClient;
-import cn.com.xuct.calendar.ums.boot.config.DictCacheManager;
-import cn.com.xuct.calendar.ums.boot.config.WxMaConfiguration;
-import cn.com.xuct.calendar.ums.boot.event.MemberModifyNameEvent;
-import cn.com.xuct.calendar.ums.boot.event.MemberRegisterEvent;
-import cn.com.xuct.calendar.ums.boot.service.IMemberAuthService;
-import cn.com.xuct.calendar.ums.boot.service.IMemberMessageService;
-import cn.com.xuct.calendar.ums.boot.service.IMemberService;
+import cn.com.xuct.calendar.ums.api.feign.BasicServicesFeignClient;
 import cn.com.xuct.calendar.ums.api.vo.MemberInfoVo;
+import cn.com.xuct.calendar.ums.boot.event.MemberModifyNameEvent;
+import cn.com.xuct.calendar.ums.boot.service.IMemberAuthService;
+import cn.com.xuct.calendar.ums.boot.service.IMemberService;
 import cn.com.xuct.calendar.ums.boot.support.SmsCodeValidateSupport;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.C;
-import org.json.JSONObject;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -75,11 +63,11 @@ public class MemberAppController {
 
     private final IMemberAuthService memberAuthService;
 
-    private final WxMaConfiguration wxMaConfiguration;
-
     private final SmsCodeValidateSupport smsCodeValidateSupport;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final BasicServicesFeignClient basicServicesFeignClient;
 
 
     @ApiOperation(value = "获取用户基础信息及所有认证")
@@ -162,8 +150,9 @@ public class MemberAppController {
         Long userId = JwtUtils.getUserId();
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("member_id", userId), Column.of("identity_type", IdentityTypeEnum.open_id)));
         if (memberAuth == null) throw new SvrException(SvrResCode.UMS_MEMBER_AUTH_TYPE_ERROR);
-        WxMaPhoneNumberInfo wxMaPhoneNumberInfo = wxMaConfiguration.getMaService().getUserService().getPhoneNoInfo(memberAuth.getSessionKey(), getPhoneReq.getEncryptedData(), getPhoneReq.getIvStr());
-        return R.data(wxMaPhoneNumberInfo.getPhoneNumber());
+        R<WxMaPhoneNumberInfo> wxMaPhoneNumberInfoR = basicServicesFeignClient.getPhoneNoInfo(WxUserPhoneFeignInfo.builder().sessionKey(memberAuth.getSessionKey()).encryptedData(getPhoneReq.getEncryptedData()).ivStr(getPhoneReq.getIvStr()).build());
+        if (wxMaPhoneNumberInfoR == null || !wxMaPhoneNumberInfoR.isSuccess()) return R.fail("查询微信失败");
+        return R.data(wxMaPhoneNumberInfoR.getData().getPhoneNumber());
     }
 
     @ApiOperation(value = "手机号绑定")
@@ -204,7 +193,7 @@ public class MemberAppController {
     public R<String> unbindPhone(@Validated @RequestBody MemberPhoneParam param) {
         Long userId = JwtUtils.getUserId();
         /* 1.验证验证码 */
-        smsCodeValidateSupport.validateCode(1, String.valueOf(param.getPhone()), param.getCode());
+        smsCodeValidateSupport.validateCode(2, String.valueOf(param.getPhone()), param.getCode());
         /* 2.校验登陆方式 */
         List<MemberAuth> memberAuths = memberAuthService.find(Lists.newArrayList(Column.of("member_id", userId)));
         if (CollectionUtils.isEmpty(memberAuths) || memberAuths.size() == 1) return R.fail("仅存在唯一登陆方式");

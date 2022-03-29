@@ -12,10 +12,10 @@ package cn.com.xuct.calendar.ums.boot.controller.common;
 
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.res.R;
-import cn.com.xuct.calendar.common.module.dto.EmailDto;
+import cn.com.xuct.calendar.common.module.feign.EmailFeignInfo;
 import cn.com.xuct.calendar.common.module.params.EmailCodeParam;
 import cn.com.xuct.calendar.common.web.utils.JwtUtils;
-import cn.com.xuct.calendar.ums.api.feign.InnerServicesFeignClient;
+import cn.com.xuct.calendar.ums.api.feign.BasicServicesFeignClient;
 import cn.hutool.core.util.RandomUtil;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
@@ -47,7 +47,7 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class EmailController {
 
-    private final InnerServicesFeignClient innerServicesFeignClient;
+    private final BasicServicesFeignClient basicServicesFeignClient;
 
     private final StringRedisTemplate stringRedisTemplate;
 
@@ -56,7 +56,7 @@ public class EmailController {
     public R<String> sendEmail(@Validated @RequestBody EmailCodeParam param) {
         if (param.getType() == 1 || param.getType() == 2) {
             String code = this.bindEmail(param.getEmail(), param.getType());
-            return innerServicesFeignClient.emailCode(EmailDto.builder().subject("【楚日历】绑定认证邮件")
+            return basicServicesFeignClient.emailCode(EmailFeignInfo.builder().subject("【楚日历】绑定认证邮件")
                     .template("emailTemplate")
                     .tos(Lists.newArrayList(param.getEmail()))
                     .params(new HashMap<>() {{

@@ -31,6 +31,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.github.binarywang</groupId>
+            <artifactId>weixin-java-miniapp</artifactId>
+            <version>${utils.wxjava.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-common-db</artifactId>
             <version>${calendar.project.version}</version>

@@ -12,6 +12,7 @@ package cn.com.xuct.calendar.cms.queue.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -37,6 +38,7 @@ public class AsyncConfiguration implements AsyncConfigurer {
     /**
      * 自定义异步线程池，若不重写会使用默认的线程池
      */
+    @Bean("taskExecutor")
     @Override
     public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();

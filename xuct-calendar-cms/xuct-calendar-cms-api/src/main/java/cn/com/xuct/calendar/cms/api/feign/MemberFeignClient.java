@@ -11,7 +11,7 @@
 package cn.com.xuct.calendar.cms.api.feign;
 
 import cn.com.xuct.calendar.common.core.res.R;
-import cn.com.xuct.calendar.common.module.dto.MemberInfoDto;
+import cn.com.xuct.calendar.common.module.feign.MemberFeignInfo;
 import cn.com.xuct.calendar.common.web.web.FeignConfiguration;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,7 +40,7 @@ public interface MemberFeignClient {
      * @return
      */
     @GetMapping("/api/feign/v1/member/get/id")
-    R<MemberInfoDto> getMemberById(@RequestParam("id") Long id);
+    R<MemberFeignInfo> getMemberById(@RequestParam("id") Long id);
 
     /**
      * 通过ids数组查询会员信息
@@ -49,5 +49,5 @@ public interface MemberFeignClient {
      * @return
      */
     @PostMapping("/api/feign/v1/member/list/ids")
-    R<List<MemberInfoDto>> listMemberByIds(@RequestBody List<Long> ids);
+    R<List<MemberFeignInfo>> listMemberByIds(@RequestBody List<Long> ids);
 }

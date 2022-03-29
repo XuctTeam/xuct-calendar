@@ -12,7 +12,7 @@ package cn.com.xuct.calendar.ums.api.feign;
 
 
 import cn.com.xuct.calendar.common.core.res.R;
-import cn.com.xuct.calendar.common.module.dto.CalendarInitDto;
+import cn.com.xuct.calendar.common.module.feign.CalendarInitFeignInfo;
 import cn.com.xuct.calendar.common.web.web.FeignConfiguration;
 import feign.Headers;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -32,23 +32,23 @@ public interface CalendarFeignClient {
     /**
      * 新增日历
      *
-     * @param calendarInitDto
+     * @param calendarInitFeignInfo
      * @return
      */
     @PostMapping("/api/feign/v1/calendar")
     @Headers("Content-Type: application/json")
-    R<String> addCalendar(CalendarInitDto calendarInitDto);
+    R<String> addCalendar(CalendarInitFeignInfo calendarInitFeignInfo);
 
 
     /**
      * 更新用户日历的显示名称
      *
-     * @param calendarInitDto
+     * @param calendarInitFeignInfo
      * @return
      */
     @PostMapping("/api/feign/v1/calendar/modify/name")
     @Headers("Content-Type: application/json")
-    R<String> updateMemberCalendarName(CalendarInitDto calendarInitDto);
+    R<String> updateMemberCalendarName(CalendarInitFeignInfo calendarInitFeignInfo);
 
 }
 
