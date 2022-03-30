@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="cn.com.xuct.calendar.ums.boot.mapper.UserRoleMapper">
-    <resultMap type="cn.com.xuct.calendar.common.module.feign.UserInfoFeignInfo" id="userResultMap">
+    <resultMap type="cn.com.xuct.calendar.common.module.feign.UserInfoFeignInfoRes" id="userResultMap">
         <!--team中的基本属性-->
         <id column="userId" property="userId"/>
         <result column="username" property="username"/>

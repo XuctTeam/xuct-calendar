@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MemberRegisterFeignInfo {
+public class MemberRegisterFeignInfoReq {
 
     public String username;
 

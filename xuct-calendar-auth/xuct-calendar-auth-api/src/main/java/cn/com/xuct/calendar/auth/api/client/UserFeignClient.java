@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.auth.api.client;
 
-import cn.com.xuct.calendar.common.module.feign.UserInfoFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.UserInfoFeignInfoRes;
 import cn.com.xuct.calendar.common.core.res.R;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,5 +34,5 @@ public interface UserFeignClient {
      * @return
      */
     @GetMapping("/api/v1/user/get/username")
-    R<UserInfoFeignInfo> getUserByUsername(@RequestParam("username") String username);
+    R<UserInfoFeignInfoRes> getUserByUsername(@RequestParam("username") String username);
 }

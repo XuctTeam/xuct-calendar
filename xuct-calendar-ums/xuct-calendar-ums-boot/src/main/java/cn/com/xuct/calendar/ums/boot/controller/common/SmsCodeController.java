@@ -12,7 +12,7 @@ package cn.com.xuct.calendar.ums.boot.controller.common;
 
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.res.R;
-import cn.com.xuct.calendar.common.module.feign.SmsCodeFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.SmsCodeFeignInfoReq;
 import cn.com.xuct.calendar.common.module.params.MemberPhoneParam;
 import cn.com.xuct.calendar.common.web.utils.JwtUtils;
 import cn.com.xuct.calendar.ums.api.feign.BasicServicesFeignClient;
@@ -55,7 +55,7 @@ public class SmsCodeController {
     public R<String> sendSmsCode(@Validated @RequestBody MemberPhoneParam param) {
         if (param.getType() == 1 || param.getType() == 2) {
             String code = this.sendBindCode(param.getPhone(), param.getType());
-            return basicServicesFeignClient.smsCode(SmsCodeFeignInfo.builder().phones(Lists.newArrayList(param.getPhone())).code(code).template("bind").build());
+            return basicServicesFeignClient.smsCode(SmsCodeFeignInfoReq.builder().phones(Lists.newArrayList(param.getPhone())).code(code).template("bind").build());
         }
         return R.fail("发送错误");
     }

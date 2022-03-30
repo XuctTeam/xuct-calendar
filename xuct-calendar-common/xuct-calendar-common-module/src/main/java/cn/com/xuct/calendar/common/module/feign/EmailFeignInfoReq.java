@@ -1,8 +1,8 @@
 /**
  * Copyright (C), 2015-2022, XXX有限公司
- * FileName: SmsCodeDto
+ * FileName: EmailDto
  * Author:   Derek Xu
- * Date:     2022/3/28 10:23
+ * Date:     2022/3/28 10:47
  * Description:
  * History:
  * <author>          <time>          <version>          <desc>
@@ -16,9 +16,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -32,17 +32,21 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SmsCodeFeignInfo {
+public class EmailFeignInfoReq implements Serializable {
 
-    @NotEmpty
-    @ApiModelProperty(name = "收短信人")
-    private List<String> phones;
+    @ApiModelProperty(name = "收件者")
+    private List<String> tos;
 
-    @NotNull
-    @ApiModelProperty(name = "短信模板")
+    @ApiModelProperty(name = "抄送")
+    private List<String> ccs;
+
+    @ApiModelProperty(name = "主题")
+    private String subject;
+
+    @ApiModelProperty(name = "参数")
+    private Map<String, Object> params;
+
+    @ApiModelProperty(name = "模板")
     private String template;
 
-    @NotNull
-    @ApiModelProperty(name = "验证码")
-    private String code;
 }

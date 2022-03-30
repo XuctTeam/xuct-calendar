@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.auth.boot.core.userdetails.membner;
 
-import cn.com.xuct.calendar.common.module.feign.MemberFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.MemberFeignInfoRes;
 import cn.com.xuct.calendar.common.core.constant.GlobalConstants;
 import cn.com.xuct.calendar.common.core.enums.PasswordEncoderTypeEnum;
 import lombok.Data;
@@ -49,7 +49,7 @@ public class MemberUserDetails implements UserDetails {
      *
      * @param member 小程序会员用户认证信息
      */
-    public MemberUserDetails(MemberFeignInfo member) {
+    public MemberUserDetails(MemberFeignInfoRes member) {
         this.setUserId(member.getUserId());
         this.setUsername(member.getUsername());
         this.setPassword(PasswordEncoderTypeEnum.BCRYPT.getPrefix() + member.getPassword());

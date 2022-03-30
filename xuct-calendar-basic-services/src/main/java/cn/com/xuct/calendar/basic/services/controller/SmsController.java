@@ -12,7 +12,7 @@ package cn.com.xuct.calendar.basic.services.controller;
 
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.res.ResultCode;
-import cn.com.xuct.calendar.common.module.feign.SmsCodeFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.SmsCodeFeignInfoReq;
 import cn.com.xuct.calendar.common.tencent.client.TencentSmsClient;
 import cn.com.xuct.calendar.common.tencent.config.TencentProperties;
 import com.tencentcloudapi.common.exception.TencentCloudSDKException;
@@ -50,14 +50,14 @@ public class SmsController {
 
     @ApiOperation(value = "发送短信")
     @PostMapping("")
-    public R<String> smsCode(@Validated @RequestBody SmsCodeFeignInfo smsCodeFeignInfo) {
-        Assert.isTrue(!CollectionUtils.isEmpty(smsCodeFeignInfo.getPhones()), "联系人为空");
-        String[] phones = new String[smsCodeFeignInfo.getPhones().size()];
-        for (int i = 0; i < smsCodeFeignInfo.getPhones().size(); i++) {
-            phones[i] = "+86".concat(smsCodeFeignInfo.getPhones().get(i));
+    public R<String> smsCode(@Validated @RequestBody SmsCodeFeignInfoReq smsCodeFeignInfoReq) {
+        Assert.isTrue(!CollectionUtils.isEmpty(smsCodeFeignInfoReq.getPhones()), "联系人为空");
+        String[] phones = new String[smsCodeFeignInfoReq.getPhones().size()];
+        for (int i = 0; i < smsCodeFeignInfoReq.getPhones().size(); i++) {
+            phones[i] = "+86".concat(smsCodeFeignInfoReq.getPhones().get(i));
         }
         try {
-            tencentSmsClient.sendSmsCode(tencentProperties.getSms().getTemplateId().get(smsCodeFeignInfo.getTemplate()), phones, smsCodeFeignInfo.getCode());
+            tencentSmsClient.sendSmsCode(tencentProperties.getSms().getTemplateId().get(smsCodeFeignInfoReq.getTemplate()), phones, smsCodeFeignInfoReq.getCode());
         } catch (TencentCloudSDKException e) {
             e.printStackTrace();
             return R.fail(ResultCode.SMS_SEND_ERROR, e.getMessage());

@@ -11,8 +11,8 @@
 package cn.com.xuct.calendar.auth.api.client;
 
 import cn.com.xuct.calendar.common.core.res.R;
-import cn.com.xuct.calendar.common.module.feign.EmailFeignInfo;
-import cn.com.xuct.calendar.common.module.feign.SmsCodeFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.EmailFeignInfoReq;
+import cn.com.xuct.calendar.common.module.feign.SmsCodeFeignInfoReq;
 import cn.com.xuct.calendar.common.web.web.FeignConfiguration;
 import feign.Headers;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -31,8 +31,8 @@ public interface BasicServicesFeignClient {
 
     @PostMapping("/api/basic/v1/sms")
     @Headers("Content-Type: application/json")
-    R<String> smsCode(SmsCodeFeignInfo smsCodeFeignInfo);
+    R<String> smsCode(SmsCodeFeignInfoReq smsCodeFeignInfoReq);
 
     @PostMapping("/api/basic/v1/email")
-    R<String> emailCode(EmailFeignInfo emailFeignInfo);
+    R<String> emailCode(EmailFeignInfoReq emailFeignInfoReq);
 }

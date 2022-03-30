@@ -8,22 +8,18 @@
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package cn.com.xuct.calendar.ums.api.feign;
+package cn.com.xuct.calendar.cms.api.feign;
 
-import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
-import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
-import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.module.feign.EmailFeignInfoReq;
 import cn.com.xuct.calendar.common.module.feign.SmsCodeFeignInfoReq;
-import cn.com.xuct.calendar.common.module.feign.WxUserInfoFeignInfoReq;
-import cn.com.xuct.calendar.common.module.feign.WxUserPhoneFeignInfoReq;
+import cn.com.xuct.calendar.common.module.feign.WxSubscribeMessageFeignInfoReq;
 import cn.com.xuct.calendar.common.web.web.FeignConfiguration;
 import feign.Headers;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -36,18 +32,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "dav-basic-services", contextId = "basic-services", configuration = FeignConfiguration.class)
 public interface BasicServicesFeignClient {
 
+    @GetMapping("/api/basic/uuid")
+    R<Long> uuid(@RequestParam("key") String key);
+
     @PostMapping("/api/basic/v1/sms")
-    R<String> smsCode(@RequestBody SmsCodeFeignInfoReq smsCodeFeignInfoReq);
+    @Headers("Content-Type: application/json")
+    R<String> smsCode(SmsCodeFeignInfoReq smsCodeFeignInfoReq);
 
     @PostMapping("/api/basic/v1/email")
-    R<String> sendEmail(@RequestBody EmailFeignInfoReq emailFeignInfoReq);
+    @Headers("Content-Type: application/json")
+    R<String> emailCode(EmailFeignInfoReq emailFeignInfoReq);
 
-    @GetMapping("/api/basic/v1/wx/miniapp/getSessionInfo")
-    R<WxMaJscode2SessionResult> getSessionInfo(String code);
-
-    @PostMapping("/api/basic/v1/wx/miniapp/getUserInfo")
-    R<WxMaUserInfo> getUserInfo(@RequestBody WxUserInfoFeignInfoReq wxUserInfoFeignInfoReq);
-
-    @PostMapping("/api/basic/v1/wx/miniapp/getPhoneNoInfo")
-    R<WxMaPhoneNumberInfo> getPhoneNoInfo(@RequestBody WxUserPhoneFeignInfoReq wxUserPhoneFeignInfoReq);
+    @PostMapping("/api/basic/v1/wx/miniapp/sendSubscribeMsg")
+    @Headers("Content-Type: application/json")
+    R<String> sendSubscribeMsg(WxSubscribeMessageFeignInfoReq subscribeMessageFeignInfoReq);
 }

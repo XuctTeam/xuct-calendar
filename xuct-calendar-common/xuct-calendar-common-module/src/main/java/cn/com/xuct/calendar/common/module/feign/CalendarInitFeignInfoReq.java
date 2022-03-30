@@ -1,8 +1,8 @@
 /**
  * Copyright (C), 2015-2021, XXX有限公司
- * FileName: UserInfoDto
+ * FileName: CalUpdateInfoDto
  * Author:   Derek Xu
- * Date:     2021/11/15 12:51
+ * Date:     2021/12/2 16:21
  * Description:
  * History:
  * <author>          <time>          <version>          <desc>
@@ -12,29 +12,18 @@ package cn.com.xuct.calendar.common.module.feign;
 
 import lombok.Data;
 
-import java.io.Serializable;
-import java.util.List;
-
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
  *
  * @author Derek Xu
- * @create 2021/11/15
+ * @create 2021/12/2
  * @since 1.0.0
  */
 @Data
-public class UserInfoFeignInfo implements Serializable {
+public class CalendarInitFeignInfoReq {
 
-    private Long userId;
+    private Long memberId;
 
-    private String username;
-
-    private String password;
-
-    private Integer status;
-
-    private String timeZone;
-
-    private List<String> roles;
+    private String memberNickName;
 }

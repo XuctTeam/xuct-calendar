@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -58,6 +59,9 @@ public class MailService {
             helper.setFrom(from);
             helper.setTo(to.toArray(new String[to.size()]));
             helper.setSentDate(new Date());
+            if (!CollectionUtils.isEmpty(cc)) {
+                helper.setCc(cc.toArray(new String[cc.size()]));
+            }
             // 这里引入的是Template的Context
             Context context = new Context();
             // 设置模板中的变量

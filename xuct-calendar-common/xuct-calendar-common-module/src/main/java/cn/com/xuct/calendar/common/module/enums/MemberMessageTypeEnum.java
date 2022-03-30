@@ -24,5 +24,5 @@ public enum MemberMessageTypeEnum {
 
     GROUP,
 
-    MESSAGE
+    EVENT
 }

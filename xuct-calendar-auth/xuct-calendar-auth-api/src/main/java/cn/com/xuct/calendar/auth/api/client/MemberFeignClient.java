@@ -11,10 +11,10 @@
 package cn.com.xuct.calendar.auth.api.client;
 
 import cn.com.xuct.calendar.common.core.res.R;
-import cn.com.xuct.calendar.common.module.feign.MemberFeignInfo;
-import cn.com.xuct.calendar.common.module.feign.MemberModifyPasswordFeignInfo;
-import cn.com.xuct.calendar.common.module.feign.MemberRegisterFeignInfo;
-import cn.com.xuct.calendar.common.module.feign.WxUserInfoFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.MemberFeignInfoRes;
+import cn.com.xuct.calendar.common.module.feign.MemberModifyPasswordFeignInfoReq;
+import cn.com.xuct.calendar.common.module.feign.MemberRegisterFeignInfoReq;
+import cn.com.xuct.calendar.common.module.feign.WxUserInfoFeignInfoReq;
 import cn.com.xuct.calendar.common.web.web.FeignConfiguration;
 import feign.Headers;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -35,28 +35,28 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface MemberFeignClient {
 
     @GetMapping("/api/feign/v1/member/get/phone")
-    R<MemberFeignInfo> loadMemberByMobile(@RequestParam("phone") String phone);
+    R<MemberFeignInfoRes> loadMemberByMobile(@RequestParam("phone") String phone);
 
     @GetMapping("/api/feign/v1/member/get/openId")
-    R<MemberFeignInfo> loadMemberByOpenId(@RequestParam("openId") String openId);
+    R<MemberFeignInfoRes> loadMemberByOpenId(@RequestParam("openId") String openId);
 
     @GetMapping("/api/feign/v1/member/get/username")
-    R<MemberFeignInfo> loadMemberByUserName(@RequestParam("username") String username);
+    R<MemberFeignInfoRes> loadMemberByUserName(@RequestParam("username") String username);
 
     @GetMapping("/api/feign/v1/member/get/email")
-    R<MemberFeignInfo> loadMemberByEmail(@RequestParam("email") String email);
+    R<MemberFeignInfoRes> loadMemberByEmail(@RequestParam("email") String email);
 
     @Headers({"Content-Type: application/json"})
     @PostMapping("/api/feign/v1/member/get/code")
-    R<MemberFeignInfo> loadMemberByWechatCode(WxUserInfoFeignInfo wxUserInfoFeignInfo);
+    R<MemberFeignInfoRes> loadMemberByWechatCode(WxUserInfoFeignInfoReq wxUserInfoFeignInfoReq);
 
 
     @PostMapping("/api/feign/v1/member/register")
     @Headers("Content-Type: application/json")
-    R<String> registerMember(MemberRegisterFeignInfo registerFeignInfo);
+    R<String> registerMember(MemberRegisterFeignInfoReq registerFeignInfo);
 
     @PostMapping("/api/feign/v1/member/modify/password")
     @Headers("Content-Type: application/json")
-    R<String> modifyPassword(MemberModifyPasswordFeignInfo passwordDto);
+    R<String> modifyPassword(MemberModifyPasswordFeignInfoReq passwordDto);
 
 }

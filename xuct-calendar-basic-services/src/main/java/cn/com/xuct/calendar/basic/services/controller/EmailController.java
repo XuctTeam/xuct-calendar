@@ -12,7 +12,7 @@ package cn.com.xuct.calendar.basic.services.controller;
 
 import cn.com.xuct.calendar.basic.services.service.MailService;
 import cn.com.xuct.calendar.common.core.res.R;
-import cn.com.xuct.calendar.common.module.feign.EmailFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.EmailFeignInfoReq;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Slf4j
 @RestController
-@Api(tags = "【基础服务】短信接口")
+@Api(tags = "【基础服务】邮件接口")
 @RequiredArgsConstructor
 @RequestMapping("/api/basic/v1/email")
 public class EmailController {
@@ -45,9 +45,9 @@ public class EmailController {
 
     @ApiOperation(value = "发送邮件")
     @PostMapping("")
-    private R<String> sendEmail(@Validated @RequestBody EmailFeignInfo emailFeignInfo) {
-        mailService.sendTemplate(mailProperties.getUsername(), emailFeignInfo.getTos(), emailFeignInfo.getCcs(),
-                emailFeignInfo.getSubject(), emailFeignInfo.getParams(), emailFeignInfo.getTemplate());
+    private R<String> sendEmail(@Validated @RequestBody EmailFeignInfoReq emailFeignInfoReq) {
+        mailService.sendTemplate(mailProperties.getUsername(), emailFeignInfoReq.getTos(), emailFeignInfoReq.getCcs(),
+                emailFeignInfoReq.getSubject(), emailFeignInfoReq.getParams(), emailFeignInfoReq.getTemplate());
         return R.status(true);
     }
 }

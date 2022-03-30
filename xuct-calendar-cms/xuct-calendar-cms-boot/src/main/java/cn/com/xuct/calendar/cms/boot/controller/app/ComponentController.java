@@ -14,7 +14,7 @@ import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAlarm;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAttend;
 import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
-import cn.com.xuct.calendar.cms.api.feign.MemberFeignClient;
+import cn.com.xuct.calendar.cms.api.feign.UmsFeignClient;
 import cn.com.xuct.calendar.cms.api.vo.CalendarComponentVo;
 import cn.com.xuct.calendar.cms.api.vo.ComponentAttendVo;
 import cn.com.xuct.calendar.cms.api.vo.ComponentListVo;
@@ -33,7 +33,7 @@ import cn.com.xuct.calendar.common.core.res.SvrResCode;
 import cn.com.xuct.calendar.common.core.utils.JsonUtils;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.dto.AlarmInfoDto;
-import cn.com.xuct.calendar.common.module.feign.MemberFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.MemberFeignInfoRes;
 import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
 import cn.com.xuct.calendar.common.module.enums.ComponentRepeatTypeEnum;
 import cn.com.xuct.calendar.common.module.params.ComponentAddParam;
@@ -82,7 +82,7 @@ public class ComponentController {
 
     private final IMemberCalendarService memberCalendarService;
 
-    private final MemberFeignClient memberFeignClient;
+    private final UmsFeignClient umsFeignClient;
 
     private final RabbitmqOutChannel rabbitmqOutChannel;
 
@@ -218,7 +218,7 @@ public class ComponentController {
     public R<List<ComponentAttendVo>> queryComponentAttend(@RequestParam("componentId") Long componentId, @RequestParam("createMemberId") Long createMemberId) {
         List<Long> memberIds = componentAttendService.listByComponentIdNoMemberId(createMemberId, componentId);
         if (CollectionUtils.isEmpty(memberIds)) return R.data(Lists.newArrayList());
-        R<List<MemberFeignInfo>> memberInfoResult = memberFeignClient.listMemberByIds(memberIds);
+        R<List<MemberFeignInfoRes>> memberInfoResult = umsFeignClient.listMemberByIds(memberIds);
         if (memberInfoResult == null || !memberInfoResult.isSuccess()) return R.data(Lists.newArrayList());
         return R.data(memberInfoResult.getData().stream().map(info -> {
             ComponentAttendVo attendVo = new ComponentAttendVo();

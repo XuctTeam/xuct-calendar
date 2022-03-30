@@ -32,7 +32,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @ApiModel(value = "会员类")
-public class MemberFeignInfo implements Serializable {
+public class MemberFeignInfoRes implements Serializable {
 
     @ApiModelProperty(value = "会员ID")
     private Long userId;
