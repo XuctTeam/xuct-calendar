@@ -28,5 +28,24 @@ public interface IAlarmNotifyService {
      *
      * @param component
      */
-    void noRepeatAlarmNotify(Component component);
+    void timerOverAlarmNotify(Component component);
+
+
+    /**
+     * 异步处理非重复事件下次提醒时间
+     *
+     * @param component
+     * @param triggerSec
+     */
+    void noRepeatAlarmPushToQueue(Component component, Long alarmId, Integer triggerSec);
+
+
+    /**
+     * 异步处理重复事件下次提醒时间
+     *
+     * @param component
+     * @param alarmId
+     * @param triggerSec
+     */
+    void repeatAlarmPushToQueue(Component component, Long alarmId, Integer triggerSec);
 }

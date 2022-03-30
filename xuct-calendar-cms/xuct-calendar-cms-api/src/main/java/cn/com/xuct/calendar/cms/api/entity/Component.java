@@ -138,4 +138,8 @@ public class Component extends SuperEntity<Component> {
     @ApiModelProperty("循环截至时间")
     @TableField("repeat_until")
     private Date repeatUntil;
+
+    @ApiModelProperty("事件时区")
+    @TableField("time_zone")
+    private String timeZone;
 }

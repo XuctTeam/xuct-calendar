@@ -97,6 +97,8 @@ public class AlarmNotifyFeignController {
             }}).build());
             return R.status(true);
         }
+        /*3.小程序 发送订阅消息 */
+
 
 
         return R.status(true);

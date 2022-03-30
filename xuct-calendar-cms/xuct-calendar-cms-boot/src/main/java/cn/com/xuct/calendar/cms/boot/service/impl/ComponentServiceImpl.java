@@ -66,6 +66,7 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
     public List<ComponentAlarm> addComponent(final Long memberId, final String timeZone, final Long calendarId, final Component component, final List<String> memberIds, final String alarmType, final List<Integer> alarmTimes) {
         List<ComponentAlarm> componentAlarmList = null;
         component.setAlarmType(ComponentAlarmEnum.getByCode(alarmType));
+        component.setTimeZone(timeZone);
         if (alarmTimes.size() != 0) {
             component.setAlarmTimes(ArrayUtil.join(alarmTimes.toArray(new Integer[alarmTimes.size()]), ","));
         }
@@ -235,7 +236,7 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
      * @param calendarId
      * @param component
      * @param memberIds
-     * @param up        是否是更新，更新则不更新自己的事件
+     * @param up         是否是更新，更新则不更新自己的事件
      * @return:void
      * @since: 1.0.0
      * @Author:Derek Xu

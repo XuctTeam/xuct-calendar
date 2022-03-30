@@ -60,5 +60,5 @@ public interface UmsFeignClient {
      * @return
      */
     @PostMapping("/api/feign/v1/alarm")
-    R<String> listMemberAuthByIds(@RequestBody AlarmNotifyFeignInfoReq alarmNotifyFeignInfoReq);
+    R<String> notifyAlarm(@RequestBody AlarmNotifyFeignInfoReq alarmNotifyFeignInfoReq);
 }

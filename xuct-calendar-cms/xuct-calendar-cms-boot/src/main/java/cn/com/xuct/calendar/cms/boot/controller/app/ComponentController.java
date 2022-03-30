@@ -113,8 +113,8 @@ public class ComponentController {
     public R<List<ComponentListVo>> getComponentDaysById(@PathVariable("id") String id) {
         Component component = componentService.getById(id);
         if (component == null) throw new SvrException(SvrResCode.CMS_COMPONENT_NOT_FOUND);
-        final List<DateTime> dayRanges = "0".equals(component.getRepeatStatus()) ? DateHelper.getRangeDateList(component.getDtstart(), component.getDtend()) :
-                DateHelper.getRepeatRangeDataList(JwtUtils.getTimeZone(), component);
+        final List<DateTime> dayRanges = "0".equals(component.getRepeatStatus()) ?
+                DateHelper.getRangeDateList(component.getDtstart(), component.getDtend()) : DateHelper.getRepeatRangeDataList(JwtUtils.getTimeZone(), component);
         if (CollectionUtils.isEmpty(dayRanges)) throw new SvrException(SvrResCode.CMS_COMPONENT_DAY_LIST_EMPTY);
         List<ComponentListVo> componentListVos = Lists.newArrayList();
         ComponentListVo componentListVo = null;

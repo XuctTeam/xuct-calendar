@@ -11,7 +11,10 @@
 package cn.com.xuct.calendar.common.module.feign;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.List;
@@ -25,6 +28,9 @@ import java.util.List;
  * @since 1.0.0
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class AlarmNotifyFeignInfoReq implements Serializable {
 
     @ApiModelProperty("事件ID")
@@ -43,6 +49,5 @@ public class AlarmNotifyFeignInfoReq implements Serializable {
     private List<Long> ids;
 
     @ApiModelProperty("认证方式 1.站内信 2.邮件 3.订阅消息")
-    /* 认证方式 1.openid  2.email */
     private Integer type;
 }

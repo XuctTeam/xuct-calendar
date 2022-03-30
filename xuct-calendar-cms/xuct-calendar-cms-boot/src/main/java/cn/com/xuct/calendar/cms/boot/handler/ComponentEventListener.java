@@ -12,6 +12,8 @@ package cn.com.xuct.calendar.cms.boot.handler;
 
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAlarm;
+import cn.com.xuct.calendar.cms.boot.config.RabbitmqConfiguration;
+import cn.com.xuct.calendar.cms.boot.service.IAlarmNotifyService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentAlarmService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentService;
 import cn.com.xuct.calendar.cms.queue.event.AlarmEvent;
@@ -46,6 +48,10 @@ public class ComponentEventListener {
     private final IComponentService componentService;
 
     private final IComponentAlarmService componentAlarmService;
+
+    private final IAlarmNotifyService alarmNotifyService;
+
+    private final RabbitmqConfiguration rabbitmqConfiguration;
 
     /**
      * 功能描述: <br>
@@ -91,8 +97,9 @@ public class ComponentEventListener {
             log.error("alarm event listener:: alarm is not exist or component had update , component id = {} , alarm id = {}", alarmInfoDto.getComponentId(), alarmInfoDto.getAlarmId());
             return;
         }
+        DateTime now = DateUtil.date();
         Component component = componentService.getById(alarmInfoDto.getComponentId());
-        if (component == null || component.getStatus().equals(CommonStatusEnum.DELETED)) {
+        if (component == null || component.getStatus().equals(CommonStatusEnum.DELETED) || new Date(component.getStartTime()).before(now)) {
             log.error("alarm event listener:: component is null , component id = {} , alarm id = {}", alarmInfoDto.getComponentId(), alarmInfoDto.getAlarmId());
             return;
         }
@@ -100,18 +107,17 @@ public class ComponentEventListener {
             log.error("alarm event listener:: alarm times is not in component alarm times , component id = {} , alarm id = {}", alarmInfoDto.getComponentId(), alarmInfoDto.getAlarmId());
             return;
         }
-        DateTime now = DateUtil.date();
-        if (alarm.getAlarmTime().before(now) && new Date(component.getStartTime()).before(now)) {
-            log.error("alarm event listener:: component already start , component id = {} , alarm id = {}", alarmInfoDto.getComponentId(), alarmInfoDto.getAlarmId());
+        /* 1. 到最后提醒时间 */
+        if (alarm.getAlarmTime().before(new Date(now.getTime() + alarm.getTriggerSec()))) {
+            alarmNotifyService.timerOverAlarmNotify(component);
             return;
         }
-        /* 非循环事件处理 */
-        if (alarm.getAlarmTime().before(now)) {
-
+        /* 2. 不循环事件*/
+        if ("0".equals(component.getRepeatStatus())) {
+            alarmNotifyService.noRepeatAlarmPushToQueue(component, alarm.getId(), alarm.getTriggerSec());
             return;
         }
-        /* 循环事件处理 */
-
-
+        /* 3. 循环事件处理 */
+        alarmNotifyService.repeatAlarmPushToQueue(component, alarm.getId(), alarm.getTriggerSec());
     }
 }

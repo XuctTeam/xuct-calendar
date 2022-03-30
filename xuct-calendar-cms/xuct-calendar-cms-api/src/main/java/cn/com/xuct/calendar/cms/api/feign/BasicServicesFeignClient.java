@@ -13,12 +13,11 @@ package cn.com.xuct.calendar.cms.api.feign;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.module.feign.EmailFeignInfoReq;
 import cn.com.xuct.calendar.common.module.feign.SmsCodeFeignInfoReq;
-import cn.com.xuct.calendar.common.module.feign.WxSubscribeMessageFeignInfoReq;
 import cn.com.xuct.calendar.common.web.web.FeignConfiguration;
-import feign.Headers;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -36,14 +35,8 @@ public interface BasicServicesFeignClient {
     R<Long> uuid(@RequestParam("key") String key);
 
     @PostMapping("/api/basic/v1/sms")
-    @Headers("Content-Type: application/json")
-    R<String> smsCode(SmsCodeFeignInfoReq smsCodeFeignInfoReq);
+    R<String> smsCode(@RequestBody  SmsCodeFeignInfoReq smsCodeFeignInfoReq);
 
     @PostMapping("/api/basic/v1/email")
-    @Headers("Content-Type: application/json")
-    R<String> emailCode(EmailFeignInfoReq emailFeignInfoReq);
-
-    @PostMapping("/api/basic/v1/wx/miniapp/sendSubscribeMsg")
-    @Headers("Content-Type: application/json")
-    R<String> sendSubscribeMsg(WxSubscribeMessageFeignInfoReq subscribeMessageFeignInfoReq);
+    R<String> emailCode(@RequestBody EmailFeignInfoReq emailFeignInfoReq);
 }

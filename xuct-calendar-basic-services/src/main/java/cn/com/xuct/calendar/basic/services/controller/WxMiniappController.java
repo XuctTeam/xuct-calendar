@@ -10,6 +10,7 @@
  */
 package cn.com.xuct.calendar.basic.services.controller;
 
+import cn.binarywang.wx.miniapp.api.WxMaMsgService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
 import cn.binarywang.wx.miniapp.bean.WxMaSubscribeMessage;
@@ -29,6 +30,9 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -71,17 +75,22 @@ public class WxMiniappController {
 
     @ApiOperation(value = "发送订阅消息")
     @PostMapping("/sendSubscribeMsg")
-    public R<String> sendSubscribeMsg(@Validated @RequestBody WxSubscribeMessageFeignInfoReq subscribeMessageFeignInfo) throws WxErrorException {
-        WxMaSubscribeMessage wxMaSubscribeMessage = new WxMaSubscribeMessage();
-        BeanUtils.copyProperties(subscribeMessageFeignInfo, wxMaSubscribeMessage);
-        if (!CollectionUtils.isEmpty(subscribeMessageFeignInfo.getData())) {
-            WxSubscribeMessageFeignInfoReq.MsgData msgData = null;
-            for (int i = 0, j = subscribeMessageFeignInfo.getData().size(); i < j; i++) {
-                msgData = subscribeMessageFeignInfo.getData().get(i);
-                wxMaSubscribeMessage.addData(new WxMaSubscribeMessage.MsgData(msgData.getName(), msgData.getValue()));
+    public R<String> sendSubscribeMsg(@Validated @RequestBody List<WxSubscribeMessageFeignInfoReq> subscribeMessageFeignInfo) {
+        WxMaMsgService wxMaMsgService = wxMaConfiguration.getMaService().getMsgService();
+        subscribeMessageFeignInfo.stream().forEach(wxSubscribeReq -> {
+            WxMaSubscribeMessage wxMaSubscribeMessage = new WxMaSubscribeMessage();
+            BeanUtils.copyProperties(wxSubscribeReq, wxMaSubscribeMessage);
+            if (!CollectionUtils.isEmpty(wxSubscribeReq.getData())) {
+                wxMaSubscribeMessage.setData(wxSubscribeReq.getData().stream().map(x -> {
+                    return new WxMaSubscribeMessage.MsgData(x.getName(), x.getName());
+                }).collect(Collectors.toList()));
             }
-        }
-        wxMaConfiguration.getMaService().getMsgService().sendSubscribeMsg(wxMaSubscribeMessage);
+            try {
+                wxMaMsgService.sendSubscribeMsg(wxMaSubscribeMessage);
+            } catch (WxErrorException e) {
+                log.error("wx miniapp controller:: send subscribe message error , to user = {}", wxSubscribeReq.getToUser());
+            }
+        });
         return R.status(true);
     }
 }

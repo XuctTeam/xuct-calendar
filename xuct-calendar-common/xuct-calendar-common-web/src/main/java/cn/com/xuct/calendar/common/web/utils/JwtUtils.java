@@ -69,7 +69,7 @@ public class JwtUtils {
      */
     public static String getTimeZone() {
         String timeZone = getJwtPayload().getStr(SecurityConstants.TIME_ZONE);
-        return StringUtils.hasText(timeZone) ? timeZone : "Asia/Shanghai";
+        return timeZone;
     }
 
 
