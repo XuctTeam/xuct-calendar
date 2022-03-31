@@ -18,6 +18,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
+import javax.annotation.PostConstruct;
+
 /**
  * 〈一句话功能简述〉<br> 
  * 〈〉
@@ -36,5 +38,10 @@ public class BasicServicesApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(BasicServicesApplication.class, args);
+    }
+
+    @PostConstruct
+    public void setProperties(){
+        System.setProperty("druid.mysql.usePingMethod","false");
     }
 }

@@ -11,11 +11,13 @@
 package cn.com.xuct.calendar.cms.boot.service.impl;
 
 import cn.com.xuct.calendar.cms.api.entity.Component;
+import cn.com.xuct.calendar.cms.api.entity.ComponentAlarm;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAttend;
 import cn.com.xuct.calendar.cms.api.feign.UmsFeignClient;
 import cn.com.xuct.calendar.cms.boot.config.RabbitmqConfiguration;
 import cn.com.xuct.calendar.cms.boot.handler.RabbitmqOutChannel;
 import cn.com.xuct.calendar.cms.boot.service.IAlarmNotifyService;
+import cn.com.xuct.calendar.cms.boot.service.IComponentAlarmService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentAttendService;
 import cn.com.xuct.calendar.cms.boot.utils.DateHelper;
 import cn.com.xuct.calendar.common.core.constant.RabbitmqConstants;
@@ -55,6 +57,8 @@ public class AlarmNotifyServiceImpl implements IAlarmNotifyService {
 
 
     private final IComponentAttendService componentAttendService;
+
+    private final IComponentAlarmService componentAlarmService;
 
     private final RabbitmqConfiguration rabbitmqConfiguration;
 
@@ -100,9 +104,10 @@ public class AlarmNotifyServiceImpl implements IAlarmNotifyService {
     }
 
     @Override
-    public void repeatAlarmPushToQueue(Component component, Long alarmId, Integer triggerSec) {
+    public void repeatAlarmPushToQueue(Component component, ComponentAlarm alarm) {
         /* TODO 1.发送本次循环参数消息*/
         /* 2.增加下次循环时间 */
+        Integer triggerSec = alarm.getTriggerSec();
         List<DateTime> dateTimes = DateHelper.getRepeatRangeDataList(component.getTimeZone(), component);
         if (CollectionUtils.isEmpty(dateTimes)) {
             log.error("alarm notify service:: repeat component date list empty , calendar id = {} , component id = {}", component.getCalendarId(), component.getId());
@@ -117,9 +122,12 @@ public class AlarmNotifyServiceImpl implements IAlarmNotifyService {
         if (nextDelayTime > rabbitmqConfiguration.getMaxDelay()) {
             nextDelayTime = rabbitmqConfiguration.getMaxDelay();
         }
+        alarm.setAlarmTime(new Date(nextDelayTime));
+        /* 更新提醒时间 */
+        componentAlarmService.updateById(alarm);
         rabbitmqOutChannel.pushAlarmDelayedMessage(
                 RabbitmqConstants.COMPONENT_ALARM_TYPE,
                 JsonUtils.obj2json(AlarmInfoDto.builder().componentId(String.valueOf(component.getId()))
-                        .alarmId(String.valueOf(alarmId)).build()), nextDelayTime);
+                        .alarmId(String.valueOf(alarm.getId())).build()), nextDelayTime);
     }
 }

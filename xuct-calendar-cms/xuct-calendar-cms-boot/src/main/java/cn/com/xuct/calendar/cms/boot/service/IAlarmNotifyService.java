@@ -11,6 +11,7 @@
 package cn.com.xuct.calendar.cms.boot.service;
 
 import cn.com.xuct.calendar.cms.api.entity.Component;
+import cn.com.xuct.calendar.cms.api.entity.ComponentAlarm;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -44,8 +45,7 @@ public interface IAlarmNotifyService {
      * 异步处理重复事件下次提醒时间
      *
      * @param component
-     * @param alarmId
-     * @param triggerSec
+     * @param alarm
      */
-    void repeatAlarmPushToQueue(Component component, Long alarmId, Integer triggerSec);
+    void repeatAlarmPushToQueue(Component component, ComponentAlarm alarm);
 }

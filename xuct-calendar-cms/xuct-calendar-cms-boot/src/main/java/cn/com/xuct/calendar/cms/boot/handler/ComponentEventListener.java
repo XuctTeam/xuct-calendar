@@ -118,6 +118,6 @@ public class ComponentEventListener {
             return;
         }
         /* 3. 循环事件处理 */
-        alarmNotifyService.repeatAlarmPushToQueue(component, alarm.getId(), alarm.getTriggerSec());
+        alarmNotifyService.repeatAlarmPushToQueue(component, alarm);
     }
 }
