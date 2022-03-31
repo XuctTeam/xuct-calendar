@@ -19,6 +19,7 @@ import cn.com.xuct.calendar.common.module.feign.MemberFeignInfoRes;
 import cn.com.xuct.calendar.common.module.feign.MemberModifyPasswordFeignInfoReq;
 import cn.com.xuct.calendar.common.module.params.ForgetModifyParam;
 import cn.com.xuct.calendar.common.module.params.ForgetPasswordParam;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
@@ -69,7 +70,7 @@ public class PasswordEndpoint {
             userId = this.sendForgetPasswordByPhone(forgetPasswordParam.getPhone());
         } else if (forgetPasswordParam.getType() == 2) {
             Assert.notNull(forgetPasswordParam.getEmail(), "邮箱为空");
-            userId = this.sendForgetPasswordByEmail(forgetPasswordParam.getPhone());
+            userId = this.sendForgetPasswordByEmail(forgetPasswordParam.getEmail());
         }
         if (!StringUtils.hasLength(userId)) return R.fail("用户不存在");
         return R.status(true);
@@ -125,9 +126,12 @@ public class PasswordEndpoint {
         String code = RandomUtil.randomNumbers(4);
         String userId = String.valueOf(memberResult.getData().getUserId());
         stringRedisTemplate.opsForValue().set(RedisConstants.MEMBER_FORGET_PASSWORD_EMAIL_CODE_KEY.concat(email), code);
-        basicServicesFeignClient.emailCode(EmailFeignInfoReq.builder().template("emailTemplate").tos(Lists.newArrayList(email)).subject("重置密码").params(
+        basicServicesFeignClient.emailCode(EmailFeignInfoReq.builder().template("code").tos(Lists.newArrayList(email)).subject("重置密码").params(
                 new HashMap<>() {{
+                    put("title", "重置密码");
+                    put("userName", email);
                     put("code", code);
+                    put("date", DateUtil.now());
                 }}).build());
         return userId;
     }

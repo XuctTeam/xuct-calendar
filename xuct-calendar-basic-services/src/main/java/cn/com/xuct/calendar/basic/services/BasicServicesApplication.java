@@ -10,6 +10,7 @@
  */
 package cn.com.xuct.calendar.basic.services;
 
+import cn.com.xuct.calendar.common.redis.annotation.EnableAutoRedis;
 import cn.com.xuct.calendar.common.swagger.annotation.EnableAutoSwagger2;
 import cn.com.xuct.calendar.common.tencent.annotation.EnableAutoTencentSdk;
 import com.sankuai.inf.leaf.plugin.annotation.EnableLeafServer;
@@ -29,6 +30,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 @EnableDiscoveryClient
 @EnableLeafServer
 @EnableAutoSwagger2
+@EnableAutoRedis
 @EnableAutoTencentSdk
 public class BasicServicesApplication {
 

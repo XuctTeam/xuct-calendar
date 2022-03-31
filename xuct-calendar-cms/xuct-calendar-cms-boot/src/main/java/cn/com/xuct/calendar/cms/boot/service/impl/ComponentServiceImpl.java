@@ -291,11 +291,11 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
         ComponentAlarm componentAlarm = null;
         long diffTime = component.getDtstart().getTime() - now.getTime();
         for (int i = 0, j = alarmTimes.size(); i < j; i++) {
-            Integer trigger = alarmTimes.get(i);
+            Long trigger = Long.valueOf(1000 * 60 * alarmTimes.get(i));
             if (diffTime - trigger < 0) continue;
             componentAlarm = this.getDefaultAlarm(memberId, calendarId, component.getId());
-            componentAlarm.setAlarmTime(DateUtil.date(diffTime - trigger));
-            componentAlarm.setTriggerSec(trigger);
+            componentAlarm.setAlarmTime(DateUtil.date(now.getTime() + (diffTime - trigger)));
+            componentAlarm.setTriggerSec(alarmTimes.get(i));
             if (diffTime - trigger > rabbitmqConfiguration.getMaxDelay()) {
                 componentAlarm.setDelayTime(rabbitmqConfiguration.getMaxDelay());
             } else {
@@ -327,9 +327,9 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
         DateTime repeatDate = null;
         ComponentAlarm componentAlarm = null;
         for (int i = 0, j = alarmTimes.size(); i < j; i++) {
-            final Integer trigger = alarmTimes.get(i) * 60 * 1000;
+            Long trigger = Long.valueOf(1000 * 60 * alarmTimes.get(i));
             componentAlarm = this.getDefaultAlarm(memberId, calendarId, component.getId());
-            componentAlarm.setTriggerSec(trigger);
+            componentAlarm.setTriggerSec(alarmTimes.get(i));
             for (int m = 0, n = dateTimes.size(); m < n; m++) {
                 repeatDate = dateTimes.get(m);
                 long nextTime = repeatDate.getTime() - now.getTime() - trigger;

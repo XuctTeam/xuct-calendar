@@ -56,8 +56,8 @@ public class EmailController {
     public R<String> sendEmail(@Validated @RequestBody EmailCodeParam param) {
         if (param.getType() == 1 || param.getType() == 2) {
             String code = this.bindEmail(param.getEmail(), param.getType());
-            return basicServicesFeignClient.emailCode(EmailFeignInfoReq.builder().subject("【楚日历】绑定认证邮件")
-                    .template("emailTemplate")
+            return basicServicesFeignClient.sendEmail(EmailFeignInfoReq.builder().subject("【楚日历】绑定认证邮件")
+                    .template("emailCode")
                     .tos(Lists.newArrayList(param.getEmail()))
                     .params(new HashMap<>() {{
                         put("title", param.getType() == 1 ? "邮箱绑定" : "邮箱解绑");
