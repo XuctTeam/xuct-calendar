@@ -131,11 +131,12 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
     @Transactional(rollbackFor = Exception.class)
     public List<Long> deleteByComponentId(final Long memberId, final Long componentId) {
         List<Long> memberIds = Lists.newArrayList();
+        /* 1.删除提醒信息 */
         componentAlarmService.delete(Column.of("component_id", componentId));
-        List<ComponentAttend> componentAttends = componentAttendService.find(Lists.newArrayList(Column.of("component_id", componentId), Column.of("member_id", memberId, ColumnEnum.nq)));
+        /* 2.删除邀请信息 */
+        List<ComponentAttend> componentAttends = componentAttendService.find(Lists.newArrayList(Column.of("component_id", componentId)));
         if (!CollectionUtils.isEmpty(componentAttends)) {
             memberIds = componentAttends.stream().map(ComponentAttend::getMemberId).collect(Collectors.toList());
-            /* TODO 增加邀请删除消息 */
             componentAttendService.removeBatchByIds(componentAttends.stream().map(ComponentAttend::getId).collect(Collectors.toList()));
         }
         super.removeById(componentId);

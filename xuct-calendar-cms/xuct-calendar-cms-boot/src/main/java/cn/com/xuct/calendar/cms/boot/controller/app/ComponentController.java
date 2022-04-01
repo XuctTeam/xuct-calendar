@@ -183,6 +183,7 @@ public class ComponentController {
             ComponentAlarm componentAlarm = null;
             for (int i = 0, j = componentAlarmList.size(); i < j; i++) {
                 componentAlarm = componentAlarmList.get(i);
+                log.info("component controller:: alarm delay component id = {} , next time = {}", component.getId(), componentAlarm.getDelayTime());
                 rabbitmqOutChannel.pushAlarmDelayedMessage(
                         RabbitmqConstants.COMPONENT_ALARM_TYPE,
                         JsonUtils.obj2json(AlarmInfoDto.builder().componentId(String.valueOf(componentAlarm.getComponentId())).alarmId(String.valueOf(componentAlarm.getId())).build()),

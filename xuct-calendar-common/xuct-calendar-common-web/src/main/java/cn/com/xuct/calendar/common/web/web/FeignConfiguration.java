@@ -27,12 +27,6 @@ public class FeignConfiguration{
 
 
     @Bean
-    public FeignBasicAuthRequestInterceptor basicAuthRequestInterceptor() {
-        return new FeignBasicAuthRequestInterceptor();
-    }
-
-
-    @Bean
     public Logger.Level feignLoggerLevel(){
         return Logger.Level.FULL;
     }

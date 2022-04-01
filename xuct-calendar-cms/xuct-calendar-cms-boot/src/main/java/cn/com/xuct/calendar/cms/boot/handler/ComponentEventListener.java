@@ -12,6 +12,7 @@ package cn.com.xuct.calendar.cms.boot.handler;
 
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAlarm;
+import cn.com.xuct.calendar.cms.api.feign.UmsFeignClient;
 import cn.com.xuct.calendar.cms.boot.config.RabbitmqConfiguration;
 import cn.com.xuct.calendar.cms.boot.service.IAlarmNotifyService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentAlarmService;
@@ -21,10 +22,12 @@ import cn.com.xuct.calendar.cms.queue.event.ComponentDelEvent;
 import cn.com.xuct.calendar.common.core.utils.JsonUtils;
 import cn.com.xuct.calendar.common.module.dto.AlarmInfoDto;
 import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
+import cn.com.xuct.calendar.common.module.feign.MemberMessageFeignInfoReq;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONObject;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -51,7 +54,7 @@ public class ComponentEventListener {
 
     private final IAlarmNotifyService alarmNotifyService;
 
-    private final RabbitmqConfiguration rabbitmqConfiguration;
+    private final UmsFeignClient umsFeignClient;
 
     /**
      * 功能描述: <br>
@@ -63,10 +66,16 @@ public class ComponentEventListener {
      * @Author:Derek Xu
      * @Date: 2022/3/15 10:21
      */
-    @Async
+    @Async(value = "taskExecutor")
     @EventListener(classes = ComponentDelEvent.class)
     public void listenerComponentDelEvent(ComponentDelEvent delEvent) {
-
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("summary", delEvent.getSummary());
+        umsFeignClient.sendMemberMessage(MemberMessageFeignInfoReq.builder().type("EVENT")
+                .operation(3)
+                .memberIds(delEvent.getMemberIds())
+                .content(jsonObject)
+                .build());
     }
 
     /**
@@ -79,7 +88,7 @@ public class ComponentEventListener {
      * @Author:Derek Xu
      * @Date: 2022/3/15 10:30
      */
-    @Async
+    @Async(value = "taskExecutor")
     @EventListener(classes = AlarmEvent.class)
     public void onEvent(AlarmEvent alarmEvent) {
         log.info("alarm event.... , message = {}", alarmEvent.getMessage());

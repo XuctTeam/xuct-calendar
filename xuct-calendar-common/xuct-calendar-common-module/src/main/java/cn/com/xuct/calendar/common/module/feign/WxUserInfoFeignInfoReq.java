@@ -10,13 +10,14 @@
  */
 package cn.com.xuct.calendar.common.module.feign;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 〈一句话功能简述〉<br> 
+ * 〈一句话功能简述〉<br>
  * 〈〉
  *
  * @author Derek Xu
@@ -29,11 +30,15 @@ import lombok.NoArgsConstructor;
 @Builder
 public class WxUserInfoFeignInfoReq {
 
+    @ApiModelProperty("小程序CODE")
     private String code;
 
+    @ApiModelProperty("小程序SessionKey")
     private String sessionKey;
 
+    @ApiModelProperty("小程序encryptedData")
     private String encryptedData;
 
+    @ApiModelProperty("小程序iv")
     private String iv;
 }

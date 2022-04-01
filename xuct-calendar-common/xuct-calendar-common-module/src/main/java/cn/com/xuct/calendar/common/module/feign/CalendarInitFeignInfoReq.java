@@ -10,6 +10,7 @@
  */
 package cn.com.xuct.calendar.common.module.feign;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -23,7 +24,9 @@ import lombok.Data;
 @Data
 public class CalendarInitFeignInfoReq {
 
+    @ApiModelProperty("会员ID")
     private Long memberId;
 
+    @ApiModelProperty("昵称")
     private String memberNickName;
 }

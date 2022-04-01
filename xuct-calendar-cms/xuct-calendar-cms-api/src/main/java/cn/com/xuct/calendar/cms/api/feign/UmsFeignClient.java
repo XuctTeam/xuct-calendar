@@ -13,6 +13,7 @@ package cn.com.xuct.calendar.cms.api.feign;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.module.feign.AlarmNotifyFeignInfoReq;
 import cn.com.xuct.calendar.common.module.feign.MemberFeignInfoRes;
+import cn.com.xuct.calendar.common.module.feign.MemberMessageFeignInfoReq;
 import cn.com.xuct.calendar.common.web.web.FeignConfiguration;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -61,4 +62,16 @@ public interface UmsFeignClient {
      */
     @PostMapping("/api/feign/v1/alarm")
     R<String> notifyAlarm(@RequestBody AlarmNotifyFeignInfoReq alarmNotifyFeignInfoReq);
+
+
+    /**
+     * 发送站内消息
+     *
+     * @param memberMessageFeignInfoReq
+     * @return
+     */
+    @PostMapping("/api/feign/v1/message")
+    R<String> sendMemberMessage(@RequestBody MemberMessageFeignInfoReq memberMessageFeignInfoReq);
+
+
 }

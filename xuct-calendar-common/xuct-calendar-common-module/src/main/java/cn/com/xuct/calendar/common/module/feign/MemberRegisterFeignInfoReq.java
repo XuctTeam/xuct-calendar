@@ -10,13 +10,14 @@
  */
 package cn.com.xuct.calendar.common.module.feign;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 〈一句话功能简述〉<br> 
+ * 〈一句话功能简述〉<br>
  * 〈〉
  *
  * @author Derek Xu
@@ -29,7 +30,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class MemberRegisterFeignInfoReq {
 
+    @ApiModelProperty("用户名")
     public String username;
 
+    @ApiModelProperty("密码")
     private String password;
 }
