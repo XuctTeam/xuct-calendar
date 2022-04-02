@@ -14,7 +14,7 @@ import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAlarm;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAttend;
 import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
-import cn.com.xuct.calendar.cms.api.feign.UmsFeignClient;
+import cn.com.xuct.calendar.cms.api.feign.UmsMemberFeignClient;
 import cn.com.xuct.calendar.cms.api.vo.CalendarComponentVo;
 import cn.com.xuct.calendar.cms.api.vo.ComponentAttendVo;
 import cn.com.xuct.calendar.cms.api.vo.ComponentListVo;
@@ -83,7 +83,7 @@ public class ComponentController {
 
     private final IMemberCalendarService memberCalendarService;
 
-    private final UmsFeignClient umsFeignClient;
+    private final UmsMemberFeignClient umsMemberFeignClient;
 
     private final RabbitmqOutChannel rabbitmqOutChannel;
 
@@ -115,7 +115,7 @@ public class ComponentController {
         Component component = componentService.getById(id);
         if (component == null) throw new SvrException(SvrResCode.CMS_COMPONENT_NOT_FOUND);
         final List<DateTime> dayRanges = "0".equals(component.getRepeatStatus()) ?
-                DateHelper.getRangeDateList(component.getDtstart(), component.getDtend()) : DateHelper.getRepeatRangeDataList(component , JwtUtils.getTimeZone());
+                DateHelper.getRangeDateList(component.getDtstart(), component.getDtend()) : DateHelper.getRepeatRangeDataList(component, JwtUtils.getTimeZone());
         if (CollectionUtils.isEmpty(dayRanges)) throw new SvrException(SvrResCode.CMS_COMPONENT_DAY_LIST_EMPTY);
         List<ComponentListVo> componentListVos = Lists.newArrayList();
         ComponentListVo componentListVo = null;
@@ -203,10 +203,8 @@ public class ComponentController {
         List<Long> memberIds = componentService.deleteByComponentId(JwtUtils.getUserId(), id);
         /* 1.推送日程删除消息 */
         if (!CollectionUtils.isEmpty(memberIds)) {
-            SpringContextHolder.publishEvent(new ComponentDelEvent(this, component.getId(), component.getCreatorMemberId(), component.getSummary(),
-                    DateUtil.format(component.getDtstart(), DatePattern.NORM_DATETIME_FORMAT),
-                    component.getLocation(),
-                    memberIds));
+            SpringContextHolder.publishEvent(new ComponentDelEvent(this, component.getId(), component.getSummary(),
+                    DateUtil.format(component.getDtstart(), DatePattern.NORM_DATETIME_FORMAT), component.getCreatorMemberId(), component.getLocation(), component.getRepeatStatus(), null, memberIds));
         }
         return R.status(true);
     }
@@ -224,7 +222,7 @@ public class ComponentController {
     public R<List<ComponentAttendVo>> queryComponentAttend(@RequestParam("componentId") Long componentId, @RequestParam("createMemberId") Long createMemberId) {
         List<Long> memberIds = componentAttendService.listByComponentIdNoMemberId(createMemberId, componentId);
         if (CollectionUtils.isEmpty(memberIds)) return R.data(Lists.newArrayList());
-        R<List<MemberFeignInfo>> memberInfoResult = umsFeignClient.listMemberByIds(memberIds);
+        R<List<MemberFeignInfo>> memberInfoResult = umsMemberFeignClient.listMemberByIds(memberIds);
         if (memberInfoResult == null || !memberInfoResult.isSuccess()) return R.data(Lists.newArrayList());
         return R.data(memberInfoResult.getData().stream().map(info -> {
             ComponentAttendVo attendVo = new ComponentAttendVo();
@@ -306,7 +304,7 @@ public class ComponentController {
                 !param.getRepeatBymonth().equals(component.getRepeatBymonth()) ||
                 !param.getRepeatBymonthday().equals(component.getRepeatBymonthday()) ||
                 param.getRepeatInterval() != component.getRepeatInterval() ||
-                !this.getRepeatUntilEqale(param.getRepeatUntil(), component.getRepeatUntil()) ||
+                !this.getRepeatUntilEquals(param.getRepeatUntil(), component.getRepeatUntil()) ||
                 !param.getAlarmType().equals(component.getAlarmType().getCode())) {
             changed = true;
         }
@@ -341,7 +339,7 @@ public class ComponentController {
      * @Author:Derek Xu
      * @Date: 2022/1/17 17:09
      */
-    private boolean getRepeatUntilEqale(Date paramRepeatUntil, Date componentRepeatUntil) {
+    private boolean getRepeatUntilEquals(Date paramRepeatUntil, Date componentRepeatUntil) {
         if (paramRepeatUntil == null && componentRepeatUntil == null) return true;
         if (paramRepeatUntil == null && componentRepeatUntil != null || paramRepeatUntil != null && componentRepeatUntil == null)
             return false;
@@ -367,7 +365,7 @@ public class ComponentController {
             if ("0".equals(component.getRepeatStatus())) {
                 dayRanges.addAll(DateHelper.getRangeDateList(component.getDtstart(), component.getDtend()));
             } else {
-                dayRanges.addAll(DateHelper.getRepeatRangeDataList(component , JwtUtils.getTimeZone()));
+                dayRanges.addAll(DateHelper.getRepeatRangeDataList(component, JwtUtils.getTimeZone()));
             }
             if (dayRanges.size() == 0) return;
             for (int i = 0; i < dayRanges.size(); i++) {

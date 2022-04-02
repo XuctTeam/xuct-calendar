@@ -31,7 +31,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AlarmNotifyFeignInfo implements Serializable {
+public class ComponentNotifyFeignInfo implements Serializable {
 
     @ApiModelProperty("事件ID")
     private Long componentId;
@@ -44,6 +44,15 @@ public class AlarmNotifyFeignInfo implements Serializable {
 
     @ApiModelProperty("事件创建者")
     private Long createMemberId;
+
+    @ApiModelProperty("地点")
+    private String location;
+
+    @ApiModelProperty("周期事件")
+    private Integer repeat;
+
+    @ApiModelProperty("提醒时间")
+    private String triggerSec;
 
     @ApiModelProperty("参加人")
     private List<Long> ids;

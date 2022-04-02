@@ -1,8 +1,8 @@
 /**
  * Copyright (C), 2015-2022, XXX有限公司
- * FileName: AlarmNotifyEvent
+ * FileName: ComponentDelEvent
  * Author:   Derek Xu
- * Date:     2022/3/30 11:03
+ * Date:     2022/4/2 17:53
  * Description:
  * History:
  * <author>          <time>          <version>          <desc>
@@ -12,27 +12,25 @@ package cn.com.xuct.calendar.ums.boot.event;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.context.ApplicationEvent;
 
 import java.util.List;
 
 /**
- * 〈一句话功能简述〉<br>
+ * 〈一句话功能简述〉<br> 
  * 〈〉
  *
  * @author Derek Xu
- * @create 2022/3/30
+ * @create 2022/4/2
  * @since 1.0.0
  */
 @Setter
 @Getter
-public class AlarmNotifyEvent extends ComponentEvent {
+public class ComponentDelEvent  extends ComponentEvent {
 
 
     private List<Long> ids;
 
-
-    public AlarmNotifyEvent(Object source, String summary, String startDate, String location, Long componentId, Long createMemberId, String createMemberName, Integer repeat, String triggerSec, List<Long> ids) {
+    public ComponentDelEvent(Object source, String summary, String startDate, String location, Long componentId, Long createMemberId, String createMemberName, Integer repeat, String triggerSec, List<Long> ids) {
         super(source, summary, startDate, location, componentId, createMemberId, createMemberName, repeat, triggerSec);
         this.ids = ids;
     }

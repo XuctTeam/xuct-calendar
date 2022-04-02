@@ -297,7 +297,7 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
             componentAlarm = this.getDefaultAlarm(memberId, calendarId, component.getId());
             componentAlarm.setTriggerSec(alarmTimes.get(i));
             componentAlarm.setAlarmTime(DateUtil.offsetMillisecond(now, Math.toIntExact(diff)));
-            componentAlarm.setDelayTime(NumberUtil.compare(diff, rabbitmqConfiguration.getMaxDelay()) == -1 ? rabbitmqConfiguration.getMaxDelay() : diff);
+            componentAlarm.setDelayTime(NumberUtil.compare(diff, rabbitmqConfiguration.getMaxDelay()) == -1 ? diff : rabbitmqConfiguration.getMaxDelay());
             alarmDatas.add(componentAlarm);
         }
         return alarmDatas;
@@ -332,7 +332,7 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
                 long nextTime = repeatDate.getTime() - now.getTime() - trigger;
                 if (nextTime < 0) continue;
                 componentAlarm.setAlarmTime(DateUtil.offsetMillisecond(repeatDate, -Math.toIntExact(trigger)));
-                componentAlarm.setDelayTime(NumberUtil.compare(nextTime, rabbitmqConfiguration.getMaxDelay()) == -1 ? rabbitmqConfiguration.getMaxDelay() : nextTime);
+                componentAlarm.setDelayTime(NumberUtil.compare(nextTime, rabbitmqConfiguration.getMaxDelay()) == -1 ? nextTime : rabbitmqConfiguration.getMaxDelay());
                 alarmDatas.add(componentAlarm);
                 break;
             }

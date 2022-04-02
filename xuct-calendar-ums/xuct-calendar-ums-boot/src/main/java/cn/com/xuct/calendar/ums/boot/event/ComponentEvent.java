@@ -1,16 +1,16 @@
 /**
  * Copyright (C), 2015-2022, XXX有限公司
- * FileName: ComponentDelEvent
+ * FileName: ComponentEvent
  * Author:   Derek Xu
- * Date:     2022/3/15 10:09
+ * Date:     2022/4/2 17:54
  * Description:
  * History:
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package cn.com.xuct.calendar.cms.queue.event;
+package cn.com.xuct.calendar.ums.boot.event;
 
-import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.ApplicationEvent;
@@ -22,39 +22,39 @@ import java.util.List;
  * 〈〉
  *
  * @author Derek Xu
- * @create 2022/3/15
+ * @create 2022/4/2
  * @since 1.0.0
  */
 @Setter
 @Getter
-public class ComponentDelEvent extends ApplicationEvent {
-
-
-    private Long componentId;
+public class ComponentEvent extends ApplicationEvent {
 
     private String summary;
 
     private String startDate;
 
-    private Long createMemberId;
-
     private String location;
 
-    private String repeat;
+    private Long componentId;
+
+    private Long createMemberId;
+
+    private String createMemberName;
+
+    private Integer repeat;
 
     private String triggerSec;
 
-    private List<Long> ids;
 
-    public ComponentDelEvent(Object source, Long componentId, String summary, String startDate, Long createMemberId, String location, String repeat, String triggerSec, List<Long> ids) {
+    public ComponentEvent(Object source, String summary, String startDate, String location, Long componentId, Long createMemberId, String createMemberName, Integer repeat, String triggerSec) {
         super(source);
-        this.componentId = componentId;
         this.summary = summary;
         this.startDate = startDate;
-        this.createMemberId = createMemberId;
         this.location = location;
+        this.componentId = componentId;
+        this.createMemberId = createMemberId;
+        this.createMemberName = createMemberName;
         this.repeat = repeat;
         this.triggerSec = triggerSec;
-        this.ids = ids;
     }
 }

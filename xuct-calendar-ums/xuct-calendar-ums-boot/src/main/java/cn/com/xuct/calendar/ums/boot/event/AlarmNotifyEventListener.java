@@ -11,10 +11,8 @@
 package cn.com.xuct.calendar.ums.boot.event;
 
 import cn.com.xuct.calendar.common.module.enums.MemberMessageTypeEnum;
-import cn.com.xuct.calendar.ums.api.entity.Member;
 import cn.com.xuct.calendar.ums.api.entity.MemberMessage;
 import cn.com.xuct.calendar.ums.boot.service.IMemberMessageService;
-import cn.com.xuct.calendar.ums.boot.service.IMemberService;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,9 +40,12 @@ public class AlarmNotifyEventListener {
     private final IMemberMessageService memberMessageService;
 
 
+
+
+
     @Async
     @EventListener
-    public void listener(AlarmNotifyEvent notifyEvent) {
+    public void listenerAlarmEvent(AlarmNotifyEvent notifyEvent) {
         MemberMessage memberMessage = null;
         List<MemberMessage> memberMessageList = Lists.newArrayList();
         for (int i = 0, j = notifyEvent.getIds().size(); i < j; i++) {
@@ -54,11 +55,13 @@ public class AlarmNotifyEventListener {
             memberMessage.setOperation(0);
             memberMessage.setStatus(0);
             JSONObject content = new JSONObject();
-            content.put("create_user_name", notifyEvent.getCreateMemberName());
-            content.put("create_member_id", notifyEvent.getCreateMemberId());
-            content.put("component_id", notifyEvent.getComponentId());
             content.put("summary", notifyEvent.getSummary());
-            content.put("start_date", notifyEvent.getStartDate());
+            content.put("startDate", notifyEvent.getStartDate());
+            content.put("createMemberName", notifyEvent.getCreateMemberName());
+            content.put("componentId", notifyEvent.getComponentId());
+            content.put("location", notifyEvent.getLocation());
+            content.put("repeat", notifyEvent.getRepeat());
+            content.put("triggerSec", notifyEvent.getTriggerSec());
             memberMessage.setContent(content);
             memberMessageList.add(memberMessage);
         }

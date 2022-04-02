@@ -13,7 +13,8 @@ package cn.com.xuct.calendar.cms.boot.service.impl;
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAlarm;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAttend;
-import cn.com.xuct.calendar.cms.api.feign.UmsFeignClient;
+import cn.com.xuct.calendar.cms.api.feign.UmsComponentFeignClient;
+import cn.com.xuct.calendar.cms.api.feign.UmsMemberFeignClient;
 import cn.com.xuct.calendar.cms.boot.config.RabbitmqConfiguration;
 import cn.com.xuct.calendar.cms.boot.handler.RabbitmqOutChannel;
 import cn.com.xuct.calendar.cms.boot.service.IAlarmNotifyService;
@@ -24,7 +25,7 @@ import cn.com.xuct.calendar.common.core.constant.RabbitmqConstants;
 import cn.com.xuct.calendar.common.core.utils.JsonUtils;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.dto.AlarmInfoDto;
-import cn.com.xuct.calendar.common.module.feign.req.AlarmNotifyFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.req.ComponentNotifyFeignInfo;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
@@ -58,27 +59,28 @@ public class AlarmNotifyServiceImpl implements IAlarmNotifyService {
 
     private final RabbitmqConfiguration rabbitmqConfiguration;
 
-    private final UmsFeignClient umsFeignClient;
+    private final UmsComponentFeignClient umsComponentFeignClient;
 
     private final RabbitmqOutChannel rabbitmqOutChannel;
 
     @Async("taskExecutor")
     @Override
-    public void timerOverAlarmNotify(Component component) {
+    public void timerOverAlarmNotify(Component component, Integer triggerSec) {
         List<ComponentAttend> componentAttendList = componentAttendService.find(Column.of("component_id", component.getId()));
         if (CollectionUtils.isEmpty(componentAttendList)) {
             log.error("alarm notify service::component attend list empty , calendar id = {} , component id = {}", component.getCalendarId(), component.getId());
             return;
         }
-        AlarmNotifyFeignInfo alarmNotifyFeignInfo = AlarmNotifyFeignInfo.builder()
+        ComponentNotifyFeignInfo componentNotifyFeignInfo = ComponentNotifyFeignInfo.builder()
                 .componentId(component.getId())
                 .summary(component.getSummary())
+                .triggerSec(String.valueOf(triggerSec))
                 .startDate(DateUtil.format(new Date(component.getStartTime()), DatePattern.NORM_DATETIME_FORMATTER))
                 .createMemberId(component.getCreatorMemberId())
                 .type(Integer.parseInt(component.getAlarmType().getCode()))
                 .ids(componentAttendList.stream().map(ComponentAttend::getMemberId).collect(Collectors.toList()))
                 .build();
-        umsFeignClient.notifyAlarm(alarmNotifyFeignInfo);
+        umsComponentFeignClient.notifyAlarm(componentNotifyFeignInfo);
     }
 
     @Async("taskExecutor")
@@ -100,7 +102,7 @@ public class AlarmNotifyServiceImpl implements IAlarmNotifyService {
     @Override
     public void repeatNextAlarmPushToQueue(Component component, ComponentAlarm alarm) {
         /* 1.发送本次循环参数消息*/
-        this.timerOverAlarmNotify(component);
+        this.timerOverAlarmNotify(component, alarm.getTriggerSec());
         /* 2.增加下次循环时间 */
         Long triggerSec = alarm.getTriggerSec() * 60 * 1000L;
         List<DateTime> dateTimes = DateHelper.getRepeatRangeDataList(component, component.getTimeZone(), new Date());

@@ -12,7 +12,9 @@ package cn.com.xuct.calendar.cms.boot.handler;
 
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAlarm;
-import cn.com.xuct.calendar.cms.api.feign.UmsFeignClient;
+import cn.com.xuct.calendar.cms.api.entity.ComponentAttend;
+import cn.com.xuct.calendar.cms.api.feign.UmsComponentFeignClient;
+import cn.com.xuct.calendar.cms.api.feign.UmsMemberFeignClient;
 import cn.com.xuct.calendar.cms.boot.service.IAlarmNotifyService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentAlarmService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentService;
@@ -23,7 +25,9 @@ import cn.com.xuct.calendar.common.core.utils.JsonUtils;
 import cn.com.xuct.calendar.common.module.dto.AlarmInfoDto;
 import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
 import cn.com.xuct.calendar.common.module.feign.MemberFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.req.ComponentNotifyFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.MemberMessageFeignInfo;
+import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +39,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
+import java.util.stream.Collectors;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -55,7 +60,7 @@ public class ComponentEventListener {
 
     private final IAlarmNotifyService alarmNotifyService;
 
-    private final UmsFeignClient umsFeignClient;
+    private final UmsComponentFeignClient umsComponentFeignClient;
 
     /**
      * 功能描述: <br>
@@ -70,21 +75,15 @@ public class ComponentEventListener {
     @Async(value = "taskExecutor")
     @EventListener(classes = ComponentDelEvent.class)
     public void listenerComponentDelEvent(ComponentDelEvent delEvent) {
-        String createName = "";
-        R<MemberFeignInfo> memberFeignInfoR = umsFeignClient.getMemberById(delEvent.getCreateMemberId());
-        if (memberFeignInfoR != null && memberFeignInfoR.isSuccess()) {
-            createName = memberFeignInfoR.getData().getName();
-        }
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("summary", delEvent.getSummary());
-        jsonObject.put("location", delEvent.getLocation());
-        jsonObject.put("startDate", delEvent.getStartDate());
-        jsonObject.put("createMemberName", createName);
-        umsFeignClient.sendMemberMessage(MemberMessageFeignInfo.builder().type("EVENT")
-                .operation(3)
-                .memberIds(delEvent.getMemberIds())
-                .content(jsonObject.toMap())
-                .build());
+        ComponentNotifyFeignInfo componentNotifyFeignInfo = ComponentNotifyFeignInfo.builder()
+                .componentId(delEvent.getComponentId())
+                .summary(delEvent.getSummary())
+                .triggerSec(delEvent.getTriggerSec())
+                .startDate(delEvent.getStartDate())
+                .createMemberId(delEvent.getCreateMemberId())
+                .ids(delEvent.getIds())
+                .build();
+        umsComponentFeignClient.deleteComponent(componentNotifyFeignInfo);
     }
 
     /**
@@ -129,7 +128,7 @@ public class ComponentEventListener {
         if ("0".equals(component.getRepeatStatus())) {
             /* 到最后提醒时间 */
             if (DateUtil.current() + alarm.getTriggerSec() * 60 * 1000 >= alarm.getAlarmTime().getTime()) {
-                alarmNotifyService.timerOverAlarmNotify(component);
+                alarmNotifyService.timerOverAlarmNotify(component, alarm.getTriggerSec());
                 return;
             }
             /* 未到预警时间 */

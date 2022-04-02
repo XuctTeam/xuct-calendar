@@ -29,7 +29,7 @@ public interface IAlarmNotifyService {
      *
      * @param component
      */
-    void timerOverAlarmNotify(Component component);
+    void timerOverAlarmNotify(Component component , Integer triggerSec);
 
 
     /**

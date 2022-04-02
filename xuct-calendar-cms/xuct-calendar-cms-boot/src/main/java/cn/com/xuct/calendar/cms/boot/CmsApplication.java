@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.cms.boot;
 
-import cn.com.xuct.calendar.cms.api.feign.UmsFeignClient;
+import cn.com.xuct.calendar.cms.api.feign.UmsMemberFeignClient;
 import cn.com.xuct.calendar.common.db.dao.config.MybatisPlusConfig;
 import cn.com.xuct.calendar.common.http.annotation.EnableAutoOkFeign;
 import cn.com.xuct.calendar.common.swagger.annotation.EnableAutoSwagger2;
@@ -41,7 +41,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableAutoSwagger2
 @EnableAutoOkFeign
 @EnableTransactionManagement
-@EnableFeignClients(basePackageClasses = {UmsFeignClient.class})
+@EnableFeignClients(basePackageClasses = {UmsMemberFeignClient.class})
 @Import(MybatisPlusConfig.class)
 public class CmsApplication {
 

@@ -11,8 +11,8 @@
 package cn.com.xuct.calendar.cms.api.feign;
 
 import cn.com.xuct.calendar.common.core.res.R;
-import cn.com.xuct.calendar.common.module.feign.req.AlarmNotifyFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.MemberFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.req.ComponentNotifyFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.MemberMessageFeignInfo;
 import cn.com.xuct.calendar.common.web.web.FeignConfiguration;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -32,46 +32,28 @@ import java.util.List;
  * @since 1.0.0
  */
 
-@FeignClient(name = "dav-ums", contextId = "members", configuration = FeignConfiguration.class)
-public interface UmsFeignClient {
-
-    /**
-     * 通过id查询会员信息
-     *
-     * @param id
-     * @return
-     */
-    @GetMapping("/api/feign/v1/member/get/id")
-    R<MemberFeignInfo> getMemberById(@RequestParam("id") Long id);
-
-    /**
-     * 通过ids数组查询会员信息
-     *
-     * @param ids
-     * @return
-     */
-    @PostMapping("/api/feign/v1/member/list/ids")
-    R<List<MemberFeignInfo>> listMemberByIds(@RequestBody List<Long> ids);
+@FeignClient(name = "dav-ums", contextId = "component", configuration = FeignConfiguration.class)
+public interface UmsComponentFeignClient {
 
 
     /**
-     * 通过ids发送提醒信息
+     * 发送提醒消息
      *
-     * @param alarmNotifyFeignInfo
+     * @param componentNotifyFeignInfo
      * @return
      */
-    @PostMapping("/api/feign/v1/alarm")
-    R<String> notifyAlarm(@RequestBody AlarmNotifyFeignInfo alarmNotifyFeignInfo);
+    @PostMapping("/api/feign/v1/component/alarm")
+    R<String> notifyAlarm(@RequestBody ComponentNotifyFeignInfo componentNotifyFeignInfo);
 
 
     /**
-     * 发送站内消息
+     * 发送删除消息
      *
-     * @param memberMessageFeignInfo
+     * @param componentNotifyFeignInfo
      * @return
      */
-    @PostMapping("/api/feign/v1/message")
-    R<String> sendMemberMessage(@RequestBody MemberMessageFeignInfo memberMessageFeignInfo);
+    @PostMapping("/api/feign/v1/component/delete")
+    R<String> deleteComponent(@RequestBody ComponentNotifyFeignInfo componentNotifyFeignInfo);
 
 
 }
