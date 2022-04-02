@@ -12,12 +12,13 @@ package cn.com.xuct.calendar.ums.boot.controller.feign;
 
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.module.enums.MemberMessageTypeEnum;
-import cn.com.xuct.calendar.common.module.feign.MemberMessageFeignInfoReq;
+import cn.com.xuct.calendar.common.module.feign.req.MemberMessageFeignInfo;
 import cn.com.xuct.calendar.ums.api.entity.MemberMessage;
 import cn.com.xuct.calendar.ums.boot.service.IMemberMessageService;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
+import org.json.JSONObject;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,16 +45,16 @@ public class MemberMessageFeignController {
     private final IMemberMessageService memberMessageService;
 
     @PostMapping("")
-    public R<String> sendMemberMessage(@Validated @RequestBody MemberMessageFeignInfoReq memberMessageFeignInfoReq) {
+    public R<String> sendMemberMessage(@Validated @RequestBody MemberMessageFeignInfo memberMessageFeignInfo) {
         MemberMessage memberMessage = null;
         List<MemberMessage> memberMessageList = Lists.newArrayList();
-        List<Long> memberIds = memberMessageFeignInfoReq.getMemberIds();
+        List<Long> memberIds = memberMessageFeignInfo.getMemberIds();
         for (int i = 0, j = memberIds.size(); i < j; i++) {
             memberMessage = new MemberMessage();
             memberMessage.setMemberId(memberIds.get(i));
-            memberMessage.setType(typeEnum(memberMessageFeignInfoReq.getType()));
-            memberMessage.setOperation(memberMessageFeignInfoReq.getOperation());
-            memberMessage.setContent(memberMessageFeignInfoReq.getContent());
+            memberMessage.setType(typeEnum(memberMessageFeignInfo.getType()));
+            memberMessage.setOperation(memberMessageFeignInfo.getOperation());
+            memberMessage.setContent(new JSONObject(memberMessageFeignInfo.getContent()));
             memberMessage.setStatus(0);
             memberMessageList.add(memberMessage);
         }

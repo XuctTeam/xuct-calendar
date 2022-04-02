@@ -24,7 +24,7 @@ import java.util.List;
  * @since 1.0.0
  */
 @Data
-public class UserInfoFeignInfoRes implements Serializable {
+public class UserInfoFeignInfo implements Serializable {
 
 
     private Long userId;

@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.ums.boot.service.impl;
 
-import cn.com.xuct.calendar.common.module.feign.UserInfoFeignInfoRes;
+import cn.com.xuct.calendar.common.module.feign.UserInfoFeignInfo;
 import cn.com.xuct.calendar.ums.api.entity.UserRole;
 import cn.com.xuct.calendar.ums.boot.mapper.UserRoleMapper;
 import cn.com.xuct.calendar.common.db.service.BaseServiceImpl;
@@ -33,7 +33,7 @@ public class UserRoleServiceImpl extends BaseServiceImpl<UserRoleMapper, UserRol
     private final UserRoleMapper userRoleMapper;
 
     @Override
-    public UserInfoFeignInfoRes selectUserByUserName(String userName) {
+    public UserInfoFeignInfo selectUserByUserName(String userName) {
         return userRoleMapper.selectUserByUserName(userName);
     }
 }

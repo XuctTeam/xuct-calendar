@@ -11,7 +11,7 @@
 package cn.com.xuct.calendar.auth.boot.core.userdetails.user;
 
 import cn.com.xuct.calendar.auth.api.client.UserFeignClient;
-import cn.com.xuct.calendar.common.module.feign.UserInfoFeignInfoRes;
+import cn.com.xuct.calendar.common.module.feign.UserInfoFeignInfo;
 import cn.com.xuct.calendar.common.core.res.AuthResCode;
 import cn.com.xuct.calendar.common.core.res.R;
 import lombok.RequiredArgsConstructor;
@@ -40,9 +40,9 @@ public class SysUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         SysUserDetails userDetails = null;
-        R<UserInfoFeignInfoRes> result = userFeignClient.getUserByUsername(username);
+        R<UserInfoFeignInfo> result = userFeignClient.getUserByUsername(username);
         if (R.isSuccess(result)) {
-            UserInfoFeignInfoRes user = result.getData();
+            UserInfoFeignInfo user = result.getData();
             if (null != user) {
                 userDetails = new SysUserDetails(user);
             }

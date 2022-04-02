@@ -14,9 +14,8 @@ import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
 import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
 import cn.com.xuct.calendar.common.core.res.R;
-import cn.com.xuct.calendar.common.module.feign.*;
+import cn.com.xuct.calendar.common.module.feign.req.*;
 import cn.com.xuct.calendar.common.web.web.FeignConfiguration;
-import feign.Headers;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,20 +35,20 @@ import java.util.List;
 public interface BasicServicesFeignClient {
 
     @PostMapping("/api/basic/v1/sms")
-    R<String> smsCode(@RequestBody SmsCodeFeignInfoReq smsCodeFeignInfoReq);
+    R<String> smsCode(@RequestBody SmsCodeFeignInfo smsCodeFeignInfo);
 
     @PostMapping("/api/basic/v1/email")
-    R<String> sendEmail(@RequestBody EmailFeignInfoReq emailFeignInfoReq);
+    R<String> sendEmail(@RequestBody EmailFeignInfo emailFeignInfo);
 
     @GetMapping("/api/basic/v1/wx/miniapp/getSessionInfo")
     R<WxMaJscode2SessionResult> getSessionInfo(String code);
 
     @PostMapping("/api/basic/v1/wx/miniapp/getUserInfo")
-    R<WxMaUserInfo> getUserInfo(@RequestBody WxUserInfoFeignInfoReq wxUserInfoFeignInfoReq);
+    R<WxMaUserInfo> getUserInfo(@RequestBody WxUserInfoFeignInfo wxUserInfoFeignInfo);
 
     @PostMapping("/api/basic/v1/wx/miniapp/getPhoneNoInfo")
-    R<WxMaPhoneNumberInfo> getPhoneNoInfo(@RequestBody WxUserPhoneFeignInfoReq wxUserPhoneFeignInfoReq);
+    R<WxMaPhoneNumberInfo> getPhoneNoInfo(@RequestBody WxUserPhoneFeignInfo wxUserPhoneFeignInfo);
 
     @PostMapping("/api/basic/v1/wx/miniapp/sendSubscribeMsg")
-    R<String> sendSubscribeMsg(@RequestBody List<WxSubscribeMessageFeignInfoReq> wxSubscribeMessageFeignInfoReqs);
+    R<String> sendSubscribeMsg(@RequestBody List<WxSubscribeMessageFeignInfo> wxSubscribeMessageFeignInfos);
 }

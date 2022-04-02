@@ -14,8 +14,8 @@ import cn.com.xuct.calendar.auth.api.client.MemberFeignClient;
 import cn.com.xuct.calendar.common.core.constant.AuthConstants;
 import cn.com.xuct.calendar.common.core.enums.AuthenticationMethodEnum;
 import cn.com.xuct.calendar.common.core.res.R;
-import cn.com.xuct.calendar.common.module.feign.MemberFeignInfoRes;
-import cn.com.xuct.calendar.common.module.feign.WxUserInfoFeignInfoReq;
+import cn.com.xuct.calendar.common.module.feign.MemberFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.req.WxUserInfoFeignInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -46,11 +46,11 @@ public class MemberUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         MemberUserDetails userDetails = null;
-        R<MemberFeignInfoRes> result = memberFeignClient.loadMemberByUserName(username);
+        R<MemberFeignInfo> result = memberFeignClient.loadMemberByUserName(username);
         if (!R.isSuccess(result)) {
             throw new UsernameNotFoundException(AuthConstants.USER_NOT_EXIST);
         }
-        MemberFeignInfoRes member = result.getData();
+        MemberFeignInfo member = result.getData();
         if (!StringUtils.hasLength(member.getPassword())) {
             throw new BadCredentialsException(AuthConstants.BAD_CREDENTIALS);
         }
@@ -63,33 +63,33 @@ public class MemberUserDetailsService implements UserDetailsService {
     }
 
     public UserDetails loadUserByMobile(String mobile) {
-        R<MemberFeignInfoRes> result = memberFeignClient.loadMemberByMobile(mobile);
+        R<MemberFeignInfo> result = memberFeignClient.loadMemberByMobile(mobile);
         if (!R.isSuccess(result) || result.getData() == null) {
             throw new UsernameNotFoundException(AuthConstants.USER_NOT_EXIST);
         }
-        MemberFeignInfoRes member = result.getData();
+        MemberFeignInfo member = result.getData();
         MemberUserDetails userDetails = new MemberUserDetails(member);
         userDetails.setAuthenticationMethod(AuthenticationMethodEnum.MOBILE.getValue());   // 认证方式：OpenId
         return getUserDetails(userDetails);
     }
 
     public UserDetails loadUserByWechatCode(String code, String iv, String encryptedData) {
-        R<MemberFeignInfoRes> result = memberFeignClient.loadMemberByWechatCode(WxUserInfoFeignInfoReq.builder().code(code).iv(iv).encryptedData(encryptedData).build());
+        R<MemberFeignInfo> result = memberFeignClient.loadMemberByWechatCode(WxUserInfoFeignInfo.builder().code(code).iv(iv).encryptedData(encryptedData).build());
         if (!R.isSuccess(result) || result.getData() == null) {
             throw new UsernameNotFoundException(AuthConstants.USER_NOT_EXIST);
         }
-        MemberFeignInfoRes member = result.getData();
+        MemberFeignInfo member = result.getData();
         MemberUserDetails userDetails = new MemberUserDetails(member);
         userDetails.setAuthenticationMethod(AuthenticationMethodEnum.OPENID.getValue());   // 认证方式：OpenId
         return getUserDetails(userDetails);
     }
 
     public UserDetails loadUserByOpenId(String openId) {
-        R<MemberFeignInfoRes> result = memberFeignClient.loadMemberByOpenId(openId);
+        R<MemberFeignInfo> result = memberFeignClient.loadMemberByOpenId(openId);
         if (!R.isSuccess(result) || result.getData() == null) {
             throw new UsernameNotFoundException(AuthConstants.USER_NOT_EXIST);
         }
-        MemberFeignInfoRes member = result.getData();
+        MemberFeignInfo member = result.getData();
         MemberUserDetails userDetails = new MemberUserDetails(member);
         userDetails.setAuthenticationMethod(AuthenticationMethodEnum.OPENID.getValue());   // 认证方式：OpenId
         return getUserDetails(userDetails);

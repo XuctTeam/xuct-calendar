@@ -19,6 +19,10 @@ import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.enums.IdentityTypeEnum;
 import cn.com.xuct.calendar.common.module.feign.*;
+import cn.com.xuct.calendar.common.module.feign.req.CalendarInitFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.req.MemberModifyPasswordFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.req.MemberRegisterFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.req.WxUserInfoFeignInfo;
 import cn.com.xuct.calendar.common.web.utils.JwtUtils;
 import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
 import cn.com.xuct.calendar.ums.api.entity.Member;
@@ -67,22 +71,22 @@ public class MemberFeignController {
 
     @ApiOperation(value = "通过手机号查询会员")
     @GetMapping("/get/phone")
-    public R<MemberFeignInfoRes> getUserByPhone(@RequestParam("phone") String phone) {
+    public R<MemberFeignInfo> getUserByPhone(@RequestParam("phone") String phone) {
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", phone), Column.of("identity_type", IdentityTypeEnum.phone)));
         if (memberAuth == null) return R.fail("用户不存在");
         Member member = memberService.getById(memberAuth.getMemberId());
-        return R.data(MemberFeignInfoRes.builder().userId(member.getId()).username(memberAuth.getUsername()).password(memberAuth.getPassword()).status(member.getStatus()).timeZone(member.getTimeZone()).build());
+        return R.data(MemberFeignInfo.builder().userId(member.getId()).username(memberAuth.getUsername()).password(memberAuth.getPassword()).status(member.getStatus()).timeZone(member.getTimeZone()).build());
     }
 
     @ApiOperation(value = "通过微信code查询会员")
     @PostMapping("/get/code")
-    public R<MemberFeignInfoRes> getUserByWechatCode(@RequestBody WxUserInfoFeignInfoReq wxUserInfoFeignInfoReq) {
+    public R<MemberFeignInfo> getUserByWechatCode(@RequestBody WxUserInfoFeignInfo wxUserInfoFeignInfo) {
 
-        R<WxMaJscode2SessionResult> jscode2SessionResultR = basicServicesFeignClient.getSessionInfo(wxUserInfoFeignInfoReq.getCode());
+        R<WxMaJscode2SessionResult> jscode2SessionResultR = basicServicesFeignClient.getSessionInfo(wxUserInfoFeignInfo.getCode());
         if (jscode2SessionResultR == null || !jscode2SessionResultR.isSuccess()) return R.fail("获取用户失败");
         WxMaJscode2SessionResult session = jscode2SessionResultR.getData();
-        R<WxMaUserInfo> wxMaUserInfoR = basicServicesFeignClient.getUserInfo(WxUserInfoFeignInfoReq.builder().sessionKey(session.getSessionKey())
-                .encryptedData(wxUserInfoFeignInfoReq.getEncryptedData()).iv(wxUserInfoFeignInfoReq.getIv()).build());
+        R<WxMaUserInfo> wxMaUserInfoR = basicServicesFeignClient.getUserInfo(WxUserInfoFeignInfo.builder().sessionKey(session.getSessionKey())
+                .encryptedData(wxUserInfoFeignInfo.getEncryptedData()).iv(wxUserInfoFeignInfo.getIv()).build());
         if (wxMaUserInfoR == null || !wxMaUserInfoR.isSuccess()) return R.fail("获取用户失败");
         WxMaUserInfo wxMaUserInfo = wxMaUserInfoR.getData();
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", session.getOpenid()), Column.of("identity_type", IdentityTypeEnum.open_id)));
@@ -92,80 +96,80 @@ public class MemberFeignController {
             memberAuth.setSessionKey(session.getSessionKey());
             memberAuthService.updateById(memberAuth);
             Member member = memberService.getById(memberAuth.getMemberId());
-            return R.data(MemberFeignInfoRes.builder().userId(member.getId()).username(memberAuth.getUsername()).status(member.getStatus()).build());
+            return R.data(MemberFeignInfo.builder().userId(member.getId()).username(memberAuth.getUsername()).status(member.getStatus()).build());
         }
         Member member = memberService.saveMemberByOpenId(session.getOpenid(), wxMaUserInfo.getNickName(), wxMaUserInfo.getAvatarUrl(),
                 session.getSessionKey(), DictCacheManager.getDictByCode(DictConstants.TIME_ZONE_TYPE, DictConstants.EAST_8_CODE).getValue());
-        CalendarInitFeignInfoReq calendarInitFeignInfoReq = new CalendarInitFeignInfoReq();
-        calendarInitFeignInfoReq.setMemberId(member.getId());
-        calendarInitFeignInfoReq.setMemberNickName(member.getName());
-        calendarFeignClient.addCalendar(calendarInitFeignInfoReq);
-        return R.data(MemberFeignInfoRes.builder().userId(member.getId()).username(session.getOpenid()).status(member.getStatus()).timeZone(member.getTimeZone()).build());
+        CalendarInitFeignInfo calendarInitFeignInfo = new CalendarInitFeignInfo();
+        calendarInitFeignInfo.setMemberId(member.getId());
+        calendarInitFeignInfo.setMemberNickName(member.getName());
+        calendarFeignClient.addCalendar(calendarInitFeignInfo);
+        return R.data(MemberFeignInfo.builder().userId(member.getId()).username(session.getOpenid()).status(member.getStatus()).timeZone(member.getTimeZone()).build());
     }
 
     @ApiOperation(value = "通过微信openId查询会员")
     @GetMapping("/get/openId")
-    public R<MemberFeignInfoRes> getUserByOpenId(@RequestParam("openId") String openId) {
+    public R<MemberFeignInfo> getUserByOpenId(@RequestParam("openId") String openId) {
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", openId), Column.of("identity_type", IdentityTypeEnum.open_id)));
         if (memberAuth == null) return R.fail("用户不存在");
         Member member = memberService.getById(memberAuth.getMemberId());
-        return R.data(MemberFeignInfoRes.builder().userId(member.getId()).username(memberAuth.getUsername()).password(memberAuth.getPassword()).timeZone(member.getTimeZone()).status(member.getStatus()).build());
+        return R.data(MemberFeignInfo.builder().userId(member.getId()).username(memberAuth.getUsername()).password(memberAuth.getPassword()).timeZone(member.getTimeZone()).status(member.getStatus()).build());
     }
 
     @ApiOperation(value = "通过登录用户名或邮箱查询会员")
     @GetMapping("/get/username")
-    public R<MemberFeignInfoRes> getUserByUserName(@RequestParam("username") String username) {
+    public R<MemberFeignInfo> getUserByUserName(@RequestParam("username") String username) {
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", username), Column.of("identity_type", IdentityTypeEnum.user_name)));
         if (memberAuth == null) {
             memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", username), Column.of("identity_type", IdentityTypeEnum.email)));
         }
         if (memberAuth == null) return R.fail("用户不存在");
         Member member = memberService.getById(memberAuth.getMemberId());
-        return R.data(MemberFeignInfoRes.builder().userId(member.getId()).username(memberAuth.getUsername()).password(memberAuth.getPassword()).timeZone(member.getTimeZone()).status(member.getStatus()).build());
+        return R.data(MemberFeignInfo.builder().userId(member.getId()).username(memberAuth.getUsername()).password(memberAuth.getPassword()).timeZone(member.getTimeZone()).status(member.getStatus()).build());
     }
 
     @ApiOperation(value = "通过邮箱查询会员")
     @GetMapping("/get/email")
-    public R<MemberFeignInfoRes> getUserByEmail(@RequestParam("email") String email) {
+    public R<MemberFeignInfo> getUserByEmail(@RequestParam("email") String email) {
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", email), Column.of("identity_type", IdentityTypeEnum.email)));
         if (memberAuth == null) return R.fail("用户不存在");
         Member member = memberService.getById(memberAuth.getMemberId());
-        return R.data(MemberFeignInfoRes.builder().userId(member.getId()).username(memberAuth.getUsername()).password(memberAuth.getPassword()).status(member.getStatus()).timeZone(member.getTimeZone()).build());
+        return R.data(MemberFeignInfo.builder().userId(member.getId()).username(memberAuth.getUsername()).password(memberAuth.getPassword()).status(member.getStatus()).timeZone(member.getTimeZone()).build());
     }
 
     @ApiOperation(value = "通过ID查询会员")
     @GetMapping("/get/id")
-    public R<MemberFeignInfoRes> getUserById(@RequestParam("id") Long id) {
+    public R<MemberFeignInfo> getUserById(@RequestParam("id") Long id) {
         Member member = memberService.findMemberById(id);
         if (member == null) return R.fail("用户不存在");
-        return R.data(MemberFeignInfoRes.builder().userId(member.getId()).name(member.getName()).status(member.getStatus()).timeZone(member.getTimeZone()).build());
+        return R.data(MemberFeignInfo.builder().userId(member.getId()).name(member.getName()).status(member.getStatus()).timeZone(member.getTimeZone()).build());
     }
 
     @ApiOperation(value = "通过IDS查询会员")
     @PostMapping("/list/ids")
-    public R<List<MemberFeignInfoRes>> listMemberByIds(@RequestBody List<String> ids) {
+    public R<List<MemberFeignInfo>> listMemberByIds(@RequestBody List<String> ids) {
         List<Member> members = memberService.find(Column.of("id", ids, ColumnEnum.in));
         if (CollectionUtils.isEmpty(members)) return R.data(Lists.newArrayList());
         return R.data(members.stream().map(member -> {
-            MemberFeignInfoRes memberFeignInfoRes = new MemberFeignInfoRes();
-            memberFeignInfoRes.setName(member.getName());
-            memberFeignInfoRes.setAvatar(member.getAvatar());
-            return memberFeignInfoRes;
+            MemberFeignInfo memberFeignInfo = new MemberFeignInfo();
+            memberFeignInfo.setName(member.getName());
+            memberFeignInfo.setAvatar(member.getAvatar());
+            return memberFeignInfo;
         }).collect(Collectors.toList()));
     }
 
     @ApiOperation(value = "会员注册")
     @PostMapping("/register")
-    public R<String> register(@RequestBody MemberRegisterFeignInfoReq registerDto) {
+    public R<String> register(@RequestBody MemberRegisterFeignInfo registerDto) {
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", registerDto.getUsername()), Column.of("identity_type", IdentityTypeEnum.user_name)));
         if (memberAuth != null) return R.fail("账号已存在");
         String password = this.delegatingPassword(registerDto.getPassword()).replace("{bcrypt}", "");
         Member member = memberService.saveMemberByUserName(registerDto.getUsername(), password, DictCacheManager.getDictByCode(DictConstants.TIME_ZONE_TYPE, DictConstants.EAST_8_CODE).getValue());
         /* 添加日历 */
-        CalendarInitFeignInfoReq calendarInitFeignInfoReq = new CalendarInitFeignInfoReq();
-        calendarInitFeignInfoReq.setMemberId(member.getId());
-        calendarInitFeignInfoReq.setMemberNickName(member.getName());
-        calendarFeignClient.addCalendar(calendarInitFeignInfoReq);
+        CalendarInitFeignInfo calendarInitFeignInfo = new CalendarInitFeignInfo();
+        calendarInitFeignInfo.setMemberId(member.getId());
+        calendarInitFeignInfo.setMemberNickName(member.getName());
+        calendarFeignClient.addCalendar(calendarInitFeignInfo);
         /* 添加注册消息到用户 */
         SpringContextHolder.publishEvent(new MemberRegisterEvent(this, member.getName(), JwtUtils.getUserId()));
         return R.status(true);
@@ -173,10 +177,10 @@ public class MemberFeignController {
 
     @ApiOperation(value = "修改密码")
     @PostMapping("/modify/password")
-    public R<String> modifyPassword(@RequestBody MemberModifyPasswordFeignInfoReq memberModifyPasswordFeignInfoReq) {
-        Member member = memberService.getById(memberModifyPasswordFeignInfoReq.getMemberId());
+    public R<String> modifyPassword(@RequestBody MemberModifyPasswordFeignInfo memberModifyPasswordFeignInfo) {
+        Member member = memberService.getById(memberModifyPasswordFeignInfo.getMemberId());
         if (member == null) return R.fail("用户不存在");
-        final String password = this.delegatingPassword(memberModifyPasswordFeignInfoReq.getPassword());
+        final String password = this.delegatingPassword(memberModifyPasswordFeignInfo.getPassword());
         List<MemberAuth> memberAuths = memberAuthService.find(Column.of("member_id", member.getId()));
         memberAuths.stream().forEach(item -> item.setPassword(password));
         memberAuthService.updateBatchById(memberAuths, memberAuths.size());

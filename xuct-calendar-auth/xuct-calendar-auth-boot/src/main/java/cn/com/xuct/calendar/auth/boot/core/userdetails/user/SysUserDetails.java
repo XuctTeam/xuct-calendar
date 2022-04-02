@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.auth.boot.core.userdetails.user;
 
-import cn.com.xuct.calendar.common.module.feign.UserInfoFeignInfoRes;
+import cn.com.xuct.calendar.common.module.feign.UserInfoFeignInfo;
 import cn.com.xuct.calendar.common.core.constant.GlobalConstants;
 import cn.com.xuct.calendar.common.core.enums.PasswordEncoderTypeEnum;
 import cn.hutool.core.collection.CollectionUtil;
@@ -50,7 +50,7 @@ public class SysUserDetails implements UserDetails {
     /**
      * 系统管理用户
      */
-    public SysUserDetails(UserInfoFeignInfoRes user) {
+    public SysUserDetails(UserInfoFeignInfo user) {
         this.setUserId(user.getUserId());
         this.setUsername(user.getUsername());
         this.setPassword(PasswordEncoderTypeEnum.BCRYPT.getPrefix() + user.getPassword());

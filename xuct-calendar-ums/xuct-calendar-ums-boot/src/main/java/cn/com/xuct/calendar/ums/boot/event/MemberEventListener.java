@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.ums.boot.event;
 
-import cn.com.xuct.calendar.common.module.feign.CalendarInitFeignInfoReq;
+import cn.com.xuct.calendar.common.module.feign.req.CalendarInitFeignInfo;
 import cn.com.xuct.calendar.common.module.enums.MemberMessageTypeEnum;
 import cn.com.xuct.calendar.ums.api.entity.MemberMessage;
 import cn.com.xuct.calendar.ums.api.feign.CalendarFeignClient;
@@ -42,10 +42,10 @@ public class MemberEventListener {
     @Async
     @EventListener
     public void listenerModifyEvent(MemberModifyNameEvent nameEvent) {
-        CalendarInitFeignInfoReq calendarInitFeignInfoReq = new CalendarInitFeignInfoReq();
-        calendarInitFeignInfoReq.setMemberId(nameEvent.getMemberId());
-        calendarInitFeignInfoReq.setMemberNickName(nameEvent.getName());
-        calendarFeignClient.updateMemberCalendarName(calendarInitFeignInfoReq);
+        CalendarInitFeignInfo calendarInitFeignInfo = new CalendarInitFeignInfo();
+        calendarInitFeignInfo.setMemberId(nameEvent.getMemberId());
+        calendarInitFeignInfo.setMemberNickName(nameEvent.getName());
+        calendarFeignClient.updateMemberCalendarName(calendarInitFeignInfo);
     }
 
     @Async

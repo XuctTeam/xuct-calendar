@@ -8,7 +8,7 @@
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package cn.com.xuct.calendar.common.module.feign;
+package cn.com.xuct.calendar.common.module.feign.req;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -30,7 +30,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class WxSubscribeMessageFeignInfoReq implements Serializable {
+public class WxSubscribeMessageFeignInfo implements Serializable {
 
     /**
      * 接收者（用户）的 openid.
@@ -88,7 +88,7 @@ public class WxSubscribeMessageFeignInfoReq implements Serializable {
     @ApiModelProperty(value = "进入小程序查看的语言类型")
     private String lang = "ZH_CN";
 
-    public WxSubscribeMessageFeignInfoReq addData(MsgData datum) {
+    public WxSubscribeMessageFeignInfo addData(MsgData datum) {
         if (this.data == null) {
             this.data = new ArrayList<>();
         }

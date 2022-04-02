@@ -33,13 +33,14 @@ import cn.com.xuct.calendar.common.core.res.SvrResCode;
 import cn.com.xuct.calendar.common.core.utils.JsonUtils;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.dto.AlarmInfoDto;
-import cn.com.xuct.calendar.common.module.feign.MemberFeignInfoRes;
+import cn.com.xuct.calendar.common.module.feign.MemberFeignInfo;
 import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
 import cn.com.xuct.calendar.common.module.enums.ComponentRepeatTypeEnum;
 import cn.com.xuct.calendar.common.module.params.ComponentAddParam;
 import cn.com.xuct.calendar.common.module.params.ComponentAttendParam;
 import cn.com.xuct.calendar.common.web.utils.JwtUtils;
 import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
+import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.map.MapUtil;
@@ -114,7 +115,7 @@ public class ComponentController {
         Component component = componentService.getById(id);
         if (component == null) throw new SvrException(SvrResCode.CMS_COMPONENT_NOT_FOUND);
         final List<DateTime> dayRanges = "0".equals(component.getRepeatStatus()) ?
-                DateHelper.getRangeDateList(component.getDtstart(), component.getDtend()) : DateHelper.getRepeatRangeDataList(JwtUtils.getTimeZone(), component);
+                DateHelper.getRangeDateList(component.getDtstart(), component.getDtend()) : DateHelper.getRepeatRangeDataList(component , JwtUtils.getTimeZone());
         if (CollectionUtils.isEmpty(dayRanges)) throw new SvrException(SvrResCode.CMS_COMPONENT_DAY_LIST_EMPTY);
         List<ComponentListVo> componentListVos = Lists.newArrayList();
         ComponentListVo componentListVo = null;
@@ -200,8 +201,12 @@ public class ComponentController {
         Component component = componentService.getById(id);
         Assert.notNull(component, "事件不存在");
         List<Long> memberIds = componentService.deleteByComponentId(JwtUtils.getUserId(), id);
+        /* 1.推送日程删除消息 */
         if (!CollectionUtils.isEmpty(memberIds)) {
-            SpringContextHolder.publishEvent(new ComponentDelEvent(this, component.getId(), component.getSummary(), memberIds));
+            SpringContextHolder.publishEvent(new ComponentDelEvent(this, component.getId(), component.getCreatorMemberId(), component.getSummary(),
+                    DateUtil.format(component.getDtstart(), DatePattern.NORM_DATETIME_FORMAT),
+                    component.getLocation(),
+                    memberIds));
         }
         return R.status(true);
     }
@@ -219,7 +224,7 @@ public class ComponentController {
     public R<List<ComponentAttendVo>> queryComponentAttend(@RequestParam("componentId") Long componentId, @RequestParam("createMemberId") Long createMemberId) {
         List<Long> memberIds = componentAttendService.listByComponentIdNoMemberId(createMemberId, componentId);
         if (CollectionUtils.isEmpty(memberIds)) return R.data(Lists.newArrayList());
-        R<List<MemberFeignInfoRes>> memberInfoResult = umsFeignClient.listMemberByIds(memberIds);
+        R<List<MemberFeignInfo>> memberInfoResult = umsFeignClient.listMemberByIds(memberIds);
         if (memberInfoResult == null || !memberInfoResult.isSuccess()) return R.data(Lists.newArrayList());
         return R.data(memberInfoResult.getData().stream().map(info -> {
             ComponentAttendVo attendVo = new ComponentAttendVo();
@@ -251,7 +256,7 @@ public class ComponentController {
         return R.status(true);
     }
 
-    @ApiOperation(value = "删除邀请")
+    @ApiOperation(value = "拒绝邀请")
     @DeleteMapping("/attend/{componentId}")
     public R<String> deleteComponentAttend(@PathVariable("componentId") Long componentId) {
         ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", componentId), Column.of("member_id", JwtUtils.getUserId())));
@@ -362,7 +367,7 @@ public class ComponentController {
             if ("0".equals(component.getRepeatStatus())) {
                 dayRanges.addAll(DateHelper.getRangeDateList(component.getDtstart(), component.getDtend()));
             } else {
-                dayRanges.addAll(DateHelper.getRepeatRangeDataList(JwtUtils.getTimeZone(), component));
+                dayRanges.addAll(DateHelper.getRepeatRangeDataList(component , JwtUtils.getTimeZone()));
             }
             if (dayRanges.size() == 0) return;
             for (int i = 0; i < dayRanges.size(); i++) {

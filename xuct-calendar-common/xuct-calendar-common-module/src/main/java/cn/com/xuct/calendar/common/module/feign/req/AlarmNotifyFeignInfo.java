@@ -8,7 +8,7 @@
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package cn.com.xuct.calendar.common.module.feign;
+package cn.com.xuct.calendar.common.module.feign.req;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -31,7 +31,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AlarmNotifyFeignInfoReq implements Serializable {
+public class AlarmNotifyFeignInfo implements Serializable {
 
     @ApiModelProperty("事件ID")
     private Long componentId;

@@ -17,9 +17,9 @@ import cn.binarywang.wx.miniapp.bean.WxMaSubscribeMessage;
 import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
 import cn.com.xuct.calendar.basic.services.config.WxMaConfiguration;
 import cn.com.xuct.calendar.common.core.res.R;
-import cn.com.xuct.calendar.common.module.feign.WxSubscribeMessageFeignInfoReq;
-import cn.com.xuct.calendar.common.module.feign.WxUserInfoFeignInfoReq;
-import cn.com.xuct.calendar.common.module.feign.WxUserPhoneFeignInfoReq;
+import cn.com.xuct.calendar.common.module.feign.req.WxSubscribeMessageFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.req.WxUserInfoFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.req.WxUserPhoneFeignInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -60,22 +60,22 @@ public class WxMiniappController {
 
     @ApiOperation(value = "获取登录用户")
     @PostMapping
-    public R<WxMaUserInfo> getUserInfo(@Validated @RequestBody WxUserInfoFeignInfoReq wxUserInfoFeignInfoReq) {
-        Assert.notNull(wxUserInfoFeignInfoReq.getSessionKey(), "sessionKey must be empty");
-        WxMaUserInfo wxMaUserInfo = wxMaConfiguration.getMaService().getUserService().getUserInfo(wxUserInfoFeignInfoReq.getSessionKey(), wxUserInfoFeignInfoReq.getEncryptedData(), wxUserInfoFeignInfoReq.getIv());
+    public R<WxMaUserInfo> getUserInfo(@Validated @RequestBody WxUserInfoFeignInfo wxUserInfoFeignInfo) {
+        Assert.notNull(wxUserInfoFeignInfo.getSessionKey(), "sessionKey must be empty");
+        WxMaUserInfo wxMaUserInfo = wxMaConfiguration.getMaService().getUserService().getUserInfo(wxUserInfoFeignInfo.getSessionKey(), wxUserInfoFeignInfo.getEncryptedData(), wxUserInfoFeignInfo.getIv());
         return wxMaUserInfo == null ? R.fail("查询微信失败") : R.data(wxMaUserInfo);
     }
 
     @ApiOperation(value = "获取用户电话")
     @PostMapping("/getPhoneNoInfo")
-    public R<WxMaPhoneNumberInfo> getPhoneNoInfo(@Validated @RequestBody WxUserPhoneFeignInfoReq wxUserPhoneFeignInfoReq) {
-        WxMaPhoneNumberInfo wxMaPhoneNumberInfo = wxMaConfiguration.getMaService().getUserService().getPhoneNoInfo(wxUserPhoneFeignInfoReq.getSessionKey(), wxUserPhoneFeignInfoReq.getEncryptedData(), wxUserPhoneFeignInfoReq.getIvStr());
+    public R<WxMaPhoneNumberInfo> getPhoneNoInfo(@Validated @RequestBody WxUserPhoneFeignInfo wxUserPhoneFeignInfo) {
+        WxMaPhoneNumberInfo wxMaPhoneNumberInfo = wxMaConfiguration.getMaService().getUserService().getPhoneNoInfo(wxUserPhoneFeignInfo.getSessionKey(), wxUserPhoneFeignInfo.getEncryptedData(), wxUserPhoneFeignInfo.getIvStr());
         return wxMaPhoneNumberInfo == null ? R.fail("查询微信失败") : R.data(wxMaPhoneNumberInfo);
     }
 
     @ApiOperation(value = "发送订阅消息")
     @PostMapping("/sendSubscribeMsg")
-    public R<String> sendSubscribeMsg(@Validated @RequestBody List<WxSubscribeMessageFeignInfoReq> subscribeMessageFeignInfo) {
+    public R<String> sendSubscribeMsg(@Validated @RequestBody List<WxSubscribeMessageFeignInfo> subscribeMessageFeignInfo) {
         WxMaMsgService wxMaMsgService = wxMaConfiguration.getMaService().getMsgService();
         subscribeMessageFeignInfo.stream().forEach(wxSubscribeReq -> {
             WxMaSubscribeMessage wxMaSubscribeMessage = new WxMaSubscribeMessage();

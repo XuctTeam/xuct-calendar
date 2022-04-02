@@ -25,7 +25,7 @@ public interface IAlarmNotifyService {
 
 
     /**
-     * 异步通知用户
+     * 通知用户
      *
      * @param component
      */
@@ -33,7 +33,7 @@ public interface IAlarmNotifyService {
 
 
     /**
-     * 异步处理非重复事件下次提醒时间
+     * 非重复事件下次提醒时间
      *
      * @param component
      * @param triggerSec
@@ -42,10 +42,18 @@ public interface IAlarmNotifyService {
 
 
     /**
-     * 异步处理重复事件下次提醒时间
+     * 到达重复事件下次提醒时间
      *
      * @param component
      * @param alarm
      */
-    void repeatAlarmPushToQueue(Component component, ComponentAlarm alarm);
+    void repeatNextAlarmPushToQueue(Component component, ComponentAlarm alarm);
+
+    /**
+     * 未到达本次重复事件的提醒时间
+     *
+     * @param component
+     * @param alarm
+     */
+    void repeatCurrentAlarmPushToQueue(Component component, ComponentAlarm alarm);
 }

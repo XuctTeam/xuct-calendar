@@ -14,9 +14,9 @@ import cn.com.xuct.calendar.auth.api.client.BasicServicesFeignClient;
 import cn.com.xuct.calendar.auth.api.client.MemberFeignClient;
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.res.R;
-import cn.com.xuct.calendar.common.module.feign.EmailFeignInfoReq;
-import cn.com.xuct.calendar.common.module.feign.MemberFeignInfoRes;
-import cn.com.xuct.calendar.common.module.feign.MemberModifyPasswordFeignInfoReq;
+import cn.com.xuct.calendar.common.module.feign.req.EmailFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.MemberFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.req.MemberModifyPasswordFeignInfo;
 import cn.com.xuct.calendar.common.module.params.ForgetModifyParam;
 import cn.com.xuct.calendar.common.module.params.ForgetPasswordParam;
 import cn.hutool.core.date.DateUtil;
@@ -88,7 +88,7 @@ public class PasswordEndpoint {
         if (!StringUtils.hasLength(cacheCode) || !cacheCode.toLowerCase().equals(forgetPasswordParam.getCode().toLowerCase()))
             return R.fail("验证码无效");
 
-        R<MemberFeignInfoRes> memberResult = null;
+        R<MemberFeignInfo> memberResult = null;
         if (forgetPasswordParam.getType() == 1) {
             memberResult = memberFeignClient.loadMemberByMobile(forgetPasswordParam.getPhone());
         } else if (forgetPasswordParam.getType() == 2) {
@@ -107,11 +107,11 @@ public class PasswordEndpoint {
         String cacheMemberId = stringRedisTemplate.opsForValue().get(RedisConstants.MEMBER_FORGET_PASSWORD_CODE_MEMBER_KEY.concat(forgetModifyParam.getCode()));
         if (!StringUtils.hasLength(cacheMemberId) || !forgetModifyParam.getMemberId().equals(cacheMemberId))
             return R.fail("认证失败");
-        return memberFeignClient.modifyPassword(MemberModifyPasswordFeignInfoReq.builder().memberId(Long.valueOf(forgetModifyParam.getMemberId())).password(forgetModifyParam.getPassword()).build());
+        return memberFeignClient.modifyPassword(MemberModifyPasswordFeignInfo.builder().memberId(Long.valueOf(forgetModifyParam.getMemberId())).password(forgetModifyParam.getPassword()).build());
     }
 
     private String sendForgetPasswordByPhone(final String phone) {
-        R<MemberFeignInfoRes> memberResult = memberFeignClient.loadMemberByMobile(phone);
+        R<MemberFeignInfo> memberResult = memberFeignClient.loadMemberByMobile(phone);
         if (memberResult == null || !memberResult.isSuccess()) return null;
         String code = RandomUtil.randomNumbers(4);
         String userId = String.valueOf(memberResult.getData().getUserId());
@@ -121,12 +121,12 @@ public class PasswordEndpoint {
     }
 
     private String sendForgetPasswordByEmail(final String email) {
-        R<MemberFeignInfoRes> memberResult = memberFeignClient.loadMemberByEmail(email);
+        R<MemberFeignInfo> memberResult = memberFeignClient.loadMemberByEmail(email);
         if (memberResult == null || !memberResult.isSuccess()) return null;
         String code = RandomUtil.randomNumbers(4);
         String userId = String.valueOf(memberResult.getData().getUserId());
         stringRedisTemplate.opsForValue().set(RedisConstants.MEMBER_FORGET_PASSWORD_EMAIL_CODE_KEY.concat(email), code);
-        basicServicesFeignClient.emailCode(EmailFeignInfoReq.builder().template("code").tos(Lists.newArrayList(email)).subject("重置密码").params(
+        basicServicesFeignClient.emailCode(EmailFeignInfo.builder().template("code").tos(Lists.newArrayList(email)).subject("重置密码").params(
                 new HashMap<>() {{
                     put("title", "重置密码");
                     put("userName", email);

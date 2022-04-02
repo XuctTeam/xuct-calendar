@@ -8,7 +8,7 @@
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package cn.com.xuct.calendar.common.module.feign;
+package cn.com.xuct.calendar.common.module.feign.req;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -22,7 +22,7 @@ import lombok.Data;
  * @since 1.0.0
  */
 @Data
-public class CalendarInitFeignInfoReq {
+public class CalendarInitFeignInfo {
 
     @ApiModelProperty("会员ID")
     private Long memberId;

@@ -8,7 +8,7 @@
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package cn.com.xuct.calendar.common.module.feign;
+package cn.com.xuct.calendar.common.module.feign.req;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -32,7 +32,7 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class EmailFeignInfoReq implements Serializable {
+public class EmailFeignInfo implements Serializable {
 
     @ApiModelProperty(name = "收件者")
     private List<String> tos;

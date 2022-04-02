@@ -13,6 +13,7 @@ package cn.com.xuct.calendar.cms.boot.handler;
 import cn.com.xuct.calendar.cms.boot.config.RabbitmqSource;
 import cn.com.xuct.calendar.common.module.dto.RabbitmqMessageBody;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,7 @@ import java.util.Date;
  * @create 2022/1/3
  * @since 1.0.0
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class RabbitmqOutChannel {
@@ -46,6 +48,7 @@ public class RabbitmqOutChannel {
      * @Date: 2022/1/4 10:30
      */
     public void pushAlarmDelayedMessage(String type, String payload, long delay) {
+        log.debug("rabbitmq channel:: type = {} , delay = {}", type, delay);
         RabbitmqMessageBody body = new RabbitmqMessageBody();
         body.setType(type);
         body.setPayload(payload);

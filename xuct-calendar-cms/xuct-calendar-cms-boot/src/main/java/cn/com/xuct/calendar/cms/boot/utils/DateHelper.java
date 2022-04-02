@@ -56,7 +56,23 @@ public class DateHelper {
      * @Author:Derek Xu
      * @Date: 2022/1/7 11:07
      */
-    public static List<DateTime> getRepeatRangeDataList(String timeZoneId, Component component) {
+    public static List<DateTime> getRepeatRangeDataList(Component component, String timeZoneId) {
+        return DateHelper.getRepeatRangeDataList(component, timeZoneId, null);
+    }
+
+    /**
+     * 功能描述: <br>
+     * 〈获取时间循环的所有天〉
+     *
+     * @param component
+     * @param timeZoneId
+     * @param begin      开始时间
+     * @return:java.util.List<cn.hutool.core.date.DateTime>
+     * @since: 1.0.0
+     * @Author:Derek Xu
+     * @Date: 2022/4/2 15:49
+     */
+    public static List<DateTime> getRepeatRangeDataList(Component component, String timeZoneId, Date begin) {
         VEvent event = new VEvent();
         event.setDateStart(component.getDtstart());
         TimeZone timeZone = DateHelper.getTimeZone(timeZoneId, event.getDateStart());
@@ -65,7 +81,11 @@ public class DateHelper {
         DateIterator it = event.getDateIterator(timeZone);
         List<DateTime> rangeList = Lists.newArrayList();
         while (it.hasNext()) {
-            rangeList.add(DateUtil.date(it.next()));
+            if (begin != null && it.next().after(begin)) {
+                rangeList.add(DateUtil.date(it.next()));
+            } else {
+                rangeList.add(DateUtil.date(it.next()));
+            }
         }
         return rangeList;
     }

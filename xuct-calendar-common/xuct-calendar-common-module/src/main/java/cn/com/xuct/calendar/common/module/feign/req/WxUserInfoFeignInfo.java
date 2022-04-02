@@ -8,7 +8,7 @@
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package cn.com.xuct.calendar.common.module.feign;
+package cn.com.xuct.calendar.common.module.feign.req;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -28,7 +28,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class WxUserInfoFeignInfoReq {
+public class WxUserInfoFeignInfo {
 
     @ApiModelProperty("小程序CODE")
     private String code;

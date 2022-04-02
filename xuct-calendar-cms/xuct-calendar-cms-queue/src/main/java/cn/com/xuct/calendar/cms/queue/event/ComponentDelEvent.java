@@ -30,14 +30,23 @@ public class ComponentDelEvent extends ApplicationEvent {
 
     private Long componentId;
 
+    private Long createMemberId;
+
     private String summary;
+
+    private String startDate;
+
+    private String location;
 
     private List<Long> memberIds;
 
-    public ComponentDelEvent(Object source, Long componentId, String summary, List<Long> memberIds) {
+    public ComponentDelEvent(Object source, Long componentId, Long createMemberId , String summary, String startDate, String location, List<Long> memberIds) {
         super(source);
         this.componentId = componentId;
+        this.createMemberId = createMemberId;
         this.summary = summary;
+        this.startDate = startDate;
+        this.location = location;
         this.memberIds = memberIds;
     }
 }

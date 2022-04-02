@@ -11,9 +11,9 @@
 package cn.com.xuct.calendar.cms.api.feign;
 
 import cn.com.xuct.calendar.common.core.res.R;
-import cn.com.xuct.calendar.common.module.feign.AlarmNotifyFeignInfoReq;
-import cn.com.xuct.calendar.common.module.feign.MemberFeignInfoRes;
-import cn.com.xuct.calendar.common.module.feign.MemberMessageFeignInfoReq;
+import cn.com.xuct.calendar.common.module.feign.req.AlarmNotifyFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.MemberFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.req.MemberMessageFeignInfo;
 import cn.com.xuct.calendar.common.web.web.FeignConfiguration;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,7 +42,7 @@ public interface UmsFeignClient {
      * @return
      */
     @GetMapping("/api/feign/v1/member/get/id")
-    R<MemberFeignInfoRes> getMemberById(@RequestParam("id") Long id);
+    R<MemberFeignInfo> getMemberById(@RequestParam("id") Long id);
 
     /**
      * 通过ids数组查询会员信息
@@ -51,27 +51,27 @@ public interface UmsFeignClient {
      * @return
      */
     @PostMapping("/api/feign/v1/member/list/ids")
-    R<List<MemberFeignInfoRes>> listMemberByIds(@RequestBody List<Long> ids);
+    R<List<MemberFeignInfo>> listMemberByIds(@RequestBody List<Long> ids);
 
 
     /**
      * 通过ids发送提醒信息
      *
-     * @param alarmNotifyFeignInfoReq
+     * @param alarmNotifyFeignInfo
      * @return
      */
     @PostMapping("/api/feign/v1/alarm")
-    R<String> notifyAlarm(@RequestBody AlarmNotifyFeignInfoReq alarmNotifyFeignInfoReq);
+    R<String> notifyAlarm(@RequestBody AlarmNotifyFeignInfo alarmNotifyFeignInfo);
 
 
     /**
      * 发送站内消息
      *
-     * @param memberMessageFeignInfoReq
+     * @param memberMessageFeignInfo
      * @return
      */
     @PostMapping("/api/feign/v1/message")
-    R<String> sendMemberMessage(@RequestBody MemberMessageFeignInfoReq memberMessageFeignInfoReq);
+    R<String> sendMemberMessage(@RequestBody MemberMessageFeignInfo memberMessageFeignInfo);
 
 
 }

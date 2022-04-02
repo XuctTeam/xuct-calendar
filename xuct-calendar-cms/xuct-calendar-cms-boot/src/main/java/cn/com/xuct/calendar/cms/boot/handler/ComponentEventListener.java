@@ -13,16 +13,17 @@ package cn.com.xuct.calendar.cms.boot.handler;
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAlarm;
 import cn.com.xuct.calendar.cms.api.feign.UmsFeignClient;
-import cn.com.xuct.calendar.cms.boot.config.RabbitmqConfiguration;
 import cn.com.xuct.calendar.cms.boot.service.IAlarmNotifyService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentAlarmService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentService;
 import cn.com.xuct.calendar.cms.queue.event.AlarmEvent;
 import cn.com.xuct.calendar.cms.queue.event.ComponentDelEvent;
+import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.utils.JsonUtils;
 import cn.com.xuct.calendar.common.module.dto.AlarmInfoDto;
 import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
-import cn.com.xuct.calendar.common.module.feign.MemberMessageFeignInfoReq;
+import cn.com.xuct.calendar.common.module.feign.MemberFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.req.MemberMessageFeignInfo;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import lombok.RequiredArgsConstructor;
@@ -69,12 +70,20 @@ public class ComponentEventListener {
     @Async(value = "taskExecutor")
     @EventListener(classes = ComponentDelEvent.class)
     public void listenerComponentDelEvent(ComponentDelEvent delEvent) {
+        String createName = "";
+        R<MemberFeignInfo> memberFeignInfoR = umsFeignClient.getMemberById(delEvent.getCreateMemberId());
+        if (memberFeignInfoR != null && memberFeignInfoR.isSuccess()) {
+            createName = memberFeignInfoR.getData().getName();
+        }
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("summary", delEvent.getSummary());
-        umsFeignClient.sendMemberMessage(MemberMessageFeignInfoReq.builder().type("EVENT")
+        jsonObject.put("location", delEvent.getLocation());
+        jsonObject.put("startDate", delEvent.getStartDate());
+        jsonObject.put("createMemberName", createName);
+        umsFeignClient.sendMemberMessage(MemberMessageFeignInfo.builder().type("EVENT")
                 .operation(3)
                 .memberIds(delEvent.getMemberIds())
-                .content(jsonObject)
+                .content(jsonObject.toMap())
                 .build());
     }
 
@@ -116,17 +125,23 @@ public class ComponentEventListener {
             log.error("alarm event listener:: alarm times is not in component alarm times , component id = {} , alarm id = {}", alarmInfoDto.getComponentId(), alarmInfoDto.getAlarmId());
             return;
         }
-        /* 1. 到最后提醒时间 */
-        if (alarm.getAlarmTime().before(new Date(now.getTime() + alarm.getTriggerSec()))) {
-            alarmNotifyService.timerOverAlarmNotify(component);
-            return;
-        }
-        /* 2. 不循环事件*/
+        /* 1. 不循环事件*/
         if ("0".equals(component.getRepeatStatus())) {
+            /* 到最后提醒时间 */
+            if (DateUtil.current() + alarm.getTriggerSec() * 60 * 1000 >= alarm.getAlarmTime().getTime()) {
+                alarmNotifyService.timerOverAlarmNotify(component);
+                return;
+            }
+            /* 未到预警时间 */
             alarmNotifyService.noRepeatAlarmPushToQueue(component, alarm.getId(), alarm.getTriggerSec());
+        }
+        /* 2. 循环事件处理 */
+        /* 已到达此次提醒时间 则提醒 */
+        if (DateUtil.current() + alarm.getTriggerSec() * 60 * 1000 >= alarm.getAlarmTime().getTime()) {
+            alarmNotifyService.repeatNextAlarmPushToQueue(component, alarm);
             return;
         }
-        /* 3. 循环事件处理 */
-        alarmNotifyService.repeatAlarmPushToQueue(component, alarm);
+        /*  未到达提醒时间，则继续投入队列 */
+        alarmNotifyService.repeatCurrentAlarmPushToQueue(component, alarm);
     }
 }

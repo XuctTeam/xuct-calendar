@@ -8,7 +8,7 @@
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package cn.com.xuct.calendar.common.module.feign;
+package cn.com.xuct.calendar.common.module.feign.req;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -16,12 +16,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.json.JSONObject;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -36,7 +36,7 @@ import java.util.List;
 @ApiModel("站内信消息体")
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberMessageFeignInfoReq implements Serializable {
+public class MemberMessageFeignInfo implements Serializable {
 
     @NotNull
     @ApiModelProperty(value = "类型", notes = "SYSTEM,GROUP,EVENT")
@@ -51,5 +51,5 @@ public class MemberMessageFeignInfoReq implements Serializable {
     private Integer operation;
 
     @ApiModelProperty("消息体")
-    private JSONObject content;
+    private Map<String, Object> content;
 }

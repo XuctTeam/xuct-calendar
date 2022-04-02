@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.ums.boot.mapper;
 
-import cn.com.xuct.calendar.common.module.feign.UserInfoFeignInfoRes;
+import cn.com.xuct.calendar.common.module.feign.UserInfoFeignInfo;
 import cn.com.xuct.calendar.ums.api.entity.UserRole;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
@@ -31,5 +31,5 @@ public interface UserRoleMapper extends BaseMapper<UserRole> {
      * @param userName
      * @return
      */
-    UserInfoFeignInfoRes selectUserByUserName(@Param("userName") String userName);
+    UserInfoFeignInfo selectUserByUserName(@Param("userName") String userName);
 }

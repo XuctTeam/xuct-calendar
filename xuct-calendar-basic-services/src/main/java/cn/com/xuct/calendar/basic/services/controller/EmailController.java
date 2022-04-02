@@ -12,7 +12,7 @@ package cn.com.xuct.calendar.basic.services.controller;
 
 import cn.com.xuct.calendar.basic.services.service.MailService;
 import cn.com.xuct.calendar.common.core.res.R;
-import cn.com.xuct.calendar.common.module.feign.EmailFeignInfoReq;
+import cn.com.xuct.calendar.common.module.feign.req.EmailFeignInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -45,9 +45,9 @@ public class EmailController {
 
     @ApiOperation(value = "发送邮件")
     @PostMapping("")
-    private R<String> sendEmail(@Validated @RequestBody EmailFeignInfoReq emailFeignInfoReq) {
-        mailService.sendTemplate(mailProperties.getUsername(), emailFeignInfoReq.getTos(), emailFeignInfoReq.getCcs(),
-                emailFeignInfoReq.getSubject(), emailFeignInfoReq.getParams(), emailFeignInfoReq.getTemplate());
+    private R<String> sendEmail(@Validated @RequestBody EmailFeignInfo emailFeignInfo) {
+        mailService.sendTemplate(mailProperties.getUsername(), emailFeignInfo.getTos(), emailFeignInfo.getCcs(),
+                emailFeignInfo.getSubject(), emailFeignInfo.getParams(), emailFeignInfo.getTemplate());
         return R.status(true);
     }
 }

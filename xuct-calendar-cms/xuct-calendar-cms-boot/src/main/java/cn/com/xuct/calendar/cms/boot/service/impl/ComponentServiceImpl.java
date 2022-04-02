@@ -29,6 +29,7 @@ import cn.com.xuct.calendar.common.module.enums.ComponentAlarmEnum;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.NumberUtil;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -199,8 +200,6 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
             componentAttendService.remove(componentAttendService.getQuery().lambda().eq(ComponentAttend::getComponentId, component.getId()).in(ComponentAttend::getMemberId, deleteReduce));
             /* TODO 增加删除消息 */
         }
-
-
     }
 
     /**
@@ -290,18 +289,15 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
         List<ComponentAlarm> alarmDatas = Lists.newArrayList();
         DateTime now = DateUtil.date();
         ComponentAlarm componentAlarm = null;
-        long diffTime = component.getDtstart().getTime() - now.getTime();
+        Long diffTime = component.getDtstart().getTime() - now.getTime();
         for (int i = 0, j = alarmTimes.size(); i < j; i++) {
-            Long trigger = Long.valueOf(1000 * 60 * alarmTimes.get(i));
-            if (diffTime - trigger < 0) continue;
+            Long trigger = alarmTimes.get(i) * 60 * 1000L;
+            Long diff = diffTime - trigger;
+            if (diff < 0) continue;
             componentAlarm = this.getDefaultAlarm(memberId, calendarId, component.getId());
-            componentAlarm.setAlarmTime(DateUtil.date(now.getTime() + (diffTime - trigger)));
             componentAlarm.setTriggerSec(alarmTimes.get(i));
-            if (diffTime - trigger > rabbitmqConfiguration.getMaxDelay()) {
-                componentAlarm.setDelayTime(rabbitmqConfiguration.getMaxDelay());
-            } else {
-                componentAlarm.setDelayTime(diffTime - trigger);
-            }
+            componentAlarm.setAlarmTime(DateUtil.offsetMillisecond(now, Math.toIntExact(diff)));
+            componentAlarm.setDelayTime(NumberUtil.compare(diff, rabbitmqConfiguration.getMaxDelay()) == -1 ? rabbitmqConfiguration.getMaxDelay() : diff);
             alarmDatas.add(componentAlarm);
         }
         return alarmDatas;
@@ -321,27 +317,22 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
      * @Date: 2022/1/20 20:34
      */
     private List<ComponentAlarm> repeatAlarm(final Long memberId, final String timeZone, final Long calendarId, Component component, List<Integer> alarmTimes) {
-        List<DateTime> dateTimes = DateHelper.getRepeatRangeDataList(timeZone, component);
+        List<DateTime> dateTimes = DateHelper.getRepeatRangeDataList(component, timeZone);
         List<ComponentAlarm> alarmDatas = Lists.newArrayList();
         if (CollectionUtils.isEmpty(dateTimes)) return alarmDatas;
         final DateTime now = DateUtil.date();
         DateTime repeatDate = null;
         ComponentAlarm componentAlarm = null;
         for (int i = 0, j = alarmTimes.size(); i < j; i++) {
-            Long trigger = Long.valueOf(1000 * 60 * alarmTimes.get(i));
+            Long trigger = alarmTimes.get(i) * 60 * 1000L;
             componentAlarm = this.getDefaultAlarm(memberId, calendarId, component.getId());
             componentAlarm.setTriggerSec(alarmTimes.get(i));
             for (int m = 0, n = dateTimes.size(); m < n; m++) {
                 repeatDate = dateTimes.get(m);
                 long nextTime = repeatDate.getTime() - now.getTime() - trigger;
                 if (nextTime < 0) continue;
-                componentAlarm.setAlarmTime(DateUtil.date(repeatDate.getTime() - trigger));
-                if (nextTime > rabbitmqConfiguration.getMaxDelay()) {
-                    componentAlarm.setDelayTime(rabbitmqConfiguration.getMaxDelay());
-                    alarmDatas.add(componentAlarm);
-                    break;
-                }
-                componentAlarm.setDelayTime(nextTime);
+                componentAlarm.setAlarmTime(DateUtil.offsetMillisecond(repeatDate, -Math.toIntExact(trigger)));
+                componentAlarm.setDelayTime(NumberUtil.compare(nextTime, rabbitmqConfiguration.getMaxDelay()) == -1 ? rabbitmqConfiguration.getMaxDelay() : nextTime);
                 alarmDatas.add(componentAlarm);
                 break;
             }

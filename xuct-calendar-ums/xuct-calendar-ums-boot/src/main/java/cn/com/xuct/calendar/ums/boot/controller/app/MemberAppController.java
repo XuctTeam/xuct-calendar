@@ -17,7 +17,7 @@ import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.res.SvrResCode;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.enums.IdentityTypeEnum;
-import cn.com.xuct.calendar.common.module.feign.WxUserPhoneFeignInfoReq;
+import cn.com.xuct.calendar.common.module.feign.req.WxUserPhoneFeignInfo;
 import cn.com.xuct.calendar.common.module.params.*;
 import cn.com.xuct.calendar.common.module.req.MemberGetPhoneReq;
 import cn.com.xuct.calendar.common.module.vo.MemberPhoneAuthVo;
@@ -150,7 +150,7 @@ public class MemberAppController {
         Long userId = JwtUtils.getUserId();
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("member_id", userId), Column.of("identity_type", IdentityTypeEnum.open_id)));
         if (memberAuth == null) throw new SvrException(SvrResCode.UMS_MEMBER_AUTH_TYPE_ERROR);
-        R<WxMaPhoneNumberInfo> wxMaPhoneNumberInfoR = basicServicesFeignClient.getPhoneNoInfo(WxUserPhoneFeignInfoReq.builder().sessionKey(memberAuth.getSessionKey()).encryptedData(getPhoneReq.getEncryptedData()).ivStr(getPhoneReq.getIvStr()).build());
+        R<WxMaPhoneNumberInfo> wxMaPhoneNumberInfoR = basicServicesFeignClient.getPhoneNoInfo(WxUserPhoneFeignInfo.builder().sessionKey(memberAuth.getSessionKey()).encryptedData(getPhoneReq.getEncryptedData()).ivStr(getPhoneReq.getIvStr()).build());
         if (wxMaPhoneNumberInfoR == null || !wxMaPhoneNumberInfoR.isSuccess()) return R.fail("查询微信失败");
         return R.data(wxMaPhoneNumberInfoR.getData().getPhoneNumber());
     }
