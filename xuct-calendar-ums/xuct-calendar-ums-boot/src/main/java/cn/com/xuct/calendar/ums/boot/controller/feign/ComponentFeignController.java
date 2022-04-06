@@ -52,7 +52,7 @@ import java.util.stream.Collectors;
 @Api(tags = "【远程调用】通知接口")
 @RequestMapping("/api/feign/v1/component")
 @RequiredArgsConstructor
-public class ComponentNotifyFeignController {
+public class ComponentFeignController {
 
     private final IMemberAuthService memberAuthService;
 

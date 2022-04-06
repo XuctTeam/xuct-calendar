@@ -180,16 +180,15 @@ public class ComponentController {
             component = componentService.getById(param.getId());
             componentAlarmList = this.updateComponent(param, component);
         }
-        if (!CollectionUtils.isEmpty(componentAlarmList)) {
-            ComponentAlarm componentAlarm = null;
-            for (int i = 0, j = componentAlarmList.size(); i < j; i++) {
-                componentAlarm = componentAlarmList.get(i);
-                log.info("component controller:: alarm delay component id = {} , next time = {}", component.getId(), componentAlarm.getDelayTime());
-                rabbitmqOutChannel.pushAlarmDelayedMessage(
-                        RabbitmqConstants.COMPONENT_ALARM_TYPE,
-                        JsonUtils.obj2json(AlarmInfoDto.builder().componentId(String.valueOf(componentAlarm.getComponentId())).alarmId(String.valueOf(componentAlarm.getId())).build()),
-                        componentAlarm.getDelayTime());
-            }
+        if (CollectionUtils.isEmpty(componentAlarmList)) return R.data(String.valueOf(component.getId()));
+        ComponentAlarm componentAlarm = null;
+        for (int i = 0, j = componentAlarmList.size(); i < j; i++) {
+            componentAlarm = componentAlarmList.get(i);
+            log.info("component controller:: alarm delay component id = {} , next time = {}", component.getId(), componentAlarm.getDelayTime());
+            rabbitmqOutChannel.pushAlarmDelayedMessage(
+                    RabbitmqConstants.COMPONENT_ALARM_TYPE,
+                    JsonUtils.obj2json(AlarmInfoDto.builder().componentId(String.valueOf(componentAlarm.getComponentId())).alarmId(String.valueOf(componentAlarm.getId())).build()),
+                    componentAlarm.getDelayTime());
         }
         return R.data(String.valueOf(component.getId()));
     }
@@ -202,10 +201,9 @@ public class ComponentController {
         Assert.notNull(component, "事件不存在");
         List<Long> memberIds = componentService.deleteByComponentId(JwtUtils.getUserId(), id);
         /* 1.推送日程删除消息 */
-        if (!CollectionUtils.isEmpty(memberIds)) {
-            SpringContextHolder.publishEvent(new ComponentDelEvent(this, component.getId(), component.getSummary(),
-                    DateUtil.format(component.getDtstart(), DatePattern.NORM_DATETIME_FORMAT), component.getCreatorMemberId(), component.getLocation(), component.getRepeatStatus(), null, memberIds));
-        }
+        if (CollectionUtils.isEmpty(memberIds)) return R.status(true);
+        SpringContextHolder.publishEvent(new ComponentDelEvent(this, component.getId(), component.getSummary(),
+                DateUtil.format(component.getDtstart(), DatePattern.NORM_DATETIME_FORMAT), component.getCreatorMemberId(), component.getLocation(), component.getRepeatStatus(), null, memberIds));
         return R.status(true);
     }
 

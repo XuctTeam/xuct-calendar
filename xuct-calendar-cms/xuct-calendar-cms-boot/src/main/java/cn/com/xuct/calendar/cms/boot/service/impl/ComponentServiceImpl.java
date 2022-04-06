@@ -65,7 +65,6 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<ComponentAlarm> addComponent(final Long memberId, final String timeZone, final Long calendarId, final Component component, final List<String> memberIds, final String alarmType, final List<Integer> alarmTimes) {
-        List<ComponentAlarm> componentAlarmList = null;
         component.setAlarmType(ComponentAlarmEnum.getByCode(alarmType));
         component.setTimeZone(timeZone);
         if (alarmTimes.size() != 0) {
@@ -75,10 +74,8 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
         /* 增加邀请人数据 */
         this.addComponentAttends(memberId, calendarId, component, memberIds, false);
         /* 增加提醒数据 */
-        if (!alarmType.equals(ComponentAlarmEnum.UNKNOWN.name()) && alarmTimes.size() != 0) {
-            componentAlarmList = this.addAlarm(memberId, timeZone, calendarId, component, alarmTimes);
-        }
-        return componentAlarmList;
+        if (alarmType.equals(ComponentAlarmEnum.UNKNOWN.getCode())) return Lists.newArrayList();
+        return this.addAlarm(memberId, timeZone, calendarId, component, alarmTimes);
     }
 
 
@@ -91,7 +88,7 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
         if (change) {
             return updateComponentAlarm(memberId, timeZone, component, alarmType, alarmTimes);
         }
-        if (alarmType.equals(ComponentAlarmEnum.UNKNOWN.name())) {
+        if (alarmType.equals(ComponentAlarmEnum.UNKNOWN.getCode())) {
             this.updateById(component);
             return Lists.newArrayList();
         }
@@ -162,16 +159,13 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
         updateAlarm.setStatus(CommonStatusEnum.DELETED);
         componentAlarmService.update(updateAlarm, Column.of("component_id", component.getId()));
         //更新提醒时间
-        List<ComponentAlarm> componentAlarmList = null;
         component.setAlarmType(ComponentAlarmEnum.getByCode(alarmType));
         if (alarmTimes.size() != 0) {
             component.setAlarmTimes(ArrayUtil.join(alarmTimes.toArray(new Integer[alarmTimes.size()]), ","));
         }
-        if (!alarmType.equals(ComponentAlarmEnum.UNKNOWN.name()) && alarmTimes.size() != 0) {
-            componentAlarmList = this.addAlarm(memberId, timeZone, component.getCalendarId(), component, alarmTimes);
-        }
         this.updateById(component);
-        return CollectionUtils.isEmpty(componentAlarmList) ? Lists.newArrayList() : componentAlarmList;
+        if (alarmType.equals(ComponentAlarmEnum.UNKNOWN.getCode())) return Lists.newArrayList();
+        return this.addAlarm(memberId, timeZone, component.getCalendarId(), component, alarmTimes);
     }
 
     /**
@@ -217,6 +211,7 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
      * @Date: 2022/1/20 22:40
      */
     private List<ComponentAlarm> addAlarm(final Long memberId, final String timeZone, final Long calendarId, Component component, final List<Integer> alarmTimes) {
+        if (CollectionUtils.isEmpty(alarmTimes)) return Lists.newArrayList();
         /* 不循环日程 */
         List<ComponentAlarm> componentAlarmList = null;
         if ("0".equals(component.getRepeatStatus())) {

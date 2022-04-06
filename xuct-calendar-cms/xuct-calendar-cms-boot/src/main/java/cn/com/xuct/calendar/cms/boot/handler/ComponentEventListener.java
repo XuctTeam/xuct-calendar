@@ -78,6 +78,7 @@ public class ComponentEventListener {
         ComponentNotifyFeignInfo componentNotifyFeignInfo = ComponentNotifyFeignInfo.builder()
                 .componentId(delEvent.getComponentId())
                 .summary(delEvent.getSummary())
+                .location(delEvent.getLocation())
                 .triggerSec(delEvent.getTriggerSec())
                 .startDate(delEvent.getStartDate())
                 .createMemberId(delEvent.getCreateMemberId())

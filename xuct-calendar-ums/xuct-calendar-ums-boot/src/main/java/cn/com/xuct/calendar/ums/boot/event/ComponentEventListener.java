@@ -16,6 +16,7 @@ import cn.com.xuct.calendar.ums.boot.service.IMemberMessageService;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -35,38 +36,52 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class AlarmNotifyEventListener {
+public class ComponentEventListener {
 
     private final IMemberMessageService memberMessageService;
 
 
-
+    @Async
+    @EventListener
+    public void listenerDeleteEvent(ComponentDelEvent delEvent) {
+        this.batchOperateMessage(delEvent, delEvent.getIds(), 2);
+    }
 
 
     @Async
     @EventListener
     public void listenerAlarmEvent(AlarmNotifyEvent notifyEvent) {
+        this.batchOperateMessage(notifyEvent, notifyEvent.getIds(), 3);
+    }
+
+    private void batchOperateMessage(ComponentEvent event, List<Long> memberIds, Integer operate) {
         MemberMessage memberMessage = null;
         List<MemberMessage> memberMessageList = Lists.newArrayList();
-        for (int i = 0, j = notifyEvent.getIds().size(); i < j; i++) {
+        for (int i = 0, j = memberIds.size(); i < j; i++) {
             memberMessage = new MemberMessage();
-            memberMessage.setMemberId(notifyEvent.getIds().get(i));
+            memberMessage.setMemberId(memberIds.get(i));
             memberMessage.setType(MemberMessageTypeEnum.EVENT);
-            memberMessage.setOperation(0);
+            memberMessage.setOperation(operate);
             memberMessage.setStatus(0);
-            JSONObject content = new JSONObject();
-            content.put("summary", notifyEvent.getSummary());
-            content.put("startDate", notifyEvent.getStartDate());
-            content.put("createMemberName", notifyEvent.getCreateMemberName());
-            content.put("componentId", notifyEvent.getComponentId());
-            content.put("location", notifyEvent.getLocation());
-            content.put("repeat", notifyEvent.getRepeat());
-            content.put("triggerSec", notifyEvent.getTriggerSec());
+            JSONObject content = geMessageContent(event);
             memberMessage.setContent(content);
             memberMessageList.add(memberMessage);
         }
-        if (!CollectionUtils.isEmpty(memberMessageList)) {
-            memberMessageService.saveBatch(memberMessageList);
-        }
+        if (CollectionUtils.isEmpty(memberMessageList)) return;
+        memberMessageService.saveBatch(memberMessageList);
+    }
+
+
+    @NotNull
+    private JSONObject geMessageContent(ComponentEvent componentEvent) {
+        JSONObject content = new JSONObject();
+        content.put("summary", componentEvent.getSummary());
+        content.put("startDate", componentEvent.getStartDate());
+        content.put("createMemberName", componentEvent.getCreateMemberName());
+        content.put("componentId", componentEvent.getComponentId());
+        content.put("location", componentEvent.getLocation());
+        content.put("repeat", componentEvent.getRepeat());
+        content.put("triggerSec", componentEvent.getTriggerSec());
+        return content;
     }
 }
