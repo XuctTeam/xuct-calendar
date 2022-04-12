@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @since 1.0.0
  */
 @FeignClient(value = "dav-ums", contextId = "users")
-public interface UserFeignClient {
+public interface UmsUserFeignClient {
 
     /**
      * 通过用户名查询系统用户

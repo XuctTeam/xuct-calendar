@@ -11,7 +11,7 @@
 package cn.com.xuct.calendar.auth.boot.endpoint;
 
 import cn.com.xuct.calendar.auth.api.client.BasicServicesFeignClient;
-import cn.com.xuct.calendar.auth.api.client.MemberFeignClient;
+import cn.com.xuct.calendar.auth.api.client.UmsMemberFeignClient;
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.module.feign.req.EmailFeignInfo;
@@ -57,7 +57,7 @@ public class PasswordEndpoint {
 
     private final StringRedisTemplate stringRedisTemplate;
 
-    private final MemberFeignClient memberFeignClient;
+    private final UmsMemberFeignClient umsMemberFeignClient;
 
     private final BasicServicesFeignClient basicServicesFeignClient;
 
@@ -90,9 +90,9 @@ public class PasswordEndpoint {
 
         R<MemberFeignInfo> memberResult = null;
         if (forgetPasswordParam.getType() == 1) {
-            memberResult = memberFeignClient.loadMemberByMobile(forgetPasswordParam.getPhone());
+            memberResult = umsMemberFeignClient.loadMemberByMobile(forgetPasswordParam.getPhone());
         } else if (forgetPasswordParam.getType() == 2) {
-            memberResult = memberFeignClient.loadMemberByEmail(forgetPasswordParam.getEmail());
+            memberResult = umsMemberFeignClient.loadMemberByEmail(forgetPasswordParam.getEmail());
         }
         if (memberResult == null || !memberResult.isSuccess()) return R.fail("验证失败");
         String memberId = String.valueOf(memberResult.getData().getUserId());
@@ -107,11 +107,11 @@ public class PasswordEndpoint {
         String cacheMemberId = stringRedisTemplate.opsForValue().get(RedisConstants.MEMBER_FORGET_PASSWORD_CODE_MEMBER_KEY.concat(forgetModifyParam.getCode()));
         if (!StringUtils.hasLength(cacheMemberId) || !forgetModifyParam.getMemberId().equals(cacheMemberId))
             return R.fail("认证失败");
-        return memberFeignClient.modifyPassword(MemberModifyPasswordFeignInfo.builder().memberId(Long.valueOf(forgetModifyParam.getMemberId())).password(forgetModifyParam.getPassword()).build());
+        return umsMemberFeignClient.modifyPassword(MemberModifyPasswordFeignInfo.builder().memberId(Long.valueOf(forgetModifyParam.getMemberId())).password(forgetModifyParam.getPassword()).build());
     }
 
     private String sendForgetPasswordByPhone(final String phone) {
-        R<MemberFeignInfo> memberResult = memberFeignClient.loadMemberByMobile(phone);
+        R<MemberFeignInfo> memberResult = umsMemberFeignClient.loadMemberByMobile(phone);
         if (memberResult == null || !memberResult.isSuccess()) return null;
         String code = RandomUtil.randomNumbers(4);
         String userId = String.valueOf(memberResult.getData().getUserId());
@@ -121,7 +121,7 @@ public class PasswordEndpoint {
     }
 
     private String sendForgetPasswordByEmail(final String email) {
-        R<MemberFeignInfo> memberResult = memberFeignClient.loadMemberByEmail(email);
+        R<MemberFeignInfo> memberResult = umsMemberFeignClient.loadMemberByEmail(email);
         if (memberResult == null || !memberResult.isSuccess()) return null;
         String code = RandomUtil.randomNumbers(4);
         String userId = String.valueOf(memberResult.getData().getUserId());

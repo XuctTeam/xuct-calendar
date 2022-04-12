@@ -50,6 +50,7 @@
         <complier.jaxb.runtime.version>2.3.5</complier.jaxb.runtime.version>
         <!-- utils -->
         <utils.hutool.version>5.7.21</utils.hutool.version>
+        <utils.zxing.version>3.4.1</utils.zxing.version>
         <utils.guava.version>31.0.1-jre</utils.guava.version>
         <utils.wxjava.version>4.2.0</utils.wxjava.version>
         <utils.jackson.version>2.12.2</utils.jackson.version>

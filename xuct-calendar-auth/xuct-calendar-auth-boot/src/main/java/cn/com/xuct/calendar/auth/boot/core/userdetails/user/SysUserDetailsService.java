@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.auth.boot.core.userdetails.user;
 
-import cn.com.xuct.calendar.auth.api.client.UserFeignClient;
+import cn.com.xuct.calendar.auth.api.client.UmsUserFeignClient;
 import cn.com.xuct.calendar.common.module.feign.UserInfoFeignInfo;
 import cn.com.xuct.calendar.common.core.res.AuthResCode;
 import cn.com.xuct.calendar.common.core.res.R;
@@ -35,12 +35,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SysUserDetailsService implements UserDetailsService {
 
-    private final UserFeignClient userFeignClient;
+    private final UmsUserFeignClient umsUserFeignClient;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         SysUserDetails userDetails = null;
-        R<UserInfoFeignInfo> result = userFeignClient.getUserByUsername(username);
+        R<UserInfoFeignInfo> result = umsUserFeignClient.getUserByUsername(username);
         if (R.isSuccess(result)) {
             UserInfoFeignInfo user = result.getData();
             if (null != user) {

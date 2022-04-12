@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 
 @FeignClient(name = "dav-ums", contextId = "members", configuration = FeignConfiguration.class)
-public interface MemberFeignClient {
+public interface UmsMemberFeignClient {
 
     @GetMapping("/api/feign/v1/member/get/phone")
     R<MemberFeignInfo> loadMemberByMobile(@RequestParam("phone") String phone);

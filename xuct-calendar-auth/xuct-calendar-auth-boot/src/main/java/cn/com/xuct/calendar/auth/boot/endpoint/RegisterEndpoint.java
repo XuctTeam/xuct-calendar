@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.auth.boot.endpoint;
 
-import cn.com.xuct.calendar.auth.api.client.MemberFeignClient;
+import cn.com.xuct.calendar.auth.api.client.UmsMemberFeignClient;
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.module.feign.req.MemberRegisterFeignInfo;
@@ -47,7 +47,7 @@ public class RegisterEndpoint {
 
     private final StringRedisTemplate stringRedisTemplate;
 
-    private final MemberFeignClient memberFeignClient;
+    private final UmsMemberFeignClient umsMemberFeignClient;
 
     @ApiOperation(value = "会员注册")
     @PostMapping("")
@@ -56,6 +56,6 @@ public class RegisterEndpoint {
         String verCode = stringRedisTemplate.opsForValue().get(RedisConstants.MEMBER_PHONE_REGISTER_CODE_KEY.concat(param.getKey()));
         if (!StringUtils.hasLength(verCode) || !verCode.toLowerCase().equals(param.getCaptcha().toLowerCase()))
             return R.fail("验证码错误");
-        return memberFeignClient.registerMember(MemberRegisterFeignInfo.builder().username(param.getUsername()).password(param.getPassword()).build());
+        return umsMemberFeignClient.registerMember(MemberRegisterFeignInfo.builder().username(param.getUsername()).password(param.getPassword()).build());
     }
 }

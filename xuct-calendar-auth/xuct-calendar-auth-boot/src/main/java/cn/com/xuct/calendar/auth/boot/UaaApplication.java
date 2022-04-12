@@ -10,8 +10,8 @@
  */
 package cn.com.xuct.calendar.auth.boot;
 
-import cn.com.xuct.calendar.auth.api.client.MemberFeignClient;
-import cn.com.xuct.calendar.auth.api.client.UserFeignClient;
+import cn.com.xuct.calendar.auth.api.client.UmsMemberFeignClient;
+import cn.com.xuct.calendar.auth.api.client.UmsUserFeignClient;
 import cn.com.xuct.calendar.common.http.annotation.EnableAutoOkFeign;
 import cn.com.xuct.calendar.common.localstore.annotation.EnableAutoLocalStoreCache;
 import cn.com.xuct.calendar.common.redis.annotation.EnableAutoRedis;
@@ -35,7 +35,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableAutoLocalStoreCache
 @SpringBootApplication(scanBasePackages = {"cn.com.xuct.calendar.auth.boot", "cn.com.xuct.calendar.common.web"})
 @EnableDiscoveryClient
-@EnableFeignClients(basePackageClasses = {MemberFeignClient.class, UserFeignClient.class})
+@EnableFeignClients(basePackageClasses = {UmsMemberFeignClient.class, UmsUserFeignClient.class})
 public class UaaApplication {
 
     public static void main(String[] args) {

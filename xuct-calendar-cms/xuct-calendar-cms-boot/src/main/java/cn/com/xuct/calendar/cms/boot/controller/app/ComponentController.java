@@ -19,12 +19,12 @@ import cn.com.xuct.calendar.cms.api.vo.CalendarComponentVo;
 import cn.com.xuct.calendar.cms.api.vo.ComponentAttendVo;
 import cn.com.xuct.calendar.cms.api.vo.ComponentListVo;
 import cn.com.xuct.calendar.cms.api.vo.ComponentSearchVo;
-import cn.com.xuct.calendar.cms.queue.event.ComponentDelEvent;
 import cn.com.xuct.calendar.cms.boot.handler.RabbitmqOutChannel;
 import cn.com.xuct.calendar.cms.boot.service.IComponentAttendService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentService;
 import cn.com.xuct.calendar.cms.boot.service.IMemberCalendarService;
 import cn.com.xuct.calendar.cms.boot.utils.DateHelper;
+import cn.com.xuct.calendar.cms.queue.event.ComponentDelEvent;
 import cn.com.xuct.calendar.common.core.constant.DateConstants;
 import cn.com.xuct.calendar.common.core.constant.RabbitmqConstants;
 import cn.com.xuct.calendar.common.core.exception.SvrException;
@@ -33,9 +33,9 @@ import cn.com.xuct.calendar.common.core.res.SvrResCode;
 import cn.com.xuct.calendar.common.core.utils.JsonUtils;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.dto.AlarmInfoDto;
-import cn.com.xuct.calendar.common.module.feign.MemberFeignInfo;
 import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
 import cn.com.xuct.calendar.common.module.enums.ComponentRepeatTypeEnum;
+import cn.com.xuct.calendar.common.module.feign.MemberFeignInfo;
 import cn.com.xuct.calendar.common.module.params.ComponentAddParam;
 import cn.com.xuct.calendar.common.module.params.ComponentAttendParam;
 import cn.com.xuct.calendar.common.web.utils.JwtUtils;
@@ -59,7 +59,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -86,6 +88,7 @@ public class ComponentController {
     private final UmsMemberFeignClient umsMemberFeignClient;
 
     private final RabbitmqOutChannel rabbitmqOutChannel;
+
 
 
     @ApiOperation(value = "通过日历查询日程-天分组")
@@ -260,6 +263,7 @@ public class ComponentController {
         componentAttendService.removeById(attend);
         return R.status(true);
     }
+
 
     /**
      * 功能描述: <br>

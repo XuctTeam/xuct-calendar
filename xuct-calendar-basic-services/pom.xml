@@ -87,6 +87,7 @@
             <artifactId>weixin-java-miniapp</artifactId>
             <version>${utils.wxjava.version}</version>
         </dependency>
+
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
