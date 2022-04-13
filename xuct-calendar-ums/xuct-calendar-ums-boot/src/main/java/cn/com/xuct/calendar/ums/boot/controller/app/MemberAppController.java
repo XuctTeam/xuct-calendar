@@ -102,6 +102,12 @@ public class MemberAppController {
         return R.data(memberAuths);
     }
 
+    @ApiOperation(value = "获取用户微信认证")
+    @GetMapping("/auth/wechat")
+    public R<MemberAuth> getWxAuth() {
+        return R.data(memberAuthService.get(Lists.newArrayList(Column.of("identity_type", IdentityTypeEnum.open_id), Column.of("member_id", JwtUtils.getUserId()))));
+    }
+
     @ApiOperation(value = "修改密码")
     @PostMapping("/password")
     public R<String> modifyPassword(@Validated @RequestBody MemberPasswordParam param) {
