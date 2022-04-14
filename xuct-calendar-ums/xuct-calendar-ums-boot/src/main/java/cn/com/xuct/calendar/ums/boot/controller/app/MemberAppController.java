@@ -10,13 +10,16 @@
  */
 package cn.com.xuct.calendar.ums.boot.controller.app;
 
+import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
+import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
 import cn.com.xuct.calendar.common.core.enums.PasswordEncoderTypeEnum;
 import cn.com.xuct.calendar.common.core.exception.SvrException;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.res.SvrResCode;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.enums.IdentityTypeEnum;
+import cn.com.xuct.calendar.common.module.feign.req.WxUserInfoFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.WxUserPhoneFeignInfo;
 import cn.com.xuct.calendar.common.module.params.*;
 import cn.com.xuct.calendar.common.module.req.MemberGetPhoneReq;
@@ -251,6 +254,28 @@ public class MemberAppController {
         Optional<MemberAuth> optPhoneAuth = memberAuths.stream().filter(x -> x.getIdentityType().equals(IdentityTypeEnum.email)).findFirst();
         if (!optPhoneAuth.isPresent()) return R.fail("未绑定邮箱");
         memberAuthService.removeById(optPhoneAuth.get().getId());
+        return R.status(true);
+    }
+
+    @ApiOperation(value = "微信绑定")
+    @PostMapping("/wx/bind")
+    public R<String> bindWechat(@RequestBody WxUserInfoFeignInfo wxUserInfoFeignInfo) {
+        R<WxMaJscode2SessionResult> jscode2SessionResultR = basicServicesFeignClient.getSessionInfo(wxUserInfoFeignInfo.getCode());
+        if (jscode2SessionResultR == null || !jscode2SessionResultR.isSuccess()) return R.fail("获取用户失败");
+        WxMaJscode2SessionResult session = jscode2SessionResultR.getData();
+        R<WxMaUserInfo> wxMaUserInfoR = basicServicesFeignClient.getUserInfo(WxUserInfoFeignInfo.builder().sessionKey(session.getSessionKey())
+                .encryptedData(wxUserInfoFeignInfo.getEncryptedData()).iv(wxUserInfoFeignInfo.getIv()).build());
+        if (wxMaUserInfoR == null || !wxMaUserInfoR.isSuccess()) return R.fail("获取用户失败");
+        MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", session.getOpenid()), Column.of("identity_type", IdentityTypeEnum.open_id)));
+        if (memberAuth != null) return R.fail("微信用户已绑定");
+        WxMaUserInfo wxMaUserInfo = wxMaUserInfoR.getData();
+        memberAuth = new MemberAuth();
+        memberAuth.setMemberId(JwtUtils.getUserId());
+        memberAuth.setUsername(wxMaUserInfo.getOpenId());
+        memberAuth.setIdentityType(IdentityTypeEnum.open_id);
+        memberAuth.setSessionKey(session.getSessionKey());
+        memberAuth.setAvatar(wxMaUserInfo.getAvatarUrl());
+        memberAuthService.save(memberAuth);
         return R.status(true);
     }
 
