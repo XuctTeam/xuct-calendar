@@ -20,6 +20,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -41,7 +42,7 @@ public interface BasicServicesFeignClient {
     R<String> sendEmail(@RequestBody EmailFeignInfo emailFeignInfo);
 
     @GetMapping("/api/basic/v1/wx/miniapp/getSessionInfo")
-    R<WxMaJscode2SessionResult> getSessionInfo(String code);
+    R<WxMaJscode2SessionResult> getSessionInfo(@RequestParam("code") String code);
 
     @PostMapping("/api/basic/v1/wx/miniapp/getUserInfo")
     R<WxMaUserInfo> getUserInfo(@RequestBody WxUserInfoFeignInfo wxUserInfoFeignInfo);

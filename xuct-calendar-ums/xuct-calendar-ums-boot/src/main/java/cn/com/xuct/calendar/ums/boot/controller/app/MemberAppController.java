@@ -153,6 +153,7 @@ public class MemberAppController {
         return R.status(true);
     }
 
+
     @ApiOperation(value = "获取微信手机号")
     @PostMapping("/phone/get")
     public R<String> getWxPhone(@RequestBody MemberGetPhoneReq getPhoneReq) {
@@ -261,21 +262,38 @@ public class MemberAppController {
     @PostMapping("/wx/bind")
     public R<String> bindWechat(@RequestBody WxUserInfoFeignInfo wxUserInfoFeignInfo) {
         R<WxMaJscode2SessionResult> jscode2SessionResultR = basicServicesFeignClient.getSessionInfo(wxUserInfoFeignInfo.getCode());
-        if (jscode2SessionResultR == null || !jscode2SessionResultR.isSuccess()) return R.fail("获取用户失败");
+        if (jscode2SessionResultR == null || !jscode2SessionResultR.isSuccess())
+            return R.fail(jscode2SessionResultR.getMsg());
         WxMaJscode2SessionResult session = jscode2SessionResultR.getData();
         R<WxMaUserInfo> wxMaUserInfoR = basicServicesFeignClient.getUserInfo(WxUserInfoFeignInfo.builder().sessionKey(session.getSessionKey())
                 .encryptedData(wxUserInfoFeignInfo.getEncryptedData()).iv(wxUserInfoFeignInfo.getIv()).build());
-        if (wxMaUserInfoR == null || !wxMaUserInfoR.isSuccess()) return R.fail("获取用户失败");
+        if (wxMaUserInfoR == null || !wxMaUserInfoR.isSuccess()) return R.fail(wxMaUserInfoR.getMsg());
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", session.getOpenid()), Column.of("identity_type", IdentityTypeEnum.open_id)));
         if (memberAuth != null) return R.fail("微信用户已绑定");
         WxMaUserInfo wxMaUserInfo = wxMaUserInfoR.getData();
         memberAuth = new MemberAuth();
         memberAuth.setMemberId(JwtUtils.getUserId());
-        memberAuth.setUsername(wxMaUserInfo.getOpenId());
+        memberAuth.setUsername(session.getOpenid());
+        memberAuth.setNickName(wxMaUserInfo.getNickName());
         memberAuth.setIdentityType(IdentityTypeEnum.open_id);
         memberAuth.setSessionKey(session.getSessionKey());
         memberAuth.setAvatar(wxMaUserInfo.getAvatarUrl());
         memberAuthService.save(memberAuth);
+        return R.status(true);
+    }
+
+    @ApiOperation(value = "使用微信头像昵称")
+    @PostMapping("/wx/update/info")
+    public R<String> modifyNameAndAvatarToWx() {
+        MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("member_id", JwtUtils.getUserId()), Column.of("identity_type", IdentityTypeEnum.open_id)));
+        if (memberAuth == null) return R.fail("未找到微信信息");
+        Member member = memberService.getById(JwtUtils.getUserId());
+        if (member == null) return R.fail("获取用户信息失败");
+        member.setName(memberAuth.getNickName());
+        member.setAvatar(memberAuth.getAvatar());
+        memberService.updateById(member);
+        /* 发送修改名称事件 */
+        SpringContextHolder.publishEvent(new MemberModifyNameEvent(this, JwtUtils.getUserId(), memberAuth.getNickName()));
         return R.status(true);
     }
 

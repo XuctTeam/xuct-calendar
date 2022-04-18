@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RestController
-@Api(tags = "【基础服务】微信接口")
+@Api(tags = "【基础服务】微信小程序接口")
 @RequiredArgsConstructor
 @RequestMapping("/api/basic/v1/wx/miniapp")
 public class WxMiniappController {
@@ -59,7 +59,7 @@ public class WxMiniappController {
     }
 
     @ApiOperation(value = "获取登录用户")
-    @PostMapping
+    @PostMapping("/getUserInfo")
     public R<WxMaUserInfo> getUserInfo(@Validated @RequestBody WxUserInfoFeignInfo wxUserInfoFeignInfo) {
         Assert.notNull(wxUserInfoFeignInfo.getSessionKey(), "sessionKey must be empty");
         WxMaUserInfo wxMaUserInfo = wxMaConfiguration.getMaService().getUserService().getUserInfo(wxUserInfoFeignInfo.getSessionKey(), wxUserInfoFeignInfo.getEncryptedData(), wxUserInfoFeignInfo.getIv());
