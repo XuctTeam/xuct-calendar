@@ -284,7 +284,7 @@ public class MemberAppController {
 
     @ApiOperation(value = "使用微信头像昵称")
     @PostMapping("/wx/update/info")
-    public R<String> modifyNameAndAvatarToWx() {
+    public R<Member> modifyNameAndAvatarToWx() {
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("member_id", JwtUtils.getUserId()), Column.of("identity_type", IdentityTypeEnum.open_id)));
         if (memberAuth == null) return R.fail("未找到微信信息");
         Member member = memberService.getById(JwtUtils.getUserId());
@@ -294,7 +294,7 @@ public class MemberAppController {
         memberService.updateById(member);
         /* 发送修改名称事件 */
         SpringContextHolder.publishEvent(new MemberModifyNameEvent(this, JwtUtils.getUserId(), memberAuth.getNickName()));
-        return R.status(true);
+        return R.data(member);
     }
 
 
