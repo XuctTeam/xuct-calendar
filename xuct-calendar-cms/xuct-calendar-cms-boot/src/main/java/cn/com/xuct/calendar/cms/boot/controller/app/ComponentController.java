@@ -74,7 +74,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RestController
-@Api(tags = "【移动端】日程服务")
+@Api(tags = "【移动端】事件服务")
 @RequestMapping("/api/app/v1/component")
 @RequiredArgsConstructor
 public class ComponentController {
@@ -88,7 +88,6 @@ public class ComponentController {
     private final UmsMemberFeignClient umsMemberFeignClient;
 
     private final RabbitmqOutChannel rabbitmqOutChannel;
-
 
 
     @ApiOperation(value = "通过日历查询日程-天分组")
