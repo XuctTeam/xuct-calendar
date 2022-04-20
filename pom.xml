@@ -11,7 +11,7 @@
     <modules>
         <module>xuct-calendar-common</module>
         <module>xuct-calendar-gateway</module>
-        <module>xuct-calendar-auth</module>
+        <module>xuct-calendar-uaa</module>
         <module>xuct-calendar-cms</module>
         <module>xuct-calendar-ums</module>
         <module>xuct-calendar-basic-services</module>

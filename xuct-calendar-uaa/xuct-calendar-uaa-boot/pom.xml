@@ -3,13 +3,13 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>xuct-calendar-auth</artifactId>
+        <artifactId>xuct-calendar-uaa</artifactId>
         <groupId>cn.com.xuct</groupId>
         <version>1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>xuct-calendar-auth-boot</artifactId>
+    <artifactId>xuct-calendar-uaa-boot</artifactId>
 
     <properties>
         <maven.compiler.source>10</maven.compiler.source>
@@ -141,7 +141,7 @@
 
         <dependency>
             <groupId>cn.com.xuct</groupId>
-            <artifactId>xuct-calendar-auth-api</artifactId>
+            <artifactId>xuct-calendar-uaa-api</artifactId>
             <version>${calendar.project.version}</version>
             <scope>compile</scope>
         </dependency>

@@ -9,11 +9,11 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>xuct-calendar-auth</artifactId>
+    <artifactId>xuct-calendar-uaa</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>xuct-calendar-auth-api</module>
-        <module>xuct-calendar-auth-boot</module>
+        <module>xuct-calendar-uaa-api</module>
+        <module>xuct-calendar-uaa-boot</module>
     </modules>
 
     <properties>
