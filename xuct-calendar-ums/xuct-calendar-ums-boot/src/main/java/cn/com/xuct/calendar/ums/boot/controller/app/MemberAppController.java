@@ -124,7 +124,7 @@ public class MemberAppController {
 
     @ApiOperation(value = "修改名字")
     @PostMapping("/name")
-    public R<String> modifyName(@Validated @RequestBody MemberNameParam param) {
+    public R<Member> modifyName(@Validated @RequestBody MemberNameParam param) {
         Long userId = JwtUtils.getUserId();
         Member member = memberService.findMemberById(userId);
         if (member == null) return R.fail("获取用户信息失败");
@@ -132,7 +132,7 @@ public class MemberAppController {
         memberService.updateMember(member);
         /* 发送修改名称事件 */
         SpringContextHolder.publishEvent(new MemberModifyNameEvent(this, userId, param.getName()));
-        return R.status(true);
+        return R.data(member);
     }
 
     @ApiOperation(value = "查询名字")
@@ -145,12 +145,12 @@ public class MemberAppController {
 
     @ApiOperation(value = "修改头像")
     @PostMapping("/avatar")
-    public R<String> modifyAvatar(@Validated @RequestBody MemberAvatarParam param) {
+    public R<Member> modifyAvatar(@Validated @RequestBody MemberAvatarParam param) {
         Member member = memberService.findMemberById(JwtUtils.getUserId());
         if (member == null) return R.fail("获取用户信息失败");
         member.setAvatar(param.getAvatar());
         memberService.updateMember(member);
-        return R.status(true);
+        return R.data(member);
     }
 
 

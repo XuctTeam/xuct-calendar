@@ -17,6 +17,7 @@ import cn.com.xuct.calendar.common.web.web.FeignConfiguration;
 import feign.Headers;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -36,8 +37,7 @@ public interface CalendarFeignClient {
      * @return
      */
     @PostMapping("/api/feign/v1/calendar")
-    @Headers("Content-Type: application/json")
-    R<String> addCalendar(CalendarInitFeignInfo calendarInitFeignInfo);
+    R<String> addCalendar(@RequestBody CalendarInitFeignInfo calendarInitFeignInfo);
 
 
     /**
@@ -47,8 +47,7 @@ public interface CalendarFeignClient {
      * @return
      */
     @PostMapping("/api/feign/v1/calendar/modify/name")
-    @Headers("Content-Type: application/json")
-    R<String> updateMemberCalendarName(CalendarInitFeignInfo calendarInitFeignInfo);
+    R<String> updateMemberCalendarName(@RequestBody CalendarInitFeignInfo calendarInitFeignInfo);
 
 }
 

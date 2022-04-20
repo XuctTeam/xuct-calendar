@@ -57,7 +57,7 @@ public class MemberCalendar extends SuperEntity<MemberCalendar> {
 
     /* 是否主日历 0是 1不是*/
     @TableField("major")
-    private int major;
+    private Integer major;
 
     private String description;
 
