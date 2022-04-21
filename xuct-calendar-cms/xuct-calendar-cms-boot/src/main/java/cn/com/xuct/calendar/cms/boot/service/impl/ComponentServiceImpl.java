@@ -186,6 +186,7 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
             componentAttendService.updateMemberAttendCalendarId(memberId, oldCalendarId, calendarId, component.getId());
         }
         if (CollectionUtils.isEmpty(attends)) {
+            if (CollectionUtils.isEmpty(attends)) return;
             this.addComponentAttends(memberId, calendarId, component, memberIds, true);
             return;
         }
@@ -201,7 +202,7 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
         }
         /* 更新参会人的邀请日历 */
         if (isNewCalendar) {
-            List<Long> updateReduce = attends.stream().filter(item -> !memberIds.contains(String.valueOf(item))).collect(Collectors.toList());
+            List<Long> updateReduce = attends.stream().filter(item -> memberIds.contains(String.valueOf(item))).collect(Collectors.toList());
             if (CollectionUtils.isEmpty(updateReduce)) return;
             componentAttendService.batchUpdateAttendMemberCalendarId(component.getId(), calendarId, updateReduce);
         }
