@@ -5,7 +5,6 @@
 
 <mapper namespace="cn.com.xuct.calendar.cms.boot.mapper.ComponentAttendMapper">
 
-
     <select id="listByCalendarId" resultType="cn.com.xuct.calendar.cms.api.entity.Component">
         select c.id,
                c.calendar_id,
@@ -80,4 +79,23 @@
           and component_id = #{componentId}
           and member_id &lt;&gt; #{memberId}
     </select>
+
+    <update id="updateMemberAttendCalendarId">
+        update cms_component_attend
+        set attend_calendar_id = #{calendarId},
+            calendar_id        = #{calendarId}
+        where member_id = #{memberId}
+          and component_id = #{componentId}
+          and attend_calendar_id = #{oldCalendarId}
+    </update>
+
+    <update id="batchUpdateAttendMemberCalendarId">
+        update cms_component_attend
+        set calendar_id = #{calendarId}
+        where component_id = #{componentId}
+        and member_id in
+        <foreach item="item" index="index" collection="memberIds" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
 </mapper>

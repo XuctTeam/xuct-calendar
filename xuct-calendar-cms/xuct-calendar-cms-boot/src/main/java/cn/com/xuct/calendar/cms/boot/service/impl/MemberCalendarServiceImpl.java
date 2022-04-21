@@ -69,6 +69,7 @@ public class MemberCalendarServiceImpl extends BaseServiceImpl<MemberCalendarMap
         memberCalendar.setMemberId(calendar.getMemberId());
         memberCalendar.setCalendarId(calendar.getId());
         memberCalendar.setCreateMemberId(calendar.getMemberId());
+        memberCalendar.setDescription(memberCalendarUpdateReq.getDescription());
         memberCalendar.setCreateMemberName(memberCalendarUpdateReq.getCreateMemberName());
         memberCalendar.setColor(memberCalendarUpdateReq.getColor());
         memberCalendar.setDisplay(memberCalendarUpdateReq.getDisplay());

@@ -46,4 +46,14 @@ public class ComponentAttendServiceImpl extends BaseServiceImpl<ComponentAttendM
     public List<Long> listByComponentIdNoMemberId(Long memberId, Long componentId) {
         return ((ComponentAttendMapper) super.getBaseMapper()).listByComponentIdNoMemberId(memberId, componentId);
     }
+
+    @Override
+    public void updateMemberAttendCalendarId(Long memberId, Long oldCalendarId, Long calendarId, Long componentId) {
+        ((ComponentAttendMapper) super.getBaseMapper()).updateMemberAttendCalendarId(memberId, oldCalendarId, calendarId, componentId);
+    }
+
+    @Override
+    public void batchUpdateAttendMemberCalendarId(Long componentId, Long calendarId, List<Long> memberIds) {
+        ((ComponentAttendMapper) super.getBaseMapper()).batchUpdateAttendMemberCalendarId(componentId, calendarId, memberIds);
+    }
 }

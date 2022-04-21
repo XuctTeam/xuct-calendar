@@ -69,14 +69,13 @@ public class ResourceServerConfiguration {
     private List<String> ignoreUrls;
 
 
-    private final List<String> swaggerUrl = Lists.newArrayList("/favicon.ico", "/doc.html", "/webjars/**", "/swagger-resources/**", "/swagger-ui/**");
+    private final List<String> swaggerUrl = Lists.newArrayList("/favicon.ico", "/doc.html", "/webjars/**", "/swagger-resources/**", "/swagger-ui/**" , "/*/v2/api-docs");
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         http.oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthenticationConverter())
-                .publicKey(rsaPublicKey()) // 本地获取公钥
+                .publicKey(rsaPublicKey()); // 本地获取公钥
         //.jwkSetUri() // 远程获取公钥
-        ;
         List<String> notIncludeUrls = Lists.newArrayList(ignoreUrls);
         notIncludeUrls.addAll(swaggerUrl);
         http.oauth2ResourceServer().authenticationEntryPoint(authenticationEntryPoint());

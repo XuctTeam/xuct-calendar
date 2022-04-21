@@ -58,4 +58,22 @@ public interface IComponentAttendService extends IBaseService<ComponentAttendMap
      */
     List<Long> listByComponentIdNoMemberId(Long memberId, Long componentId);
 
+    /**
+     * 更新用户自己事件的邀请日历
+     *
+     * @param memberId
+     * @param oldCalendarId
+     * @param calendarId
+     * @param componentId
+     */
+    void updateMemberAttendCalendarId(Long memberId, Long oldCalendarId, Long calendarId, Long componentId);
+
+    /**
+     * 批量更新被邀请人的日历
+     *
+     * @param componentId
+     * @param calendarId
+     * @param memberIds
+     */
+    void batchUpdateAttendMemberCalendarId(Long componentId, Long calendarId, List<Long> memberIds);
 }

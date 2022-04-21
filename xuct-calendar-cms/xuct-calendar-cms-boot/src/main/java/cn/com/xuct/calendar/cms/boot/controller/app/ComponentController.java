@@ -297,6 +297,7 @@ public class ComponentController {
         if (!param.getRepeatStatus().equals("0") && param.getRepeatUntil() == null)
             throw new SvrException(SvrResCode.CMS_COMPONENT_REPEAT_UNTIL_EMPTY);
         boolean changed = false;
+        Long oldCalendarId = component.getCalendarId();
         if (param.getDtstart().getTime() != component.getDtstart().getTime() ||
                 param.getDtend().getTime() != component.getDtend().getTime() ||
                 !param.getRepeatStatus().equals(component.getRepeatStatus()) ||
@@ -310,7 +311,7 @@ public class ComponentController {
             changed = true;
         }
         this.setComponent(param, component);
-        return componentService.updateComponent(JwtUtils.getUserId(), JwtUtils.getTimeZone(), component, param.getMemberIds(), param.getAlarmType(), param.getAlarmTimes(), changed);
+        return componentService.updateComponent(oldCalendarId, JwtUtils.getUserId(), JwtUtils.getTimeZone(), component, param.getMemberIds(), param.getAlarmType(), param.getAlarmTimes(), changed);
     }
 
 

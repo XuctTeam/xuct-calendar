@@ -11,7 +11,7 @@
 package cn.com.xuct.calendar.common.web.utils;
 
 /**
- * 〈一句话功能简述〉<br> 
+ * 〈一句话功能简述〉<br>
  * 〈〉
  *
  * @author Derek Xu
@@ -19,7 +19,9 @@ package cn.com.xuct.calendar.common.web.utils;
  * @since 1.0.0
  */
 
+import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
 import cn.hutool.json.JSONUtil;
+import com.google.common.collect.Maps;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -33,6 +35,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Enumeration;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -49,6 +53,7 @@ public class WebUtils extends org.springframework.web.util.WebUtils {
 
     /**
      * 判断是否ajax请求 spring ajax 返回含有 ResponseBody 或者 RestController注解
+     *
      * @param handlerMethod HandlerMethod
      * @return 是否ajax请求
      */
@@ -59,6 +64,7 @@ public class WebUtils extends org.springframework.web.util.WebUtils {
 
     /**
      * 读取cookie
+     *
      * @param name cookie name
      * @return cookie value
      */
@@ -71,8 +77,9 @@ public class WebUtils extends org.springframework.web.util.WebUtils {
 
     /**
      * 读取cookie
+     *
      * @param request HttpServletRequest
-     * @param name cookie name
+     * @param name    cookie name
      * @return cookie value
      */
     public String getCookieVal(HttpServletRequest request, String name) {
@@ -82,8 +89,9 @@ public class WebUtils extends org.springframework.web.util.WebUtils {
 
     /**
      * 清除 某个指定的cookie
+     *
      * @param response HttpServletResponse
-     * @param key cookie key
+     * @param key      cookie key
      */
     public void removeCookie(HttpServletResponse response, String key) {
         setCookie(response, key, null, 0);
@@ -91,9 +99,10 @@ public class WebUtils extends org.springframework.web.util.WebUtils {
 
     /**
      * 设置cookie
-     * @param response HttpServletResponse
-     * @param name cookie name
-     * @param value cookie value
+     *
+     * @param response        HttpServletResponse
+     * @param name            cookie name
+     * @param value           cookie value
      * @param maxAgeInSeconds maxage
      */
     public void setCookie(HttpServletResponse response, String name, String value, int maxAgeInSeconds) {
@@ -106,6 +115,7 @@ public class WebUtils extends org.springframework.web.util.WebUtils {
 
     /**
      * 获取 HttpServletRequest
+     *
      * @return {HttpServletRequest}
      */
     public Optional<HttpServletRequest> getRequest() {
@@ -115,6 +125,7 @@ public class WebUtils extends org.springframework.web.util.WebUtils {
 
     /**
      * 获取 HttpServletResponse
+     *
      * @return {HttpServletResponse}
      */
     public HttpServletResponse getResponse() {
@@ -123,8 +134,9 @@ public class WebUtils extends org.springframework.web.util.WebUtils {
 
     /**
      * 返回json
+     *
      * @param response HttpServletResponse
-     * @param result 结果对象
+     * @param result   结果对象
      */
     public void renderJson(HttpServletResponse response, Object result) {
         renderJson(response, result, MediaType.APPLICATION_JSON_VALUE);
@@ -132,8 +144,9 @@ public class WebUtils extends org.springframework.web.util.WebUtils {
 
     /**
      * 返回json
-     * @param response HttpServletResponse
-     * @param result 结果对象
+     *
+     * @param response    HttpServletResponse
+     * @param result      结果对象
      * @param contentType contentType
      */
     public void renderJson(HttpServletResponse response, Object result, String contentType) {
@@ -141,9 +154,26 @@ public class WebUtils extends org.springframework.web.util.WebUtils {
         response.setContentType(contentType);
         try (PrintWriter out = response.getWriter()) {
             out.append(JSONUtil.toJsonStr(result));
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
+    }
+
+    /**
+     * 功能描述: <br>
+     * 〈查询header中参数〉
+     *
+     * @param name
+     * @return:java.lang.String
+     * @since: 1.0.0
+     * @Author:Derek Xu
+     * @Date: 2022/4/21 9:35
+     */
+    public String getHeaders(String name) {
+        Optional<HttpServletRequest> requestOpt = getRequest();
+        if (!requestOpt.isPresent()) return null;
+        Enumeration<String> header = requestOpt.get().getHeaders(name);
+        if (header.hasMoreElements()) return header.nextElement();
+        return null;
     }
 }

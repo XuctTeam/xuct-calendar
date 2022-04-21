@@ -43,15 +43,16 @@ public interface IComponentService extends IBaseService<ComponentMapper, Compone
     /**
      * 更新日程
      *
+     * @param oldCalendarId 原事件的日历ID
      * @param memberId
      * @param component
      * @param alarmType
      * @param alarmTimes
-     * @param change     是否有提醒更新
-     * @param timeZone   用户时区
+     * @param change        是否有提醒更新
+     * @param timeZone      用户时区
      * @return
      */
-    List<ComponentAlarm> updateComponent(final Long memberId, final String timeZone, final Component component, final List<String> memberIds, final String alarmType, final List<Integer> alarmTimes, boolean change);
+    List<ComponentAlarm> updateComponent(final Long oldCalendarId, final Long memberId, final String timeZone, final Component component, final List<String> memberIds, final String alarmType, final List<Integer> alarmTimes, boolean change);
 
     /**
      * 删除日程

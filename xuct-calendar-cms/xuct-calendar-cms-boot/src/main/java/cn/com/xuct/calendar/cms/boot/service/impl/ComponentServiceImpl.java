@@ -81,9 +81,9 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<ComponentAlarm> updateComponent(final Long memberId, final String timeZone, final Component component, final List<String> memberIds, final String alarmType, final List<Integer> alarmTimes, boolean change) {
+    public List<ComponentAlarm> updateComponent(final Long oldCalendarId, final Long memberId, final String timeZone, final Component component, final List<String> memberIds, final String alarmType, final List<Integer> alarmTimes, boolean change) {
         /* 更新邀请人信息 */
-        this.updateComponentAttend(memberId, component.getCalendarId(), component, memberIds);
+        this.updateComponentAttend(oldCalendarId, memberId, component.getCalendarId(), component, memberIds);
         //有更新
         if (change) {
             return updateComponentAlarm(memberId, timeZone, component, alarmType, alarmTimes);
@@ -178,8 +178,13 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
      * @Author:
      * @Date: 2022/3/13 21:00
      */
-    private void updateComponentAttend(Long memberId, Long calendarId, Component component, List<String> memberIds) {
+    private void updateComponentAttend(final Long oldCalendarId, Long memberId, Long calendarId, Component component, List<String> memberIds) {
         List<Long> attends = componentAttendService.listByComponentIdNoMemberId(memberId, component.getId());
+        /* 1. 更新自己邀请事件表 */
+        boolean isNewCalendar = !String.valueOf(oldCalendarId).equals(String.valueOf(calendarId));
+        if (isNewCalendar) {
+            componentAttendService.updateMemberAttendCalendarId(memberId, oldCalendarId, calendarId, component.getId());
+        }
         if (CollectionUtils.isEmpty(attends)) {
             this.addComponentAttends(memberId, calendarId, component, memberIds, true);
             return;
@@ -193,6 +198,12 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
         if (!CollectionUtils.isEmpty(deleteReduce)) {
             componentAttendService.remove(componentAttendService.getQuery().lambda().eq(ComponentAttend::getComponentId, component.getId()).in(ComponentAttend::getMemberId, deleteReduce));
             /* TODO 增加删除消息 */
+        }
+        /* 更新参会人的邀请日历 */
+        if (isNewCalendar) {
+            List<Long> updateReduce = attends.stream().filter(item -> !memberIds.contains(String.valueOf(item))).collect(Collectors.toList());
+            if (CollectionUtils.isEmpty(updateReduce)) return;
+            componentAttendService.batchUpdateAttendMemberCalendarId(component.getId(), calendarId, updateReduce);
         }
     }
 

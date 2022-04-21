@@ -33,6 +33,9 @@ import java.util.Date;
 @Data
 public class ComponentShareVo implements Serializable {
 
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long id;
+    
     @ApiModelProperty("日历ID")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long calendarId;
