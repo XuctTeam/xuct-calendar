@@ -12,11 +12,16 @@ package cn.com.xuct.calendar.cms.boot.service.impl;
 
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAttend;
+import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
 import cn.com.xuct.calendar.cms.api.vo.CalendarComponentVo;
 import cn.com.xuct.calendar.cms.api.vo.ComponentAttendVo;
 import cn.com.xuct.calendar.cms.boot.mapper.ComponentAttendMapper;
 import cn.com.xuct.calendar.cms.boot.service.IComponentAttendService;
+import cn.com.xuct.calendar.cms.boot.service.IMemberCalendarService;
+import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.db.service.BaseServiceImpl;
+import com.google.common.collect.Lists;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,7 +35,10 @@ import java.util.List;
  * @since 1.0.0
  */
 @Service
+@RequiredArgsConstructor
 public class ComponentAttendServiceImpl extends BaseServiceImpl<ComponentAttendMapper, ComponentAttend> implements IComponentAttendService {
+
+    private final IMemberCalendarService memberCalendarService;
 
     @Override
     public List<Component> listByCalendarId(Long calendarId, Long start, Long end) {
@@ -55,5 +63,16 @@ public class ComponentAttendServiceImpl extends BaseServiceImpl<ComponentAttendM
     @Override
     public void batchUpdateAttendMemberCalendarId(Long componentId, Long calendarId, List<Long> memberIds) {
         ((ComponentAttendMapper) super.getBaseMapper()).batchUpdateAttendMemberCalendarId(componentId, calendarId, memberIds);
+    }
+
+    @Override
+    public void acceptAttend(Long memberId, Long calendarId, Long attendCalendarId, Long componentId) {
+        ComponentAttend componentAttend = new ComponentAttend();
+        componentAttend.setComponentId(componentId);
+        componentAttend.setCalendarId(calendarId);
+        componentAttend.setAttendCalendarId(attendCalendarId);
+        componentAttend.setStatus(1);
+        componentAttend.setMemberId(memberId);
+        this.save(componentAttend);
     }
 }

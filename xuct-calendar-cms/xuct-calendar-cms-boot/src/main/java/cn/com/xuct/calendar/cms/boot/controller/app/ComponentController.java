@@ -244,7 +244,7 @@ public class ComponentController {
         return R.data(attend.getStatus());
     }
 
-    @ApiOperation(value = "更新邀请状态")
+    @ApiOperation(value = "邀请待定或接受")
     @PostMapping("/attend/status")
     public R<String> updateComponentAttendStatus(@RequestBody ComponentAttendParam param) {
         ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", param.getComponentId()), Column.of("member_id", JwtUtils.getUserId())));
@@ -263,6 +263,29 @@ public class ComponentController {
         return R.status(true);
     }
 
+    @ApiOperation(value = "判断邀请是否存在")
+    @GetMapping("/attend/exists")
+    public R<Integer> attendExists(@RequestParam("componentId") Long componentId) {
+        Component component = componentService.getById(componentId);
+        Assert.notNull(component, "事件不存在");
+        ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", componentId), Column.of("member_id", JwtUtils.getUserId())));
+        return R.data(attend == null ? 0 : 1);
+    }
+
+
+    @ApiOperation(value = "加入邀请")
+    @PostMapping("/attend/accept")
+    public R<String> acceptAttend(@RequestBody ComponentAttendParam param) {
+        Component component = componentService.getById(param.getComponentId());
+        Long memberId = JwtUtils.getUserId();
+        Assert.notNull(component, "事件不存在");
+        ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", param.getComponentId()), Column.of("member_id", memberId)));
+        Assert.isNull(attend, "已加入邀请");
+        MemberCalendar memberCalendar = memberCalendarService.get(Lists.newArrayList(Column.of("member_id", memberId), Column.of("major", 1)));
+        Assert.notNull(memberCalendar, "查询主日历失败");
+        componentAttendService.acceptAttend(memberId, component.getCalendarId(), memberCalendar.getCalendarId(), param.getComponentId());
+        return R.status(true);
+    }
 
     /**
      * 功能描述: <br>

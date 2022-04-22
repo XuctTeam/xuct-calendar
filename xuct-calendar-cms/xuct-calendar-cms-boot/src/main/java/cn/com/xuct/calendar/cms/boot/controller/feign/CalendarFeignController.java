@@ -71,6 +71,4 @@ public class CalendarFeignController {
         //memberCalendarService.mergeMemberCalendar(calendarMergeDto.getMemberId(), calendarMergeDto.getFromMemberId());
         return R.status(true);
     }
-
-
 }

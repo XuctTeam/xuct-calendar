@@ -76,4 +76,14 @@ public interface IComponentAttendService extends IBaseService<ComponentAttendMap
      * @param memberIds
      */
     void batchUpdateAttendMemberCalendarId(Long componentId, Long calendarId, List<Long> memberIds);
+
+    /**
+     * 加入邀请
+     *
+     * @param memberId
+     * @param calendarId
+     * @param attendCalendarId
+     * @param componentId
+     */
+    void acceptAttend(Long memberId, Long calendarId, Long attendCalendarId, Long componentId);
 }
