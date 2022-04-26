@@ -20,25 +20,14 @@
 
 
     <select id="pages" resultType="cn.com.xuct.calendar.ums.api.entity.MemberMessage" resultMap="jsonResult">
-        select id, create_time, member_id, type, status, operation, content
+        select id, title, create_time, member_id, type, status, operation, content
         from sys_member_message
         where 1 = 1
         and member_id = #{memberId}
         <if test="status != null and status != 2">
             and status = #{status}
         </if>
-        <choose>
-            <when test="sort != null and sort == 1">
-                order by create_time desc
-            </when>
-            <when test="sort != null and sort == 2">
-                order by type asc, status desc
-            </when>
-            <otherwise>
-                order by status asc, create_time desc
-            </otherwise>
-        </choose>
-
+        order by create_time desc
         limit #{page}, #{limit}
     </select>
 </mapper>

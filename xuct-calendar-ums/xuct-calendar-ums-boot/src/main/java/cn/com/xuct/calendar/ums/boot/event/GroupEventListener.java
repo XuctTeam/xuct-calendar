@@ -61,6 +61,7 @@ public class GroupEventListener {
         List<MemberMessage> memberMessages = Lists.newArrayList();
         for (int i = 0, j = memberIds.size(); i < j; i++) {
             memberMessage = new MemberMessage();
+            memberMessage.setTitle(deleteEvent.getGroupName());
             memberMessage.setType(MemberMessageTypeEnum.GROUP);
             memberMessage.setOperation(3);
             memberMessage.setStatus(0);
@@ -92,6 +93,7 @@ public class GroupEventListener {
         memberMessage.setType(MemberMessageTypeEnum.GROUP);
         memberMessage.setOperation(0);
         memberMessage.setStatus(0);
+        memberMessage.setTitle(applyEvent.getGroupName());
         JSONObject content = new JSONObject();
         content.put("group_id", String.valueOf(applyEvent.getGroupId()))
                 .put("group_name", applyEvent.getGroupName())
@@ -114,6 +116,7 @@ public class GroupEventListener {
     @EventListener
     public void listenerApplyOptionEvent(GroupApplyOptionEvent optionEvent) {
         MemberMessage memberMessage = new MemberMessage();
+        memberMessage.setTitle(optionEvent.getGroupName());
         memberMessage.setMemberId(optionEvent.getMemberId());
         memberMessage.setType(MemberMessageTypeEnum.GROUP);
         memberMessage.setOperation(optionEvent.getOperate());
@@ -142,8 +145,9 @@ public class GroupEventListener {
         memberMessage.setType(MemberMessageTypeEnum.GROUP);
         memberMessage.setOperation(leaveEvent.getOperate());
         memberMessage.setStatus(0);
+        memberMessage.setTitle(leaveEvent.getGroupName());
         JSONObject content = new JSONObject();
-        content.put("group_id", leaveEvent.getGroupId()).put("name", leaveEvent.getName());
+        content.put("group_id", leaveEvent.getGroupId()).put("name", leaveEvent.getGroupName());
         memberMessage.setContent(content);
         memberMessageService.save(memberMessage);
     }

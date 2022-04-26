@@ -35,6 +35,9 @@ import org.json.JSONObject;
 @TableName(value = "sys_member_message", autoResultMap = true)
 public class MemberMessage extends SuperEntity<MemberMessage> {
 
+
+    private String title;
+
     @TableField("member_id")
     private Long memberId;
 

@@ -59,6 +59,7 @@ public class ComponentEventListener {
         List<MemberMessage> memberMessageList = Lists.newArrayList();
         for (int i = 0, j = memberIds.size(); i < j; i++) {
             memberMessage = new MemberMessage();
+            memberMessage.setTitle(event.getSummary());
             memberMessage.setMemberId(memberIds.get(i));
             memberMessage.setType(MemberMessageTypeEnum.EVENT);
             memberMessage.setOperation(operate);

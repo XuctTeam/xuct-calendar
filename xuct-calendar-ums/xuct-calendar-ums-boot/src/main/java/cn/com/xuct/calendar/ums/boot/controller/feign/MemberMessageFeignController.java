@@ -51,6 +51,7 @@ public class MemberMessageFeignController {
         List<Long> memberIds = memberMessageFeignInfo.getMemberIds();
         for (int i = 0, j = memberIds.size(); i < j; i++) {
             memberMessage = new MemberMessage();
+            memberMessage.setTitle(memberMessageFeignInfo.getTitle());
             memberMessage.setMemberId(memberIds.get(i));
             memberMessage.setType(typeEnum(memberMessageFeignInfo.getType()));
             memberMessage.setOperation(memberMessageFeignInfo.getOperation());

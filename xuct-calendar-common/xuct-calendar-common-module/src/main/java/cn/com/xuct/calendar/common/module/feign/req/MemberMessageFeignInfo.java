@@ -38,6 +38,9 @@ import java.util.Map;
 @AllArgsConstructor
 public class MemberMessageFeignInfo implements Serializable {
 
+    @ApiModelProperty("标题")
+    private String title;
+
     @NotNull
     @ApiModelProperty(value = "类型", notes = "SYSTEM,GROUP,EVENT")
     private String type;

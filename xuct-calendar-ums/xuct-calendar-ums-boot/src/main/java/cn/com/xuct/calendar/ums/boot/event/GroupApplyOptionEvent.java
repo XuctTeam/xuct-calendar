@@ -32,10 +32,13 @@ public class GroupApplyOptionEvent extends ApplicationEvent {
 
     private Long groupId;
 
-    public GroupApplyOptionEvent(Object source, Long groupId, Long memberId, Integer operate) {
+    private String groupName;
+
+    public GroupApplyOptionEvent(Object source, Long groupId, String groupName, Long memberId, Integer operate) {
         super(source);
         this.memberId = memberId;
         this.operate = operate;
         this.groupId = groupId;
+        this.groupName = groupName;
     }
 }

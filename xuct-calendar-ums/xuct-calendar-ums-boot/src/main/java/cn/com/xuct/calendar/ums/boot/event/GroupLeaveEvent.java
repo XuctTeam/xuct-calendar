@@ -15,7 +15,7 @@ import lombok.Setter;
 import org.springframework.context.ApplicationEvent;
 
 /**
- * 〈一句话功能简述〉<br> 
+ * 〈一句话功能简述〉<br>
  * 〈〉
  *
  * @author Derek Xu
@@ -26,18 +26,20 @@ import org.springframework.context.ApplicationEvent;
 @Setter
 public class GroupLeaveEvent extends ApplicationEvent {
 
+
     private Long groupId;
 
-    private String name;
+    private String groupName;
+
 
     private Long memberId;
 
     private Integer operate;
 
-    public GroupLeaveEvent(Object source, Long groupId, String name, Long memberId, Integer operate) {
+    public GroupLeaveEvent(Object source, Long groupId, String groupName, Long memberId, Integer operate) {
         super(source);
         this.groupId = groupId;
-        this.name = name;
+        this.groupName = groupName;
         this.memberId = memberId;
         this.operate = operate;
     }

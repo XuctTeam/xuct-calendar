@@ -126,18 +126,22 @@ public class MemberGroupAppController {
     @ApiOperation(value = "同意入群")
     @PostMapping("/apply/agree")
     public R<String> applyAgreeJoinGroup(@RequestBody @Validated GroupApplyParam groupApplyParam) {
+        Group group = groupService.getById(groupApplyParam.getGroupId());
+        Assert.notNull(group, "群组为空");
         memberGroupService.applyAgreeJoinGroup(groupApplyParam.getGroupId(), groupApplyParam.getMemberId());
         /* 发出入群同意消息 */
-        SpringContextHolder.publishEvent(new GroupApplyOptionEvent(this, groupApplyParam.getGroupId(), groupApplyParam.getMemberId(), 1));
+        SpringContextHolder.publishEvent(new GroupApplyOptionEvent(this, group.getId(), group.getName(), groupApplyParam.getMemberId(), 1));
         return R.status(true);
     }
 
     @ApiOperation(value = "拒绝入群")
     @PostMapping("/apply/refuse")
     public R<String> applyRefuseJoinGroup(@RequestBody @Validated GroupApplyParam groupApplyParam) {
+        Group group = groupService.getById(groupApplyParam.getGroupId());
+        Assert.notNull(group, "群组为空");
         memberGroupService.applyRefuseJoinGroup(groupApplyParam.getGroupId(), groupApplyParam.getMemberId());
         /* 发出入群拒绝消息 */
-        SpringContextHolder.publishEvent(new GroupApplyOptionEvent(this, groupApplyParam.getGroupId(), groupApplyParam.getMemberId(), 2));
+        SpringContextHolder.publishEvent(new GroupApplyOptionEvent(this, group.getId(), group.getName(), groupApplyParam.getMemberId(), 2));
         return R.status(true);
     }
 
