@@ -34,5 +34,5 @@ public interface MemberMessageMapper extends BaseMapper<MemberMessage> {
      * @param limit
      * @return
      */
-    List<MemberMessage> pages(@Param("memberId") Long memberId, @Param("page") Integer page, @Param("limit") Integer limit, @Param("status") Integer status);
+    List<MemberMessage> pages(@Param("title") String title, @Param("memberId") Long memberId, @Param("page") Integer page, @Param("limit") Integer limit, @Param("status") Integer status);
 }
