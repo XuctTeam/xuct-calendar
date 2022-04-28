@@ -23,7 +23,5 @@ import lombok.Data;
 @Data
 public class MemberGetPhoneReq {
 
-    private String encryptedData;
-
-    private String ivStr;
+    private String code;
 }

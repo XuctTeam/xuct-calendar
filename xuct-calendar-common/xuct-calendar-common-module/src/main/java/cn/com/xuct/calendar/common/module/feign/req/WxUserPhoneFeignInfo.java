@@ -33,11 +33,5 @@ import java.io.Serializable;
 public class WxUserPhoneFeignInfo implements Serializable {
 
     @NotNull
-    private String sessionKey;
-
-    @NotNull
-    private String encryptedData;
-
-    @NotNull
-    private String ivStr;
+    private String code;
 }

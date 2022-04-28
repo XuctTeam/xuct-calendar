@@ -160,7 +160,7 @@ public class MemberAppController {
         Long userId = JwtUtils.getUserId();
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("member_id", userId), Column.of("identity_type", IdentityTypeEnum.open_id)));
         if (memberAuth == null) throw new SvrException(SvrResCode.UMS_MEMBER_AUTH_TYPE_ERROR);
-        R<WxMaPhoneNumberInfo> wxMaPhoneNumberInfoR = basicServicesFeignClient.getPhoneNoInfo(WxUserPhoneFeignInfo.builder().sessionKey(memberAuth.getSessionKey()).encryptedData(getPhoneReq.getEncryptedData()).ivStr(getPhoneReq.getIvStr()).build());
+        R<WxMaPhoneNumberInfo> wxMaPhoneNumberInfoR = basicServicesFeignClient.getPhoneNoInfo(WxUserPhoneFeignInfo.builder().code(getPhoneReq.getCode()).build());
         if (wxMaPhoneNumberInfoR == null || !wxMaPhoneNumberInfoR.isSuccess()) return R.fail("查询微信失败");
         return R.data(wxMaPhoneNumberInfoR.getData().getPhoneNumber());
     }

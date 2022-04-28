@@ -55,7 +55,8 @@ public class SmsCodeController {
     public R<String> sendSmsCode(@Validated @RequestBody MemberPhoneParam param) {
         if (param.getType() == 1 || param.getType() == 2) {
             String code = this.sendBindCode(param.getPhone(), param.getType());
-            return basicServicesFeignClient.smsCode(SmsCodeFeignInfo.builder().phones(Lists.newArrayList(param.getPhone())).code(code).template("bind").build());
+            //basicServicesFeignClient.smsCode(SmsCodeFeignInfo.builder().phones(Lists.newArrayList(param.getPhone())).code(code).template("bind").build());
+            return R.status(true);
         }
         return R.fail("发送错误");
     }

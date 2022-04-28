@@ -68,8 +68,8 @@ public class WxMiniappController {
 
     @ApiOperation(value = "获取用户电话")
     @PostMapping("/getPhoneNoInfo")
-    public R<WxMaPhoneNumberInfo> getPhoneNoInfo(@Validated @RequestBody WxUserPhoneFeignInfo wxUserPhoneFeignInfo) {
-        WxMaPhoneNumberInfo wxMaPhoneNumberInfo = wxMaConfiguration.getMaService().getUserService().getPhoneNoInfo(wxUserPhoneFeignInfo.getSessionKey(), wxUserPhoneFeignInfo.getEncryptedData(), wxUserPhoneFeignInfo.getIvStr());
+    public R<WxMaPhoneNumberInfo> getPhoneNoInfo(@Validated @RequestBody WxUserPhoneFeignInfo wxUserPhoneFeignInfo) throws WxErrorException {
+        WxMaPhoneNumberInfo wxMaPhoneNumberInfo = wxMaConfiguration.getMaService().getUserService().getNewPhoneNoInfo(wxUserPhoneFeignInfo.getCode());
         return wxMaPhoneNumberInfo == null ? R.fail("查询微信失败") : R.data(wxMaPhoneNumberInfo);
     }
 
