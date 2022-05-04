@@ -81,23 +81,27 @@ public class MemberServiceImpl extends BaseServiceImpl<MemberMapper, Member> imp
     }
 
     @Override
-    public Member saveMemberByPhone(String phone, String timeZone) {
+    @Transactional(rollbackFor = Exception.class)
+    public Member saveMemberByPhone(String phone, String password, String timeZone) {
         Member member = this.saveMember(timeZone, null);
         MemberAuth memberAuth = new MemberAuth();
         memberAuth.setMemberId(member.getId());
         memberAuth.setIdentityType(IdentityTypeEnum.phone);
         memberAuth.setUsername(phone);
+        memberAuth.setPassword(password);
         memberAuthService.save(memberAuth);
         return member;
     }
 
     @Override
-    public Member saveMemberByEmail(String email, String timeZone) {
+    @Transactional(rollbackFor = Exception.class)
+    public Member saveMemberByEmail(String email, String password, String timeZone) {
         Member member = this.saveMember(timeZone, null);
         MemberAuth memberAuth = new MemberAuth();
         memberAuth.setMemberId(member.getId());
         memberAuth.setIdentityType(IdentityTypeEnum.email);
         memberAuth.setUsername(email);
+        memberAuth.setPassword(password);
         memberAuthService.save(memberAuth);
         return member;
     }

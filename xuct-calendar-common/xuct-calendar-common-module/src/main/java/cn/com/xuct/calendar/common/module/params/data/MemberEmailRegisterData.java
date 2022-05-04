@@ -29,6 +29,9 @@ public class MemberEmailRegisterData implements Serializable {
     @ApiModelProperty("邮箱")
     private String email;
 
+    @ApiModelProperty("密码")
+    private String password;
+
     @ApiModelProperty("验证码")
     private String code;
 }

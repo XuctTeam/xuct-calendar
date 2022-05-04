@@ -56,6 +56,7 @@ public class MemberEventListener {
         memberMessage.setType(MemberMessageTypeEnum.SYSTEM);
         memberMessage.setOperation(0);
         memberMessage.setStatus(0);
+        memberMessage.setTitle(event.getUserName() + "注册成功");
 
         JSONObject content = new JSONObject();
         content.put("user_name", event.getUserName());

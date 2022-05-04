@@ -29,6 +29,9 @@ public class MemberPhoneRegisterData implements Serializable {
     @ApiModelProperty("手机号")
     private String phone;
 
+    @ApiModelProperty("密码")
+    private String password;
+
     @ApiModelProperty("验证码")
     private String smsCode;
 }

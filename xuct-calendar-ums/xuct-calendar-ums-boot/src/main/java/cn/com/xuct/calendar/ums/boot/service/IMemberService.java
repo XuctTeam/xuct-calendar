@@ -68,10 +68,11 @@ public interface IMemberService extends IBaseService<MemberMapper, Member> {
      * 通过电话号码保存用户
      *
      * @param phone
+     * @param password
      * @param timeZone
      * @return
      */
-    Member saveMemberByPhone(String phone, String timeZone);
+    Member saveMemberByPhone(String phone, String password, String timeZone);
 
     /**
      * 通过email保存用户
@@ -80,7 +81,7 @@ public interface IMemberService extends IBaseService<MemberMapper, Member> {
      * @param timeZone
      * @return
      */
-    Member saveMemberByEmail(String email, String timeZone);
+    Member saveMemberByEmail(String email, String password, String timeZone);
 
     /**
      * 合并用户

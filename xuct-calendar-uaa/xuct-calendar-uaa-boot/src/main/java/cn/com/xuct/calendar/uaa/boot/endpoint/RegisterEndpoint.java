@@ -83,19 +83,20 @@ public class RegisterEndpoint {
     }
 
     @ApiOperation(value = "获取短信验证码")
-    @GetMapping("/sms")
+    @PostMapping("/sms")
     public R<String> sendSmsCode(@Validated @RequestBody MemberPhoneParam param) {
         String code = RandomUtil.randomNumbers(6);
         stringRedisTemplate.opsForValue().set(this.getSmsCodeKey(param.getPhone()), code, 60 * 2, TimeUnit.SECONDS);
-        return basicServicesFeignClient.smsCode(SmsCodeFeignInfo.builder().code(code).phones(Lists.newArrayList(param.getPhone())).template("register").build());
+        //return basicServicesFeignClient.smsCode(SmsCodeFeignInfo.builder().code(code).phones(Lists.newArrayList(param.getPhone())).template("register").build());
+        return R.status(true);
     }
 
 
-    @ApiOperation(value = "获取短信验证码")
-    @GetMapping("/email/code")
+    @ApiOperation(value = "获取邮箱验证码")
+    @PostMapping("/email/code")
     public R<String> sendEmailCode(@Validated @RequestBody MemberEmailParam param) {
         String code = RandomUtil.randomNumbers(4);
-        stringRedisTemplate.opsForValue().set(this.getEmailCodeKey(param.getEmail()), code);
+        stringRedisTemplate.opsForValue().set(this.getEmailCodeKey(param.getEmail()), code, 120, TimeUnit.SECONDS);
         return basicServicesFeignClient.emailCode(EmailFeignInfo.builder().template("register").tos(Lists.newArrayList(param.getEmail())).subject("注册验证").params(
                 new HashMap<>() {{
                     put("userName", param.getEmail());
@@ -122,24 +123,27 @@ public class RegisterEndpoint {
 
 
     private R<String> registerByUserName(MemberUserNameRegisterData param) {
-        Assert.isTrue(!StringUtils.hasLength(param.getKey()) || !StringUtils.hasLength(param.getCaptcha()), "验证失败");
+        if (!(StringUtils.hasLength(param.getKey()) && StringUtils.hasLength(param.getCaptcha())))
+            return R.fail("参数错误");
         String verCode = stringRedisTemplate.opsForValue().get(this.getCaptchaKey(param.getKey()));
         if (!verCode.toLowerCase().equals(param.getCaptcha().toLowerCase())) return R.fail("验证失败");
         return umsMemberFeignClient.registerMember(MemberRegisterFeignInfo.builder().formType(0).username(param.getUsername()).password(param.getPassword()).build());
     }
 
     private R<String> registerByPhone(MemberPhoneRegisterData param) {
-        Assert.isTrue(!StringUtils.hasLength(param.getPhone()) || !StringUtils.hasLength(param.getSmsCode()), "验证失败");
+        if (!(StringUtils.hasLength(param.getPhone()) && StringUtils.hasLength(param.getSmsCode())))
+            return R.fail("参数错误");
         String verCode = stringRedisTemplate.opsForValue().get(this.getSmsCodeKey(param.getPhone()));
-        if (!verCode.equals(param.getSmsCode())) return R.fail("验证失败");
-        return umsMemberFeignClient.registerMember(MemberRegisterFeignInfo.builder().formType(1).username(param.getPhone()).build());
+        if (!StringUtils.hasLength(verCode) || !verCode.equals(param.getSmsCode())) return R.fail("验证码错误");
+        return umsMemberFeignClient.registerMember(MemberRegisterFeignInfo.builder().formType(1).username(param.getPhone()).password(param.getPassword()).build());
     }
 
     private R<String> registerByEmail(MemberEmailRegisterData param) {
-        Assert.isTrue(!StringUtils.hasLength(param.getEmail()) || !StringUtils.hasLength(param.getCode()), "验证失败");
+        if (!StringUtils.hasLength(param.getEmail()) && StringUtils.hasLength(param.getCode()) && StringUtils.hasLength(param.getPassword()))
+            return R.fail("参数错误");
         String verCode = stringRedisTemplate.opsForValue().get(this.getEmailCodeKey(param.getEmail()));
-        if (!verCode.equals(param.getCode())) return R.fail("验证失败");
-        return umsMemberFeignClient.registerMember(MemberRegisterFeignInfo.builder().formType(2).username(param.getEmail()).build());
+        if (!StringUtils.hasLength(verCode) || !verCode.equals(param.getCode())) return R.fail("验证码错误");
+        return umsMemberFeignClient.registerMember(MemberRegisterFeignInfo.builder().formType(2).username(param.getEmail()).password(param.getPassword()).build());
     }
 
     private String getCaptchaKey(String key) {

@@ -125,7 +125,7 @@ public class PasswordEndpoint {
         if (memberResult == null || !memberResult.isSuccess()) return null;
         String code = RandomUtil.randomNumbers(4);
         String userId = String.valueOf(memberResult.getData().getUserId());
-        stringRedisTemplate.opsForValue().set(RedisConstants.MEMBER_FORGET_PASSWORD_EMAIL_CODE_KEY.concat(email), code);
+        stringRedisTemplate.opsForValue().set(RedisConstants.MEMBER_FORGET_PASSWORD_EMAIL_CODE_KEY.concat(email), code, 120, TimeUnit.SECONDS);
         basicServicesFeignClient.emailCode(EmailFeignInfo.builder().template("code").tos(Lists.newArrayList(email)).subject("重置密码").params(
                 new HashMap<>() {{
                     put("title", "重置密码");

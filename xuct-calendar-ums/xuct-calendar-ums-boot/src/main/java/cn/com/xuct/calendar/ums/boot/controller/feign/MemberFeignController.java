@@ -187,10 +187,10 @@ public class MemberFeignController {
                 member = memberService.saveMemberByUserName(registerDto.getUsername(), this.delegatingPassword(registerDto.getPassword()).replace("{bcrypt}", ""), timeZone);
                 break;
             case 1:
-                member = memberService.saveMemberByPhone(registerDto.getUsername(), timeZone);
+                member = memberService.saveMemberByPhone(registerDto.getUsername(), registerDto.getPassword(), timeZone);
                 break;
             case 2:
-                member = memberService.saveMemberByEmail(registerDto.getUsername(), timeZone);
+                member = memberService.saveMemberByEmail(registerDto.getUsername(), this.delegatingPassword(registerDto.getPassword()).replace("{bcrypt}", ""), timeZone);
                 break;
         }
         if (member == null) return R.fail("注册失败");
@@ -200,7 +200,7 @@ public class MemberFeignController {
         calendarInitFeignInfo.setMemberNickName(member.getName());
         calendarFeignClient.addCalendar(calendarInitFeignInfo);
         /* 添加注册消息到用户 */
-        SpringContextHolder.publishEvent(new MemberRegisterEvent(this, member.getName(), JwtUtils.getUserId()));
+        SpringContextHolder.publishEvent(new MemberRegisterEvent(this, member.getName(), member.getId()));
         return R.status(true);
     }
 
