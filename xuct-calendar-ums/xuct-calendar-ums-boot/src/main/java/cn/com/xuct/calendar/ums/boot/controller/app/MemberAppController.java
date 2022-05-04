@@ -18,7 +18,9 @@ import cn.com.xuct.calendar.common.core.exception.SvrException;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.res.SvrResCode;
 import cn.com.xuct.calendar.common.core.vo.Column;
+import cn.com.xuct.calendar.common.module.dto.CalendarMergeDto;
 import cn.com.xuct.calendar.common.module.enums.IdentityTypeEnum;
+import cn.com.xuct.calendar.common.module.feign.req.CalendarCountFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.WxUserInfoFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.WxUserPhoneFeignInfo;
 import cn.com.xuct.calendar.common.module.params.*;
@@ -29,11 +31,13 @@ import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
 import cn.com.xuct.calendar.ums.api.entity.Member;
 import cn.com.xuct.calendar.ums.api.entity.MemberAuth;
 import cn.com.xuct.calendar.ums.api.feign.BasicServicesFeignClient;
+import cn.com.xuct.calendar.ums.api.feign.CalendarFeignClient;
 import cn.com.xuct.calendar.ums.api.vo.MemberInfoVo;
 import cn.com.xuct.calendar.ums.boot.event.MemberModifyNameEvent;
 import cn.com.xuct.calendar.ums.boot.service.IMemberAuthService;
 import cn.com.xuct.calendar.ums.boot.service.IMemberService;
 import cn.com.xuct.calendar.ums.boot.support.SmsCodeValidateSupport;
+import cn.hutool.core.lang.Assert;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -71,6 +75,8 @@ public class MemberAppController {
     private final PasswordEncoder passwordEncoder;
 
     private final BasicServicesFeignClient basicServicesFeignClient;
+
+    private final CalendarFeignClient calendarFeignClient;
 
 
     @ApiOperation(value = "获取用户基础信息及所有认证")
@@ -297,6 +303,20 @@ public class MemberAppController {
         return R.data(member);
     }
 
+    @ApiOperation(value = "用户账号合并")
+    @PostMapping("/merge")
+    public R<String> mergeAccount(@Validated @RequestBody MemberMergeParam memberMergeParam) {
+        Long userId = JwtUtils.getUserId();
+        MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", memberMergeParam.getPhone()), Column.of("identity_type", IdentityTypeEnum.phone)));
+        Assert.notNull(memberAuth, "获取用户信息失败");
+        R<Long> memberCalendarNumberR = calendarFeignClient.countCalendarNumberByMemberIds(CalendarCountFeignInfo.builder().memberIds(Lists.newArrayList(userId, memberAuth.getMemberId())).build());
+        if (memberCalendarNumberR == null || !memberCalendarNumberR.isSuccess()) return R.fail("获取用户日历失败");
+        if (memberCalendarNumberR.getData() > 5) return R.fail("超过最大日历数");
+        R<String> mergeCalendarR = calendarFeignClient.mergeCalendar(CalendarMergeDto.builder().fromMemberId(memberAuth.getMemberId()).memberId(userId).build());
+        if (mergeCalendarR == null || !mergeCalendarR.isSuccess()) return R.fail("合并日历失败");
+        memberService.mergeMember(userId, memberAuth);
+        return R.status(true);
+    }
 
     private String delegatingPassword(String password) {
         return passwordEncoder.encode(password).replace(PasswordEncoderTypeEnum.BCRYPT.getPrefix(), "");

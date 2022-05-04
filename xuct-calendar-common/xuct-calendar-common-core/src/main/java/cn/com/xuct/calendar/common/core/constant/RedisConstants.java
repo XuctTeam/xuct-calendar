@@ -38,8 +38,14 @@ public interface RedisConstants {
     /* 短信验证码 */
     public static final String MEMBER_PHONE_LOGIN_CODE_KEY = "member::login::sms:code:";
 
-    /* 注册验证码 */
-    public static final String MEMBER_PHONE_REGISTER_CODE_KEY = "member::register::sms:code:";
+    /* 注册图形验证码 */
+    public static final String MEMBER_CAPTCHA_REGISTER_CODE_KEY = "member::register::captcha:code:";
+
+    /* 注册短信验证码 */
+    public static final String MEMBER_PHONE_REGISTER_CODE_KEY = "member::register::phone:code:";
+
+    /* 注册邮箱验证码 */
+    public static final String MEMBER_EMAIL_REGISTER_CODE_KEY = "member::register::email:code:";
 
     /* 手机号绑定 */
     public static final String MEMBER_BIND_PHONE_CODE_KEY = "member::bind::phone::sms:code:";

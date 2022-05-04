@@ -10,6 +10,9 @@
  */
 package cn.com.xuct.calendar.common.module.params;
 
+import cn.com.xuct.calendar.common.module.params.data.MemberEmailRegisterData;
+import cn.com.xuct.calendar.common.module.params.data.MemberPhoneRegisterData;
+import cn.com.xuct.calendar.common.module.params.data.MemberUserNameRegisterData;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -28,18 +31,16 @@ import java.io.Serializable;
 public class MemberRegisterParam implements Serializable {
 
     @NotNull
-    @ApiModelProperty("用户名")
-    public String username;
+    @ApiModelProperty("注册类型")
+    private Integer formType;
 
-    @NotNull
-    @ApiModelProperty("密码")
-    private String password;
+    @ApiModelProperty("用户名注册参数")
+    private MemberUserNameRegisterData username;
 
-    @NotNull
-    @ApiModelProperty("请求key")
-    private String key;
+    @ApiModelProperty("手机注册参数")
+    private MemberPhoneRegisterData phone;
 
-    @NotNull
-    @ApiModelProperty("验证码")
-    private String captcha;
+    @ApiModelProperty("邮箱注册参数")
+    private MemberEmailRegisterData email;
+
 }

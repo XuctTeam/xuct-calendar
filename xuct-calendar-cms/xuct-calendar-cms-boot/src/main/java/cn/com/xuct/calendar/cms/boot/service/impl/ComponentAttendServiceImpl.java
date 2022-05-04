@@ -38,8 +38,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ComponentAttendServiceImpl extends BaseServiceImpl<ComponentAttendMapper, ComponentAttend> implements IComponentAttendService {
 
-    private final IMemberCalendarService memberCalendarService;
-
     @Override
     public List<Component> listByCalendarId(Long calendarId, Long start, Long end) {
         return ((ComponentAttendMapper) super.getBaseMapper()).listByCalendarId(calendarId, start, end);
@@ -74,5 +72,21 @@ public class ComponentAttendServiceImpl extends BaseServiceImpl<ComponentAttendM
         componentAttend.setStatus(1);
         componentAttend.setMemberId(memberId);
         this.save(componentAttend);
+    }
+
+    @Override
+    public void updateAttendMarjoCalendarId(Long oldCalendarId, Long newCalendarId) {
+        ComponentAttend componentAttend = new ComponentAttend();
+        componentAttend.setCreateTime(null);
+        componentAttend.setAttendCalendarId(newCalendarId);
+        this.update(componentAttend, Column.of("attend_calendar_id", oldCalendarId));
+    }
+
+    @Override
+    public void updateAttendCalendarId(Long oldCalendarId, Long newCalendarId) {
+        ComponentAttend componentAttend = new ComponentAttend();
+        componentAttend.setCreateTime(null);
+        componentAttend.setCalendarId(newCalendarId);
+        this.update(componentAttend, Column.of("calendar_id", oldCalendarId));
     }
 }

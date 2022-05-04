@@ -1,8 +1,8 @@
 /**
- * Copyright (C), 2015-2022, XXX有限公司
- * FileName: MemberAvatarParam
+ * Copyright (C), 2015-2022, 楚恬
+ * FileName: MemberMergeParam
  * Author:   Derek Xu
- * Date:     2022/3/2 11:24
+ * Date:     2022/4/29 17:21
  * Description:
  * History:
  * <author>          <time>          <version>          <desc>
@@ -19,11 +19,11 @@ import java.io.Serializable;
  * 〈〉
  *
  * @author Derek Xu
- * @create 2022/3/2
+ * @create 2022/4/29
  * @since 1.0.0
  */
 @Data
-public class MemberAvatarParam implements Serializable {
+public class MemberMergeParam implements Serializable {
 
-    private String avatar;
+    private String phone;
 }

@@ -1,8 +1,8 @@
 /**
- * Copyright (C), 2015-2022, XXX有限公司
- * FileName: MemberRegisterDto
+ * Copyright (C), 2015-2022, 楚恬
+ * FileName: CalendarCountFeignInfo
  * Author:   Derek Xu
- * Date:     2022/3/26 19:43
+ * Date:     2022/4/29 17:35
  * Description:
  * History:
  * <author>          <time>          <version>          <desc>
@@ -10,32 +10,27 @@
  */
 package cn.com.xuct.calendar.common.module.feign.req;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
  *
  * @author Derek Xu
- * @create 2022/3/26
+ * @create 2022/4/29
  * @since 1.0.0
  */
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class MemberRegisterFeignInfo {
+public class CalendarCountFeignInfo implements Serializable {
 
-    @ApiModelProperty("注册类型")
-    private Integer formType;
-
-    @ApiModelProperty("用户名/手机号/邮箱")
-    public String username;
-
-    @ApiModelProperty("密码")
-    private String password;
+    private List<Long> memberIds;
 }

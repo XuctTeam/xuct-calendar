@@ -12,7 +12,10 @@ package cn.com.xuct.calendar.ums.boot.service;
 
 import cn.com.xuct.calendar.common.db.service.IBaseService;
 import cn.com.xuct.calendar.ums.api.entity.Member;
+import cn.com.xuct.calendar.ums.api.entity.MemberAuth;
 import cn.com.xuct.calendar.ums.boot.mapper.MemberMapper;
+
+import java.lang.reflect.Method;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -60,4 +63,30 @@ public interface IMemberService extends IBaseService<MemberMapper, Member> {
      * @return
      */
     Member saveMemberByUserName(String username, String password, String timeZone);
+
+    /**
+     * 通过电话号码保存用户
+     *
+     * @param phone
+     * @param timeZone
+     * @return
+     */
+    Member saveMemberByPhone(String phone, String timeZone);
+
+    /**
+     * 通过email保存用户
+     *
+     * @param email
+     * @param timeZone
+     * @return
+     */
+    Member saveMemberByEmail(String email, String timeZone);
+
+    /**
+     * 合并用户
+     *
+     * @param memberId
+     * @param memberAuth
+     */
+    void mergeMember(Long memberId, MemberAuth memberAuth);
 }

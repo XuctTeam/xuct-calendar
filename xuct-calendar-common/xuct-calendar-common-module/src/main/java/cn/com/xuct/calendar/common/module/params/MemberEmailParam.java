@@ -1,8 +1,8 @@
 /**
- * Copyright (C), 2015-2022, XXX有限公司
- * FileName: MemberAvatarParam
+ * Copyright (C), 2015-2022, 楚恬
+ * FileName: MemberEmailParam
  * Author:   Derek Xu
- * Date:     2022/3/2 11:24
+ * Date:     2022/5/4 16:48
  * Description:
  * History:
  * <author>          <time>          <version>          <desc>
@@ -12,6 +12,7 @@ package cn.com.xuct.calendar.common.module.params;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -19,11 +20,13 @@ import java.io.Serializable;
  * 〈〉
  *
  * @author Derek Xu
- * @create 2022/3/2
+ * @create 2022/5/4
  * @since 1.0.0
  */
 @Data
-public class MemberAvatarParam implements Serializable {
+public class MemberEmailParam implements Serializable {
 
-    private String avatar;
+    private String email;
+
+    private String code;
 }

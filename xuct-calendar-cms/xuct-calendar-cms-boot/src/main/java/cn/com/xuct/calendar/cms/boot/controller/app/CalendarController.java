@@ -11,10 +11,14 @@
 package cn.com.xuct.calendar.cms.boot.controller.app;
 
 import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
+import cn.com.xuct.calendar.cms.boot.service.ICalendarService;
+import cn.com.xuct.calendar.cms.boot.service.IComponentService;
+import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.req.MemberCalendarUpdateReq;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.web.utils.JwtUtils;
 import cn.com.xuct.calendar.cms.boot.service.IMemberCalendarService;
+import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +44,10 @@ import java.util.List;
 public class CalendarController {
 
     private final IMemberCalendarService memberCalendarService;
+
+    private final IComponentService componentService;
+
+    private final ICalendarService calendarService;
 
     @ApiOperation(value = "日历列表")
     @GetMapping("/list")
@@ -67,6 +75,25 @@ public class CalendarController {
         if (memberCalendar == null) return R.fail("未找到日历");
         if (!JwtUtils.getUserId().toString().equals(memberCalendar.getMemberId().toString())) return R.fail("无权限修改");
         memberCalendarService.updateMemberCalendar(JwtUtils.getUserId(), memberCalendar, memberCalendarUpdateReq);
+        return R.status(true);
+    }
+
+    @ApiOperation(value = "删除日历")
+    @DeleteMapping
+    public R<String> delete(@RequestParam("calendarId") Long calendarId) {
+        Long userId = JwtUtils.getUserId();
+        MemberCalendar memberCalendar = memberCalendarService.get(Lists.newArrayList(Column.of("member_id", userId), Column.of("calendar_id", calendarId)));
+        if (memberCalendar == null) return R.fail("未找到日历");
+        if(memberCalendar.getMajor() == 1) return R.fail("主日历无法删除");
+        /* 不是自己创建创建 则删除对应关系 */
+        if (!memberCalendar.getCreateMemberId().toString().equals(userId.toString())) {
+            memberCalendarService.removeById(memberCalendar.getId());
+            return R.status(true);
+        }
+        /* 是自己日历，则查询日历下事件 */
+        Long existComponentNumber = componentService.count(Column.of("calendar_id", calendarId));
+        if (existComponentNumber > 0) return R.fail("日历下包含事件");
+        memberCalendarService.deleteCalendar(memberCalendar.getId(), calendarId);
         return R.status(true);
     }
 }

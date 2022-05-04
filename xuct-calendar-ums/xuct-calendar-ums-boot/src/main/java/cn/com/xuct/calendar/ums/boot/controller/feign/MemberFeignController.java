@@ -37,6 +37,7 @@ import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -52,6 +53,7 @@ import java.util.stream.Collectors;
  * @create 2021/11/27
  * @since 1.0.0
  */
+@Slf4j
 @RestController
 @Api(tags = "【远程调用】会员接口")
 @RequestMapping("/api/feign/v1/member")
@@ -121,6 +123,9 @@ public class MemberFeignController {
     public R<MemberFeignInfo> getUserByUserName(@RequestParam("username") String username) {
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", username), Column.of("identity_type", IdentityTypeEnum.user_name)));
         if (memberAuth == null) {
+            memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", username), Column.of("identity_type", IdentityTypeEnum.phone)));
+        }
+        if (memberAuth == null) {
             memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", username), Column.of("identity_type", IdentityTypeEnum.email)));
         }
         if (memberAuth == null) return R.fail("用户不存在");
@@ -148,7 +153,7 @@ public class MemberFeignController {
     @ApiOperation(value = "通过IDS查询会员")
     @PostMapping("/list/ids")
     public R<List<MemberFeignInfo>> listMemberByIds(@RequestBody List<String> ids) {
-        List<Member> members = memberService.find(Column.of("id", ids, ColumnEnum.in));
+        List<Member> members = memberService.find(Column.in("id", ids));
         if (CollectionUtils.isEmpty(members)) return R.data(Lists.newArrayList());
         return R.data(members.stream().map(member -> {
             MemberFeignInfo memberFeignInfo = new MemberFeignInfo();
@@ -161,10 +166,34 @@ public class MemberFeignController {
     @ApiOperation(value = "会员注册")
     @PostMapping("/register")
     public R<String> register(@RequestBody MemberRegisterFeignInfo registerDto) {
-        MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", registerDto.getUsername()), Column.of("identity_type", IdentityTypeEnum.user_name)));
+        List<Column> qry = Lists.newArrayList(Column.of("user_name", registerDto.getUsername()));
+        switch (registerDto.getFormType()) {
+            case 0:
+                qry.add(Column.of("identity_type", IdentityTypeEnum.user_name));
+                break;
+            case 1:
+                qry.add(Column.of("identity_type", IdentityTypeEnum.phone));
+                break;
+            case 2:
+                qry.add(Column.of("identity_type", IdentityTypeEnum.email));
+                break;
+        }
+        MemberAuth memberAuth = memberAuthService.get(qry);
         if (memberAuth != null) return R.fail("账号已存在");
-        String password = this.delegatingPassword(registerDto.getPassword()).replace("{bcrypt}", "");
-        Member member = memberService.saveMemberByUserName(registerDto.getUsername(), password, DictCacheManager.getDictByCode(DictConstants.TIME_ZONE_TYPE, DictConstants.EAST_8_CODE).getValue());
+        Member member = null;
+        String timeZone = DictCacheManager.getDictByCode(DictConstants.TIME_ZONE_TYPE, DictConstants.EAST_8_CODE).getValue();
+        switch (registerDto.getFormType()) {
+            case 0:
+                member = memberService.saveMemberByUserName(registerDto.getUsername(), this.delegatingPassword(registerDto.getPassword()).replace("{bcrypt}", ""), timeZone);
+                break;
+            case 1:
+                member = memberService.saveMemberByPhone(registerDto.getUsername(), timeZone);
+                break;
+            case 2:
+                member = memberService.saveMemberByEmail(registerDto.getUsername(), timeZone);
+                break;
+        }
+        if (member == null) return R.fail("注册失败");
         /* 添加日历 */
         CalendarInitFeignInfo calendarInitFeignInfo = new CalendarInitFeignInfo();
         calendarInitFeignInfo.setMemberId(member.getId());

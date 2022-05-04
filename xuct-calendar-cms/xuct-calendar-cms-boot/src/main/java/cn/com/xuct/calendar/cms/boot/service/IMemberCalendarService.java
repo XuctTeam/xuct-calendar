@@ -78,4 +78,20 @@ public interface IMemberCalendarService extends IBaseService<MemberCalendarMappe
      * @param memberCalendarUpdateReq
      */
     void updateMemberCalendar(Long memberId, MemberCalendar memberCalendar, MemberCalendarUpdateReq memberCalendarUpdateReq);
+
+    /**
+     * 日历合并
+     *
+     * @param fromMemberId
+     * @param memberId
+     */
+    void mergeMemberCalendar(Long fromMemberId, Long memberId);
+
+    /**
+     * 删除日历
+     *
+     * @param memberCalendarId
+     * @param calendarId
+     */
+    void deleteCalendar(Long memberCalendarId, Long calendarId);
 }

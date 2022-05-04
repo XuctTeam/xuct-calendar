@@ -37,4 +37,12 @@ public interface ComponentMapper extends BaseMapper<Component> {
      * @return
      */
     List<CalendarComponentVo> searchByWord(@Param("word") String word, @Param("page") Integer page, @Param("limit") Integer limit);
+
+    /**
+     * 更新事件到新日历
+     *
+     * @param oldCalendarId
+     * @param newCalendarId
+     */
+    void updateCalendarIdByCalendarId(@Param("oldCalendarId") Long oldCalendarId, @Param("newCalendarId") Long newCalendarId);
 }

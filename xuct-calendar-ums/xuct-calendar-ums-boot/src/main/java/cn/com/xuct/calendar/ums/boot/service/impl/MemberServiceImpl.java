@@ -24,6 +24,7 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -55,12 +56,7 @@ public class MemberServiceImpl extends BaseServiceImpl<MemberMapper, Member> imp
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Member saveMemberByOpenId(String openId, String nickName, String avatar, String sessionKey, String timeZone) {
-        Member member = new Member();
-        member.setStatus(0);
-        member.setTimeZone(timeZone);
-        member.setAvatar(avatar);
-        member.setName("用户" + RandomUtil.randomString(6));
-        this.save(member);
+        Member member = this.saveMember(timeZone, avatar);
         MemberAuth memberAuth = new MemberAuth();
         memberAuth.setMemberId(member.getId());
         memberAuth.setIdentityType(IdentityTypeEnum.open_id);
@@ -74,17 +70,56 @@ public class MemberServiceImpl extends BaseServiceImpl<MemberMapper, Member> imp
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Member saveMemberByUserName(String username, String password, String timeZone) {
-        Member member = new Member();
-        member.setStatus(0);
-        member.setTimeZone(timeZone);
-        member.setName("用户" + RandomUtil.randomString(6));
-        this.save(member);
+        Member member = this.saveMember(timeZone, null);
         MemberAuth memberAuth = new MemberAuth();
         memberAuth.setMemberId(member.getId());
         memberAuth.setIdentityType(IdentityTypeEnum.user_name);
         memberAuth.setUsername(username);
         memberAuth.setPassword(password);
         memberAuthService.save(memberAuth);
+        return member;
+    }
+
+    @Override
+    public Member saveMemberByPhone(String phone, String timeZone) {
+        Member member = this.saveMember(timeZone, null);
+        MemberAuth memberAuth = new MemberAuth();
+        memberAuth.setMemberId(member.getId());
+        memberAuth.setIdentityType(IdentityTypeEnum.phone);
+        memberAuth.setUsername(phone);
+        memberAuthService.save(memberAuth);
+        return member;
+    }
+
+    @Override
+    public Member saveMemberByEmail(String email, String timeZone) {
+        Member member = this.saveMember(timeZone, null);
+        MemberAuth memberAuth = new MemberAuth();
+        memberAuth.setMemberId(member.getId());
+        memberAuth.setIdentityType(IdentityTypeEnum.email);
+        memberAuth.setUsername(email);
+        memberAuthService.save(memberAuth);
+        return member;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void mergeMember(Long memberId, MemberAuth memberAuth) {
+        Long deleteMemberId = memberAuth.getMemberId();
+        memberAuth.setMemberId(memberId);
+        memberAuthService.updateById(memberAuth);
+        this.removeById(deleteMemberId);
+    }
+
+    private Member saveMember(String timeZone, String avatar) {
+        Member member = new Member();
+        member.setStatus(0);
+        member.setTimeZone(timeZone);
+        if (StringUtils.hasLength(avatar)) {
+            member.setAvatar(avatar);
+        }
+        member.setName("用户" + RandomUtil.randomString(6));
+        this.save(member);
         return member;
     }
 }

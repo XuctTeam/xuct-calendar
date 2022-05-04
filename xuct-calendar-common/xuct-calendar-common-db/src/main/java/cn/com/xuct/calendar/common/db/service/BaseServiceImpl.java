@@ -295,7 +295,7 @@ public class BaseServiceImpl<M extends BaseMapper<T>, T extends SuperEntity<T>> 
             queryWrapper.ne(column.getColumn(), Lists.newArrayList(column.getValue()).get(0));
         }
         if (column.getColumnEnum().equals(ColumnEnum.in)) {
-            queryWrapper.in(column.getColumn(), StrUtil.join(",", column.getValue()));
+            queryWrapper.in(column.getColumn(), column.getValue());
         }
         if (column.getColumnEnum().equals(ColumnEnum.like)) {
             queryWrapper.like(column.getColumn(), Lists.newArrayList(column.getValue()).get(0));

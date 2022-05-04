@@ -12,7 +12,10 @@ package cn.com.xuct.calendar.cms.boot.controller.feign;
 
 import cn.com.xuct.calendar.cms.boot.config.DictCacheManager;
 import cn.com.xuct.calendar.common.core.constant.DictConstants;
+import cn.com.xuct.calendar.common.core.enums.ColumnEnum;
 import cn.com.xuct.calendar.common.core.res.R;
+import cn.com.xuct.calendar.common.core.vo.Column;
+import cn.com.xuct.calendar.common.module.feign.req.CalendarCountFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.CalendarInitFeignInfo;
 import cn.com.xuct.calendar.common.module.dto.CalendarMergeDto;
 import cn.com.xuct.calendar.common.module.req.MemberCalendarUpdateReq;
@@ -42,7 +45,7 @@ public class CalendarFeignController {
 
     @ApiOperation(value = "新建主日历")
     @PostMapping
-    @ApiImplicitParam(value = "实体JSON对象", required = true, paramType = "body", dataType = "CalendarInitDto")
+    @ApiImplicitParam(value = "会员基础信息", required = true, paramType = "body", dataType = "CalendarInitDto")
     public R<String> createCalendar(@RequestBody CalendarInitFeignInfo calendarInitFeignInfo) {
         MemberCalendarUpdateReq updateReq = new MemberCalendarUpdateReq();
         updateReq.setName("日程");
@@ -57,18 +60,25 @@ public class CalendarFeignController {
 
     @ApiOperation(value = "更新日历创建用户名称")
     @PostMapping("/modify/name")
-    @ApiImplicitParam(value = "实体JSON对象", required = true, paramType = "body", dataType = "CalendarInitDto")
+    @ApiImplicitParam(value = "会员基础信息", required = true, paramType = "body", dataType = "CalendarInitDto")
     public R<String> updateMemberCalendarName(@RequestBody CalendarInitFeignInfo calendarInitFeignInfo) {
         memberCalendarService.updateMemberCalendarName(calendarInitFeignInfo.getMemberId(), calendarInitFeignInfo.getMemberNickName());
         return R.status(true);
     }
 
 
+    @ApiOperation(value = "更新日历创建用户名称")
+    @PostMapping("/member/ids/count")
+    @ApiImplicitParam(value = "会员IDS", required = true, paramType = "body", dataType = "calendarCountFeignInfo")
+    public R<Long> countCalendarNumberByMemberIds(@RequestBody CalendarCountFeignInfo calendarCountFeignInfo) {
+        return R.data(memberCalendarService.count(Column.in("member_id", calendarCountFeignInfo.getMemberIds())));
+    }
+
     @ApiOperation(value = "日历合并")
     @PostMapping("/merge")
-    @ApiImplicitParam(value = "实体JSON对象", required = true, paramType = "body", dataType = "CalendarMergeDto")
+    @ApiImplicitParam(value = "合并日历", required = true, paramType = "body", dataType = "CalendarMergeDto")
     public R<String> mergeCalendar(@RequestBody CalendarMergeDto calendarMergeDto) {
-        //memberCalendarService.mergeMemberCalendar(calendarMergeDto.getMemberId(), calendarMergeDto.getFromMemberId());
+        memberCalendarService.mergeMemberCalendar(calendarMergeDto.getFromMemberId() , calendarMergeDto.getMemberId());
         return R.status(true);
     }
 }

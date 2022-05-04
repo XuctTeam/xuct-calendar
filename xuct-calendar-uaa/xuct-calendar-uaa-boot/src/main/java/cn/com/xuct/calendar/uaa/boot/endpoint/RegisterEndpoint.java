@@ -10,24 +10,41 @@
  */
 package cn.com.xuct.calendar.uaa.boot.endpoint;
 
+import cn.com.xuct.calendar.common.core.exception.SvrException;
+import cn.com.xuct.calendar.common.core.res.SvrResCode;
+import cn.com.xuct.calendar.common.module.feign.req.EmailFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.req.SmsCodeFeignInfo;
+import cn.com.xuct.calendar.common.module.params.MemberEmailParam;
+import cn.com.xuct.calendar.common.module.params.MemberPhoneParam;
+import cn.com.xuct.calendar.common.module.params.data.MemberEmailRegisterData;
+import cn.com.xuct.calendar.common.module.params.data.MemberPhoneRegisterData;
+import cn.com.xuct.calendar.common.module.params.data.MemberUserNameRegisterData;
+import cn.com.xuct.calendar.uaa.api.client.BasicServicesFeignClient;
 import cn.com.xuct.calendar.uaa.api.client.UmsMemberFeignClient;
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.module.feign.req.MemberRegisterFeignInfo;
 import cn.com.xuct.calendar.common.module.params.MemberRegisterParam;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.RandomUtil;
+import com.google.common.collect.Lists;
+import com.wf.captcha.SpecCaptcha;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -49,13 +66,91 @@ public class RegisterEndpoint {
 
     private final UmsMemberFeignClient umsMemberFeignClient;
 
+    private final BasicServicesFeignClient basicServicesFeignClient;
+
+    @ApiOperation(value = "获取图形验证码")
+    @GetMapping("/captcha")
+    public R<Map<String, String>> captcha() {
+        SpecCaptcha specCaptcha = new SpecCaptcha(130, 48, 5);
+        String verCode = specCaptcha.text().toLowerCase();
+        String key = UUID.randomUUID().toString();
+        String redisKey = this.getCaptchaKey(key);
+        stringRedisTemplate.opsForValue().set(redisKey, verCode, 60 * 2, TimeUnit.SECONDS);
+        return R.data(new HashMap<String, String>() {{
+            put("key", key);
+            put("image", specCaptcha.toBase64(""));
+        }});
+    }
+
+    @ApiOperation(value = "获取短信验证码")
+    @GetMapping("/sms")
+    public R<String> sendSmsCode(@Validated @RequestBody MemberPhoneParam param) {
+        String code = RandomUtil.randomNumbers(6);
+        stringRedisTemplate.opsForValue().set(this.getSmsCodeKey(param.getPhone()), code, 60 * 2, TimeUnit.SECONDS);
+        return basicServicesFeignClient.smsCode(SmsCodeFeignInfo.builder().code(code).phones(Lists.newArrayList(param.getPhone())).template("register").build());
+    }
+
+
+    @ApiOperation(value = "获取短信验证码")
+    @GetMapping("/email/code")
+    public R<String> sendEmailCode(@Validated @RequestBody MemberEmailParam param) {
+        String code = RandomUtil.randomNumbers(4);
+        stringRedisTemplate.opsForValue().set(this.getEmailCodeKey(param.getEmail()), code);
+        return basicServicesFeignClient.emailCode(EmailFeignInfo.builder().template("register").tos(Lists.newArrayList(param.getEmail())).subject("注册验证").params(
+                new HashMap<>() {{
+                    put("userName", param.getEmail());
+                    put("code", code);
+                    put("date", DateUtil.now());
+                }}).build());
+    }
+
+
     @ApiOperation(value = "会员注册")
     @PostMapping("")
     public R<String> register(@Validated @RequestBody MemberRegisterParam param) {
-        Assert.isTrue(StringUtils.hasLength(param.getKey()), "验证失败");
-        String verCode = stringRedisTemplate.opsForValue().get(RedisConstants.MEMBER_PHONE_REGISTER_CODE_KEY.concat(param.getKey()));
-        if (!StringUtils.hasLength(verCode) || !verCode.toLowerCase().equals(param.getCaptcha().toLowerCase()))
-            return R.fail("验证码错误");
-        return umsMemberFeignClient.registerMember(MemberRegisterFeignInfo.builder().username(param.getUsername()).password(param.getPassword()).build());
+        switch (param.getFormType()) {
+            case 0:
+                return this.registerByUserName(param.getUsername());
+            case 1:
+                return this.registerByPhone(param.getPhone());
+            case 2:
+                return this.registerByEmail(param.getEmail());
+            default:
+                throw new SvrException(SvrResCode.PARAM_ERROR);
+        }
+    }
+
+
+    private R<String> registerByUserName(MemberUserNameRegisterData param) {
+        Assert.isTrue(!StringUtils.hasLength(param.getKey()) || !StringUtils.hasLength(param.getCaptcha()), "验证失败");
+        String verCode = stringRedisTemplate.opsForValue().get(this.getCaptchaKey(param.getKey()));
+        if (!verCode.toLowerCase().equals(param.getCaptcha().toLowerCase())) return R.fail("验证失败");
+        return umsMemberFeignClient.registerMember(MemberRegisterFeignInfo.builder().formType(0).username(param.getUsername()).password(param.getPassword()).build());
+    }
+
+    private R<String> registerByPhone(MemberPhoneRegisterData param) {
+        Assert.isTrue(!StringUtils.hasLength(param.getPhone()) || !StringUtils.hasLength(param.getSmsCode()), "验证失败");
+        String verCode = stringRedisTemplate.opsForValue().get(this.getSmsCodeKey(param.getPhone()));
+        if (!verCode.equals(param.getSmsCode())) return R.fail("验证失败");
+        return umsMemberFeignClient.registerMember(MemberRegisterFeignInfo.builder().formType(1).username(param.getPhone()).build());
+    }
+
+    private R<String> registerByEmail(MemberEmailRegisterData param) {
+        Assert.isTrue(!StringUtils.hasLength(param.getEmail()) || !StringUtils.hasLength(param.getCode()), "验证失败");
+        String verCode = stringRedisTemplate.opsForValue().get(this.getEmailCodeKey(param.getEmail()));
+        if (!verCode.equals(param.getCode())) return R.fail("验证失败");
+        return umsMemberFeignClient.registerMember(MemberRegisterFeignInfo.builder().formType(2).username(param.getEmail()).build());
+    }
+
+    private String getCaptchaKey(String key) {
+        return RedisConstants.MEMBER_CAPTCHA_REGISTER_CODE_KEY.concat(key);
+    }
+
+    private String getSmsCodeKey(String phone) {
+        return RedisConstants.MEMBER_PHONE_REGISTER_CODE_KEY.concat(phone);
+    }
+
+    private String getEmailCodeKey(String email) {
+        return RedisConstants.MEMBER_EMAIL_REGISTER_CODE_KEY.concat(email);
     }
 }

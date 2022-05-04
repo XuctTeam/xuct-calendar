@@ -14,6 +14,7 @@ import cn.com.xuct.calendar.common.core.enums.ColumnEnum;
 import com.google.common.collect.Sets;
 import lombok.Data;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -36,7 +37,6 @@ public class Column {
     private Column() {
     }
 
-
     public static Column of(String column, Object value) {
         Column c = new Column();
         c.setColumn(column);
@@ -45,17 +45,6 @@ public class Column {
         return c;
     }
 
-    /**
-     * 功能描述: <br>
-     * 〈〉
-     *
-     * @param column
-     * @param columnEnum
-     * @return:com.net263.vcs.api.server.common.vo.Column
-     * @since: 1.0.0
-     * @Author:
-     * @Date: 2020/4/2 13:31
-     */
     public static Column of(String column, ColumnEnum columnEnum) {
         Column c = new Column();
         c.setColumn(column);
@@ -63,18 +52,6 @@ public class Column {
         return c;
     }
 
-    /**
-     * 功能描述: <br>
-     * 〈〉
-     *
-     * @param column
-     * @param value
-     * @param columnEnum
-     * @return:com.net263.vcs.api.server.common.vo.Column
-     * @since: 1.0.0
-     * @Author:
-     * @Date: 2020/2/3 16:42
-     */
     public static Column of(String column, Object value, ColumnEnum columnEnum) {
         Column c = new Column();
         c.setColumn(column);
@@ -83,18 +60,11 @@ public class Column {
         return c;
     }
 
-    /**
-     * 功能描述: <br>
-     * 〈添加值〉
-     *
-     * @param value
-     * @return:com.net263.vcs.api.server.common.vo.Column
-     * @since: 1.0.0
-     * @Author:
-     * @Date: 2020/4/2 14:00
-     */
-    public Column addValue(Object value) {
-        this.getValue().add(value);
-        return this;
+    public static Column in(String column, Collection values) {
+        Column c = new Column();
+        c.setColumn(column);
+        c.getValue().addAll(values);
+        c.setColumnEnum(ColumnEnum.in);
+        return c;
     }
 }

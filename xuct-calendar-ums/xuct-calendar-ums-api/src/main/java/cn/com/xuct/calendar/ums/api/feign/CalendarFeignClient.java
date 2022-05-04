@@ -12,6 +12,8 @@ package cn.com.xuct.calendar.ums.api.feign;
 
 
 import cn.com.xuct.calendar.common.core.res.R;
+import cn.com.xuct.calendar.common.module.dto.CalendarMergeDto;
+import cn.com.xuct.calendar.common.module.feign.req.CalendarCountFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.CalendarInitFeignInfo;
 import cn.com.xuct.calendar.common.web.web.FeignConfiguration;
 import feign.Headers;
@@ -39,7 +41,6 @@ public interface CalendarFeignClient {
     @PostMapping("/api/feign/v1/calendar")
     R<String> addCalendar(@RequestBody CalendarInitFeignInfo calendarInitFeignInfo);
 
-
     /**
      * 更新用户日历的显示名称
      *
@@ -49,5 +50,22 @@ public interface CalendarFeignClient {
     @PostMapping("/api/feign/v1/calendar/modify/name")
     R<String> updateMemberCalendarName(@RequestBody CalendarInitFeignInfo calendarInitFeignInfo);
 
+    /**
+     * 查询账号下日历的总数
+     *
+     * @param calendarCountFeignInfo
+     * @return
+     */
+    @PostMapping("/api/feign/v1/calendar/member/ids/count")
+    R<Long> countCalendarNumberByMemberIds(@RequestBody CalendarCountFeignInfo calendarCountFeignInfo);
+
+    /**
+     * 合并日历
+     *
+     * @param calendarMergeDto
+     * @return
+     */
+    @PostMapping("/api/feign/v1/calendar/merge")
+    R<String> mergeCalendar(@RequestBody CalendarMergeDto calendarMergeDto);
 }
 
