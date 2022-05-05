@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Api(tags = "【基础服务】Sequence接口")
 @RequiredArgsConstructor
-@RequestMapping("/api/basic/uuid")
+@RequestMapping("/api/basic/v1/uuid")
 public class SequenceController {
 
 

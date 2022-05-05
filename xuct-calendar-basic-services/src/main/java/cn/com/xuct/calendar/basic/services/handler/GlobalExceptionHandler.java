@@ -16,6 +16,7 @@ import cn.com.xuct.calendar.common.core.res.SvrResCode;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -51,10 +52,17 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
+    @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
+    public R<String> methodNotSupportHandler(Exception e) {
+        log.error("方法不匹配异常！原因是：{}", e.getMessage());
+        return R.fail(SvrResCode.BASIC_METHOD_NOT_SUPPORT_ERROR);
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
     @ExceptionHandler(value = Exception.class)
     public R<String> errorHandler(Exception e) {
         log.error("服务器异常！原因是：{}", e.getMessage());
-        return R.fail(SvrResCode.UMS_SERVER_ERROR);
+        return R.fail(SvrResCode.BASIC_SERVER_ERROR);
     }
-
 }
