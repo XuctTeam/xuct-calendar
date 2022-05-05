@@ -12,6 +12,7 @@ package cn.com.xuct.calendar.cms.api.feign;
 
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.module.feign.req.EmailFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.req.ShortChainFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.SmsCodeFeignInfo;
 import cn.com.xuct.calendar.common.web.web.FeignConfiguration;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -39,4 +40,7 @@ public interface BasicServicesFeignClient {
 
     @PostMapping("/api/basic/v1/email")
     R<String> emailCode(@RequestBody EmailFeignInfo emailFeignInfo);
+
+    @PostMapping("/api/basic/short/chain")
+    R<String> shortChain(@RequestBody ShortChainFeignInfo shortChainFeignInfo);
 }

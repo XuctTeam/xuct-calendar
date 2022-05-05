@@ -18,3 +18,4 @@ spring:
     import:
       - optional:nacos:dav-basic-services.yaml  # 监听 DEFAULT_GROUP:test.yml
       - optional:nacos:leaf.properties
+      - optional:nacos:dav-short-domain.yaml

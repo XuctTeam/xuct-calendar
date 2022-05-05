@@ -35,7 +35,7 @@
         <lib.mybaties.plus.version>3.5.1</lib.mybaties.plus.version>
         <lib.mysql.version>8.0.27</lib.mysql.version>
         <lib.servlet.version>4.0.1</lib.servlet.version>
-        <lib.nacos.client.version>2.0.4</lib.nacos.client.version>
+        <lib.nacos.client.version>2.1.0</lib.nacos.client.version>
         <lib.jedis.lock.version>1.0.0</lib.jedis.lock.version>
         <lib.caffeine.version>2.9.2</lib.caffeine.version>
         <lib.jackson.version>20211205</lib.jackson.version>

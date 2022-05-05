@@ -14,11 +14,13 @@ import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAlarm;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAttend;
 import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
+import cn.com.xuct.calendar.cms.api.feign.BasicServicesFeignClient;
 import cn.com.xuct.calendar.cms.api.feign.UmsMemberFeignClient;
 import cn.com.xuct.calendar.cms.api.vo.CalendarComponentVo;
 import cn.com.xuct.calendar.cms.api.vo.ComponentAttendVo;
 import cn.com.xuct.calendar.cms.api.vo.ComponentListVo;
 import cn.com.xuct.calendar.cms.api.vo.ComponentSearchVo;
+import cn.com.xuct.calendar.cms.boot.config.DomainConfiguration;
 import cn.com.xuct.calendar.cms.boot.handler.RabbitmqOutChannel;
 import cn.com.xuct.calendar.cms.boot.service.IComponentAttendService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentService;
@@ -36,6 +38,7 @@ import cn.com.xuct.calendar.common.module.dto.AlarmInfoDto;
 import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
 import cn.com.xuct.calendar.common.module.enums.ComponentRepeatTypeEnum;
 import cn.com.xuct.calendar.common.module.feign.MemberFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.req.ShortChainFeignInfo;
 import cn.com.xuct.calendar.common.module.params.ComponentAddParam;
 import cn.com.xuct.calendar.common.module.params.ComponentAttendParam;
 import cn.com.xuct.calendar.common.web.utils.JwtUtils;
@@ -79,6 +82,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ComponentController {
 
+    private final DomainConfiguration domainConfiguration;
+
     private final IComponentService componentService;
 
     private final IComponentAttendService componentAttendService;
@@ -87,8 +92,9 @@ public class ComponentController {
 
     private final UmsMemberFeignClient umsMemberFeignClient;
 
-    private final RabbitmqOutChannel rabbitmqOutChannel;
+    private final BasicServicesFeignClient basicServicesFeignClient;
 
+    private final RabbitmqOutChannel rabbitmqOutChannel;
 
     @ApiOperation(value = "通过日历查询日程-天分组")
     @GetMapping("/list/calendar/days")
@@ -285,6 +291,13 @@ public class ComponentController {
         Assert.notNull(memberCalendar, "查询主日历失败");
         componentAttendService.acceptAttend(memberId, component.getCalendarId(), memberCalendar.getCalendarId(), param.getComponentId());
         return R.status(true);
+    }
+
+    @ApiOperation(value = "获取短链接")
+    @GetMapping("/short")
+    public R<String> getShortChain(@RequestParam("componentId") String componentId) {
+        return basicServicesFeignClient.shortChain(ShortChainFeignInfo.builder().url(domainConfiguration.getCalendar().concat("?componentId=").concat(componentId))
+                .type("calendar").expire(7200000).build());
     }
 
     /**

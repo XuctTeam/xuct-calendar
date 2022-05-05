@@ -11,6 +11,7 @@
 package cn.com.xuct.calendar.ums.boot.service.impl;
 
 import cn.com.xuct.calendar.common.db.service.BaseServiceImpl;
+import cn.com.xuct.calendar.common.module.enums.CommonPowerEnum;
 import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
 import cn.com.xuct.calendar.ums.api.dto.GroupInfoDto;
 import cn.com.xuct.calendar.ums.api.entity.Group;
@@ -66,13 +67,14 @@ public class GroupServiceImpl extends BaseServiceImpl<GroupMapper, Group> implem
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void addGroup(Long memberId, String name, String imageUrl) {
+    public void addGroup(Long memberId, String name, String imageUrl, String power) {
         Group group = new Group();
         group.setName(name);
         if (StringUtils.hasLength(imageUrl)) {
             group.setImages(imageUrl);
         }
         group.setMemberId(memberId);
+        group.setPower(CommonPowerEnum.valueOf(power));
         group.setStatus(CommonStatusEnum.NORMAL);
         this.save(group);
         MemberGroup memberGroup = new MemberGroup();

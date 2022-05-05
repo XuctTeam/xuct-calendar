@@ -41,7 +41,7 @@ public class MemberEventListener {
 
     @Async
     @EventListener
-    public void listenerModifyEvent(MemberModifyNameEvent nameEvent) {
+    public void listenerModifyEvent(MemberEvent nameEvent) {
         CalendarInitFeignInfo calendarInitFeignInfo = new CalendarInitFeignInfo();
         calendarInitFeignInfo.setMemberId(nameEvent.getMemberId());
         calendarInitFeignInfo.setMemberNickName(nameEvent.getName());
@@ -50,16 +50,30 @@ public class MemberEventListener {
 
     @Async
     @EventListener
-    public void listenerRegisterEvent(MemberRegisterEvent event) {
+    public void listenerRegisterEvent(MemberEvent event) {
         MemberMessage memberMessage = new MemberMessage();
         memberMessage.setMemberId(event.getMemberId());
         memberMessage.setType(MemberMessageTypeEnum.SYSTEM);
-        memberMessage.setOperation(0);
+        memberMessage.setOperation(event.getType());
         memberMessage.setStatus(0);
-        memberMessage.setTitle(event.getUserName() + "注册成功");
-
+        String title = "";
+        switch (event.getType()) {
+            case 0:
+                title = event.getName() + "注册成功";
+                break;
+            case 1:
+                title = event.getName() + "修改姓名";
+                break;
+            case 2:
+                title = event.getName() + "使用微信头像昵称";
+                break;
+            case 3:
+                title = event.getName() + "合并账号";
+                break;
+        }
+        memberMessage.setTitle(title);
         JSONObject content = new JSONObject();
-        content.put("user_name", event.getUserName());
+        content.put("user_name", event.getName());
         memberMessage.setContent(content);
         memberMessageService.save(memberMessage);
     }

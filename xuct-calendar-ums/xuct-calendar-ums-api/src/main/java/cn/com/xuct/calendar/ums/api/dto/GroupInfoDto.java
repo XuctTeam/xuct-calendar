@@ -43,4 +43,6 @@ public class GroupInfoDto implements Serializable {
     private String createMemberName;
 
     private Integer count;
+
+    private String power;
 }

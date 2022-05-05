@@ -13,24 +13,22 @@ package cn.com.xuct.calendar.ums.boot.controller.feign;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
 import cn.com.xuct.calendar.common.core.constant.DictConstants;
-import cn.com.xuct.calendar.common.core.enums.ColumnEnum;
 import cn.com.xuct.calendar.common.core.enums.PasswordEncoderTypeEnum;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.enums.IdentityTypeEnum;
-import cn.com.xuct.calendar.common.module.feign.*;
+import cn.com.xuct.calendar.common.module.feign.MemberFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.CalendarInitFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.MemberModifyPasswordFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.MemberRegisterFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.WxUserInfoFeignInfo;
-import cn.com.xuct.calendar.common.web.utils.JwtUtils;
 import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
 import cn.com.xuct.calendar.ums.api.entity.Member;
 import cn.com.xuct.calendar.ums.api.entity.MemberAuth;
 import cn.com.xuct.calendar.ums.api.feign.BasicServicesFeignClient;
 import cn.com.xuct.calendar.ums.api.feign.CalendarFeignClient;
 import cn.com.xuct.calendar.ums.boot.config.DictCacheManager;
-import cn.com.xuct.calendar.ums.boot.event.MemberRegisterEvent;
+import cn.com.xuct.calendar.ums.boot.event.MemberEvent;
 import cn.com.xuct.calendar.ums.boot.service.IMemberAuthService;
 import cn.com.xuct.calendar.ums.boot.service.IMemberService;
 import com.google.common.collect.Lists;
@@ -100,12 +98,13 @@ public class MemberFeignController {
             Member member = memberService.getById(memberAuth.getMemberId());
             return R.data(MemberFeignInfo.builder().userId(member.getId()).username(memberAuth.getUsername()).status(member.getStatus()).build());
         }
-        Member member = memberService.saveMemberByOpenId(session.getOpenid(), wxMaUserInfo.getNickName(), wxMaUserInfo.getAvatarUrl(),
-                session.getSessionKey(), DictCacheManager.getDictByCode(DictConstants.TIME_ZONE_TYPE, DictConstants.EAST_8_CODE).getValue());
+        Member member = memberService.saveMemberByOpenId(session.getOpenid(), wxMaUserInfo.getNickName(), wxMaUserInfo.getAvatarUrl(), session.getSessionKey(), DictCacheManager.getDictByCode(DictConstants.TIME_ZONE_TYPE, DictConstants.EAST_8_CODE).getValue());
         CalendarInitFeignInfo calendarInitFeignInfo = new CalendarInitFeignInfo();
         calendarInitFeignInfo.setMemberId(member.getId());
         calendarInitFeignInfo.setMemberNickName(member.getName());
         calendarFeignClient.addCalendar(calendarInitFeignInfo);
+        /* 添加注册消息到用户 */
+        SpringContextHolder.publishEvent(new MemberEvent(this, member.getId(), member.getName(), 0));
         return R.data(MemberFeignInfo.builder().userId(member.getId()).username(session.getOpenid()).status(member.getStatus()).timeZone(member.getTimeZone()).build());
     }
 
@@ -182,15 +181,16 @@ public class MemberFeignController {
         if (memberAuth != null) return R.fail("账号已存在");
         Member member = null;
         String timeZone = DictCacheManager.getDictByCode(DictConstants.TIME_ZONE_TYPE, DictConstants.EAST_8_CODE).getValue();
+        String password = this.delegatingPassword(registerDto.getPassword()).replace("{bcrypt}", "");
         switch (registerDto.getFormType()) {
             case 0:
-                member = memberService.saveMemberByUserName(registerDto.getUsername(), this.delegatingPassword(registerDto.getPassword()).replace("{bcrypt}", ""), timeZone);
+                member = memberService.saveMemberByUserName(registerDto.getUsername(), password, timeZone);
                 break;
             case 1:
-                member = memberService.saveMemberByPhone(registerDto.getUsername(), registerDto.getPassword(), timeZone);
+                member = memberService.saveMemberByPhone(registerDto.getUsername(), password, timeZone);
                 break;
             case 2:
-                member = memberService.saveMemberByEmail(registerDto.getUsername(), this.delegatingPassword(registerDto.getPassword()).replace("{bcrypt}", ""), timeZone);
+                member = memberService.saveMemberByEmail(registerDto.getUsername(), password, timeZone);
                 break;
         }
         if (member == null) return R.fail("注册失败");
@@ -200,7 +200,7 @@ public class MemberFeignController {
         calendarInitFeignInfo.setMemberNickName(member.getName());
         calendarFeignClient.addCalendar(calendarInitFeignInfo);
         /* 添加注册消息到用户 */
-        SpringContextHolder.publishEvent(new MemberRegisterEvent(this, member.getName(), member.getId()));
+        SpringContextHolder.publishEvent(new MemberEvent(this, member.getId(), member.getName(), 0));
         return R.status(true);
     }
 

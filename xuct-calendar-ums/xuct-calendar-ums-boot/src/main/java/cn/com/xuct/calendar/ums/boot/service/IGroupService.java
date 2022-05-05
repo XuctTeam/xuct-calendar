@@ -73,8 +73,9 @@ public interface IGroupService extends IBaseService<GroupMapper, Group> {
      * @param memberId
      * @param name
      * @param imageUrl
+     * @param power
      */
-    void addGroup(Long memberId, String name, String imageUrl);
+    void addGroup(Long memberId, String name, String imageUrl , String power);
 
     /**
      * 解散群组

@@ -10,6 +10,7 @@
  */
 package cn.com.xuct.calendar.common.module.params;
 
+import cn.com.xuct.calendar.common.module.enums.CommonPowerEnum;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -32,4 +33,7 @@ public class GroupAddParam implements Serializable {
 
     @NotNull
     private String name;
+
+    @NotNull
+    private String power;
 }

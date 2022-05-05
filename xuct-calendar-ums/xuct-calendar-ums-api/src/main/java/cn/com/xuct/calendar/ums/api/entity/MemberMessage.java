@@ -45,7 +45,7 @@ public class MemberMessage extends SuperEntity<MemberMessage> {
     private MemberMessageTypeEnum type;
 
     /* 类型 */
-    @ApiModelProperty(value = "类型", notes = "type=EVENT:0.新建邀请 1.更新邀请 2.事件删除 3.事件提醒 type=GROUP 1.新建群组 2.申请群组 3.同意入群 4拒绝入群 ")
+    @ApiModelProperty(value = "类型", notes = "type=EVENT:0.新建邀请 1.更新邀请 2.事件删除 3.事件提醒 type=GROUP 1.新建群组 2.申请群组 3.同意入群 4拒绝入群 type=SYSTEM:0")
     private Integer operation;
 
     @ApiModelProperty(value = "状态", notes = "0未读 1.已读")

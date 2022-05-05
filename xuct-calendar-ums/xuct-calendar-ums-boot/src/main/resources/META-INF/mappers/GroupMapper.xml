@@ -7,7 +7,7 @@
 
 
     <select id="findGroupCountByMember" resultType="cn.com.xuct.calendar.ums.api.dto.GroupInfoDto">
-        select g.id, g.name, g.images, g.member_id as createMemberId, m.name as createMemberName, mg.count
+        select g.id, g.name, g.images, g.member_id as createMemberId, g.power , m.name as createMemberName , mg.count
         from sys_group g
                  inner join (select count(1) as count , group_id
                              from sys_member_group
@@ -19,7 +19,7 @@
     </select>
 
     <select id="getGroupCountByGroupId" resultType="cn.com.xuct.calendar.ums.api.dto.GroupInfoDto">
-        select g.id, g.name, g.images, mg.count, g.member_id as createMemberId, m.name as createMemberName
+        select g.id, g.name, g.images, g.power, mg.count, g.member_id as createMemberId, g.power, m.name as createMemberName
         from sys_group g
                  left join (select group_id, count(1) as count
                             from sys_member_group

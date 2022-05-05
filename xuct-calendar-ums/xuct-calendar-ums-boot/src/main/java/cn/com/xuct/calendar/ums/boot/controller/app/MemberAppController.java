@@ -33,7 +33,7 @@ import cn.com.xuct.calendar.ums.api.entity.MemberAuth;
 import cn.com.xuct.calendar.ums.api.feign.BasicServicesFeignClient;
 import cn.com.xuct.calendar.ums.api.feign.CalendarFeignClient;
 import cn.com.xuct.calendar.ums.api.vo.MemberInfoVo;
-import cn.com.xuct.calendar.ums.boot.event.MemberModifyNameEvent;
+import cn.com.xuct.calendar.ums.boot.event.MemberEvent;
 import cn.com.xuct.calendar.ums.boot.service.IMemberAuthService;
 import cn.com.xuct.calendar.ums.boot.service.IMemberService;
 import cn.com.xuct.calendar.ums.boot.support.SmsCodeValidateSupport;
@@ -137,7 +137,7 @@ public class MemberAppController {
         member.setName(param.getName());
         memberService.updateMember(member);
         /* 发送修改名称事件 */
-        SpringContextHolder.publishEvent(new MemberModifyNameEvent(this, userId, param.getName()));
+        SpringContextHolder.publishEvent(new MemberEvent(this, userId, param.getName(), 1));
         return R.data(member);
     }
 
@@ -299,7 +299,7 @@ public class MemberAppController {
         member.setAvatar(memberAuth.getAvatar());
         memberService.updateById(member);
         /* 发送修改名称事件 */
-        SpringContextHolder.publishEvent(new MemberModifyNameEvent(this, JwtUtils.getUserId(), memberAuth.getNickName()));
+        SpringContextHolder.publishEvent(new MemberEvent(this, JwtUtils.getUserId(), memberAuth.getNickName(), 2));
         return R.data(member);
     }
 
@@ -315,6 +315,9 @@ public class MemberAppController {
         R<String> mergeCalendarR = calendarFeignClient.mergeCalendar(CalendarMergeDto.builder().fromMemberId(memberAuth.getMemberId()).memberId(userId).build());
         if (mergeCalendarR == null || !mergeCalendarR.isSuccess()) return R.fail("合并日历失败");
         memberService.mergeMember(userId, memberAuth);
+        /* 发送账号合并消息 */
+        SpringContextHolder.publishEvent(new MemberEvent(this, JwtUtils.getUserId(), memberAuth.getNickName(), 3));
+
         return R.status(true);
     }
 

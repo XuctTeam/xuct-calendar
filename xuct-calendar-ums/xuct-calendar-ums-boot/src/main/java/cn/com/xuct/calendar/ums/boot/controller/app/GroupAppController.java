@@ -11,6 +11,7 @@
 package cn.com.xuct.calendar.ums.boot.controller.app;
 
 import cn.com.xuct.calendar.common.core.res.R;
+import cn.com.xuct.calendar.common.module.enums.CommonPowerEnum;
 import cn.com.xuct.calendar.common.module.params.GroupAddParam;
 import cn.com.xuct.calendar.common.module.params.GroupDeleteParam;
 import cn.com.xuct.calendar.common.web.utils.JwtUtils;
@@ -89,10 +90,11 @@ public class GroupAppController {
             if (StringUtils.hasLength(addParam.getImageUrl())) {
                 group.setImages(addParam.getImageUrl());
             }
+            group.setPower(CommonPowerEnum.valueOf(addParam.getPower()));
             groupService.updateById(group);
             return R.status(true);
         }
-        groupService.addGroup(JwtUtils.getUserId(), addParam.getName(), addParam.getImageUrl());
+        groupService.addGroup(JwtUtils.getUserId(), addParam.getName(), addParam.getImageUrl(), addParam.getPower());
         return R.status(true);
     }
 
