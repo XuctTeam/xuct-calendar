@@ -28,7 +28,7 @@
         <dependency>
             <groupId>com.github.chengtengfei</groupId>
             <artifactId>okhttp3-fast-spring-boot-starter</artifactId>
-            <version>${utils.okhttp3.version}</version>
+            <version>${utils.okhttp3.start.version}</version>
         </dependency>
         <dependency>
             <groupId>cn.com.xuct</groupId>

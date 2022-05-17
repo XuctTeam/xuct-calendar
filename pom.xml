@@ -20,27 +20,27 @@
     <properties>
         <maven.compiler.source>10</maven.compiler.source>
         <maven.compiler.target>10</maven.compiler.target>
-        <spring.boot.version>2.6.6</spring.boot.version>
+        <spring.boot.version>2.6.7</spring.boot.version>
         <calendar.project.version>1.0</calendar.project.version>
 
         <!-- alibaba -->
         <alibaba.cloud.version>2021.0.1.0</alibaba.cloud.version>
-        <spring.colud.version>2021.0.1</spring.colud.version>
+        <spring.colud.version>2021.0.2</spring.colud.version>
         <spring.colud.oauth.version>2.2.5.RELEASE</spring.colud.oauth.version>
         <maven.compiler.source>10</maven.compiler.source>
         <maven.compiler.target>10</maven.compiler.target>
         <!--lib-->
-        <lib.jedis.version>3.7.0</lib.jedis.version>
+        <lib.jedis.version>4.2.3</lib.jedis.version>
         <lib.common.pool.version>2.11.1</lib.common.pool.version>
         <lib.mybaties.plus.version>3.5.1</lib.mybaties.plus.version>
-        <lib.mysql.version>8.0.27</lib.mysql.version>
+        <lib.mysql.version>8.0.29</lib.mysql.version>
         <lib.servlet.version>4.0.1</lib.servlet.version>
         <lib.nacos.client.version>2.1.0</lib.nacos.client.version>
         <lib.jedis.lock.version>1.0.0</lib.jedis.lock.version>
-        <lib.caffeine.version>2.9.2</lib.caffeine.version>
-        <lib.jackson.version>20211205</lib.jackson.version>
+        <lib.caffeine.version>3.1.0</lib.caffeine.version>
+        <lib.jackson.version>20220320</lib.jackson.version>
         <!-- compiler-->
-        <compiler.lombok.version>1.18.22</compiler.lombok.version>
+        <compiler.lombok.version>1.18.24</compiler.lombok.version>
         <compiler.knife4j.verion>2.0.9</compiler.knife4j.verion>
         <complier.swagger2.version>2.10.5</complier.swagger2.version>
         <complier.swagger2.moudle.version>1.6.3</complier.swagger2.moudle.version>
@@ -49,15 +49,15 @@
         <complier.okio.verison>2.10.0</complier.okio.verison>
         <complier.jaxb.runtime.version>2.3.5</complier.jaxb.runtime.version>
         <!-- utils -->
-        <utils.hutool.version>5.7.22</utils.hutool.version>
-        <utils.zxing.version>3.4.1</utils.zxing.version>
-        <utils.guava.version>31.0.1-jre</utils.guava.version>
+        <utils.hutool.version>5.8.0</utils.hutool.version>
+        <utils.guava.version>31.1-jre</utils.guava.version>
         <utils.wxjava.version>4.3.0</utils.wxjava.version>
-        <utils.jackson.version>2.12.2</utils.jackson.version>
-        <utils.nimbusds.jwt.version>9.15.2</utils.nimbusds.jwt.version>
-        <utils.tencentcloud.version>3.1.405</utils.tencentcloud.version>
+        <utils.jackson.version>2.13.3</utils.jackson.version>
+        <utils.nimbusds.jwt.version>9.22</utils.nimbusds.jwt.version>
+        <utils.tencentcloud.version>3.1.508</utils.tencentcloud.version>
         <utils.biweekly.version>0.6.6</utils.biweekly.version>
-        <utils.okhttp3.version>0.0.3-SNAPSHOT</utils.okhttp3.version>
+        <utils.okhttp3.version>4.9.3</utils.okhttp3.version>
+        <utils.okhttp3.start.version>0.0.3-SNAPSHOT</utils.okhttp3.start.version>
         <utils.easy.captcha.version>1.6.2</utils.easy.captcha.version>
         <utils.pinyin.version>2.6.1</utils.pinyin.version>
     </properties>
