@@ -29,16 +29,22 @@
         <spring.colud.oauth.version>2.2.5.RELEASE</spring.colud.oauth.version>
         <maven.compiler.source>10</maven.compiler.source>
         <maven.compiler.target>10</maven.compiler.target>
+
+        <!--start-->
+        <utils.okhttp3.start.version>0.0.3-SNAPSHOT</utils.okhttp3.start.version>
+        <mybaties.plus.start.version>3.5.1</mybaties.plus.start.version>
         <!--lib-->
-        <lib.jedis.version>4.2.3</lib.jedis.version>
+        <lib.jedis.version>3.8.0</lib.jedis.version>
         <lib.common.pool.version>2.11.1</lib.common.pool.version>
         <lib.mybaties.plus.version>3.5.1</lib.mybaties.plus.version>
         <lib.mysql.version>8.0.29</lib.mysql.version>
         <lib.servlet.version>4.0.1</lib.servlet.version>
         <lib.nacos.client.version>2.1.0</lib.nacos.client.version>
         <lib.jedis.lock.version>1.0.0</lib.jedis.lock.version>
-        <lib.caffeine.version>3.1.0</lib.caffeine.version>
+        <lib.caffeine.version>2.9.3</lib.caffeine.version>
+        <lib.google.prone.version>2.11.0</lib.google.prone.version>
         <lib.jackson.version>20220320</lib.jackson.version>
+        <lib.open.feign.version>11.8</lib.open.feign.version>
         <!-- compiler-->
         <compiler.lombok.version>1.18.24</compiler.lombok.version>
         <compiler.knife4j.verion>2.0.9</compiler.knife4j.verion>
@@ -57,7 +63,6 @@
         <utils.tencentcloud.version>3.1.508</utils.tencentcloud.version>
         <utils.biweekly.version>0.6.6</utils.biweekly.version>
         <utils.okhttp3.version>4.9.3</utils.okhttp3.version>
-        <utils.okhttp3.start.version>0.0.3-SNAPSHOT</utils.okhttp3.start.version>
         <utils.easy.captcha.version>1.6.2</utils.easy.captcha.version>
         <utils.pinyin.version>2.6.1</utils.pinyin.version>
     </properties>
@@ -99,7 +104,7 @@
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-boot-starter</artifactId>
-                <version>${lib.mybaties.plus.version}</version>
+                <version>${mybaties.plus.start.version}</version>
             </dependency>
             <dependency>
                 <groupId>mysql</groupId>
