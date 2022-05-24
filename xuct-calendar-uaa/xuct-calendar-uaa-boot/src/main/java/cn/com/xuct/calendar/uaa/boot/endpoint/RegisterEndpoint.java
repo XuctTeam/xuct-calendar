@@ -99,6 +99,7 @@ public class RegisterEndpoint {
         stringRedisTemplate.opsForValue().set(this.getEmailCodeKey(param.getEmail()), code, 120, TimeUnit.SECONDS);
         return basicServicesFeignClient.emailCode(EmailFeignInfo.builder().template("register").tos(Lists.newArrayList(param.getEmail())).subject("注册验证").params(
                 new HashMap<>() {{
+                    put | ("title", "注册验证")
                     put("userName", param.getEmail());
                     put("code", code);
                     put("date", DateUtil.now());
