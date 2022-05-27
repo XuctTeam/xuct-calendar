@@ -25,6 +25,7 @@ import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.db.service.BaseServiceImpl;
 import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
 import cn.com.xuct.calendar.common.module.enums.ComponentAlarmEnum;
+import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
@@ -37,6 +38,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,6 +70,12 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
         component.setTimeZone(timeZone);
         if (alarmTimes.size() != 0) {
             component.setAlarmTimes(ArrayUtil.join(alarmTimes.toArray(new Integer[alarmTimes.size()]), ","));
+        }
+        /* 全天事件处理 */
+        if (component.getFullDay() == 1) {
+            Date date = component.getDtstart();
+            component.setDtstart(DateUtil.beginOfDay(date));
+            component.setDtend(DateUtil.endOfDay(date).offset(DateField.MILLISECOND,-999));
         }
         this.save(component);
         /* 增加邀请人数据 */

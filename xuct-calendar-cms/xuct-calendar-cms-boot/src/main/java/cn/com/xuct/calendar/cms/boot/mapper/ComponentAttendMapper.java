@@ -13,7 +13,6 @@ package cn.com.xuct.calendar.cms.boot.mapper;
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAttend;
 import cn.com.xuct.calendar.cms.api.vo.CalendarComponentVo;
-import cn.com.xuct.calendar.cms.api.vo.ComponentAttendVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 

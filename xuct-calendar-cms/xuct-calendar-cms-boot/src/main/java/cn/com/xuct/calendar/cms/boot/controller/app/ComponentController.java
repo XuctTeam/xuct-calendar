@@ -43,6 +43,7 @@ import cn.com.xuct.calendar.common.module.params.ComponentAddParam;
 import cn.com.xuct.calendar.common.module.params.ComponentAttendParam;
 import cn.com.xuct.calendar.common.web.utils.JwtUtils;
 import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
+import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
@@ -336,6 +337,8 @@ public class ComponentController {
         Long oldCalendarId = component.getCalendarId();
         if (param.getDtstart().getTime() != component.getDtstart().getTime() ||
                 param.getDtend().getTime() != component.getDtend().getTime() ||
+                //全天事件要处理
+                param.getFullDay() != component.getFullDay() ||
                 !param.getRepeatStatus().equals(component.getRepeatStatus()) ||
                 !param.getRepeatType().equals(component.getRepeatType().getValue()) ||
                 !param.getRepeatByday().equals(component.getRepeatByday()) ||
@@ -363,6 +366,12 @@ public class ComponentController {
         } else {
             component.setRepeatType(ComponentRepeatTypeEnum.getValueByValue(param.getRepeatType()));
             component.setEndTime(param.getRepeatUntil().getTime());
+        }
+        /* 全天事件处理 */
+        if (param.getFullDay() == 1) {
+            Date date = param.getDtstart();
+            component.setDtstart(DateUtil.beginOfDay(date));
+            component.setDtend(DateUtil.endOfDay(date).offset(DateField.MILLISECOND, -999));
         }
     }
 
