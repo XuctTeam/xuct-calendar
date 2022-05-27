@@ -11,10 +11,10 @@
 package cn.com.xuct.calendar.ums.boot;
 
 import cn.com.xuct.calendar.common.db.dao.config.MybatisPlusConfig;
-import cn.com.xuct.calendar.common.http.annotation.EnableAutoOkFeign;
-import cn.com.xuct.calendar.common.redis.annotation.EnableAutoRedis;
+import cn.com.xuct.calendar.common.http.annotation.EnableOkFeignAutoConfiguration;
+import cn.com.xuct.calendar.common.redis.annotation.EnableRedisAutoConfiguration;
 import cn.com.xuct.calendar.common.smms.annotation.EnableSmmsClient;
-import cn.com.xuct.calendar.common.swagger.annotation.EnableAutoSwagger2;
+import cn.com.xuct.calendar.common.swagger.annotation.EnableSwagger2AutoConfiguration;
 import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
 import cn.com.xuct.calendar.ums.api.feign.CalendarFeignClient;
 import org.springframework.boot.SpringApplication;
@@ -34,9 +34,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @create 2021/11/9
  * @since 1.0.0
  */
-@EnableAutoRedis
-@EnableAutoSwagger2
-@EnableAutoOkFeign
+@EnableRedisAutoConfiguration
+@EnableSwagger2AutoConfiguration
+@EnableOkFeignAutoConfiguration
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableCaching

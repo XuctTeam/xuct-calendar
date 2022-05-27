@@ -28,6 +28,6 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 @Import({FeignOkHttpConfiguration.class})
-public @interface EnableAutoOkFeign {
+public @interface EnableOkFeignAutoConfiguration {
 
 }

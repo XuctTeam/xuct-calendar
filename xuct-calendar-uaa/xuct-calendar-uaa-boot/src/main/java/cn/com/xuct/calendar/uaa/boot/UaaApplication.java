@@ -12,10 +12,10 @@ package cn.com.xuct.calendar.uaa.boot;
 
 import cn.com.xuct.calendar.uaa.api.client.UmsMemberFeignClient;
 import cn.com.xuct.calendar.uaa.api.client.UmsUserFeignClient;
-import cn.com.xuct.calendar.common.http.annotation.EnableAutoOkFeign;
-import cn.com.xuct.calendar.common.localstore.annotation.EnableAutoLocalStoreCache;
-import cn.com.xuct.calendar.common.redis.annotation.EnableAutoRedis;
-import cn.com.xuct.calendar.common.swagger.annotation.EnableAutoSwagger2;
+import cn.com.xuct.calendar.common.http.annotation.EnableOkFeignAutoConfiguration;
+import cn.com.xuct.calendar.common.localstore.annotation.EnableLocalStoreCacheAutoConfiguration;
+import cn.com.xuct.calendar.common.redis.annotation.EnableRedisAutoConfiguration;
+import cn.com.xuct.calendar.common.swagger.annotation.EnableSwagger2AutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -29,10 +29,10 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * @create 2021/11/15
  * @since 1.0.0
  */
-@EnableAutoRedis
-@EnableAutoSwagger2
-@EnableAutoOkFeign
-@EnableAutoLocalStoreCache
+@EnableRedisAutoConfiguration
+@EnableSwagger2AutoConfiguration
+@EnableOkFeignAutoConfiguration
+@EnableLocalStoreCacheAutoConfiguration
 @SpringBootApplication(scanBasePackages = {"cn.com.xuct.calendar.uaa.boot", "cn.com.xuct.calendar.common.web"})
 @EnableDiscoveryClient
 @EnableFeignClients(basePackageClasses = {UmsMemberFeignClient.class, UmsUserFeignClient.class})

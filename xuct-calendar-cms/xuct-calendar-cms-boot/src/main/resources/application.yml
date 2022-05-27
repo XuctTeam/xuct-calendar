@@ -17,7 +17,6 @@ spring:
   config:
     import:
       - optional:nacos:dav-cms.yaml  # 监听 DEFAULT_GROUP:test.yml
-
 logging:
   level:
     cn:

@@ -10,11 +10,13 @@
  */
 package cn.com.xuct.calendar.common.fdfs.config;
 
+import cn.com.xuct.calendar.common.fdfs.client.FdfsExt;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.csource.fastdfs.ClientGlobal;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 
@@ -29,15 +31,16 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
+@EnableConfigurationProperties(FdfsProperties.class)
 public class FdfsAutoConfiguration implements InitializingBean, DisposableBean {
 
-    private FdfsProperties fdfsProperties;
-
+    private final FdfsProperties fdfsProperties;
 
     @Override
     public void afterPropertiesSet() throws Exception {
         log.info("fdfs start init.....");
         ClientGlobal.initByProperties(fdfsProperties);
+        FdfsExt.initExt();
     }
 
     @Override

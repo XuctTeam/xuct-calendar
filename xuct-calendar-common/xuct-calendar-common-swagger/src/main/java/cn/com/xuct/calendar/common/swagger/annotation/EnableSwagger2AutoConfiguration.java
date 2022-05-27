@@ -28,5 +28,5 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 @Import({SwaggerAutoConfiguration.class})
-public @interface EnableAutoSwagger2 {
+public @interface EnableSwagger2AutoConfiguration {
 }

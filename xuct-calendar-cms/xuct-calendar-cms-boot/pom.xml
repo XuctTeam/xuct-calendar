@@ -124,6 +124,12 @@
             <version>${calendar.project.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>cn.com.xuct</groupId>
+            <artifactId>xuct-calendar-common-fdfs</artifactId>
+            <version>${calendar.project.version}</version>
+            <scope>compile</scope>
+        </dependency>
 
     </dependencies>
 </project>

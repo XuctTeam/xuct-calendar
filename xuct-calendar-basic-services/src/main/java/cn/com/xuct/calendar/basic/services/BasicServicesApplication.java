@@ -10,8 +10,8 @@
  */
 package cn.com.xuct.calendar.basic.services;
 
-import cn.com.xuct.calendar.common.redis.annotation.EnableAutoRedis;
-import cn.com.xuct.calendar.common.swagger.annotation.EnableAutoSwagger2;
+import cn.com.xuct.calendar.common.redis.annotation.EnableRedisAutoConfiguration;
+import cn.com.xuct.calendar.common.swagger.annotation.EnableSwagger2AutoConfiguration;
 import cn.com.xuct.calendar.common.tencent.annotation.EnableAutoTencentSdk;
 import com.sankuai.inf.leaf.plugin.annotation.EnableLeafServer;
 import org.springframework.boot.SpringApplication;
@@ -31,8 +31,8 @@ import javax.annotation.PostConstruct;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableLeafServer
-@EnableAutoSwagger2
-@EnableAutoRedis
+@EnableSwagger2AutoConfiguration
+@EnableRedisAutoConfiguration
 @EnableAutoTencentSdk
 public class BasicServicesApplication {
 

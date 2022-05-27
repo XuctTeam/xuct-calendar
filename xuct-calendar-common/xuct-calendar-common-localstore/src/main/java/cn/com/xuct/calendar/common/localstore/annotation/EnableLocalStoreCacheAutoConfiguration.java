@@ -28,6 +28,6 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 @Import({CaffeineConfiguration.class})
-public @interface EnableAutoLocalStoreCache {
+public @interface EnableLocalStoreCacheAutoConfiguration {
 
 }
