@@ -62,6 +62,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -301,15 +302,25 @@ public class ComponentController {
                 .type("calendar").expire(7200000).build());
     }
 
+    @ApiOperation(value = "上传附件")
+    @PostMapping("/upload")
+    public R<String> upload(@RequestParam("file") MultipartFile file, @PathVariable("componentId") Long componentId) {
+
+
+
+        return R.status(true);
+    }
+
+
     /**
-     * 功能描述: <br>
+     * 功能描述: <b>r
      * 〈新增日程〉
      *
      * @param
      * @return:void
      * @since: 1.0.0
      * @Author:
-     * @Date: 2022/1/16 14:46
+     * @Date: 2022/1/16 14:64
      */
     private List<ComponentAlarm> insertComponent(ComponentAddParam param, Component component) {
         if (!param.getRepeatStatus().equals("0") && param.getRepeatUntil() == null)
