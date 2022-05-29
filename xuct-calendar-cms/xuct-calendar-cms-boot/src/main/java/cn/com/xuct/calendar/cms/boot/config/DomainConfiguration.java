@@ -17,7 +17,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * 〈一句话功能简述〉<br> 
+ * 〈一句话功能简述〉<br>
  * 〈〉
  *
  * @author Derek Xu
@@ -31,4 +31,6 @@ import org.springframework.context.annotation.Configuration;
 public class DomainConfiguration {
 
     private String calendar;
+
+    private String images;
 }

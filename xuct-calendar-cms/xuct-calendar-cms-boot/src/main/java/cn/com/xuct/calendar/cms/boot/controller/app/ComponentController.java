@@ -10,10 +10,7 @@
  */
 package cn.com.xuct.calendar.cms.boot.controller.app;
 
-import cn.com.xuct.calendar.cms.api.entity.Component;
-import cn.com.xuct.calendar.cms.api.entity.ComponentAlarm;
-import cn.com.xuct.calendar.cms.api.entity.ComponentAttend;
-import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
+import cn.com.xuct.calendar.cms.api.entity.*;
 import cn.com.xuct.calendar.cms.api.feign.BasicServicesFeignClient;
 import cn.com.xuct.calendar.cms.api.feign.UmsMemberFeignClient;
 import cn.com.xuct.calendar.cms.api.vo.CalendarComponentVo;
@@ -22,6 +19,7 @@ import cn.com.xuct.calendar.cms.api.vo.ComponentListVo;
 import cn.com.xuct.calendar.cms.api.vo.ComponentSearchVo;
 import cn.com.xuct.calendar.cms.boot.config.DomainConfiguration;
 import cn.com.xuct.calendar.cms.boot.handler.RabbitmqOutChannel;
+import cn.com.xuct.calendar.cms.boot.service.IComponentAttachmentService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentAttendService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentService;
 import cn.com.xuct.calendar.cms.boot.service.IMemberCalendarService;
@@ -34,6 +32,8 @@ import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.res.SvrResCode;
 import cn.com.xuct.calendar.common.core.utils.JsonUtils;
 import cn.com.xuct.calendar.common.core.vo.Column;
+import cn.com.xuct.calendar.common.fdfs.client.FdfsClient;
+import cn.com.xuct.calendar.common.fdfs.exception.FdfsClientException;
 import cn.com.xuct.calendar.common.module.dto.AlarmInfoDto;
 import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
 import cn.com.xuct.calendar.common.module.enums.ComponentRepeatTypeEnum;
@@ -64,6 +64,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -91,6 +92,8 @@ public class ComponentController {
     private final IComponentAttendService componentAttendService;
 
     private final IMemberCalendarService memberCalendarService;
+
+    private final IComponentAttachmentService componentAttachmentService;
 
     private final UmsMemberFeignClient umsMemberFeignClient;
 
@@ -304,11 +307,16 @@ public class ComponentController {
 
     @ApiOperation(value = "上传附件")
     @PostMapping("/upload")
-    public R<String> upload(@RequestParam("file") MultipartFile file, @PathVariable("componentId") Long componentId) {
-
-
-
-        return R.status(true);
+    public R<ComponentAttachment> upload(@RequestParam("file") MultipartFile file, @RequestParam("uuid") String uuid, @RequestParam(value = "componentId", required = false) Long componentId) throws IOException, FdfsClientException {
+        FdfsClient fdfsClient = new FdfsClient();
+        String url = fdfsClient.upload(file, Maps.newHashMap());
+        ComponentAttachment componentAttachment = new ComponentAttachment();
+        componentAttachment.setDomain(domainConfiguration.getImages());
+        componentAttachment.setFileName(file.getOriginalFilename());
+        componentAttachment.setSuffix(file.getOriginalFilename().substring(file.getOriginalFilename().indexOf("."), file.getOriginalFilename().length()));
+        componentAttachment.setPath(url);
+        componentAttachmentService.save(componentAttachment);
+        return R.data(componentAttachment);
     }
 
 
