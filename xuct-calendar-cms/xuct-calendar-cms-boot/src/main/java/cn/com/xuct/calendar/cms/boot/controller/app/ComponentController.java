@@ -18,6 +18,7 @@ import cn.com.xuct.calendar.cms.api.vo.ComponentAttendVo;
 import cn.com.xuct.calendar.cms.api.vo.ComponentListVo;
 import cn.com.xuct.calendar.cms.api.vo.ComponentSearchVo;
 import cn.com.xuct.calendar.cms.boot.config.DomainConfiguration;
+import cn.com.xuct.calendar.cms.boot.config.UploadConfiguration;
 import cn.com.xuct.calendar.cms.boot.handler.RabbitmqOutChannel;
 import cn.com.xuct.calendar.cms.boot.service.IComponentAttachmentService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentAttendService;
@@ -86,19 +87,13 @@ import java.util.stream.Collectors;
 public class ComponentController {
 
     private final DomainConfiguration domainConfiguration;
-
+    private final UploadConfiguration uploadConfiguration;
     private final IComponentService componentService;
-
     private final IComponentAttendService componentAttendService;
-
     private final IMemberCalendarService memberCalendarService;
-
     private final IComponentAttachmentService componentAttachmentService;
-
     private final UmsMemberFeignClient umsMemberFeignClient;
-
     private final BasicServicesFeignClient basicServicesFeignClient;
-
     private final RabbitmqOutChannel rabbitmqOutChannel;
 
     @ApiOperation(value = "通过日历查询日程-天分组")
@@ -244,7 +239,6 @@ public class ComponentController {
         }).collect(Collectors.toList()));
     }
 
-
     @ApiOperation(value = "获取邀请状态")
     @GetMapping("/attend/status")
     public R<Integer> getComponentAttendStatus(@RequestParam("componentId") Long componentId) {
@@ -283,7 +277,6 @@ public class ComponentController {
         return R.data(attend == null ? 0 : 1);
     }
 
-
     @ApiOperation(value = "加入邀请")
     @PostMapping("/attend/accept")
     public R<String> acceptAttend(@RequestBody ComponentAttendParam param) {
@@ -308,6 +301,9 @@ public class ComponentController {
     @ApiOperation(value = "上传附件")
     @PostMapping("/upload")
     public R<ComponentAttachment> upload(@RequestParam("file") MultipartFile file, @RequestParam("uuid") String uuid, @RequestParam(value = "componentId", required = false) Long componentId) throws IOException, FdfsClientException {
+        Assert.isTrue(!(StringUtils.hasText(uuid) && componentId == null), "参数错误");
+        Long count = componentAttachmentService.count(componentId != null ? Column.of("component_id", componentId) : Column.of("uuid", uuid));
+        if (count > uploadConfiguration.getMaxNumber()) return R.fail("已达到最大");
         FdfsClient fdfsClient = new FdfsClient();
         String url = fdfsClient.upload(file, Maps.newHashMap());
         ComponentAttachment componentAttachment = new ComponentAttachment();
@@ -315,6 +311,12 @@ public class ComponentController {
         componentAttachment.setFileName(file.getOriginalFilename());
         componentAttachment.setSuffix(file.getOriginalFilename().substring(file.getOriginalFilename().indexOf("."), file.getOriginalFilename().length()));
         componentAttachment.setPath(url);
+        if (componentId == null && StringUtils.hasText(uuid)) {
+            componentAttachment.setUuid(uuid);
+        }
+        if (componentId != null) {
+            componentAttachment.setComponentId(componentId);
+        }
         componentAttachmentService.save(componentAttachment);
         return R.data(componentAttachment);
     }

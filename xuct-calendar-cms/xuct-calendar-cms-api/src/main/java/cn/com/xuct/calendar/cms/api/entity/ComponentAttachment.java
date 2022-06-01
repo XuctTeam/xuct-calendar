@@ -40,4 +40,7 @@ public class ComponentAttachment extends SuperEntity<ComponentAttachment> {
 
     /* 访问地址 */
     private String domain;
+
+    /* uuid */
+    private String uuid;
 }
