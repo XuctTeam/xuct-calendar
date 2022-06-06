@@ -16,6 +16,7 @@ import cn.com.xuct.calendar.ums.boot.mapper.MemberMessageMapper;
 import cn.com.xuct.calendar.ums.boot.service.IMemberMessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 

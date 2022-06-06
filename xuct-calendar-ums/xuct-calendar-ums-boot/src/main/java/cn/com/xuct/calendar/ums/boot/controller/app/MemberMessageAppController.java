@@ -11,6 +11,7 @@
 package cn.com.xuct.calendar.ums.boot.controller.app;
 
 import cn.com.xuct.calendar.common.core.res.R;
+import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.params.MessageReadParam;
 import cn.com.xuct.calendar.common.web.utils.JwtUtils;
 import cn.com.xuct.calendar.ums.api.entity.MemberMessage;
@@ -50,7 +51,7 @@ public class MemberMessageAppController {
                                        @RequestParam(value = "status", required = false) Integer status) {
         MemberMessagePageVo memberMessagePageVo = new MemberMessagePageVo();
         memberMessagePageVo.setFinished(false);
-        List<MemberMessage> memberMessageList = memberMessageService.pages(title , JwtUtils.getUserId(), page, limit + 1, status);
+        List<MemberMessage> memberMessageList = memberMessageService.pages(title, JwtUtils.getUserId(), page, limit + 1, status);
         if (CollectionUtils.isEmpty(memberMessageList)) {
             memberMessagePageVo.setFinished(true);
             memberMessagePageVo.setMessages(Lists.newArrayList());
@@ -68,10 +69,27 @@ public class MemberMessageAppController {
         return R.data(memberMessagePageVo);
     }
 
+    @ApiOperation(value = "查询总数")
+    @GetMapping("/count")
+    public R<Long> count() {
+        return R.data(memberMessageService.count(Column.of("member_id", JwtUtils.getUserId())));
+    }
+
     @GetMapping("")
     @ApiOperation(value = "获取消息")
     public R<MemberMessage> get(@RequestParam("id") Long id) {
         return R.data(memberMessageService.getById(id));
+    }
+
+    @ApiOperation(value = "清除未读")
+    @PostMapping("/clear")
+    public R<String> clearUnread() {
+        MemberMessage memberMessage = new MemberMessage();
+        memberMessage.setCreateTime(null);
+        memberMessage.setUpdateTime(null);
+        memberMessage.setStatus(1);
+        memberMessageService.update(memberMessage, Lists.newArrayList(Column.of("member_id", JwtUtils.getUserId()), Column.of("status", 0)));
+        return R.status(true);
     }
 
     @ApiOperation(value = "已读消息")
@@ -81,6 +99,13 @@ public class MemberMessageAppController {
         memberMessage.setId(Long.valueOf(param.getId()));
         memberMessage.setStatus(1);
         memberMessageService.updateById(memberMessage);
+        return R.status(true);
+    }
+
+    @ApiOperation(value = "删除消息")
+    @DeleteMapping("/{id}")
+    public R<String> delete(@PathVariable("id") Long id) {
+        memberMessageService.removeById(id);
         return R.status(true);
     }
 }
