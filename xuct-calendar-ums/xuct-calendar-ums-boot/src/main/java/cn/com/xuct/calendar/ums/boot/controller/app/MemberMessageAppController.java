@@ -22,10 +22,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -69,7 +71,6 @@ public class MemberMessageAppController {
         return R.data(memberMessagePageVo);
     }
 
-    @ApiOperation(value = "查询总数")
     @GetMapping("/count")
     public R<Long> count() {
         return R.data(memberMessageService.count(Column.of("member_id", JwtUtils.getUserId())));
@@ -106,6 +107,15 @@ public class MemberMessageAppController {
     @DeleteMapping("/{id}")
     public R<String> delete(@PathVariable("id") Long id) {
         memberMessageService.removeById(id);
+        return R.status(true);
+    }
+
+    @ApiOperation(value = "按ID批量删除消息")
+    @DeleteMapping("/batch")
+    public R<String> batchDelete(@RequestParam("ids") String ids) {
+        String[] idsArray = ids.split(",");
+        Assert.notEmpty(idsArray, "批量删除ID不能为空");
+        memberMessageService.removeBatchByIds(Arrays.asList(idsArray));
         return R.status(true);
     }
 }

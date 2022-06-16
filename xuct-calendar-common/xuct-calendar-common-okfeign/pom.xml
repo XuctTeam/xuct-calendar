@@ -17,18 +17,14 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>io.github.openfeign</groupId>
-            <artifactId>feign-okhttp</artifactId>
-            <version>${lib.open.feign.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-openfeign-core</artifactId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>${open.feign.start.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.squareup.okio</groupId>
-            <artifactId>okio</artifactId>
-            <version>${complier.okio.verison}</version>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>${complier.okhttp.version}</version>
         </dependency>
     </dependencies>
 
