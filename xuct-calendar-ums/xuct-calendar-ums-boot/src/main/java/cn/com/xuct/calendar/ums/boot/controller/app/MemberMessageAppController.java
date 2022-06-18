@@ -12,6 +12,7 @@ package cn.com.xuct.calendar.ums.boot.controller.app;
 
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.vo.Column;
+import cn.com.xuct.calendar.common.module.params.MessageDeleteBatchParam;
 import cn.com.xuct.calendar.common.module.params.MessageReadParam;
 import cn.com.xuct.calendar.common.web.utils.JwtUtils;
 import cn.com.xuct.calendar.ums.api.entity.MemberMessage;
@@ -112,10 +113,9 @@ public class MemberMessageAppController {
 
     @ApiOperation(value = "按ID批量删除消息")
     @DeleteMapping("/batch")
-    public R<String> batchDelete(@RequestParam("ids") String ids) {
-        String[] idsArray = ids.split(",");
-        Assert.notEmpty(idsArray, "批量删除ID不能为空");
-        memberMessageService.removeBatchByIds(Arrays.asList(idsArray));
+    public R<String> batchDelete(@RequestBody MessageDeleteBatchParam param) {
+        Assert.notEmpty(param.getIds(), "批量删除ID不能为空");
+        memberMessageService.removeBatchByIds(Arrays.asList(param.getIds()));
         return R.status(true);
     }
 }
