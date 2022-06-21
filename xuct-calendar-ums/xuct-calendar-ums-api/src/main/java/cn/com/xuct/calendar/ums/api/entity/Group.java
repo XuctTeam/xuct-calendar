@@ -30,17 +30,14 @@ import lombok.Data;
 public class Group extends SuperEntity<Group> {
 
     private String name;
-
     private String images;
-
     @TableField("member_id")
     private Long memberId;
-
     @TableField("status")
     private CommonStatusEnum status;
-
     private CommonPowerEnum power;
 
+    private String password;
     @TableField(exist = false)
     private Integer count;
 }

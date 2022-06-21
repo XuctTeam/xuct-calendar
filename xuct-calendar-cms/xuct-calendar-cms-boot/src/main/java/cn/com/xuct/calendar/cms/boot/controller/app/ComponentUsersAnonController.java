@@ -44,7 +44,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @Api(tags = "【移动端】事件非登录服务")
-@RequestMapping("/api/v1/users-anon/component")
+@RequestMapping("/api/v1/anon/component")
 @RequiredArgsConstructor
 public class ComponentUsersAnonController {
 
