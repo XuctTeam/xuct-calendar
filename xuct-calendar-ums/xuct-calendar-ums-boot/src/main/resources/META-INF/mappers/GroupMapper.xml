@@ -7,7 +7,14 @@
 
 
     <select id="findGroupCountByMember" resultType="cn.com.xuct.calendar.ums.api.dto.GroupInfoDto">
-        select g.id, g.name, g.images, g.member_id as createMemberId, g.power , m.name as createMemberName , mg.count
+        select g.id,
+               g.name,
+               g.images,
+               g.member_id as createMemberId,
+               g.power,
+               m.name      as createMemberName,
+               mg.count,
+               g.password
         from sys_group g
                  inner join (select count(1) as count , group_id
                              from sys_member_group
@@ -19,7 +26,15 @@
     </select>
 
     <select id="getGroupCountByGroupId" resultType="cn.com.xuct.calendar.ums.api.dto.GroupInfoDto">
-        select g.id, g.name, g.images, g.power, mg.count, g.member_id as createMemberId, g.power, m.name as createMemberName
+        select g.id,
+               g.name,
+               g.images,
+               g.power,
+               mg.count,
+               g.member_id as createMemberId,
+               g.power,
+               m.name      as createMemberName,
+               g.password
         from sys_group g
                  left join (select group_id, count(1) as count
                             from sys_member_group
@@ -38,6 +53,7 @@
         where 1 = 1
           and g.power = 'PUBLIC'
           and g.name LIKE CONCAT(CONCAT('%', #{word}), '%')
+          and g.member_id &lt;&gt; #{memberId}
     </select>
 
 

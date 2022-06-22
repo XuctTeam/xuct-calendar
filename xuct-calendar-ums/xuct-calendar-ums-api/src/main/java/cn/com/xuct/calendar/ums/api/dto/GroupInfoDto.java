@@ -34,6 +34,8 @@ public class GroupInfoDto implements Serializable {
 
     private String images;
 
+    private String password;
+
     @JsonSerialize(using = ToStringSerializer.class)
     private Long memberId;
 

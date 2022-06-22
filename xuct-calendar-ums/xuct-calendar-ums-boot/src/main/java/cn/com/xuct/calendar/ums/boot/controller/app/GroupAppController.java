@@ -64,7 +64,7 @@ public class GroupAppController {
     @ApiOperation(value = "搜索群组")
     @GetMapping("/search")
     public R<List<GroupInfoDto>> search(@RequestParam("word") String word) {
-        return R.data(groupService.findGroupBySearch(word));
+        return R.data(groupService.findGroupBySearch(JwtUtils.getUserId(), word));
     }
 
     @ApiOperation(value = "我申请的群组")
@@ -87,14 +87,15 @@ public class GroupAppController {
             Group group = groupService.getById(addParam.getId());
             if (group == null) return R.fail("群组不存在");
             group.setName(addParam.getName());
-            if (StringUtils.hasLength(addParam.getImageUrl())) {
+            if (StringUtils.hasLength(addParam.getImageUrl()))
                 group.setImages(addParam.getImageUrl());
-            }
+            if (StringUtils.hasLength(addParam.getPassword()))
+                group.setPassword(addParam.getPassword());
             group.setPower(CommonPowerEnum.valueOf(addParam.getPower()));
             groupService.updateById(group);
             return R.status(true);
         }
-        groupService.addGroup(JwtUtils.getUserId(), addParam.getName(), addParam.getImageUrl(), addParam.getPower());
+        groupService.addGroup(JwtUtils.getUserId(), addParam.getName(), addParam.getPassword(), addParam.getImageUrl(), addParam.getPower());
         return R.status(true);
     }
 

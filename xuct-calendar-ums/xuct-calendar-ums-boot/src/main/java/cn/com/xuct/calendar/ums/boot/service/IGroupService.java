@@ -49,7 +49,7 @@ public interface IGroupService extends IBaseService<GroupMapper, Group> {
      * @param word
      * @return
      */
-    List<GroupInfoDto> findGroupBySearch(String word);
+    List<GroupInfoDto> findGroupBySearch(final Long memberId, String word);
 
     /**
      * 我申请的群组
@@ -72,10 +72,11 @@ public interface IGroupService extends IBaseService<GroupMapper, Group> {
      *
      * @param memberId
      * @param name
+     * @param password
      * @param imageUrl
      * @param power
      */
-    void addGroup(Long memberId, String name, String imageUrl , String power);
+    void addGroup(Long memberId, String name, final String password, String imageUrl, String power);
 
     /**
      * 解散群组

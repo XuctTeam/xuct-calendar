@@ -36,4 +36,6 @@ public class GroupAddParam implements Serializable {
 
     @NotNull
     private String power;
+
+    private String password;
 }
