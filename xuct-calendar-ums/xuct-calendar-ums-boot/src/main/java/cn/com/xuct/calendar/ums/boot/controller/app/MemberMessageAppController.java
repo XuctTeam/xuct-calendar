@@ -111,11 +111,19 @@ public class MemberMessageAppController {
         return R.status(true);
     }
 
-    @ApiOperation(value = "按ID批量删除消息")
+    @ApiOperation(value = "批量删除消息")
     @DeleteMapping("/batch")
     public R<String> batchDelete(@RequestBody MessageDeleteBatchParam param) {
         Assert.notEmpty(param.getIds(), "批量删除ID不能为空");
         memberMessageService.removeBatchByIds(Arrays.asList(param.getIds()));
         return R.status(true);
     }
+
+    @ApiOperation(value = "批量已读消息")
+    @PostMapping("/batch")
+    public R<String> batchRead(@RequestBody MessageDeleteBatchParam param){
+        Assert.notEmpty(param.getIds(), "批量已经ID不能为空");
+
+    }
+
 }
