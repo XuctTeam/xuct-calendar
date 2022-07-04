@@ -17,7 +17,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 〈一句话功能简述〉<br> 
+ * 〈一句话功能简述〉<br>
  * 〈群组统计列表〉
  *
  * @author Derek Xu
@@ -47,4 +47,6 @@ public class GroupInfoDto implements Serializable {
     private Integer count;
 
     private String power;
+
+    private int hasPasswordJoin = 0;
 }

@@ -35,7 +35,7 @@
         <mybaties.plus.start.version>3.5.2</mybaties.plus.start.version>
         <open.feign.start.version>3.1.3</open.feign.start.version>
         <!--lib-->
-        <lib.jedis.version>3.8.0</lib.jedis.version>
+        <lib.jedis.version>3.9.0</lib.jedis.version>
         <lib.common.pool.version>2.11.1</lib.common.pool.version>
         <lib.mybaties.plus.version>3.5.1</lib.mybaties.plus.version>
         <lib.mysql.version>8.0.29</lib.mysql.version>

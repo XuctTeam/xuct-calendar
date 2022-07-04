@@ -47,7 +47,7 @@
     </select>
 
     <select id="findGroupBySearch" resultType="cn.com.xuct.calendar.ums.api.dto.GroupInfoDto">
-        select g.id, g.name, g.images, g.member_id as createMemberId, s.name as createMemberName
+        select g.id, g.name, g.images, g.member_id as createMemberId, s.name as createMemberName , if(isnull(g.password),0,1) as hasPasswordJoin
         from sys_group g
                  left join sys_member s on g.member_id = s.id
         where 1 = 1
