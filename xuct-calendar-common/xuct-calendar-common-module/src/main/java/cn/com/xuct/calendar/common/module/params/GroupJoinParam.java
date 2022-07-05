@@ -28,4 +28,6 @@ public class GroupJoinParam implements Serializable {
 
     @NotNull
     private Long id;
+
+    private String password;
 }

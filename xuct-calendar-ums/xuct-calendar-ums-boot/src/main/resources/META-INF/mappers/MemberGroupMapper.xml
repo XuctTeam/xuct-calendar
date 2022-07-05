@@ -11,7 +11,8 @@
         from sys_member_group mg
                  left join sys_group g on mg.group_id = g.id
                  left join sys_member m on mg.member_id = m.id
-        where group_id in
+        where  mg.status = 'NORMAL'
+             and mg.group_id in
               (select group_id from sys_member_group where member_id = #{memberId} and status = 'NORMAL')
           and mg.member_id &lt;&gt; #{memberId}
     </select>

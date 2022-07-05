@@ -14,7 +14,8 @@
                g.power,
                m.name      as createMemberName,
                mg.count,
-               g.password
+               g.password,
+               g.num
         from sys_group g
                  inner join (select count(1) as count , group_id
                              from sys_member_group
@@ -34,7 +35,8 @@
                g.member_id as createMemberId,
                g.power,
                m.name      as createMemberName,
-               g.password
+               g.password,
+               g.num
         from sys_group g
                  left join (select group_id, count(1) as count
                             from sys_member_group

@@ -51,8 +51,8 @@ public class GroupServiceImpl extends BaseServiceImpl<GroupMapper, Group> implem
     }
 
     @Override
-    public List<GroupInfoDto> findGroupBySearch(final Long memberId , String word) {
-        return ((GroupMapper) super.getBaseMapper()).findGroupBySearch(memberId,word);
+    public List<GroupInfoDto> findGroupBySearch(final Long memberId, String word) {
+        return ((GroupMapper) super.getBaseMapper()).findGroupBySearch(memberId, word);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class GroupServiceImpl extends BaseServiceImpl<GroupMapper, Group> implem
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void addGroup(final Long memberId, final String name, final String password, final String imageUrl, final String power) {
+    public void addGroup(final Long memberId, final String name, final String password, final String imageUrl, final String power, final Integer num) {
         Group group = new Group();
         group.setName(name);
         group.setMemberId(memberId);
@@ -75,6 +75,7 @@ public class GroupServiceImpl extends BaseServiceImpl<GroupMapper, Group> implem
         group.setPassword(StringUtils.hasLength(password) ? password : null);
         group.setPower(CommonPowerEnum.valueOf(power));
         group.setStatus(CommonStatusEnum.NORMAL);
+        group.setNum(num);
         this.save(group);
         MemberGroup memberGroup = new MemberGroup();
         memberGroup.setGroupId(group.getId());

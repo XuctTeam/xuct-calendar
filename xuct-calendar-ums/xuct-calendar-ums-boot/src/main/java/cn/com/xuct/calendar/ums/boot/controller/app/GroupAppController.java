@@ -54,7 +54,6 @@ public class GroupAppController {
         return R.data(groupService.findGroupCountByMember(JwtUtils.getUserId()));
     }
 
-
     @ApiOperation(value = "查询群组信息")
     @GetMapping("/get")
     public R<GroupInfoDto> get(@RequestParam("id") Long id) {
@@ -79,7 +78,6 @@ public class GroupAppController {
         return R.data(groupService.applyMineGroup(JwtUtils.getUserId()));
     }
 
-
     @ApiOperation(value = "添加/修改群组")
     @PostMapping
     public R<String> addGroup(@RequestBody @Validated GroupAddParam addParam) {
@@ -92,10 +90,11 @@ public class GroupAppController {
             if (StringUtils.hasLength(addParam.getPassword()))
                 group.setPassword(addParam.getPassword());
             group.setPower(CommonPowerEnum.valueOf(addParam.getPower()));
+            group.setNum(addParam.getNum());
             groupService.updateById(group);
             return R.status(true);
         }
-        groupService.addGroup(JwtUtils.getUserId(), addParam.getName(), addParam.getPassword(), addParam.getImageUrl(), addParam.getPower());
+        groupService.addGroup(JwtUtils.getUserId(), addParam.getName(), addParam.getPassword(), addParam.getImageUrl(), addParam.getPower(), addParam.getNum());
         return R.status(true);
     }
 

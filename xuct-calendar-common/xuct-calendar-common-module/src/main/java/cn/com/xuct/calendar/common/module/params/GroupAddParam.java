@@ -38,4 +38,6 @@ public class GroupAddParam implements Serializable {
     private String power;
 
     private String password;
+
+    private Integer num;
 }

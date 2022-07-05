@@ -36,6 +36,8 @@ public class GroupInfoDto implements Serializable {
 
     private String password;
 
+    private Integer count;
+
     @JsonSerialize(using = ToStringSerializer.class)
     private Long memberId;
 
@@ -44,9 +46,10 @@ public class GroupInfoDto implements Serializable {
 
     private String createMemberName;
 
-    private Integer count;
-
     private String power;
+
+    /* 群组设置人数 */
+    private Integer num;
 
     private int hasPasswordJoin = 0;
 }

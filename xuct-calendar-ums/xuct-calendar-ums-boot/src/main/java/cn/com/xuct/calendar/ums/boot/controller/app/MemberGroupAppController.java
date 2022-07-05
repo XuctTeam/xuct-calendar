@@ -115,8 +115,14 @@ public class MemberGroupAppController {
             return R.fail("已在群组");
         }
         GroupInfoDto groupInfoDto = groupService.getGroupCountByGroupId(Long.valueOf(joinParam.getId()));
-        if (groupInfoDto == null) return R.fail("群组不存在");
-        if (groupInfoDto.getCount() > 200) return R.fail("群组已满");
+        if (groupInfoDto == null)
+            return R.fail("群组不存在");
+        /* 有密码是判断密码 */
+        if (StringUtils.hasLength(groupInfoDto.getPassword()) && !joinParam.getPassword().equals(groupInfoDto.getPassword()))
+            return R.fail("密码错误");
+        /* 已有人数大于群组配置人数 */
+        if (groupInfoDto.getCount() > groupInfoDto.getNum())
+            return R.fail("群组已满");
         memberGroupService.applyJoinGroup(groupInfoDto.getId(), groupInfoDto.getName(), groupInfoDto.getCreateMemberId(), JwtUtils.getUserId());
         /* 发出申请入群消息 */
         SpringContextHolder.publishEvent(new GroupApplyEvent(this, JwtUtils.getUserId(), groupInfoDto.getId(), groupInfoDto.getName(), groupInfoDto.getCreateMemberId()));
@@ -127,7 +133,7 @@ public class MemberGroupAppController {
     @PostMapping("/apply/agree")
     public R<String> applyAgreeJoinGroup(@RequestBody @Validated GroupApplyParam groupApplyParam) {
         Group group = groupService.getById(groupApplyParam.getGroupId());
-        Assert.notNull(group, "群组为空");
+        Assert.notNull(group, "群组不存在");
         memberGroupService.applyAgreeJoinGroup(groupApplyParam.getGroupId(), groupApplyParam.getMemberId());
         /* 发出入群同意消息 */
         SpringContextHolder.publishEvent(new GroupApplyOptionEvent(this, group.getId(), group.getName(), groupApplyParam.getMemberId(), 1));
@@ -138,7 +144,7 @@ public class MemberGroupAppController {
     @PostMapping("/apply/refuse")
     public R<String> applyRefuseJoinGroup(@RequestBody @Validated GroupApplyParam groupApplyParam) {
         Group group = groupService.getById(groupApplyParam.getGroupId());
-        Assert.notNull(group, "群组为空");
+        Assert.notNull(group, "群组不存在");
         memberGroupService.applyRefuseJoinGroup(groupApplyParam.getGroupId(), groupApplyParam.getMemberId());
         /* 发出入群拒绝消息 */
         SpringContextHolder.publishEvent(new GroupApplyOptionEvent(this, group.getId(), group.getName(), groupApplyParam.getMemberId(), 2));
