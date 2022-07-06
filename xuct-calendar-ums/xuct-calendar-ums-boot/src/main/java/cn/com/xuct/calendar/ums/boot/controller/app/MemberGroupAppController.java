@@ -131,23 +131,29 @@ public class MemberGroupAppController {
 
     @ApiOperation(value = "同意入群")
     @PostMapping("/apply/agree")
-    public R<String> applyAgreeJoinGroup(@RequestBody @Validated GroupApplyParam groupApplyParam) {
-        Group group = groupService.getById(groupApplyParam.getGroupId());
+    public R<String> agreeApply(@RequestBody @Validated GroupApplyParam groupApplyParam) {
+        MemberGroup memberGroup = memberGroupService.getById(groupApplyParam.getId());
+        Assert.notNull(memberGroup, "申请不存在");
+        Group group = groupService.getById(memberGroup.getGroupId());
         Assert.notNull(group, "群组不存在");
-        memberGroupService.applyAgreeJoinGroup(groupApplyParam.getGroupId(), groupApplyParam.getMemberId());
+        Assert.isTrue(memberGroup.getStatus().equals(GroupMemberStatusEnum.APPLY), "状态错误");
+        memberGroup.setStatus(GroupMemberStatusEnum.NORMAL);
+        memberGroupService.updateById(memberGroup);
         /* 发出入群同意消息 */
-        SpringContextHolder.publishEvent(new GroupApplyOptionEvent(this, group.getId(), group.getName(), groupApplyParam.getMemberId(), 1));
+        SpringContextHolder.publishEvent(new GroupApplyOptionEvent(this, group.getId(), group.getName(), memberGroup.getMemberId(), groupApplyParam.getAction()));
         return R.status(true);
     }
 
-    @ApiOperation(value = "拒绝入群")
+    @ApiOperation(value = "拒绝或撤回申请")
     @PostMapping("/apply/refuse")
-    public R<String> applyRefuseJoinGroup(@RequestBody @Validated GroupApplyParam groupApplyParam) {
-        Group group = groupService.getById(groupApplyParam.getGroupId());
-        Assert.notNull(group, "群组不存在");
-        memberGroupService.applyRefuseJoinGroup(groupApplyParam.getGroupId(), groupApplyParam.getMemberId());
+    public R<String> refuseApply(@RequestBody @Validated GroupApplyParam groupApplyParam) {
+        MemberGroup memberGroup = memberGroupService.getById(groupApplyParam.getId());
+        Assert.notNull(memberGroup, "申请不存在");
+        Assert.isTrue(memberGroup.getStatus().equals(GroupMemberStatusEnum.APPLY), "状态错误");
+        memberGroupService.removeById(groupApplyParam.getId());
+        Group group = groupService.getById(memberGroup.getGroupId());
         /* 发出入群拒绝消息 */
-        SpringContextHolder.publishEvent(new GroupApplyOptionEvent(this, group.getId(), group.getName(), groupApplyParam.getMemberId(), 2));
+        SpringContextHolder.publishEvent(new GroupApplyOptionEvent(this, memberGroup.getGroupId(), group != null ? group.getName() : "", memberGroup.getMemberId(), groupApplyParam.getAction()));
         return R.status(true);
     }
 
@@ -156,12 +162,12 @@ public class MemberGroupAppController {
     public R<String> leave(@RequestBody @Validated GroupLeaveParam param) {
         Group group = groupService.getById(param.getGroupId());
         Assert.notNull(group, "组不存在或非管理员");
-        if (param.getAction() == 4) {
+        if (param.getAction() == 5) {
             if (!String.valueOf(group.getMemberId()).equals(String.valueOf(JwtUtils.getUserId())))
                 return R.fail("非管理员");
             if (param.getMemberId() == null) return R.fail("会员ID不能为空");
         }
-        Long mId = param.getAction() == 3 ? JwtUtils.getUserId() : param.getMemberId();
+        Long mId = param.getAction() == 4 ? JwtUtils.getUserId() : param.getMemberId();
         memberGroupService.leaveOut(param.getGroupId(), mId);
         /* 发出清理消息 */
         SpringContextHolder.publishEvent(new GroupLeaveEvent(this, group.getId(), group.getName(), mId, param.getAction()));

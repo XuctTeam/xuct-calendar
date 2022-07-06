@@ -63,7 +63,7 @@ public class GroupEventListener {
             memberMessage = new MemberMessage();
             memberMessage.setTitle(deleteEvent.getGroupName());
             memberMessage.setType(MemberMessageTypeEnum.GROUP);
-            memberMessage.setOperation(3);
+            memberMessage.setOperation(6);
             memberMessage.setStatus(0);
             memberMessage.setMemberId(memberIds.get(i));
             jsonObject = new JSONObject();

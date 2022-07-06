@@ -17,9 +17,10 @@ import cn.com.xuct.calendar.common.module.params.GroupDeleteParam;
 import cn.com.xuct.calendar.common.web.utils.JwtUtils;
 import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
 import cn.com.xuct.calendar.ums.api.dto.GroupInfoDto;
+import cn.com.xuct.calendar.ums.api.dto.GroupMemberInfoDto;
 import cn.com.xuct.calendar.ums.api.entity.Group;
-import cn.com.xuct.calendar.ums.boot.service.IGroupService;
 import cn.com.xuct.calendar.ums.boot.event.GroupDeleteEvent;
+import cn.com.xuct.calendar.ums.boot.service.IGroupService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -68,13 +69,13 @@ public class GroupAppController {
 
     @ApiOperation(value = "我申请的群组")
     @GetMapping("/mine/apply")
-    public R<List<GroupInfoDto>> mineApplyGroup() {
+    public R<List<GroupMemberInfoDto>> mineApplyGroup() {
         return R.data(groupService.mineApplyGroup(JwtUtils.getUserId()));
     }
 
     @ApiOperation(value = "申请我的群组")
     @GetMapping("/apply/mine")
-    public R<List<GroupInfoDto>> applyMineGroup() {
+    public R<List<GroupMemberInfoDto>> applyMineGroup() {
         return R.data(groupService.applyMineGroup(JwtUtils.getUserId()));
     }
 

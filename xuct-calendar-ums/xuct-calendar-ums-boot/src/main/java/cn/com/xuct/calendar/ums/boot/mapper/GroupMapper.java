@@ -11,6 +11,7 @@
 package cn.com.xuct.calendar.ums.boot.mapper;
 
 import cn.com.xuct.calendar.ums.api.dto.GroupInfoDto;
+import cn.com.xuct.calendar.ums.api.dto.GroupMemberInfoDto;
 import cn.com.xuct.calendar.ums.api.entity.Group;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
@@ -57,7 +58,7 @@ public interface GroupMapper extends BaseMapper<Group> {
      * @param memberId
      * @return
      */
-    List<GroupInfoDto> mineApplyGroup(@Param("memberId") Long memberId);
+    List<GroupMemberInfoDto> mineApplyGroup(@Param("memberId") Long memberId);
 
     /**
      * 申请我的群组
@@ -65,5 +66,5 @@ public interface GroupMapper extends BaseMapper<Group> {
      * @param memberId
      * @return
      */
-    List<GroupInfoDto> applyMineGroup(@Param("memberId") Long memberId);
+    List<GroupMemberInfoDto> applyMineGroup(@Param("memberId") Long memberId);
 }

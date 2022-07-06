@@ -60,21 +60,6 @@ public interface IMemberGroupService extends IBaseService<MemberGroupMapper, Mem
      */
     void applyJoinGroup(Long groupId, String groupName, Long groupCreateMemberId, Long memberId);
 
-    /**
-     * 同意入组
-     *
-     * @param groupId
-     * @param memberId
-     */
-    void applyAgreeJoinGroup(Long groupId, Long memberId);
-
-    /**
-     * 拒绝入组
-     *
-     * @param groupId
-     * @param memberId
-     */
-    void applyRefuseJoinGroup(Long groupId, Long memberId);
 
     /**
      * 通过群组删除用户

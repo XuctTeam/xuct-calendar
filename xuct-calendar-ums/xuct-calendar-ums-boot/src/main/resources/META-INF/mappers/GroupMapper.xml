@@ -49,7 +49,12 @@
     </select>
 
     <select id="findGroupBySearch" resultType="cn.com.xuct.calendar.ums.api.dto.GroupInfoDto">
-        select g.id, g.name, g.images, g.member_id as createMemberId, s.name as createMemberName , if(isnull(g.password),0,1) as hasPasswordJoin
+        select g.id,
+               g.name,
+               g.images,
+               g.member_id                  as createMemberId,
+               s.name                       as createMemberName,
+               if(isnull(g.password), 0, 1) as hasPasswordJoin
         from sys_group g
                  left join sys_member s on g.member_id = s.id
         where 1 = 1
@@ -59,21 +64,37 @@
     </select>
 
 
-    <select id="mineApplyGroup" resultType="cn.com.xuct.calendar.ums.api.dto.GroupInfoDto">
-        select s.id, s.name, s.member_id as createMemberId, m.name as createMemberName, mg.member_id
+    <select id="mineApplyGroup" resultType="cn.com.xuct.calendar.ums.api.dto.GroupMemberInfoDto">
+        select mg.id,
+               s.id as groupId,
+               s.name as groupName,
+               s.member_id as groupCreateMemberId,
+               m.name      as groupCreateMemberName,
+               mg.member_id,
+               m1.name     as name ,
+               mg.create_time as createTime
         from sys_member_group mg
                  left join sys_group s on mg.group_id = s.id
                  left join sys_member m on mg.member_id = m.id
+                 left join sys_member m1 on mg.member_id = m1.id
         where 1 = 1
           and mg.member_id = #{memberId}
           and mg.status = 'APPLY'
     </select>
 
-    <select id="applyMineGroup" resultType="cn.com.xuct.calendar.ums.api.dto.GroupInfoDto">
-        select s.id, s.name, s.member_id as createMemberId, m.name as createMemberName, mg.member_id
+    <select id="applyMineGroup" resultType="cn.com.xuct.calendar.ums.api.dto.GroupMemberInfoDto">
+        select mg.id,
+               s.id as groupId,
+               s.name as groupName,
+               s.member_id as groupCreateMemberId,
+               m.name      as groupCreateMemberName,
+               mg.member_id,
+               m1.name     as name ,
+               mg.create_time as createTime
         from sys_member_group mg
                  left join sys_group s on mg.group_id = s.id
-                 left join sys_member m on mg.member_id = m.id
+                 left join sys_member m on s.member_id = m.id
+                 left join sys_member m1 on mg.member_id = m1.id
         where 1 = 1
           and s.member_id = #{memberId}
           and mg.status = 'APPLY'

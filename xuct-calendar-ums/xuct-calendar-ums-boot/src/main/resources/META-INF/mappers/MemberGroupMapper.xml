@@ -46,24 +46,4 @@
         where 1 = 1
     </select>
 
-    <update id="applyAgreeJoinGroup">
-        update sys_member_group
-        set status = 'NORMAL'
-        where 1 = 1
-          and group_id = #{groupId}
-          and member_id = #{memberId}
-          and status = 'APPLY'
-
-    </update>
-
-    <delete id="applyRefuseJoinGroup">
-        delete
-        from sys_member_group
-        where 1 = 1
-          and group_id = #{groupId}
-          and member_id = #{memberId}
-          and status = 'APPLY'
-    </delete>
-
-
 </mapper>

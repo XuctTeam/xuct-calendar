@@ -14,6 +14,7 @@ import cn.com.xuct.calendar.common.db.service.BaseServiceImpl;
 import cn.com.xuct.calendar.common.module.enums.CommonPowerEnum;
 import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
 import cn.com.xuct.calendar.ums.api.dto.GroupInfoDto;
+import cn.com.xuct.calendar.ums.api.dto.GroupMemberInfoDto;
 import cn.com.xuct.calendar.ums.api.entity.Group;
 import cn.com.xuct.calendar.ums.api.entity.MemberGroup;
 import cn.com.xuct.calendar.ums.boot.mapper.GroupMapper;
@@ -56,12 +57,12 @@ public class GroupServiceImpl extends BaseServiceImpl<GroupMapper, Group> implem
     }
 
     @Override
-    public List<GroupInfoDto> mineApplyGroup(Long memberId) {
+    public List<GroupMemberInfoDto> mineApplyGroup(Long memberId) {
         return ((GroupMapper) super.getBaseMapper()).mineApplyGroup(memberId);
     }
 
     @Override
-    public List<GroupInfoDto> applyMineGroup(Long memberId) {
+    public List<GroupMemberInfoDto> applyMineGroup(Long memberId) {
         return ((GroupMapper) super.getBaseMapper()).applyMineGroup(memberId);
     }
 

@@ -64,18 +64,6 @@ public class MemberGroupServiceImpl extends BaseServiceImpl<MemberGroupMapper, M
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void applyAgreeJoinGroup(Long groupId, Long memberId) {
-        ((MemberGroupMapper) super.getBaseMapper()).applyAgreeJoinGroup(groupId, memberId);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void applyRefuseJoinGroup(Long groupId, Long memberId) {
-        ((MemberGroupMapper) super.getBaseMapper()).applyRefuseJoinGroup(groupId, memberId);
-    }
-
-    @Override
     public List<Long> deleteAllByGroupId(Long groupId) {
         List<Long> memberIds = ((MemberGroupMapper) super.getBaseMapper()).findMemberIdsByGroupId(groupId);
         if (CollectionUtils.isEmpty(memberIds)) return Lists.newArrayList();

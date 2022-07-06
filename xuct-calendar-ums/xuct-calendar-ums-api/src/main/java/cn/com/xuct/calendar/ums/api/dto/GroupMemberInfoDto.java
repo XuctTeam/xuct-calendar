@@ -10,7 +10,11 @@
  */
 package cn.com.xuct.calendar.ums.api.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
+
+import java.util.Date;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -23,9 +27,13 @@ import lombok.Data;
 @Data
 public class GroupMemberInfoDto {
 
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long id;
+
     private String name;
 
-    private String memberId;
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long memberId;
 
     private String avatar;
 
@@ -34,4 +42,9 @@ public class GroupMemberInfoDto {
     private String groupName;
 
     private String groupCreateMemberId;
+
+    private String groupCreateMemberName;
+
+    private Date createTime;
+
 }

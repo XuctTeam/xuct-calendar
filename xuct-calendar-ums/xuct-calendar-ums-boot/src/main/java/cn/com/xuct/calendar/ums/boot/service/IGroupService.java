@@ -12,6 +12,7 @@ package cn.com.xuct.calendar.ums.boot.service;
 
 import cn.com.xuct.calendar.common.db.service.IBaseService;
 import cn.com.xuct.calendar.ums.api.dto.GroupInfoDto;
+import cn.com.xuct.calendar.ums.api.dto.GroupMemberInfoDto;
 import cn.com.xuct.calendar.ums.api.entity.Group;
 import cn.com.xuct.calendar.ums.boot.mapper.GroupMapper;
 
@@ -57,7 +58,7 @@ public interface IGroupService extends IBaseService<GroupMapper, Group> {
      * @param memberId
      * @return
      */
-    List<GroupInfoDto> mineApplyGroup(Long memberId);
+    List<GroupMemberInfoDto> mineApplyGroup(Long memberId);
 
     /**
      * 申请我的群组
@@ -65,7 +66,7 @@ public interface IGroupService extends IBaseService<GroupMapper, Group> {
      * @param memberId
      * @return
      */
-    List<GroupInfoDto> applyMineGroup(Long memberId);
+    List<GroupMemberInfoDto> applyMineGroup(Long memberId);
 
     /**
      * 添加组

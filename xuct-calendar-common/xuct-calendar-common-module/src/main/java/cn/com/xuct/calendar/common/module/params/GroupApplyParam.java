@@ -25,7 +25,7 @@ import java.io.Serializable;
 @Data
 public class GroupApplyParam implements Serializable {
 
-    private Long groupId;
+   private String id;
 
-    private Long memberId;
+   private Integer action;
 }

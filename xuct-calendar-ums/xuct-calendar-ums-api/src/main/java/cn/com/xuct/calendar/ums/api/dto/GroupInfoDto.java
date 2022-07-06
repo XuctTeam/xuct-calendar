@@ -12,9 +12,11 @@ package cn.com.xuct.calendar.ums.api.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -27,19 +29,19 @@ import java.io.Serializable;
 @Data
 public class GroupInfoDto implements Serializable {
 
+    @ApiModelProperty(notes = "ID")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
+    @ApiModelProperty(notes = "群组名称")
     private String name;
 
+    @ApiModelProperty(notes = "群组图片")
     private String images;
 
     private String password;
 
     private Integer count;
-
-    @JsonSerialize(using = ToStringSerializer.class)
-    private Long memberId;
 
     @JsonSerialize(using = ToStringSerializer.class)
     private Long createMemberId;

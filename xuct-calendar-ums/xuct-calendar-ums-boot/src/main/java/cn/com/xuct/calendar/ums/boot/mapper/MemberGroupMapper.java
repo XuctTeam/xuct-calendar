@@ -36,28 +36,12 @@ public interface MemberGroupMapper extends BaseMapper<MemberGroup> {
     List<GroupMemberInfoDto> list(@Param("memberId") Long memberId);
 
     /**
-     * 同意入组
-     *
-     * @param groupId
-     * @param memberId
-     */
-    void applyAgreeJoinGroup(@Param("groupId") Long groupId, @Param("memberId") Long memberId);
-
-    /**
      * 去重查询组内所有用户
      *
      * @param memberId
      * @return
      */
     List<GroupMemberInfoDto> distinctGroupMembers(@Param("memberId") Long memberId);
-
-    /**
-     * 拒绝入组
-     *
-     * @param groupId
-     * @param memberId
-     */
-    void applyRefuseJoinGroup(@Param("groupId") Long groupId, @Param("memberId") Long memberId);
 
     /**
      * 查询组下所有用户
