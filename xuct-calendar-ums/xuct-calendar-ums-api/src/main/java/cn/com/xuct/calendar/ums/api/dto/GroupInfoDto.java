@@ -39,8 +39,13 @@ public class GroupInfoDto implements Serializable {
     @ApiModelProperty(notes = "群组图片")
     private String images;
 
+    @ApiModelProperty(notes = "编号")
+    private String no;
+
+    @ApiModelProperty(notes = "密码")
     private String password;
 
+    @ApiModelProperty(notes = "总人数")
     private Integer count;
 
     @JsonSerialize(using = ToStringSerializer.class)
@@ -48,10 +53,12 @@ public class GroupInfoDto implements Serializable {
 
     private String createMemberName;
 
+    @ApiModelProperty(notes = "是否公开")
     private String power;
 
-    /* 群组设置人数 */
+    @ApiModelProperty(notes = "最大人数")
     private Integer num;
 
+    @ApiModelProperty(notes = "是否需要免密加入")
     private int hasPasswordJoin = 0;
 }

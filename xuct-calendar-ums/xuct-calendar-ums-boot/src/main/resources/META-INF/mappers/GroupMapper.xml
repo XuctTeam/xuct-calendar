@@ -21,6 +21,7 @@
                              from sys_member_group
                              where group_id in (select group_id from sys_member_group where member_id = #{memberId}
                                and status = 'NORMAL')
+                             and status = 'NORMAL'
                              group by group_id) mg on g.id = mg.group_id
                  left join sys_member m on g.member_id = m.id
 
@@ -29,6 +30,7 @@
     <select id="getGroupCountByGroupId" resultType="cn.com.xuct.calendar.ums.api.dto.GroupInfoDto">
         select g.id,
                g.name,
+               g.no ,
                g.images,
                g.power,
                mg.count,
@@ -36,7 +38,8 @@
                g.power,
                m.name      as createMemberName,
                g.password,
-               g.num
+               g.num,
+               if(isnull(g.password), 0, 1) as hasPasswordJoin
         from sys_group g
                  left join (select group_id, count(1) as count
                             from sys_member_group
@@ -51,6 +54,7 @@
     <select id="findGroupBySearch" resultType="cn.com.xuct.calendar.ums.api.dto.GroupInfoDto">
         select g.id,
                g.name,
+               g.no ,
                g.images,
                g.member_id                  as createMemberId,
                s.name                       as createMemberName,
@@ -61,17 +65,18 @@
           and g.power = 'PUBLIC'
           and g.name LIKE CONCAT(CONCAT('%', #{word}), '%')
           and g.member_id &lt;&gt; #{memberId}
+          limit #{start} , #{limit}
     </select>
 
 
     <select id="mineApplyGroup" resultType="cn.com.xuct.calendar.ums.api.dto.GroupMemberInfoDto">
         select mg.id,
-               s.id as groupId,
-               s.name as groupName,
-               s.member_id as groupCreateMemberId,
-               m.name      as groupCreateMemberName,
+               s.id           as groupId,
+               s.name         as groupName,
+               s.member_id    as groupCreateMemberId,
+               m.name         as groupCreateMemberName,
                mg.member_id,
-               m1.name     as name ,
+               m1.name        as name,
                mg.create_time as createTime
         from sys_member_group mg
                  left join sys_group s on mg.group_id = s.id
@@ -84,12 +89,12 @@
 
     <select id="applyMineGroup" resultType="cn.com.xuct.calendar.ums.api.dto.GroupMemberInfoDto">
         select mg.id,
-               s.id as groupId,
-               s.name as groupName,
-               s.member_id as groupCreateMemberId,
-               m.name      as groupCreateMemberName,
+               s.id           as groupId,
+               s.name         as groupName,
+               s.member_id    as groupCreateMemberId,
+               m.name         as groupCreateMemberName,
                mg.member_id,
-               m1.name     as name ,
+               m1.name        as name,
                mg.create_time as createTime
         from sys_member_group mg
                  left join sys_group s on mg.group_id = s.id

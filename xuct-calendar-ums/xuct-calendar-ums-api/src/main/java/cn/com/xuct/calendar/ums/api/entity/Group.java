@@ -31,6 +31,9 @@ public class Group extends SuperEntity<Group> {
 
     private String name;
 
+    private String no;
+
+    /* 编号 */
     private String images;
 
     @TableField("member_id")

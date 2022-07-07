@@ -1,0 +1,33 @@
+/**
+ * Copyright (C), 2015-2022, XXX有限公司
+ * FileName: GroupSearchDto
+ * Author:   Derek Xu
+ * Date:     2022/7/7 11:35
+ * Description:
+ * History:
+ * <author>          <time>          <version>          <desc>
+ * Derek Xu         修改时间           版本号              描述
+ */
+package cn.com.xuct.calendar.ums.api.dto;
+
+import lombok.Data;
+
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * 〈一句话功能简述〉<br> 
+ * 〈〉
+ *
+ * @author Administrator
+ * @create 2022/7/7
+ * @since 1.0.0
+ */
+@Data
+public class GroupSearchPageDto implements Serializable {
+
+    private boolean finished = false;
+
+    private List<GroupInfoDto> list;
+
+}

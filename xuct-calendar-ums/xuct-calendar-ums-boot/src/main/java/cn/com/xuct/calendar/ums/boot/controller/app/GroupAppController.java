@@ -18,13 +18,16 @@ import cn.com.xuct.calendar.common.web.utils.JwtUtils;
 import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
 import cn.com.xuct.calendar.ums.api.dto.GroupInfoDto;
 import cn.com.xuct.calendar.ums.api.dto.GroupMemberInfoDto;
+import cn.com.xuct.calendar.ums.api.dto.GroupSearchPageDto;
 import cn.com.xuct.calendar.ums.api.entity.Group;
 import cn.com.xuct.calendar.ums.boot.event.GroupDeleteEvent;
 import cn.com.xuct.calendar.ums.boot.service.IGroupService;
+import cn.hutool.core.util.RandomUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
@@ -58,13 +61,25 @@ public class GroupAppController {
     @ApiOperation(value = "查询群组信息")
     @GetMapping("/get")
     public R<GroupInfoDto> get(@RequestParam("id") Long id) {
-        return R.data(groupService.getGroupCountByGroupId(id));
+        GroupInfoDto groupInfoDto = groupService.getGroupCountByGroupId(id);
+        Assert.notNull(groupInfoDto, "查询结果为空");
+        if (!String.valueOf(JwtUtils.getUserId()).equals(groupInfoDto.getCreateMemberId()))
+            groupInfoDto.setPassword(null);
+        return R.data(groupInfoDto);
     }
 
     @ApiOperation(value = "搜索群组")
     @GetMapping("/search")
-    public R<List<GroupInfoDto>> search(@RequestParam("word") String word) {
-        return R.data(groupService.findGroupBySearch(JwtUtils.getUserId(), word));
+    public R<GroupSearchPageDto> search(@RequestParam("word") String word, @RequestParam("page") Integer page, @RequestParam("limit") Integer limit) {
+        GroupSearchPageDto groupSearchPageDto = new GroupSearchPageDto();
+        groupSearchPageDto.setFinished(true);
+        List<GroupInfoDto> groupInfoDtos = groupService.findGroupBySearchByPage(JwtUtils.getUserId(), word, page, limit + 1);
+        if (groupInfoDtos.size() == limit + 1) {
+            groupInfoDtos.remove(groupInfoDtos.size() - 1);
+            groupSearchPageDto.setFinished(false);
+        }
+        groupSearchPageDto.setList(groupInfoDtos);
+        return R.data(groupSearchPageDto);
     }
 
     @ApiOperation(value = "我申请的群组")
@@ -92,10 +107,13 @@ public class GroupAppController {
                 group.setPassword(addParam.getPassword());
             group.setPower(CommonPowerEnum.valueOf(addParam.getPower()));
             group.setNum(addParam.getNum());
+            if (!StringUtils.hasLength(group.getNo())) {
+                group.setNo(RandomUtil.randomNumbers(8));
+            }
             groupService.updateById(group);
             return R.status(true);
         }
-        groupService.addGroup(JwtUtils.getUserId(), addParam.getName(), addParam.getPassword(), addParam.getImageUrl(), addParam.getPower(), addParam.getNum());
+        groupService.addGroup(JwtUtils.getUserId(), addParam.getName(), addParam.getPassword(), addParam.getImageUrl(), addParam.getPower(), addParam.getNum(), RandomUtil.randomNumbers(8));
         return R.status(true);
     }
 
