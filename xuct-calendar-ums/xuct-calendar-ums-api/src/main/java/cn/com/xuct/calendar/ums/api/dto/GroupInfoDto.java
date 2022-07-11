@@ -10,6 +10,7 @@
  */
 package cn.com.xuct.calendar.ums.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModelProperty;
@@ -35,6 +36,8 @@ public class GroupInfoDto implements Serializable {
 
     @ApiModelProperty(notes = "群组名称")
     private String name;
+
+    private Date createTime;
 
     @ApiModelProperty(notes = "群组图片")
     private String images;

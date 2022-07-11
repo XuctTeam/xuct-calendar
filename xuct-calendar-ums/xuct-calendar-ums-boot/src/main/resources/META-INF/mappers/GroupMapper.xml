@@ -10,6 +10,7 @@
         select g.id,
                g.name,
                g.images,
+               g.create_time,
                g.member_id as createMemberId,
                g.power,
                m.name      as createMemberName,
@@ -21,7 +22,7 @@
                              from sys_member_group
                              where group_id in (select group_id from sys_member_group where member_id = #{memberId}
                                and status = 'NORMAL')
-                             and status = 'NORMAL'
+                               and status = 'NORMAL'
                              group by group_id) mg on g.id = mg.group_id
                  left join sys_member m on g.member_id = m.id
 
@@ -30,13 +31,13 @@
     <select id="getGroupCountByGroupId" resultType="cn.com.xuct.calendar.ums.api.dto.GroupInfoDto">
         select g.id,
                g.name,
-               g.no ,
+               g.no,
                g.images,
                g.power,
                mg.count,
-               g.member_id as createMemberId,
+               g.member_id                  as createMemberId,
                g.power,
-               m.name      as createMemberName,
+               m.name                       as createMemberName,
                g.password,
                g.num,
                if(isnull(g.password), 0, 1) as hasPasswordJoin
@@ -54,7 +55,7 @@
     <select id="findGroupBySearch" resultType="cn.com.xuct.calendar.ums.api.dto.GroupInfoDto">
         select g.id,
                g.name,
-               g.no ,
+               g.no,
                g.images,
                g.member_id                  as createMemberId,
                s.name                       as createMemberName,
@@ -64,8 +65,8 @@
         where 1 = 1
           and g.power = 'PUBLIC'
           and g.name LIKE CONCAT(CONCAT('%', #{word}), '%')
-          and g.member_id &lt;&gt; #{memberId}
-          limit #{start} , #{limit}
+          and g.member_id &lt;&gt; #{memberId} limit #{start}
+            , #{limit}
     </select>
 
 

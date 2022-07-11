@@ -100,6 +100,8 @@ public class GroupAppController {
         if (addParam.getId() != null) {
             Group group = groupService.getById(addParam.getId());
             if (group == null) return R.fail("群组不存在");
+            if (!String.valueOf(group.getMemberId()).equals(String.valueOf(JwtUtils.getUserId())))
+                return R.fail("非群组管理员");
             group.setName(addParam.getName());
             if (StringUtils.hasLength(addParam.getImageUrl()))
                 group.setImages(addParam.getImageUrl());
@@ -121,8 +123,10 @@ public class GroupAppController {
     @PostMapping("/delete")
     public R<String> deleteGroup(@RequestBody @Validated GroupDeleteParam param) {
         Group group = groupService.getById(param.getId());
-        if (group == null || !String.valueOf(group.getMemberId()).equals(String.valueOf(JwtUtils.getUserId())))
-            return R.fail("群组不存在或权限不够");
+        if (group == null)
+            return R.fail("群组不存在");
+        if (!String.valueOf(group.getMemberId()).equals(String.valueOf(JwtUtils.getUserId())))
+            return R.fail("非群组管理员");
         List<Long> memberIds = groupService.deleteGroup(param.getId());
         if (CollectionUtils.isEmpty(memberIds)) return R.status(true);
         /* 发出结算群组消息 */
