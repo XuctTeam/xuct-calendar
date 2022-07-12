@@ -13,6 +13,7 @@ package cn.com.xuct.calendar.common.module.params;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 〈一句话功能简述〉<br> 
@@ -25,5 +26,5 @@ import java.io.Serializable;
 @Data
 public class MessageDeleteBatchParam implements Serializable {
 
-    private String[] ids;
+    private List<String> ids;
 }

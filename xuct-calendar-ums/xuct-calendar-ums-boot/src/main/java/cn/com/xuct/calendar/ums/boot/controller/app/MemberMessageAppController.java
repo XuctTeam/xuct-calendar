@@ -75,7 +75,7 @@ public class MemberMessageAppController {
 
     @GetMapping("/count")
     public R<Long> count() {
-        return R.data(memberMessageService.count(Column.of("member_id", JwtUtils.getUserId())));
+        return R.data(memberMessageService.count(Lists.newArrayList(Column.of("member_id", JwtUtils.getUserId()), Column.of("status", 0))));
     }
 
     @GetMapping("")
@@ -116,7 +116,7 @@ public class MemberMessageAppController {
     @DeleteMapping("/batch")
     public R<String> batchDelete(@RequestBody MessageDeleteBatchParam param) {
         Assert.notEmpty(param.getIds(), "批量删除ID不能为空");
-        memberMessageService.removeBatchByIds(Arrays.asList(param.getIds()));
+        memberMessageService.removeBatchByIds(param.getIds());
         return R.status(true);
     }
 
@@ -124,7 +124,11 @@ public class MemberMessageAppController {
     @PostMapping("/batch")
     public R<String> batchRead(@RequestBody MessageDeleteBatchParam param) {
         Assert.notEmpty(param.getIds(), "批量已经ID不能为空");
-        List<MemberMessage> memberMessages = memberMessageService.find(Lists.newArrayList(Column.of("id", Lists.newArrayList(param.getIds()), ColumnEnum.in), Column.of("status", 0)));
+        List<MemberMessage> memberMessages = memberMessageService.find(
+                Lists.newArrayList(Column.in("id", param.getIds()),
+                        Column.of("status", 0),
+                        Column.of("member_id", JwtUtils.getUserId()))
+        );
         if (CollectionUtils.isEmpty(memberMessages)) return R.fail("全部已读");
         memberMessages.stream().forEach(x -> x.setStatus(1));
         memberMessageService.updateBatchById(memberMessages);
