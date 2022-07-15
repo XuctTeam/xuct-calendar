@@ -20,6 +20,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.slf4j.MDC;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletResponse;
@@ -37,6 +38,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class R<T> implements Serializable {
 
+    public static final String TRACK_ID = "track_id";
+
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(value = "状态码", required = true)
@@ -50,7 +53,10 @@ public class R<T> implements Serializable {
     private T data;
 
     @ApiModelProperty(value = "返回消息", required = true)
-    private String msg;
+    private String message;
+
+    @ApiModelProperty(value = "请求key", required = false)
+    private String logKey;
 
     private R(IResultCode resultCode) {
         this(resultCode, null, resultCode.getMessage());
@@ -68,11 +74,12 @@ public class R<T> implements Serializable {
         this(resultCode.getCode(), data, msg);
     }
 
-    private R(int code, T data, String msg) {
+    private R(int code, T data, String message) {
         this.code = code;
         this.data = data;
-        this.msg = msg;
+        this.message = message;
         this.success = ResultCode.SUCCESS.code == code;
+        this.logKey = MDC.get(TRACK_ID);
     }
 
     /**
