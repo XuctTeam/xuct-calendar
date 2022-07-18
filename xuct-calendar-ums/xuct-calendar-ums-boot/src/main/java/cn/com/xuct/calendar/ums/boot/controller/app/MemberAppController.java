@@ -269,11 +269,11 @@ public class MemberAppController {
     public R<String> bindWechat(@RequestBody WxUserInfoFeignInfo wxUserInfoFeignInfo) {
         R<WxMaJscode2SessionResult> jscode2SessionResultR = basicServicesFeignClient.getSessionInfo(wxUserInfoFeignInfo.getCode());
         if (jscode2SessionResultR == null || !jscode2SessionResultR.isSuccess())
-            return R.fail(jscode2SessionResultR.getMsg());
+            return R.fail(jscode2SessionResultR.getMessage());
         WxMaJscode2SessionResult session = jscode2SessionResultR.getData();
         R<WxMaUserInfo> wxMaUserInfoR = basicServicesFeignClient.getUserInfo(WxUserInfoFeignInfo.builder().sessionKey(session.getSessionKey())
                 .encryptedData(wxUserInfoFeignInfo.getEncryptedData()).iv(wxUserInfoFeignInfo.getIv()).build());
-        if (wxMaUserInfoR == null || !wxMaUserInfoR.isSuccess()) return R.fail(wxMaUserInfoR.getMsg());
+        if (wxMaUserInfoR == null || !wxMaUserInfoR.isSuccess()) return R.fail(wxMaUserInfoR.getMessage());
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", session.getOpenid()), Column.of("identity_type", IdentityTypeEnum.open_id)));
         if (memberAuth != null) return R.fail("微信用户已绑定");
         WxMaUserInfo wxMaUserInfo = wxMaUserInfoR.getData();
