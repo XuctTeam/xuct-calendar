@@ -73,4 +73,6 @@ public class MemberCalendar extends SuperEntity<MemberCalendar> {
     @TableField(exist = false)
     private int isShare;
 
+    @TableField(exist = false)
+    private Boolean checked = true;
 }
