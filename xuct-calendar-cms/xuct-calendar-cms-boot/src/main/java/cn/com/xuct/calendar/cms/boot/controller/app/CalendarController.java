@@ -64,7 +64,7 @@ public class CalendarController {
     @ApiOperation(value = "新增日历")
     @PostMapping("")
     public R<String> createMemberCalendar(@Validated @RequestBody MemberCalendarUpdateReq memberCalendarUpdateReq) {
-        memberCalendarService.createMemberCalendar(JwtUtils.getUserId(), memberCalendarUpdateReq);
+        memberCalendarService.createMemberCalendar(JwtUtils.getUserId(), memberCalendarUpdateReq , false);
         return R.status(true);
     }
 

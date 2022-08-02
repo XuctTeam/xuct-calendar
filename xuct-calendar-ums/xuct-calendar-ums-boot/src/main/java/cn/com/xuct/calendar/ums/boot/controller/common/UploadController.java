@@ -44,8 +44,8 @@ public class UploadController {
 
     @PostMapping(value = "/upload", consumes = "multipart/form-data")
     @ApiOperation(value = "上传图片")
-    public R<SmmsUploadData> uploadImage(@RequestParam MultipartFile smfile) {
-        SmmsUploadRes smmsRes = smmsClient.upload(FileUtils.multipartFileToFile(smfile, "/temp", FileUtils.contentTypeToFileSuffix(smfile.getContentType())));
+    public R<SmmsUploadData> uploadImage(@RequestParam MultipartFile smsfile) {
+        SmmsUploadRes smmsRes = smmsClient.upload(FileUtils.multipartFileToFile(smsfile, "/temp", FileUtils.contentTypeToFileSuffix(smsfile.getContentType())));
         if (smmsRes == null || (!smmsRes.isSuccess() && !"image_repeated".equals(smmsRes.getCode())))
             return R.fail("上传失败");
         if (!smmsRes.isSuccess() && "image_repeated".equals(smmsRes.getCode())) {

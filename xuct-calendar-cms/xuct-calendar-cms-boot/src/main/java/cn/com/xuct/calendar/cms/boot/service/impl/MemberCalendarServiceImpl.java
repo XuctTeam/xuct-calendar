@@ -68,7 +68,7 @@ public class MemberCalendarServiceImpl extends BaseServiceImpl<MemberCalendarMap
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void createMemberCalendar(Long memberId, MemberCalendarUpdateReq memberCalendarUpdateReq) {
+    public void createMemberCalendar(Long memberId, MemberCalendarUpdateReq memberCalendarUpdateReq, final boolean major) {
         Calendar calendar = new Calendar();
         calendar.setMemberId(memberId);
         calendar.setAlarmTime(Integer.parseInt(memberCalendarUpdateReq.getAlarmTime()));
@@ -83,7 +83,7 @@ public class MemberCalendarServiceImpl extends BaseServiceImpl<MemberCalendarMap
         memberCalendar.setCreateMemberName(memberCalendarUpdateReq.getCreateMemberName());
         memberCalendar.setColor(memberCalendarUpdateReq.getColor());
         memberCalendar.setDisplay(memberCalendarUpdateReq.getDisplay());
-        memberCalendar.setMajor(1);
+        memberCalendar.setMajor(major ? 1 : 0);
         this.save(memberCalendar);
     }
 

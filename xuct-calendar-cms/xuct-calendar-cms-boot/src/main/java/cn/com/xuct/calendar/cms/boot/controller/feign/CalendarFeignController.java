@@ -54,7 +54,7 @@ public class CalendarFeignController {
         updateReq.setAlarmType("0");
         updateReq.setCreateMemberName(calendarInitFeignInfo.getMemberNickName());
         updateReq.setDisplay(1);
-        memberCalendarService.createMemberCalendar(calendarInitFeignInfo.getMemberId(), updateReq);
+        memberCalendarService.createMemberCalendar(calendarInitFeignInfo.getMemberId(), updateReq , true);
         return R.status(true);
     }
 
