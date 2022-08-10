@@ -127,8 +127,9 @@ public class MemberFeignController {
         if (memberAuth == null) {
             memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", username), Column.of("identity_type", IdentityTypeEnum.email)));
         }
-        if (memberAuth == null) return R.fail("用户不存在");
+        if (memberAuth == null) return R.fail("验证不存在");
         Member member = memberService.getById(memberAuth.getMemberId());
+        if(member == null) return R.fail("用户不存在");
         return R.data(MemberFeignInfo.builder().userId(member.getId()).username(memberAuth.getUsername()).password(memberAuth.getPassword()).timeZone(member.getTimeZone()).status(member.getStatus()).build());
     }
 
