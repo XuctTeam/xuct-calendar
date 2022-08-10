@@ -49,7 +49,7 @@ public class SmsCodeValidateSupport {
         String userId = String.valueOf(JwtUtils.getUserId());
         String redisKeys = this.redisKey(type).concat(userId).concat(":").concat(val);
         String cacheCode = stringRedisTemplate.opsForValue().get(redisKeys);
-        if (!StringUtils.hasLength(cacheCode) || !StringUtils.hasLength(code) || !code.toLowerCase().equals(cacheCode.toLowerCase()))
+        if (!StringUtils.hasLength(cacheCode)  || !code.toLowerCase().equals(cacheCode.toLowerCase()))
             throw new SvrException(SvrResCode.UMS_SMS_CODE_ERROR);
         stringRedisTemplate.delete(redisKeys);
     }
