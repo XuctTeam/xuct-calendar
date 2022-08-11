@@ -124,6 +124,7 @@ public class MemberCalendarServiceImpl extends BaseServiceImpl<MemberCalendarMap
         List<MemberCalendar> notMajorCalendars = memberCalendars.stream().filter(calendar -> calendar.getMajor() == 0).collect(Collectors.toList());
         notMajorCalendars.forEach(calendar -> {
             calendar.setMemberId(memberId);
+            calendar.setCreateMemberId(memberId);
         });
         this.updateBatchById(notMajorCalendars);
         /*2. 更新邀请数据 */

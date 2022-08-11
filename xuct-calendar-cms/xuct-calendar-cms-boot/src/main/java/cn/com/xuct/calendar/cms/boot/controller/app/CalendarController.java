@@ -47,7 +47,6 @@ public class CalendarController {
 
     private final IComponentService componentService;
 
-    private final ICalendarService calendarService;
 
     @ApiOperation(value = "日历列表")
     @GetMapping("/list")
