@@ -38,8 +38,8 @@ import java.util.List;
 public class MemberGroupServiceImpl extends BaseServiceImpl<MemberGroupMapper, MemberGroup> implements IMemberGroupService {
 
     @Override
-    public List<GroupMemberInfoDto> list(Long memberId) {
-        return ((MemberGroupMapper) super.getBaseMapper()).list(memberId);
+    public List<GroupMemberInfoDto> list(final Long groupId, Long memberId) {
+        return ((MemberGroupMapper) super.getBaseMapper()).list(groupId , memberId);
     }
 
     @Override

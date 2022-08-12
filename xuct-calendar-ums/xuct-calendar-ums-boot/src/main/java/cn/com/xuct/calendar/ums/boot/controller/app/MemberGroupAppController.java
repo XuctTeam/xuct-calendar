@@ -65,8 +65,8 @@ public class MemberGroupAppController {
 
     @ApiOperation(value = "按拼音分组用户")
     @GetMapping("")
-    public R<List<GroupMemberPinYinVo>> list() {
-        List<GroupMemberInfoDto> memberInfoDtos = memberGroupService.list(JwtUtils.getUserId());
+    public R<List<GroupMemberPinYinVo>> list(@RequestParam("groupId") Long groupId) {
+        List<GroupMemberInfoDto> memberInfoDtos = memberGroupService.list(groupId, JwtUtils.getUserId());
         if (CollectionUtils.isEmpty(memberInfoDtos)) return R.data(Lists.newArrayList());
         TreeMap<String, List<GroupMemberInfoDto>> pinyinVos = new TreeMap<String, List<GroupMemberInfoDto>>(
                 new Comparator<String>() {

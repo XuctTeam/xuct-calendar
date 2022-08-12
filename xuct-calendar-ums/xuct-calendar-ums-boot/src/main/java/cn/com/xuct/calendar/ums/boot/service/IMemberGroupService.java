@@ -33,7 +33,7 @@ public interface IMemberGroupService extends IBaseService<MemberGroupMapper, Mem
      * @param memberId
      * @return
      */
-    List<GroupMemberInfoDto> list(Long memberId);
+    List<GroupMemberInfoDto> list(final Long groupId , final Long memberId);
 
     /**
      * 查询群组下所有用户

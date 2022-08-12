@@ -11,10 +11,13 @@
         from sys_member_group mg
                  left join sys_group g on mg.group_id = g.id
                  left join sys_member m on mg.member_id = m.id
-        where  mg.status = 'NORMAL'
-             and mg.group_id in
-              (select group_id from sys_member_group where member_id = #{memberId} and status = 'NORMAL')
-          and mg.member_id &lt;&gt; #{memberId}
+        where mg.status = 'NORMAL'
+          and mg.group_id = #{groupId}
+          and mg.member_id in
+              (select member_id
+               from sys_member_group
+               where group_id = #{groupId}
+                 and member_id = #{memberId})
     </select>
     <select id="findMemberIdsByGroupId" resultType="java.lang.Long">
         select member_id
@@ -40,8 +43,7 @@
                      from sys_member_group
                      where member_id = #{memberId}
                        and status = 'NORMAL')
-                and member_id &lt;&gt; #{memberId}
-             ) g
+                and member_id &lt;&gt; #{memberId}) g
                  left join sys_member m on g.member_id = m.id
         where 1 = 1
     </select>

@@ -33,7 +33,7 @@ public interface MemberGroupMapper extends BaseMapper<MemberGroup> {
      * @param memberId
      * @return
      */
-    List<GroupMemberInfoDto> list(@Param("memberId") Long memberId);
+    List<GroupMemberInfoDto> list(@Param("groupId") Long groupId , @Param("memberId") Long memberId);
 
     /**
      * 去重查询组内所有用户
