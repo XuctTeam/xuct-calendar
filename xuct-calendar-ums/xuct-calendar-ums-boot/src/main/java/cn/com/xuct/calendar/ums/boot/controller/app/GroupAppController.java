@@ -63,7 +63,7 @@ public class GroupAppController {
     public R<GroupInfoDto> get(@RequestParam("id") Long id) {
         GroupInfoDto groupInfoDto = groupService.getGroupCountByGroupId(id);
         Assert.notNull(groupInfoDto, "查询结果为空");
-        if (!String.valueOf(JwtUtils.getUserId()).equals(groupInfoDto.getCreateMemberId()))
+        if (!String.valueOf(JwtUtils.getUserId()).equals(String.valueOf(groupInfoDto.getCreateMemberId())))
             groupInfoDto.setPassword(null);
         return R.data(groupInfoDto);
     }
@@ -103,8 +103,11 @@ public class GroupAppController {
             if (!String.valueOf(group.getMemberId()).equals(String.valueOf(JwtUtils.getUserId())))
                 return R.fail("非群组管理员");
             group.setName(addParam.getName());
-            if (StringUtils.hasLength(addParam.getImageUrl()))
+            if (StringUtils.hasLength(addParam.getImageUrl()) && !addParam.getImageUrl().equals(group.getImages())) {
                 group.setImages(addParam.getImageUrl());
+            } else if (StringUtils.hasLength(group.getImages()) && !StringUtils.hasLength(addParam.getImageUrl())) {
+                group.setImages(null);
+            }
             if (StringUtils.hasLength(addParam.getPassword()))
                 group.setPassword(addParam.getPassword());
             group.setPower(CommonPowerEnum.valueOf(addParam.getPower()));
