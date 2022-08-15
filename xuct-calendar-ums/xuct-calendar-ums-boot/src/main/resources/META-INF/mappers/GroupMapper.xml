@@ -59,12 +59,18 @@
                g.images,
                g.member_id                  as createMemberId,
                s.name                       as createMemberName,
-               if(isnull(g.password), 0, 1) as hasPasswordJoin
+               if(isnull(g.password), 0, 1) as hasPasswordJoin,
+               ifnull(sg.count,0) as count,
+               g.num
         from sys_group g
                  left join sys_member s on g.member_id = s.id
+                 left join (select group_id, count(1) as count
+                            from sys_member_group
+                            where status = 'NORMAL'
+                            group by group_id) sg on g.id = sg.group_id
         where 1 = 1
           and g.power = 'PUBLIC'
-          and g.name LIKE CONCAT(CONCAT('%', #{word}), '%')
+          and (g.name LIKE CONCAT('%', #{word}, '%') or g.no LIKE CONCAT('%', #{word}, '%'))
           and g.member_id &lt;&gt; #{memberId} limit #{start}
             , #{limit}
     </select>

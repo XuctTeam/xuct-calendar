@@ -22,6 +22,8 @@ import cn.com.xuct.calendar.ums.api.dto.GroupSearchPageDto;
 import cn.com.xuct.calendar.ums.api.entity.Group;
 import cn.com.xuct.calendar.ums.boot.event.GroupDeleteEvent;
 import cn.com.xuct.calendar.ums.boot.service.IGroupService;
+import cn.hutool.core.lang.UUID;
+import cn.hutool.core.math.MathUtil;
 import cn.hutool.core.util.RandomUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,6 +35,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
