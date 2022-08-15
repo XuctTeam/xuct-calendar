@@ -84,7 +84,8 @@
                m.name         as groupCreateMemberName,
                mg.member_id,
                m1.name        as name,
-               mg.create_time as createTime
+               mg.create_time as createTime,
+               m1.avatar
         from sys_member_group mg
                  left join sys_group s on mg.group_id = s.id
                  left join sys_member m on mg.member_id = m.id
@@ -102,7 +103,8 @@
                m.name         as groupCreateMemberName,
                mg.member_id,
                m1.name        as name,
-               mg.create_time as createTime
+               mg.create_time as createTime,
+               m1.avatar
         from sys_member_group mg
                  left join sys_group s on mg.group_id = s.id
                  left join sys_member m on s.member_id = m.id
