@@ -13,8 +13,8 @@
                  left join sys_member m on mg.member_id = m.id
         where mg.status = 'NORMAL'
           and mg.group_id = #{groupId}
-          and mg.member_id in
-              (select member_id
+          and mg.group_id in
+              (select group_id
                from sys_member_group
                where group_id = #{groupId}
                  and member_id = #{memberId})

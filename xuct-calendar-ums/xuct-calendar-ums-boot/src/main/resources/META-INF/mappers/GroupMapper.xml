@@ -70,9 +70,46 @@
                             group by group_id) sg on g.id = sg.group_id
         where 1 = 1
           and g.power = 'PUBLIC'
-          and (g.name LIKE CONCAT('%', #{word}, '%') or g.no LIKE CONCAT('%', #{word}, '%'))
-          and g.member_id &lt;&gt; #{memberId} limit #{start}
-            , #{limit}
+            <if test="word != null">
+                  and (g.name LIKE CONCAT('%', #{word}, '%') or g.no LIKE CONCAT('%', #{word}, '%'))
+            </if>
+            <choose>
+                <when test='hasPass != null and hasPass == "1"'>
+                    and g.password is not null
+                </when>
+                <when test="hasPass != null">
+                    and g.password is null
+                </when>
+                <otherwise>
+                </otherwise>
+            </choose>
+            <choose>
+                <when test='dateScope != null and dateScope == "1"'>
+                    and g.create_time &lt; DATE_SUB(now(), INTERVAL 3 DAY)
+                </when>
+                <when test='dateScope != null and dateScope == "2"'>
+                    and g.create_time &lt; DATE_SUB(now(), INTERVAL 7 DAY)
+                </when>
+                <when test='dateScope != null and dateScope == "3"'>
+                    and g.create_time &lt; DATE_SUB(now(), INTERVAL 30 DAY)
+                </when>
+                <when test='dateScope != null and dateScope == "4"'>
+                    and g.create_time &lt; DATE_SUB(now(), INTERVAL 365 DAY)
+                </when>
+                <otherwise>
+                </otherwise>
+            </choose>
+            <choose>
+                <when test='numCount != null and numCount == "1"'>
+                    and  g.num &lt; 50
+                </when>
+                <when test="numCount != null">
+                    and g.num &gt; 100
+                </when>
+                <otherwise>
+                </otherwise>
+            </choose>
+          and g.member_id &lt;&gt; #{memberId} limit #{start}, #{limit}
     </select>
 
 

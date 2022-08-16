@@ -52,8 +52,8 @@ public class GroupServiceImpl extends BaseServiceImpl<GroupMapper, Group> implem
     }
 
     @Override
-    public List<GroupInfoDto> findGroupBySearchByPage(final Long memberId, final String word, final Integer page, final Integer limit) {
-        return ((GroupMapper) super.getBaseMapper()).findGroupBySearch(memberId, word, page * limit, limit);
+    public List<GroupInfoDto> findGroupBySearchByPage(final Long memberId, final String word, final Integer page, final Integer limit, final String hasPass, final String dateScope, final String numCount) {
+        return ((GroupMapper) super.getBaseMapper()).findGroupBySearch(memberId, word, page * limit, limit, hasPass, dateScope, numCount);
     }
 
     @Override

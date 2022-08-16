@@ -50,7 +50,7 @@ public interface GroupMapper extends BaseMapper<Group> {
      * @param word
      * @return
      */
-    List<GroupInfoDto> findGroupBySearch(@Param("memberId") Long memberId, @Param("word") String word, @Param("start") Integer start, @Param("limit") Integer limit);
+    List<GroupInfoDto> findGroupBySearch(@Param("memberId") Long memberId, @Param("word") String word, @Param("start") Integer start, @Param("limit") Integer limit, @Param("hasPass") String hasPass, @Param("dateScope") String dateScope, @Param("numCount") String numCount);
 
     /**
      * 我申请的群组

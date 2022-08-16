@@ -73,10 +73,17 @@ public class GroupAppController {
 
     @ApiOperation(value = "搜索群组")
     @GetMapping("/search")
-    public R<GroupSearchPageDto> search(@RequestParam("word") String word, @RequestParam("page") Integer page, @RequestParam("limit") Integer limit) {
+    public R<GroupSearchPageDto> search(@RequestParam("word") String word, @RequestParam("page") Integer page, @RequestParam("limit") Integer limit,
+                                        @RequestParam(value = "hasPass", required = false) String hasPass, @RequestParam(value = "dateScope", required = false) String dateScope,
+                                        @RequestParam(value = "numCount", required = false) String numCount) {
         GroupSearchPageDto groupSearchPageDto = new GroupSearchPageDto();
         groupSearchPageDto.setFinished(true);
-        List<GroupInfoDto> groupInfoDtos = groupService.findGroupBySearchByPage(JwtUtils.getUserId(), word, page, limit + 1);
+        word = StringUtils.hasLength(word) ? word : null;
+        hasPass = StringUtils.hasLength(hasPass) ? hasPass : null;
+        dateScope = StringUtils.hasLength(dateScope) ? dateScope : null;
+        numCount = StringUtils.hasLength(numCount) ? numCount : null;
+
+        List<GroupInfoDto> groupInfoDtos = groupService.findGroupBySearchByPage(JwtUtils.getUserId(), word, page, limit + 1, hasPass, dateScope, numCount);
         if (groupInfoDtos.size() == limit + 1) {
             groupInfoDtos.remove(groupInfoDtos.size() - 1);
             groupSearchPageDto.setFinished(false);

@@ -51,7 +51,7 @@ public interface IGroupService extends IBaseService<GroupMapper, Group> {
      * @param word
      * @return
      */
-    List<GroupInfoDto> findGroupBySearchByPage(final Long memberId, final String word, final Integer page, final Integer limit);
+    List<GroupInfoDto> findGroupBySearchByPage(final Long memberId, final String word, final Integer page, final Integer limit, final String hasPass, final String dateScope, final String numCount);
 
     /**
      * 我申请的群组
@@ -78,7 +78,7 @@ public interface IGroupService extends IBaseService<GroupMapper, Group> {
      * @param imageUrl
      * @param power
      * @param num
-     * @param no 编号
+     * @param no       编号
      */
     void addGroup(final Long memberId, final String name, final String password, final String imageUrl, final String power, final Integer num, final String no);
 
