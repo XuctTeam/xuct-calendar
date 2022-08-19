@@ -21,7 +21,6 @@
         <maven.compiler.source>10</maven.compiler.source>
         <maven.compiler.target>10</maven.compiler.target>
         <spring.boot.version>2.7.2</spring.boot.version>
-        <calendar.project.version>1.0</calendar.project.version>
 
         <!-- alibaba -->
         <alibaba.cloud.version>2021.0.1.0</alibaba.cloud.version>
@@ -37,7 +36,7 @@
         <!--lib-->
         <lib.jedis.version>3.9.0</lib.jedis.version>
         <lib.common.pool.version>2.11.1</lib.common.pool.version>
-        <lib.mybaties.plus.version>3.5.1</lib.mybaties.plus.version>
+        <lib.mybaties.plus.version>3.5.2</lib.mybaties.plus.version>
         <lib.mysql.version>8.0.29</lib.mysql.version>
         <lib.servlet.version>4.0.1</lib.servlet.version>
         <lib.nacos.client.version>2.1.0</lib.nacos.client.version>
@@ -55,12 +54,12 @@
         <complier.okhttp.version>4.9.3</complier.okhttp.version>
         <complier.jaxb.runtime.version>2.3.5</complier.jaxb.runtime.version>
         <!-- utils -->
-        <utils.hutool.version>5.8.3</utils.hutool.version>
+        <utils.hutool.version>5.8.5</utils.hutool.version>
         <utils.guava.version>31.1-jre</utils.guava.version>
         <utils.wxjava.version>4.3.0</utils.wxjava.version>
         <utils.jackson.version>2.13.3</utils.jackson.version>
         <utils.nimbusds.jwt.version>9.23</utils.nimbusds.jwt.version>
-        <utils.tencentcloud.version>3.1.529</utils.tencentcloud.version>
+        <utils.tencentcloud.version>4.0.11</utils.tencentcloud.version>
         <utils.biweekly.version>0.6.6</utils.biweekly.version>
         <utils.okhttp3.version>4.9.3</utils.okhttp3.version>
         <utils.easy.captcha.version>1.6.2</utils.easy.captcha.version>

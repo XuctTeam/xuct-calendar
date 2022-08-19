@@ -13,12 +13,10 @@ package cn.com.xuct.calendar.basic.services;
 import cn.com.xuct.calendar.common.redis.annotation.EnableRedisAutoConfiguration;
 import cn.com.xuct.calendar.common.swagger.annotation.EnableSwagger2AutoConfiguration;
 import cn.com.xuct.calendar.common.tencent.annotation.EnableAutoTencentSdk;
-import com.sankuai.inf.leaf.plugin.annotation.EnableLeafServer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
-import javax.annotation.PostConstruct;
 
 /**
  * 〈一句话功能简述〉<br> 
@@ -30,7 +28,6 @@ import javax.annotation.PostConstruct;
  */
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableLeafServer
 @EnableSwagger2AutoConfiguration
 @EnableRedisAutoConfiguration
 @EnableAutoTencentSdk
@@ -40,8 +37,4 @@ public class BasicServicesApplication {
         SpringApplication.run(BasicServicesApplication.class, args);
     }
 
-    @PostConstruct
-    public void setProperties(){
-        System.setProperty("druid.mysql.usePingMethod","false");
-    }
 }

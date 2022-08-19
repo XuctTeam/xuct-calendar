@@ -54,7 +54,7 @@
         <dependency>
             <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-common-nacos</artifactId>
-            <version>${calendar.project.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba.nacos</groupId>
@@ -112,41 +112,36 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
         </dependency>
-        <dependency>
-            <artifactId>leaf-boot-starter</artifactId>
-            <groupId>com.sankuai.inf.leaf</groupId>
-            <version>${util.leaf.version}</version>
-        </dependency>
 
 
         <dependency>
             <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-common-swagger</artifactId>
-            <version>${calendar.project.version}</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-common-core</artifactId>
-            <version>${calendar.project.version}</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-common-module</artifactId>
-            <version>${calendar.project.version}</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-common-tencent</artifactId>
-            <version>${calendar.project.version}</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-common-redis</artifactId>
-            <version>${calendar.project.version}</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

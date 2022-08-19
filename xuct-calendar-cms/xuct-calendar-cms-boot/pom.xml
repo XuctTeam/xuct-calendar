@@ -50,7 +50,7 @@
         <dependency>
             <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-common-nacos</artifactId>
-            <version>${calendar.project.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -90,44 +90,44 @@
         <dependency>
             <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-common-db</artifactId>
-            <version>${calendar.project.version}</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-common-swagger</artifactId>
-            <version>${calendar.project.version}</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-common-okfeign</artifactId>
-            <version>${calendar.project.version}</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-common-web</artifactId>
-            <version>${calendar.project.version}</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-cms-queue</artifactId>
-            <version>${calendar.project.version}</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-cms-api</artifactId>
-            <version>${calendar.project.version}</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-common-fdfs</artifactId>
-            <version>${calendar.project.version}</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
 

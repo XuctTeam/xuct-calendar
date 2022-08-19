@@ -39,25 +39,25 @@
         <dependency>
             <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-common-db</artifactId>
-            <version>${calendar.project.version}</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-common-core</artifactId>
-            <version>${calendar.project.version}</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-common-module</artifactId>
-            <version>${calendar.project.version}</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-common-web</artifactId>
-            <version>${calendar.project.version}</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
 
