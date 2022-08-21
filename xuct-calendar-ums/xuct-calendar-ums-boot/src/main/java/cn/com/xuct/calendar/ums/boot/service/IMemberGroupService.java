@@ -33,7 +33,7 @@ public interface IMemberGroupService extends IBaseService<MemberGroupMapper, Mem
      * @param memberId
      * @return
      */
-    List<GroupMemberInfoDto> list(final Long groupId , final Long memberId);
+    List<GroupMemberInfoDto> list(final Long groupId, final Long memberId);
 
     /**
      * 查询群组下所有用户
@@ -44,12 +44,12 @@ public interface IMemberGroupService extends IBaseService<MemberGroupMapper, Mem
     List<GroupMemberInfoDto> queryMembersByGroupId(Long groupId);
 
     /**
-     * 去重查询群组下所有用户
+     * 通过会员id查询
      *
-     * @param memberId
+     * @param memberIds
      * @return
      */
-    List<GroupMemberInfoDto> distinctGroupMembers(Long memberId);
+    List<GroupMemberInfoDto> queryMemberIds(List<Long> memberIds);
 
     /**
      * 申请加入群组

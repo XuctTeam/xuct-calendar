@@ -34,18 +34,15 @@
         where 1 = 1
           and mg.group_id = #{groupId}
     </select>
-    <select id="distinctGroupMembers" resultType="cn.com.xuct.calendar.ums.api.dto.GroupMemberInfoDto">
-        select m.id as memberId, m.name, m.avatar
-        from (select DISTINCT member_id
-              from sys_member_group
-              where group_id in
-                    (select group_id
-                     from sys_member_group
-                     where member_id = #{memberId}
-                       and status = 'NORMAL')
-                and member_id &lt;&gt; #{memberId}) g
-                 left join sys_member m on g.member_id = m.id
-        where 1 = 1
+
+    <select id="queryMemberIds" resultType="cn.com.xuct.calendar.ums.api.dto.GroupMemberInfoDto">
+        select s.name, s.avatar, s.id as memberId
+          from sys_member s
+        where 1=1
+            and s.id in
+            <foreach collection="memberIds" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
     </select>
 
 </mapper>

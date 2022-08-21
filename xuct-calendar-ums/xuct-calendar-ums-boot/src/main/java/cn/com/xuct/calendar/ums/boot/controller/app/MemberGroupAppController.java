@@ -17,6 +17,7 @@ import cn.com.xuct.calendar.common.module.enums.GroupMemberStatusEnum;
 import cn.com.xuct.calendar.common.module.params.GroupApplyParam;
 import cn.com.xuct.calendar.common.module.params.GroupJoinParam;
 import cn.com.xuct.calendar.common.module.params.GroupLeaveParam;
+import cn.com.xuct.calendar.common.module.params.GroupMemberIdsParam;
 import cn.com.xuct.calendar.common.web.utils.JwtUtils;
 import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
 import cn.com.xuct.calendar.ums.api.dto.GroupInfoDto;
@@ -100,10 +101,10 @@ public class MemberGroupAppController {
         return R.data(memberGroupService.queryMembersByGroupId(groupId));
     }
 
-    @ApiOperation(value = "按组内用户去重查询")
-    @GetMapping("/distinct")
-    public R<List<GroupMemberInfoDto>> distinctGroupMembers() {
-        return R.data(memberGroupService.distinctGroupMembers(JwtUtils.getUserId()));
+    @ApiOperation(value = "通过ids查询")
+    @PostMapping("/ids")
+    public R<List<GroupMemberInfoDto>> queryMemberIds(@RequestBody GroupMemberIdsParam idsParam) {
+        return R.data(memberGroupService.queryMemberIds(idsParam.getIds()));
     }
 
     @ApiOperation(value = "申请入群")
