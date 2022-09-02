@@ -33,4 +33,13 @@ public interface RConstants {
      */
     String DEFAULT_FAILURE_MESSAGE = "操作失败";
 
+
+
+    Integer SUCCESS = 200;
+
+
+    Integer FAILURE = 400;
+
+
+
 }

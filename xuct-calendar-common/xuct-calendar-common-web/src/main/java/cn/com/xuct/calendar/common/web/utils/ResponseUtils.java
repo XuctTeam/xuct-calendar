@@ -46,7 +46,7 @@ public class ResponseUtils {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=utf-8");
         response.setStatus(cn.hutool.http.HttpStatus.HTTP_OK);
-        response.setHeader(CONTENT_TYPE, GlobalConstants.APPLICATION_JSON_UTF8_VALUE);
+        response.setHeader(CONTENT_TYPE, GlobalConstants.CONTENT_TYPE);
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Cache-Control", "no-cache");
         R result = R.fail(AuthResCode.UNAUTHORIZED_ERROR, ee.getMessage());

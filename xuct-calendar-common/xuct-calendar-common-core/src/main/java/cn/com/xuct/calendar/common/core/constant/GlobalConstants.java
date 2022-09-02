@@ -20,7 +20,6 @@ package cn.com.xuct.calendar.common.core.constant;
  */
 public interface GlobalConstants {
 
-    public static final String APPLICATION_JSON_UTF8_VALUE = "application/json;charset=UTF-8";
 
     Integer STATUS_YES = 0;
 
@@ -32,4 +31,15 @@ public interface GlobalConstants {
     String URL_PERM_ROLES_KEY = "sys:perm_roles_rule:url:";
 
     String BTN_PERM_ROLES_KEY = "sys:perm_roles_rule:btn:";
+
+    /**
+     * 编码
+     */
+    String UTF8 = "UTF-8";
+
+    /**
+     * JSON 资源
+     */
+    String CONTENT_TYPE = "application/json; charset=utf-8";
+
 }

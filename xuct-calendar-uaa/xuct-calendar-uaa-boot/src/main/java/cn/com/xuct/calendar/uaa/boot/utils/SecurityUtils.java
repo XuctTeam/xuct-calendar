@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.uaa.boot.utils;
 
-import cn.com.xuct.calendar.uaa.boot.core.userdetails.membner.MemberUserDetails;
+import cn.com.xuct.calendar.common.security.serivces.OAuthUser;
 import cn.hutool.core.util.StrUtil;
 import lombok.experimental.UtilityClass;
 import org.springframework.security.core.Authentication;
@@ -40,26 +40,18 @@ public class SecurityUtils {
         return SecurityContextHolder.getContext().getAuthentication();
     }
 
-    /**
-     * 获取用户
-     */
-    public MemberUserDetails getUser(Authentication authentication) {
-        Object principal = authentication.getPrincipal();
-        if (principal instanceof MemberUserDetails)
-            return (MemberUserDetails) principal;
-        return null;
-    }
 
     /**
      * 获取用户
      */
-    public MemberUserDetails getUser() {
-        Authentication authentication = getAuthentication();
-        if (authentication == null) {
-            return null;
+    public OAuthUser getUser(Authentication authentication) {
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof OAuthUser) {
+            return (OAuthUser) principal;
         }
-        return getUser(authentication);
+        return null;
     }
+
 
     /**
      * 获取用户角色信息

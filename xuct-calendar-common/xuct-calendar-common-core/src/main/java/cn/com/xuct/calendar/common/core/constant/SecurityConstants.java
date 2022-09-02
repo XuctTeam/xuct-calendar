@@ -22,10 +22,54 @@ public interface SecurityConstants {
 
     String GRANT_TYPE_KEY = "grant_type";
 
-    String CLIENT_ID_KEY = "client_id";
+    String CLIENT_ID = "client_id";
+
+    String PHONE_GRANT_TYPE = "phone";
+
+    String SMS_PARAMETER_NAME = "mobile";
 
 
     String USER_ID_KEY = "userId";
+
+    /**
+     * 协议字段
+     */
+    String DETAILS_LICENSE = "license";
+
+    /**
+     * 项目的license
+     */
+    String PROJECT_LICENSE = "https://xuct.net.cn";
+
+    /**
+     * 客户端模式
+     */
+    String CLIENT_CREDENTIALS = "client_credentials";
+
+
+    /**
+     * 用户信息
+     */
+    String DETAILS_USER = "user_info";
+
+
+    /**
+     * 授权码模式confirm
+     */
+    String CUSTOM_CONSENT_PAGE_URI = "/token/confirm_access";
+
+    /**
+     * 标志
+     */
+    String FROM = "from";
+
+    /**
+     * 内部
+     */
+    String FROM_IN = "Y";
+
+    String NOOP = "{noop}";
+
 
     String USER_NAME_KEY = "username";
 

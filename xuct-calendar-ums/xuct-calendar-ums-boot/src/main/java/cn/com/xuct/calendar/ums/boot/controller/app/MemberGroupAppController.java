@@ -98,7 +98,7 @@ public class MemberGroupAppController {
     @ApiOperation(value = "通过群组查询")
     @GetMapping("/query")
     public R<List<GroupMemberInfoDto>> queryMembers(@RequestParam("groupId") Long groupId) {
-        return R.data(memberGroupService.queryMembersByGroupId(groupId));
+        return R.data(memberGroupService.queryMembersByGroupId(groupId, JwtUtils.getUserId()));
     }
 
     @ApiOperation(value = "通过ids查询")

@@ -228,4 +228,12 @@ public class R<T> implements Serializable {
     public static <T> R<T> status(boolean flag) {
         return flag ? success(RConstants.DEFAULT_SUCCESS_MESSAGE) : fail(RConstants.DEFAULT_FAILURE_MESSAGE);
     }
+
+    public static <T> R<T> restResult(T data, int code, String msg) {
+        R<T> apiResult = new R<>();
+        apiResult.setCode(code);
+        apiResult.setData(data);
+        apiResult.setMessage(msg);
+        return apiResult;
+    }
 }

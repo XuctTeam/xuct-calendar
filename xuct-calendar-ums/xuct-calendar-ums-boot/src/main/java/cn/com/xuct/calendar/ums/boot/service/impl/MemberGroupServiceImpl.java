@@ -43,9 +43,10 @@ public class MemberGroupServiceImpl extends BaseServiceImpl<MemberGroupMapper, M
     }
 
     @Override
-    public List<GroupMemberInfoDto> queryMembersByGroupId(Long groupId) {
-        return ((MemberGroupMapper) super.getBaseMapper()).queryMembersByGroupId(groupId);
+    public List<GroupMemberInfoDto> queryMembersByGroupId(Long groupId, final Long memberId) {
+        return ((MemberGroupMapper) super.getBaseMapper()).queryMembersByGroupId(groupId, memberId);
     }
+
     @Override
     public List<GroupMemberInfoDto> queryMemberIds(List<Long> memberIds) {
         return ((MemberGroupMapper) super.getBaseMapper()).queryMemberIds(memberIds);

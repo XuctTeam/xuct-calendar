@@ -50,7 +50,7 @@ public interface MemberGroupMapper extends BaseMapper<MemberGroup> {
      * @param groupId
      * @return
      */
-    List<GroupMemberInfoDto> queryMembersByGroupId(@Param("groupId") Long groupId);
+    List<GroupMemberInfoDto> queryMembersByGroupId(@Param("groupId") Long groupId , @Param("memberId") Long memberId);
 
     /**
      * 通过id查询

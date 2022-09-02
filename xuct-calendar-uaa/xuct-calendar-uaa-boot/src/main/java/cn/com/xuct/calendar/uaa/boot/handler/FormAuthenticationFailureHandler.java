@@ -1,16 +1,21 @@
-/**
- * Copyright (C), 2015-2021, XXX有限公司
- * FileName: FormAuthenticationFailureHandler
- * Author:   Derek Xu
- * Date:     2021/11/23 15:12
- * Description:
- * History:
- * <author>          <time>          <version>          <desc>
- * 作者姓名           修改时间           版本号              描述
+/*
+ * Copyright (c) 2020 pig4cloud Authors. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package cn.com.xuct.calendar.uaa.boot.handler;
 
-import cn.com.xuct.calendar.common.core.constant.AuthConstants;
 import cn.com.xuct.calendar.common.web.utils.WebUtils;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.http.HttpUtil;
@@ -23,36 +28,28 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * 〈一句话功能简述〉<br>
- * 〈〉
- *
- * @author Derek Xu
- * @create 2021/11/23
- * @since 1.0.0
- */
-
-/**
  * @author lengleng
- * @date 2019-08-20
+ * @date 2022-06-02
  * <p>
  * 表单登录失败处理逻辑
  */
 @Slf4j
 public class FormAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
-    /**
-     * Called when an authentication attempt fails.
-     *
-     * @param request   the request during which the authentication attempt occurred.
-     * @param response  the response.
-     * @param exception the exception which was thrown to reject the authentication
-     */
-    @Override
-    @SneakyThrows
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
-                                        AuthenticationException exception) {
-        log.debug("表单登录失败:{}", exception.getLocalizedMessage());
-        String url = HttpUtil.encodeParams(String.format(AuthConstants.REDIRECT_URL.concat("?error=%s"), exception.getMessage()), CharsetUtil.CHARSET_UTF_8);
-        WebUtils.getResponse().sendRedirect(url);
-    }
+	/**
+	 * Called when an authentication attempt fails.
+	 * @param request the request during which the authentication attempt occurred.
+	 * @param response the response.
+	 * @param exception the exception which was thrown to reject the authentication
+	 */
+	@Override
+	@SneakyThrows
+	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
+			AuthenticationException exception) {
+		log.debug("表单登录失败:{}", exception.getLocalizedMessage());
+		String url = HttpUtil.encodeParams(String.format("/token/login?error=%s", exception.getMessage()),
+				CharsetUtil.CHARSET_UTF_8);
+		WebUtils.getResponse().sendRedirect(url);
+	}
+
 }

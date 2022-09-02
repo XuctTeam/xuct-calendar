@@ -33,6 +33,7 @@
                  left join sys_group g on mg.group_id = g.id
         where 1 = 1
           and mg.group_id = #{groupId}
+          and mg.member_id &lt;&gt; #{memberId}
     </select>
 
     <select id="queryMemberIds" resultType="cn.com.xuct.calendar.ums.api.dto.GroupMemberInfoDto">

@@ -1,28 +1,15 @@
 package cn.com.xuct.calendar.uaa.boot.config;
 
-import cn.com.xuct.calendar.uaa.boot.core.userdetails.membner.MemberUserDetailsService;
-import cn.com.xuct.calendar.uaa.boot.extension.PhoneAuthenticationProvider;
-import cn.com.xuct.calendar.uaa.boot.extension.WechatAuthenticationProvider;
-import cn.com.xuct.calendar.uaa.boot.handler.FormAuthenticationFailureHandler;
-import cn.com.xuct.calendar.common.web.utils.ResponseUtils;
+import cn.com.xuct.calendar.uaa.boot.support.core.FormIdentityLoginConfigurer;
+import cn.com.xuct.calendar.uaa.boot.support.core.OauthDaoAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-
-import javax.servlet.http.HttpServletResponse;
+import org.springframework.security.web.SecurityFilterChain;
 
 /**
  * 安全配置类
@@ -32,118 +19,40 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 @Configuration
-@EnableWebSecurity
 @RequiredArgsConstructor
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
-public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
-
-    private final MemberUserDetailsService memberUserDetailsService;
-
-    private final StringRedisTemplate stringRedisTemplate;
-
-    private final PasswordEncoder passwordEncoder;
-
-    private final String[] ignoreUrls = {"/webjars/**", "/doc.html", "/swagger-resources/**", "/v2/api-docs"};
+public class WebSecurityConfiguration  {
 
     /**
-     * 手机验证码认证授权提供者
-     *
-     * @return
+     * spring security 默认的安全策略
+     * @param http security注入点
+     * @return SecurityFilterChain
+     * @throws Exception
      */
     @Bean
-    public PhoneAuthenticationProvider phoneAuthenticationProvider() {
-        PhoneAuthenticationProvider provider = new PhoneAuthenticationProvider();
-        provider.setUserDetailsService(memberUserDetailsService);
-        provider.setStringRedisTemplate(stringRedisTemplate);
-        return provider;
+    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+        http.authorizeRequests(authorizeRequests -> authorizeRequests.antMatchers("/token/*").permitAll()// 开放自定义的部分端点
+                        .anyRequest().authenticated()).headers().frameOptions().sameOrigin()// 避免iframe同源无法登录
+                .and().apply(new FormIdentityLoginConfigurer()); // 表单登录个性化
+        // 处理 UsernamePasswordAuthenticationToken
+        http.authenticationProvider(new OauthDaoAuthenticationProvider());
+        return http.build();
     }
 
     /**
-     * 微信认证授权提供者
+     * 暴露静态资源
      *
+     * https://github.com/spring-projects/spring-security/issues/10938
+     * @param http
      * @return
+     * @throws Exception
      */
     @Bean
-    public WechatAuthenticationProvider wechatAuthenticationProvider() {
-        WechatAuthenticationProvider provider = new WechatAuthenticationProvider();
-        provider.setUserDetailsService(memberUserDetailsService);
-        return provider;
-    }
-
-
-    /**
-     * 用户名密码认证授权提供者
-     *
-     * @return
-     */
-    @Bean
-    public DaoAuthenticationProvider daoAuthenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(memberUserDetailsService);
-        provider.setHideUserNotFoundExceptions(false);
-        provider.setPasswordEncoder(passwordEncoder);
-        return provider;
-    }
-
-
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(daoAuthenticationProvider());
-        auth.authenticationProvider(wechatAuthenticationProvider());
-        auth.authenticationProvider(phoneAuthenticationProvider());
-
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-
-        http.csrf()
-                .disable()
-                //开启授权认证
-                .authorizeRequests()
-                .antMatchers("/oauth/**", "/sms/**", "/captcha/**", "/register/**", "/forget/**").permitAll()
-                .antMatchers(ignoreUrls).permitAll()
-                .anyRequest()
-                .authenticated()
-                .and()
-                //登陆配置
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                .and()
-                .httpBasic()
-                //密码错误返回在这里配置，用户名在自定义userDetail里配置
-                .authenticationEntryPoint((request, response, authException) -> {
-                    this.sendResponse(response, authException);
-                })
-                .and()
-                .exceptionHandling()
-                .authenticationEntryPoint((request, response, authException) -> {
-                    this.sendResponse(response, authException);
-                })
-                .accessDeniedHandler((request, response, accessDeniedException) -> {
-                    this.sendResponse(response, accessDeniedException);
-                });
-    }
-
-    @Bean // 密码模式需要此bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
-    @Override
-    public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/css/**");
-    }
-
-    @Bean
-    AuthenticationFailureHandler authenticationFailureHandler() {
-        return new FormAuthenticationFailureHandler();
-    }
-
-
-    @SuppressWarnings("all")
-    private void sendResponse(HttpServletResponse response, Exception ee) {
-        log.info("basic commence AuthenticationException：{}", ee.getMessage());
-        ResponseUtils.write(response, ee);
+    @Order(0)
+    SecurityFilterChain resources(HttpSecurity http) throws Exception {
+        http.requestMatchers((matchers) -> matchers.antMatchers("/actuator/**", "/css/**", "/error"))
+                .authorizeHttpRequests((authorize) -> authorize.anyRequest().permitAll()).requestCache().disable()
+                .securityContext().disable().sessionManagement().disable();
+        return http.build();
     }
 }

@@ -41,7 +41,7 @@ public interface IMemberGroupService extends IBaseService<MemberGroupMapper, Mem
      * @param groupId
      * @return
      */
-    List<GroupMemberInfoDto> queryMembersByGroupId(Long groupId);
+    List<GroupMemberInfoDto> queryMembersByGroupId(Long groupId , final Long memberId);
 
     /**
      * 通过会员id查询
