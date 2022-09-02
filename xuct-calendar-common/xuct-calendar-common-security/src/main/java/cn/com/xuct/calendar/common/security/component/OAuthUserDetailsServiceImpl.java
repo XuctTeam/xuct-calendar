@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package cn.com.xuct.calendar.common.security.serivces;
+package cn.com.xuct.calendar.common.security.component;
 
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.module.feign.MemberFeignInfo;
-import cn.com.xuct.calendar.common.security.client.UmsMemberFeignClient;
+import cn.com.xuct.calendar.uaa.boot.support.feign.MemberFeignClient;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +36,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @RequiredArgsConstructor
 public class OAuthUserDetailsServiceImpl implements OAuthUserDetailsService {
 
-	private final UmsMemberFeignClient umsMemberFeignClient;
+	private final MemberFeignClient memberFeignClient;
 
 	private final CacheManager cacheManager;
 
@@ -53,7 +53,7 @@ public class OAuthUserDetailsServiceImpl implements OAuthUserDetailsService {
 //			return (PigUser) cache.get(username).get();
 //		}
 
-		R<MemberFeignInfo> result = umsMemberFeignClient.loadMemberByUserName(username);
+		R<MemberFeignInfo> result = memberFeignClient.loadMemberByUserName(username);
 		UserDetails userDetails = getUserDetails(result);
 //		if (cache != null) {
 //			cache.put(username, userDetails);

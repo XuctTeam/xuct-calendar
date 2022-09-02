@@ -42,7 +42,7 @@ public class ResourceServerConfiguration {
 
 	private final PermitAllUrlProperties permitAllUrl;
 
-	private final OauthBearerTokenExtractor pigBearerTokenExtractor;
+	private final OAuthBearerTokenExtractor oAuthBearerTokenExtractor;
 
 	private final OpaqueTokenIntrospector customOpaqueTokenIntrospector;
 
@@ -56,7 +56,7 @@ public class ResourceServerConfiguration {
 				.oauth2ResourceServer(
 						oauth2 -> oauth2.opaqueToken(token -> token.introspector(customOpaqueTokenIntrospector))
 								.authenticationEntryPoint(resourceAuthExceptionEntryPoint)
-								.bearerTokenResolver(pigBearerTokenExtractor))
+								.bearerTokenResolver(oAuthBearerTokenExtractor))
 				.headers().frameOptions().disable().and().csrf().disable();
 
 		return http.build();

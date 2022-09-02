@@ -12,7 +12,6 @@
     <artifactId>xuct-calendar-uaa</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>xuct-calendar-uaa-api</module>
         <module>xuct-calendar-uaa-boot</module>
     </modules>
 

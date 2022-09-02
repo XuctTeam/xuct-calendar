@@ -10,13 +10,10 @@
  */
 package cn.com.xuct.calendar.uaa.boot.endpoint;
 
-import cn.com.xuct.calendar.uaa.api.client.BasicServicesFeignClient;
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.res.R;
-import cn.com.xuct.calendar.common.module.feign.req.SmsCodeFeignInfo;
 import cn.com.xuct.calendar.common.module.params.MemberPhoneParam;
 import cn.hutool.core.util.RandomUtil;
-import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -50,7 +47,6 @@ public class SmsCodeEndpoint {
 
     private final StringRedisTemplate stringRedisTemplate;
 
-    private final BasicServicesFeignClient basicServicesFeignClient;
 
     @ApiOperation(value = "短信验证码")
     @ApiImplicitParam(name = "phoneNumber", example = "17621590365", value = "手机号", required = true)
@@ -59,6 +55,7 @@ public class SmsCodeEndpoint {
         String code = RandomUtil.randomNumbers(4);
         String redisKey = RedisConstants.MEMBER_PHONE_LOGIN_CODE_KEY.concat(param.getPhone());
         stringRedisTemplate.opsForValue().set(redisKey, code, 60 * 2, TimeUnit.SECONDS);
-        return basicServicesFeignClient.smsCode(SmsCodeFeignInfo.builder().code(code).phones(Lists.newArrayList(param.getPhone())).template("login").build());
+        //return basicServicesFeignClient.smsCode(SmsCodeFeignInfo.builder().code(code).phones(Lists.newArrayList(param.getPhone())).template("login").build());
+        return null;
     }
 }

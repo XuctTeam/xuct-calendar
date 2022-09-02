@@ -11,7 +11,6 @@
 package cn.com.xuct.calendar.common.http.config;
 
 import feign.Feign;
-import feign.Logger;
 import okhttp3.ConnectionPool;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -51,10 +50,5 @@ public class FeignOkHttpConfiguration {
                 .addInterceptor(new OkHttpLogInterceptor())
                 //构建OkHttpClient对象
                 .build();
-    }
-
-    @Bean
-    public Logger.Level feignLoggerLevel(){
-        return Logger.Level.FULL;
     }
 }

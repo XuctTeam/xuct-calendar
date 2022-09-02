@@ -1,6 +1,5 @@
 package cn.com.xuct.calendar.common.security.component;
 
-import cn.com.xuct.calendar.common.security.serivces.OAuthUserDetailsService;
 import cn.hutool.extra.spring.SpringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,5 +1,5 @@
 cn.com.xuct.calendar.common.security.serivces.OAuthRedisOAuth2AuthorizationService
 cn.com.xuct.calendar.common.security.serivces.OAuthRedisOAuth2AuthorizationConsentService
-cn.com.xuct.calendar.common.security.serivces.OAuthRegisteredClientRepository
+cn.com.xuct.calendar.uaa.boot.support.service.OAuthRegisteredClientRepository
 cn.com.xuct.calendar.common.security.component.SecurityMessageSourceConfiguration
 cn.com.xuct.calendar.common.security.component.SecurityInnerAspect

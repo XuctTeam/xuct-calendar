@@ -8,19 +8,13 @@
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package cn.com.xuct.calendar.common.security.client;
+package cn.com.xuct.calendar.ums.oauth;
 
 import cn.com.xuct.calendar.common.core.constant.ServiceNameConstants;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.module.feign.MemberFeignInfo;
-import cn.com.xuct.calendar.common.module.feign.req.MemberModifyPasswordFeignInfo;
-import cn.com.xuct.calendar.common.module.feign.req.MemberRegisterFeignInfo;
-import cn.com.xuct.calendar.common.module.feign.req.WxUserInfoFeignInfo;
-import cn.com.xuct.calendar.common.web.web.FeignConfiguration;
-import feign.Headers;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -32,8 +26,8 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @since 1.0.0
  */
 
-@FeignClient(name = ServiceNameConstants.UMS_SERVICE, contextId = "members" , configuration = FeignConfiguration.class)
-public interface UmsMemberFeignClient {
+@FeignClient(name = ServiceNameConstants.UMS_SERVICE, contextId = "members")
+public interface MemberFeignClient {
 
     @GetMapping("/api/feign/v1/member/get/phone")
     R<MemberFeignInfo> loadMemberByMobile(@RequestParam("phone") String phone);
@@ -46,18 +40,4 @@ public interface UmsMemberFeignClient {
 
     @GetMapping("/api/feign/v1/member/get/email")
     R<MemberFeignInfo> loadMemberByEmail(@RequestParam("email") String email);
-
-    @Headers({"Content-Type: application/json"})
-    @PostMapping("/api/feign/v1/member/get/code")
-    R<MemberFeignInfo> loadMemberByWechatCode(WxUserInfoFeignInfo wxUserInfoFeignInfo);
-
-
-    @PostMapping("/api/feign/v1/member/register")
-    @Headers("Content-Type: application/json")
-    R<String> registerMember(MemberRegisterFeignInfo registerFeignInfo);
-
-    @PostMapping("/api/feign/v1/member/modify/password")
-    @Headers("Content-Type: application/json")
-    R<String> modifyPassword(MemberModifyPasswordFeignInfo passwordDto);
-
 }

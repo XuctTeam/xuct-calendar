@@ -46,8 +46,8 @@ public class ResourceServerAutoConfiguration {
 	 * @return BearerTokenExtractor
 	 */
 	@Bean
-	public OauthBearerTokenExtractor bearerTokenExtractor(PermitAllUrlProperties urlProperties) {
-		return new OauthBearerTokenExtractor(urlProperties);
+	public OAuthBearerTokenExtractor bearerTokenExtractor(PermitAllUrlProperties urlProperties) {
+		return new OAuthBearerTokenExtractor(urlProperties);
 	}
 
 	/**

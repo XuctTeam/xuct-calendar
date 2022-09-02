@@ -31,12 +31,10 @@ import javax.validation.constraints.NotBlank;
 @TableName("sys_oauth_client_details")
 public class OAuthClientDetails extends SuperEntity<OAuthClientDetails> {
 
-
     /**
      * 客户端ID
      */
     @NotBlank(message = "client_id 不能为空")
-    @TableId(value = "client_id", type = IdType.INPUT)
     @ApiModelProperty(value = "客户端id")
     private String clientId;
 

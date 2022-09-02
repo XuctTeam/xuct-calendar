@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
  * @author caiqy
  * @date 2020.05.15
  */
-public class OauthBearerTokenExtractor implements BearerTokenResolver {
+public class OAuthBearerTokenExtractor implements BearerTokenResolver {
 
 	private static final Pattern authorizationPattern = Pattern.compile("^Bearer (?<token>[a-zA-Z0-9-:._~+/]+=*)$",
 			Pattern.CASE_INSENSITIVE);
@@ -49,7 +49,7 @@ public class OauthBearerTokenExtractor implements BearerTokenResolver {
 
 	private final PermitAllUrlProperties urlProperties;
 
-	public OauthBearerTokenExtractor(PermitAllUrlProperties urlProperties) {
+	public OAuthBearerTokenExtractor(PermitAllUrlProperties urlProperties) {
 		this.urlProperties = urlProperties;
 	}
 

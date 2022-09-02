@@ -16,6 +16,7 @@
         <module>xuct-calendar-ums</module>
         <module>xuct-calendar-basic-services</module>
         <module>xuct-calendar-common/xuct-calendar-common-security</module>
+        <module>xuct-calendar-ums/xuct-calendar-ums-oauth</module>
     </modules>
 
     <properties>

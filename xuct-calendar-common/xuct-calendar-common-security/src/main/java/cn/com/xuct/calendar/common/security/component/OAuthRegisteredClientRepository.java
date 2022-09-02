@@ -1,9 +1,9 @@
-package cn.com.xuct.calendar.common.security.serivces;
+package cn.com.xuct.calendar.common.security.component;
 
 import cn.com.xuct.calendar.common.core.constant.CacheConstants;
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
 import cn.com.xuct.calendar.common.core.res.RetOps;
-import cn.com.xuct.calendar.common.security.client.UmsClientDetailsFeignClient;
+import cn.com.xuct.calendar.uaa.boot.support.feign.ClientDetailsFeignClient;
 import cn.com.xuct.calendar.common.security.dto.OauthDetailsDto;
 import cn.com.xuct.calendar.common.security.excpetion.OAuthClientException;
 import cn.hutool.core.util.BooleanUtil;
@@ -43,7 +43,7 @@ public class OAuthRegisteredClientRepository implements RegisteredClientReposito
      */
     private final static int accessTokenValiditySeconds = 60 * 60 * 12;
 
-    private final UmsClientDetailsFeignClient umsClientDetailsFeignClient;
+    private final ClientDetailsFeignClient clientDetailsFeignClient;
 
     /**
      * Saves the registered client.
@@ -90,7 +90,7 @@ public class OAuthRegisteredClientRepository implements RegisteredClientReposito
     public RegisteredClient findByClientId(String clientId) {
 
         OauthDetailsDto clientDetails = RetOps
-                .of(umsClientDetailsFeignClient.getClientDetailsById(clientId , SecurityConstants.FROM_IN)).getData()
+                .of(clientDetailsFeignClient.getClientDetailsById(clientId , SecurityConstants.FROM_IN)).getData()
                 .orElseThrow(() -> new OAuthClientException("clientId 不合法"));
 
         RegisteredClient.Builder builder = RegisteredClient.withId(clientDetails.getClientId())

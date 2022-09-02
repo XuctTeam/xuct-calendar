@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package cn.com.xuct.calendar.common.security.serivces;
+package cn.com.xuct.calendar.common.security.component;
 
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
-import cn.com.xuct.calendar.common.security.client.UmsMemberFeignClient;
+import cn.com.xuct.calendar.uaa.boot.support.feign.MemberFeignClient;
+import cn.com.xuct.calendar.common.security.serivces.OAuthUser;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +34,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @RequiredArgsConstructor
 public class OAuthMemberDetailsServiceImpl implements OAuthUserDetailsService {
 
-	private final UmsMemberFeignClient remoteUserService;
+	private final MemberFeignClient remoteUserService;
 
 	private final CacheManager cacheManager;
 

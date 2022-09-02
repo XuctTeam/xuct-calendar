@@ -1,7 +1,8 @@
-package cn.com.xuct.calendar.common.security.serivces;
+package cn.com.xuct.calendar.common.security.component;
 
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.module.feign.MemberFeignInfo;
+import cn.com.xuct.calendar.common.security.serivces.OAuthUser;
 import org.springframework.core.Ordered;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
