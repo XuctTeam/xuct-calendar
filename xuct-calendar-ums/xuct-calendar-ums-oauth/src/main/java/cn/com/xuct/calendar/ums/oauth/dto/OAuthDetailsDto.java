@@ -8,12 +8,11 @@
  * <author>          <time>          <version>          <desc>
  * Derek Xu         修改时间           版本号              描述
  */
-package cn.com.xuct.calendar.common.security.dto;
+package cn.com.xuct.calendar.ums.oauth.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 /**
@@ -25,7 +24,7 @@ import java.io.Serializable;
  * @since 1.0.0
  */
 @Data
-public class OauthDetailsDto implements Serializable {
+public class OAuthDetailsDto implements Serializable {
     /**
      * 客户端ID
      */

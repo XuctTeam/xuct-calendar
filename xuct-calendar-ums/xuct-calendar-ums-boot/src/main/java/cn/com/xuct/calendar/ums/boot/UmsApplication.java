@@ -17,12 +17,10 @@ import cn.com.xuct.calendar.common.security.annotation.EnableOAuthResourceServer
 import cn.com.xuct.calendar.common.smms.annotation.EnableSmmsClient;
 import cn.com.xuct.calendar.common.swagger.annotation.EnableSwagger2AutoConfiguration;
 import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
-import cn.com.xuct.calendar.ums.api.feign.CalendarFeignClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -46,7 +44,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableAsync
 @EnableOAuthResourceServer
 @Import({MybatisPlusConfig.class, SpringContextHolder.class})
-@EnableFeignClients(basePackageClasses = {CalendarFeignClient.class})
 public class UmsApplication {
 
     public static void main(String[] args) {

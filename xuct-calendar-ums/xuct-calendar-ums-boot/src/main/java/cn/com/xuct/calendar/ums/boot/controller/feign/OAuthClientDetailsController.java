@@ -23,8 +23,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 /**
  * 〈一句话功能简述〉<br>
  * 〈〉
@@ -36,7 +34,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @Api(tags = "【远程调用】客户端管理接口")
-@RequestMapping("/api/feign/v1/oauth")
+@RequestMapping("/api/feign/v1/oauth/client")
 @RequiredArgsConstructor
 public class OAuthClientDetailsController {
 
@@ -51,7 +49,7 @@ public class OAuthClientDetailsController {
      */
     @Inner
     @GetMapping("/{clientId}")
-    public R<List<OAuthClientDetails>> getByClientId(@PathVariable String clientId) {
-        return R.data(authClientDetailsService.find(Column.of("client_id", clientId)));
+    public R<OAuthClientDetails> getByClientId(@PathVariable String clientId) {
+        return R.data(authClientDetailsService.get(Column.of("client_id", clientId)));
     }
 }

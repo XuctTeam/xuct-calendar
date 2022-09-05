@@ -8,7 +8,7 @@
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package cn.com.xuct.calendar.ums.oauth;
+package cn.com.xuct.calendar.ums.oauth.client;
 
 import cn.com.xuct.calendar.common.core.constant.ServiceNameConstants;
 import cn.com.xuct.calendar.common.core.res.R;

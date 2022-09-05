@@ -22,7 +22,13 @@ public interface CacheConstants {
 
 
     /**
+     * 用户信息缓存
+     */
+    String USER_DETAILS = "user_details";
+
+
+    /**
      * oauth 客户端信息
      */
-    String CLIENT_DETAILS_KEY = "calendar_oauth:client:details";
+    String CLIENT_DETAILS_KEY = "client:details";
 }

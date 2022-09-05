@@ -123,13 +123,6 @@
         </dependency>
         <dependency>
             <groupId>cn.com.xuct</groupId>
-            <artifactId>xuct-calendar-common-localstore</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-common-web</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>

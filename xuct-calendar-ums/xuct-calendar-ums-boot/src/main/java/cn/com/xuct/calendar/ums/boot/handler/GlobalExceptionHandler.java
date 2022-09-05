@@ -15,6 +15,7 @@ import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.res.SvrResCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -32,6 +33,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseBody
+    @ExceptionHandler(value = AccessDeniedException.class)
+    public R<String> accessDeniedException(AccessDeniedException e) {
+        log.error("权限异常！原因是：{}", e.getMessage());
+        return R.fail(401, e.getMessage());
+    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody

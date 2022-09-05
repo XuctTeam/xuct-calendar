@@ -12,10 +12,14 @@ package cn.com.xuct.calendar.uaa.boot.handler;
 
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.res.ResultCode;
+import cn.com.xuct.calendar.common.security.excpetion.OAuthClientException;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -28,53 +32,6 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestControllerAdvice(basePackages = "cn.com.xuct.calendar.auth.boot.controller.web")
 public class GlobalExceptionHandler {
-
-
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    @ExceptionHandler(InvalidScopeException.class)
-//    public R<String> InvalidScopeExceptionException(InvalidScopeException e) {
-//        log.error("客户端验证scope异常: {}", e.getMessage());
-//        return R.fail(AuthResCode.CLIENT_SCOPE_FAILED, e.getMessage());
-//    }
-//
-//
-//    /**
-//     * 用户不存在
-//     *
-//     * @param e
-//     * @return
-//     */
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    @ExceptionHandler(UsernameNotFoundException.class)
-//    public R<String> handleUsernameNotFoundException(UsernameNotFoundException e) {
-//        return R.fail(AuthResCode.USER_NOT_EXIST);
-//    }
-//
-//    /**
-//     * 用户名和密码异常
-//     *
-//     * @param e
-//     * @return
-//     */
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    @ExceptionHandler(InvalidGrantException.class)
-//    public R<String> handleInvalidGrantException(InvalidGrantException e) {
-//        return R.fail(AuthResCode.USERNAME_OR_PASSWORD_ERROR);
-//    }
-//
-//
-//    /**
-//     * 账户异常(禁用、锁定、过期)
-//     *
-//     * @param e
-//     * @return
-//     */
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    @ExceptionHandler({InternalAuthenticationServiceException.class})
-//    public R<String> handleInternalAuthenticationServiceException(InternalAuthenticationServiceException e) {
-//        return R.fail(e.getMessage());
-//    }
-
 
     /**
      * 远程接口调用异常

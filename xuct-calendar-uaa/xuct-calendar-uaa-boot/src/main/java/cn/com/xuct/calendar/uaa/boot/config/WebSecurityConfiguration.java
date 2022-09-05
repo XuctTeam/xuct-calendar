@@ -2,13 +2,11 @@ package cn.com.xuct.calendar.uaa.boot.config;
 
 import cn.com.xuct.calendar.uaa.boot.support.core.FormIdentityLoginConfigurer;
 import cn.com.xuct.calendar.uaa.boot.support.core.OauthDaoAuthenticationProvider;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
@@ -18,9 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
  * @date 2020/4/22 13:52
  */
 @Slf4j
-@Configuration
-@RequiredArgsConstructor
-@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
+@EnableWebSecurity(debug = true)
 public class WebSecurityConfiguration  {
 
     /**

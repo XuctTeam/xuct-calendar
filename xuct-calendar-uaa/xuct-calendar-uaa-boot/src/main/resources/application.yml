@@ -17,3 +17,4 @@ spring:
   config:
     import:
       - optional:nacos:dav-uaa.yaml  # 监听 DEFAULT_GROUP:test.yml
+

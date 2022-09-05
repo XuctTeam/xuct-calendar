@@ -17,8 +17,8 @@
 package cn.com.xuct.calendar.common.security.component;
 
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
-import cn.com.xuct.calendar.uaa.boot.support.feign.MemberFeignClient;
 import cn.com.xuct.calendar.common.security.serivces.OAuthUser;
+import cn.com.xuct.calendar.ums.oauth.client.MemberFeignClient;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

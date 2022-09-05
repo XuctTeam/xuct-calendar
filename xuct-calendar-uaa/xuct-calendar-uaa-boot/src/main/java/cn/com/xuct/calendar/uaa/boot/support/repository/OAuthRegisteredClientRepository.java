@@ -1,11 +1,12 @@
-package cn.com.xuct.calendar.common.security.component;
+package cn.com.xuct.calendar.uaa.boot.support.repository;
 
 import cn.com.xuct.calendar.common.core.constant.CacheConstants;
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
+import cn.com.xuct.calendar.common.core.res.AuthResCode;
 import cn.com.xuct.calendar.common.core.res.RetOps;
-import cn.com.xuct.calendar.uaa.boot.support.feign.ClientDetailsFeignClient;
-import cn.com.xuct.calendar.common.security.dto.OauthDetailsDto;
 import cn.com.xuct.calendar.common.security.excpetion.OAuthClientException;
+import cn.com.xuct.calendar.ums.oauth.client.ClientDetailsFeignClient;
+import cn.com.xuct.calendar.ums.oauth.dto.OAuthDetailsDto;
 import cn.hutool.core.util.BooleanUtil;
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.config.TokenSettings;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.time.Duration;
@@ -30,6 +32,7 @@ import java.util.Optional;
  * @author lengleng
  * @date 2022/5/29
  */
+@Component
 @RequiredArgsConstructor
 public class OAuthRegisteredClientRepository implements RegisteredClientRepository {
 
@@ -89,9 +92,9 @@ public class OAuthRegisteredClientRepository implements RegisteredClientReposito
     @Cacheable(value = CacheConstants.CLIENT_DETAILS_KEY, key = "#clientId", unless = "#result == null")
     public RegisteredClient findByClientId(String clientId) {
 
-        OauthDetailsDto clientDetails = RetOps
+        OAuthDetailsDto clientDetails = RetOps
                 .of(clientDetailsFeignClient.getClientDetailsById(clientId , SecurityConstants.FROM_IN)).getData()
-                .orElseThrow(() -> new OAuthClientException("clientId 不合法"));
+                .orElseThrow(() -> new OAuthClientException(AuthResCode.CLIENT_AUTHENTICATION_FAILED.getMessage()));
 
         RegisteredClient.Builder builder = RegisteredClient.withId(clientDetails.getClientId())
                 .clientId(clientDetails.getClientId())

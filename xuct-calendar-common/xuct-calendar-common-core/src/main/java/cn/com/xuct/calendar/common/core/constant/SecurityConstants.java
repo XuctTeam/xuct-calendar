@@ -77,6 +77,19 @@ public interface SecurityConstants {
 
     String TIME_ZONE = "timeZone";
 
+
+    /**
+     * 默认登录URL
+     */
+    String OAUTH_TOKEN_URL = "/oauth2/token";
+
+    /**
+     * grant_type
+     */
+    String REFRESH_TOKEN = "refresh_token";
+
+
+
     /**
      * JWT令牌前缀
      */

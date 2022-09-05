@@ -40,12 +40,7 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
-        <dependency>
-            <groupId>cn.com.xuct</groupId>
-            <artifactId>xuct-calendar-common-core</artifactId>
-            <version>1.0</version>
-            <scope>compile</scope>
-        </dependency>
+
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
@@ -54,12 +49,7 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-openfeign-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>cn.com.xuct</groupId>
-            <artifactId>xuct-calendar-common-module</artifactId>
-            <version>1.0</version>
-            <scope>compile</scope>
-        </dependency>
+
         <dependency>
             <groupId>io.github.openfeign</groupId>
             <artifactId>feign-core</artifactId>
@@ -67,9 +57,28 @@
         <dependency>
             <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-common-web</artifactId>
-            <version>1.0</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>cn.com.xuct</groupId>
+            <artifactId>xuct-calendar-ums-oauth</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>cn.com.xuct</groupId>
+            <artifactId>xuct-calendar-common-core</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>cn.com.xuct</groupId>
+            <artifactId>xuct-calendar-common-module</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
     </dependencies>
 
 </project>
