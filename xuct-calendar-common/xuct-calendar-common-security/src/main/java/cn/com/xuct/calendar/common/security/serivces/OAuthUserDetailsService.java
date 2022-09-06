@@ -1,4 +1,4 @@
-package cn.com.xuct.calendar.common.security.component;
+package cn.com.xuct.calendar.common.security.serivces;
 
 import cn.com.xuct.calendar.common.core.constant.GlobalConstants;
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;

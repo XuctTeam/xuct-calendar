@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package cn.com.xuct.calendar.common.security.component;
+package cn.com.xuct.calendar.common.security.serivces;
 
 import cn.com.xuct.calendar.common.core.constant.CacheConstants;
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;

@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package cn.com.xuct.calendar.common.security.component;
+package cn.com.xuct.calendar.common.security.serivces;
 
 import cn.com.xuct.calendar.common.core.constant.CacheConstants;
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.module.feign.UserInfo;
-import cn.com.xuct.calendar.common.security.serivces.OAuthUser;
 import cn.com.xuct.calendar.ums.oauth.client.MemberFeignClient;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
