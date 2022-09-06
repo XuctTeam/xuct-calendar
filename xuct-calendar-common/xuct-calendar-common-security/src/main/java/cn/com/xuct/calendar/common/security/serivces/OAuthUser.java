@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 〈一句话功能简述〉<br> 
+ * 〈一句话功能简述〉<br>
  * 〈〉
  *
  * @author Derek Xu
@@ -35,17 +35,21 @@ public class OAuthUser extends User implements OAuth2AuthenticatedPrincipal {
     @Getter
     private final Long id;
 
-    public OAuthUser(Long id, String username, String password, String phone, boolean enabled,
-                   boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked,
-                   Collection<? extends GrantedAuthority> authorities) {
+    @Getter
+    private String name;
+
+    public OAuthUser(Long id, String username, String password, String name, boolean enabled,
+                     boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked,
+                     Collection<? extends GrantedAuthority> authorities) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
         this.id = id;
+        this.name = name;
     }
 
 
     @Override
     public Map<String, Object> getAttributes() {
-       return new HashMap<>();
+        return new HashMap<>();
     }
 
     @Override

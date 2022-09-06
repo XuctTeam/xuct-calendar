@@ -41,9 +41,8 @@ public class AuthenticationFailureEventHandler implements AuthenticationFailureH
 
 
     @Override
-    @SneakyThrows
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
-                                        AuthenticationException exception) {
+                                        AuthenticationException exception) throws IOException {
         String username = request.getParameter(OAuth2ParameterNames.USERNAME);
         // 写出错误信息
         sendErrorResponse(response, exception);

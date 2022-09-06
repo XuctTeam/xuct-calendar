@@ -34,7 +34,7 @@ import java.util.function.Supplier;
  * @author lengleng
  * @date 2022-06-04
  */
-public class OauthDaoAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
+public class OAuthDaoAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
 	/**
 	 * The plaintext password used to perform PasswordEncoder#matches(CharSequence,
@@ -58,7 +58,7 @@ public class OauthDaoAuthenticationProvider extends AbstractUserDetailsAuthentic
 
 	private UserDetailsPasswordService userDetailsPasswordService;
 
-	public OauthDaoAuthenticationProvider() {
+	public OAuthDaoAuthenticationProvider() {
 		setMessageSource(SpringUtil.getBean("securityMessageSource"));
 		setPasswordEncoder(PasswordEncoderFactories.createDelegatingPasswordEncoder());
 	}

@@ -17,7 +17,7 @@ import cn.com.xuct.calendar.common.core.enums.PasswordEncoderTypeEnum;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.enums.IdentityTypeEnum;
-import cn.com.xuct.calendar.common.module.feign.MemberFeignInfo;
+import cn.com.xuct.calendar.ums.oauth.dto.MemberFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.CalendarInitFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.MemberModifyPasswordFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.MemberRegisterFeignInfo;

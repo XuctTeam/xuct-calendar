@@ -20,7 +20,7 @@ import cn.com.xuct.calendar.common.core.constant.CacheConstants;
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.module.feign.UserInfo;
-import cn.com.xuct.calendar.ums.oauth.client.UserFeignClient;
+import cn.com.xuct.calendar.ums.oauth.client.MemberFeignClient;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -37,35 +37,48 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Slf4j
 @Primary
 @RequiredArgsConstructor
-public class OAuthUserDetailsServiceImpl implements OAuthUserDetailsService {
+public class OAuthUserDetailsAppServiceImpl implements OAuthUserDetailsService {
 
-	private final UserFeignClient userFeignClient;
+    private final MemberFeignClient memberFeignClient;
 
-	private final CacheManager cacheManager;
+    private final CacheManager cacheManager;
 
-	/**
-	 * 用户名密码登录
-	 * @param username 用户名
-	 * @return
-	 */
-	@Override
-	@SneakyThrows
-	public UserDetails loadUserByUsername(String username) {
+    /**
+     * 用户名密码登录
+     *
+     * @param username 用户名
+     * @return
+     */
+    @Override
+    @SneakyThrows
+    public UserDetails loadUserByUsername(String username) {
 		Cache cache = cacheManager.getCache(CacheConstants.USER_DETAILS);
 //		if (cache != null && cache.get(username) != null) {
 //			return (PigUser) cache.get(username).get();
 //		}
-		R<UserInfo> result = userFeignClient.info(username, SecurityConstants.FROM_IN);
-		UserDetails userDetails = getUserDetails(result , false);
+        R<UserInfo> result = memberFeignClient.loadMemberByUserName(username);
+        UserDetails userDetails = getUserDetails(result, true);
 		if (cache != null) {
 			cache.put(username, userDetails);
 		}
-		return userDetails;
-	}
+        return userDetails;
+    }
 
-	@Override
-	public int getOrder() {
-		return Integer.MIN_VALUE;
-	}
+    @Override
+    public int getOrder() {
+        return Integer.MIN_VALUE;
+    }
+
+    /**
+     * 是否支持此客户端校验
+     *
+     * @param clientId 目标客户端
+     * @return true/false
+     */
+    @Override
+    public boolean support(String clientId, String grantType) {
+        return SecurityConstants.APP_GRANT_TYPE.equals(clientId);
+    }
+
 
 }

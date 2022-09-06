@@ -29,6 +29,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
@@ -43,9 +44,8 @@ public class ResourceAuthExceptionEntryPoint implements AuthenticationEntryPoint
     private final ObjectMapper objectMapper;
 
     @Override
-    @SneakyThrows
     public void commence(HttpServletRequest request, HttpServletResponse response,
-                         AuthenticationException authException) {
+                         AuthenticationException authException) throws IOException {
         response.setCharacterEncoding(GlobalConstants.UTF8);
         response.setContentType(GlobalConstants.CONTENT_TYPE);
         R<String> result = new R<>();

@@ -10,11 +10,13 @@
  */
 package cn.com.xuct.calendar.ums.oauth.client;
 
+import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
 import cn.com.xuct.calendar.common.core.constant.ServiceNameConstants;
 import cn.com.xuct.calendar.common.core.res.R;
-import cn.com.xuct.calendar.common.module.feign.MemberFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.UserInfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -30,14 +32,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface MemberFeignClient {
 
     @GetMapping("/api/feign/v1/member/get/phone")
-    R<MemberFeignInfo> loadMemberByMobile(@RequestParam("phone") String phone);
+    R<UserInfo> loadMemberByMobile(@RequestParam("phone") String phone);
 
     @GetMapping("/api/feign/v1/member/get/openId")
-    R<MemberFeignInfo> loadMemberByOpenId(@RequestParam("openId") String openId);
+    R<UserInfo> loadMemberByOpenId(@RequestParam("openId") String openId ,  @RequestHeader(SecurityConstants.FROM) String from);
 
     @GetMapping("/api/feign/v1/member/get/username")
-    R<MemberFeignInfo> loadMemberByUserName(@RequestParam("username") String username);
+    R<UserInfo> loadMemberByUserName(@RequestParam("username") String username);
 
     @GetMapping("/api/feign/v1/member/get/email")
-    R<MemberFeignInfo> loadMemberByEmail(@RequestParam("email") String email);
+    R<UserInfo> loadMemberByEmail(@RequestParam("email") String email);
 }

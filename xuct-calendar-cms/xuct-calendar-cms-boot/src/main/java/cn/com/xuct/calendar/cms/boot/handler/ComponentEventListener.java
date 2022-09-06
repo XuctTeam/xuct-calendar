@@ -12,34 +12,27 @@ package cn.com.xuct.calendar.cms.boot.handler;
 
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAlarm;
-import cn.com.xuct.calendar.cms.api.entity.ComponentAttend;
 import cn.com.xuct.calendar.cms.api.feign.UmsComponentFeignClient;
-import cn.com.xuct.calendar.cms.api.feign.UmsMemberFeignClient;
 import cn.com.xuct.calendar.cms.boot.service.IAlarmNotifyService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentAlarmService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentService;
 import cn.com.xuct.calendar.cms.queue.event.AlarmEvent;
 import cn.com.xuct.calendar.cms.queue.event.ComponentDelEvent;
-import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.utils.JsonUtils;
 import cn.com.xuct.calendar.common.module.dto.AlarmInfoDto;
 import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
 import cn.com.xuct.calendar.common.module.feign.MemberFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.ComponentNotifyFeignInfo;
-import cn.com.xuct.calendar.common.module.feign.req.MemberMessageFeignInfo;
-import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONObject;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
-import java.util.stream.Collectors;
 
 /**
  * 〈一句话功能简述〉<br>

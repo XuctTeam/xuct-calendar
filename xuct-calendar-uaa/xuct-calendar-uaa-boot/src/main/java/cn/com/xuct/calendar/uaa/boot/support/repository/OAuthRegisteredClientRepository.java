@@ -1,17 +1,10 @@
 package cn.com.xuct.calendar.uaa.boot.support.repository;
 
-import cn.com.xuct.calendar.common.core.constant.CacheConstants;
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
-import cn.com.xuct.calendar.common.core.res.AuthResCode;
-import cn.com.xuct.calendar.common.core.res.RetOps;
-import cn.com.xuct.calendar.common.security.excpetion.OAuthClientException;
-import cn.com.xuct.calendar.ums.oauth.client.ClientDetailsFeignClient;
 import cn.com.xuct.calendar.ums.oauth.dto.OAuthDetailsDto;
 import cn.hutool.core.util.BooleanUtil;
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.OAuth2TokenFormat;
@@ -46,7 +39,7 @@ public class OAuthRegisteredClientRepository implements RegisteredClientReposito
      */
     private final static int accessTokenValiditySeconds = 60 * 60 * 12;
 
-    private final ClientDetailsFeignClient clientDetailsFeignClient;
+    private final OAuthClientCacheSupport oauthClientCacheSupport;
 
     /**
      * Saves the registered client.
@@ -88,41 +81,23 @@ public class OAuthRegisteredClientRepository implements RegisteredClientReposito
      * @return
      */
     @Override
-    @SneakyThrows
-    @Cacheable(value = CacheConstants.CLIENT_DETAILS_KEY, key = "#clientId", unless = "#result == null")
     public RegisteredClient findByClientId(String clientId) {
-
-        OAuthDetailsDto clientDetails = RetOps
-                .of(clientDetailsFeignClient.getClientDetailsById(clientId , SecurityConstants.FROM_IN)).getData()
-                .orElseThrow(() -> new OAuthClientException(AuthResCode.CLIENT_AUTHENTICATION_FAILED.getMessage()));
-
-        RegisteredClient.Builder builder = RegisteredClient.withId(clientDetails.getClientId())
-                .clientId(clientDetails.getClientId())
+        OAuthDetailsDto clientDetails = oauthClientCacheSupport.getOAthDetails(clientId);
+        RegisteredClient.Builder builder = RegisteredClient.withId(clientDetails.getClientId()).clientId(clientDetails.getClientId())
                 .clientSecret(SecurityConstants.NOOP + clientDetails.getClientSecret())
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC);
-
         // 授权模式
-        Optional.ofNullable(clientDetails.getAuthorizedGrantTypes())
-                .ifPresent(grants -> StringUtils.commaDelimitedListToSet(grants)
-                        .forEach(s -> builder.authorizationGrantType(new AuthorizationGrantType(s))));
+        Optional.ofNullable(clientDetails.getAuthorizedGrantTypes()).ifPresent(grants -> StringUtils.commaDelimitedListToSet(grants).forEach(s -> builder.authorizationGrantType(new AuthorizationGrantType(s))));
         // 回调地址
-        Optional.ofNullable(clientDetails.getWebServerRedirectUri()).ifPresent(redirectUri -> Arrays
-                .stream(redirectUri.split(StrUtil.COMMA)).filter(StrUtil::isNotBlank).forEach(builder::redirectUri));
-
+        Optional.ofNullable(clientDetails.getWebServerRedirectUri()).ifPresent(redirectUri -> Arrays.stream(redirectUri.split(StrUtil.COMMA)).filter(StrUtil::isNotBlank).forEach(builder::redirectUri));
         // scope
-        Optional.ofNullable(clientDetails.getScope()).ifPresent(
-                scope -> Arrays.stream(scope.split(StrUtil.COMMA)).filter(StrUtil::isNotBlank).forEach(builder::scope));
-
+        Optional.ofNullable(clientDetails.getScope()).ifPresent(scope -> Arrays.stream(scope.split(StrUtil.COMMA)).filter(StrUtil::isNotBlank).forEach(builder::scope));
         return builder
                 .tokenSettings(TokenSettings.builder().accessTokenFormat(OAuth2TokenFormat.REFERENCE)
-                        .accessTokenTimeToLive(Duration.ofSeconds(Optional
-                                .ofNullable(clientDetails.getAccessTokenValidity()).orElse(accessTokenValiditySeconds)))
-                        .refreshTokenTimeToLive(
-                                Duration.ofSeconds(Optional.ofNullable(clientDetails.getRefreshTokenValidity())
-                                        .orElse(refreshTokenValiditySeconds)))
+                        .accessTokenTimeToLive(Duration.ofSeconds(Optional.ofNullable(clientDetails.getAccessTokenValidity()).orElse(accessTokenValiditySeconds)))
+                        .refreshTokenTimeToLive(Duration.ofSeconds(Optional.ofNullable(clientDetails.getRefreshTokenValidity()).orElse(refreshTokenValiditySeconds)))
                         .build())
-                .clientSettings(ClientSettings.builder()
-                        .requireAuthorizationConsent(!BooleanUtil.toBoolean(clientDetails.getAutoapprove())).build())
+                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(!BooleanUtil.toBoolean(clientDetails.getAutoapprove())).build())
                 .build();
 
     }

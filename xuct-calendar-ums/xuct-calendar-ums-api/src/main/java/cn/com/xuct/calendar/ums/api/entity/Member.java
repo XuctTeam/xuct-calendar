@@ -36,7 +36,7 @@ public class Member extends SuperEntity<Member> {
     private String avatar;
 
     /**
-     * 状态 0未正常 1冻结 2删除
+     * 状态 0正常 1冻结 2删除
      */
     private int status;
 

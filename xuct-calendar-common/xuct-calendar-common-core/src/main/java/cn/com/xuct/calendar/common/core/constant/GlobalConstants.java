@@ -21,7 +21,7 @@ package cn.com.xuct.calendar.common.core.constant;
 public interface GlobalConstants {
 
 
-    Integer STATUS_YES = 0;
+    String STATUS_YES = "0";
 
     String DEFAULT_USER_PASSWORD = "123456";
 

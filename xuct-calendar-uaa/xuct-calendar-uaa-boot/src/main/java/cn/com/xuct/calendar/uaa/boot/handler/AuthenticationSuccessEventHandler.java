@@ -54,10 +54,9 @@ public class AuthenticationSuccessEventHandler implements AuthenticationSuccessH
      * @param authentication the <tt>Authentication</tt> object which was created during
      *                       the authentication process.
      */
-    @SneakyThrows
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                        Authentication authentication) {
+                                        Authentication authentication) throws IOException {
         OAuth2AccessTokenAuthenticationToken accessTokenAuthentication = (OAuth2AccessTokenAuthenticationToken) authentication;
         Map<String, Object> map = accessTokenAuthentication.getAdditionalParameters();
         if (MapUtil.isNotEmpty(map)) {
