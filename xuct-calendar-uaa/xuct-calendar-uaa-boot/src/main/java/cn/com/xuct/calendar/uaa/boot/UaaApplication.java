@@ -29,7 +29,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 @EnableRedisAutoConfiguration
 @EnableSwagger2AutoConfiguration
 @EnableCaching
-@SpringBootApplication(scanBasePackages = {"cn.com.xuct.calendar.uaa.boot", "cn.com.xuct.calendar.common.web"})
+@SpringBootApplication(scanBasePackages = {"cn.com.xuct.calendar.uaa.boot"})
 @EnableDiscoveryClient
 @EnableOkFeignAutoConfiguration
 public class UaaApplication {
