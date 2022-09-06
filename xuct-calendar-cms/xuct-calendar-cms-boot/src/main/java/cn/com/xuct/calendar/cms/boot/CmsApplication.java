@@ -14,6 +14,7 @@ import cn.com.xuct.calendar.cms.api.feign.UmsMemberFeignClient;
 import cn.com.xuct.calendar.common.db.dao.config.MybatisPlusConfig;
 import cn.com.xuct.calendar.common.fdfs.annotation.EnableFdfsAutoConfiguration;
 import cn.com.xuct.calendar.common.http.annotation.EnableOkFeignAutoConfiguration;
+import cn.com.xuct.calendar.common.security.annotation.EnableOAuthResourceServer;
 import cn.com.xuct.calendar.common.swagger.annotation.EnableSwagger2AutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -40,11 +41,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableSwagger2AutoConfiguration
-@EnableOkFeignAutoConfiguration
 @EnableFdfsAutoConfiguration
 @EnableTransactionManagement
-@EnableFeignClients(basePackageClasses = {UmsMemberFeignClient.class})
 @Import(MybatisPlusConfig.class)
+@EnableOkFeignAutoConfiguration
+@EnableOAuthResourceServer
 public class CmsApplication {
 
     public static void main(String[] args) {

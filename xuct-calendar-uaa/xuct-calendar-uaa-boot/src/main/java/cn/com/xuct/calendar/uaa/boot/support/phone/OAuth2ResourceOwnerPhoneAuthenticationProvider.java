@@ -51,14 +51,14 @@ public class OAuth2ResourceOwnerPhoneAuthenticationProvider
 	@Override
 	public void checkClient(RegisteredClient registeredClient) {
 		assert registeredClient != null;
-		if (!registeredClient.getAuthorizationGrantTypes().contains(new AuthorizationGrantType(SecurityConstants.PHONE_GRANT_TYPE))) {
+		if (!registeredClient.getAuthorizationGrantTypes().contains(new AuthorizationGrantType(SecurityConstants.APP_GRANT_TYPE))) {
 			throw new OAuth2AuthenticationException(OAuth2ErrorCodes.UNAUTHORIZED_CLIENT);
 		}
 	}
 
 	@Override
 	public UsernamePasswordAuthenticationToken buildToken(Map<String, Object> reqParameters) {
-		String phone = (String) reqParameters.get(SecurityConstants.SMS_PARAMETER_NAME);
+		String phone = (String) reqParameters.get(SecurityConstants.PHONE_PARAM);
 		return new UsernamePasswordAuthenticationToken(phone, null);
 	}
 

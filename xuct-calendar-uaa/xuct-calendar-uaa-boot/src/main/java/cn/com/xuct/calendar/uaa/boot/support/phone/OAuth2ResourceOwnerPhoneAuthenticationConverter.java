@@ -30,13 +30,13 @@ public class OAuth2ResourceOwnerPhoneAuthenticationConverter
      */
     @Override
     public boolean support(String grantType) {
-        return SecurityConstants.PHONE_GRANT_TYPE.equals(grantType);
+        return SecurityConstants.APP_GRANT_TYPE.equals(grantType);
     }
 
     @Override
     public OAuth2ResourcePhoneSmsAuthenticationToken buildToken(Authentication clientPrincipal, Set requestedScopes,
                                                                 Map additionalParameters) {
-        return new OAuth2ResourcePhoneSmsAuthenticationToken(new AuthorizationGrantType(SecurityConstants.PHONE_GRANT_TYPE),
+        return new OAuth2ResourcePhoneSmsAuthenticationToken(new AuthorizationGrantType(SecurityConstants.APP_GRANT_TYPE),
                 clientPrincipal, requestedScopes, additionalParameters);
     }
 
@@ -49,10 +49,9 @@ public class OAuth2ResourceOwnerPhoneAuthenticationConverter
     public void checkParams(HttpServletRequest request) {
         MultiValueMap<String, String> parameters = OAuth2EndpointUtils.getParameters(request);
         // PHONE (REQUIRED)
-        String phone = parameters.getFirst(SecurityConstants.SMS_PARAMETER_NAME);
-        if (!StringUtils.hasText(phone) || parameters.get(SecurityConstants.SMS_PARAMETER_NAME).size() != 1) {
-            OAuth2EndpointUtils.throwError(OAuth2ErrorCodes.INVALID_REQUEST, SecurityConstants.SMS_PARAMETER_NAME,
-                    OAuth2EndpointUtils.ACCESS_TOKEN_REQUEST_ERROR_URI);
+        String phone = parameters.getFirst(SecurityConstants.PHONE_PARAM);
+        if (!StringUtils.hasText(phone) || parameters.get(SecurityConstants.PHONE_PARAM).size() != 1) {
+            OAuth2EndpointUtils.throwError(OAuth2ErrorCodes.INVALID_REQUEST, SecurityConstants.PHONE_PARAM, OAuth2EndpointUtils.ACCESS_TOKEN_REQUEST_ERROR_URI);
         }
     }
 }

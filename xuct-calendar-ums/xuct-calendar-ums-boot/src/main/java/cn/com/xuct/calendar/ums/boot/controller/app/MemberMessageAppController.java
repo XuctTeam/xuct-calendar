@@ -10,12 +10,11 @@
  */
 package cn.com.xuct.calendar.ums.boot.controller.app;
 
-import cn.com.xuct.calendar.common.core.enums.ColumnEnum;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.params.MessageDeleteBatchParam;
 import cn.com.xuct.calendar.common.module.params.MessageReadParam;
-import cn.com.xuct.calendar.common.web.utils.JwtUtils;
+import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
 import cn.com.xuct.calendar.ums.api.entity.MemberMessage;
 import cn.com.xuct.calendar.ums.api.vo.MemberMessagePageVo;
 import cn.com.xuct.calendar.ums.boot.service.IMemberMessageService;
@@ -55,7 +54,7 @@ public class MemberMessageAppController {
                                        @RequestParam(value = "status", required = false) Integer status) {
         MemberMessagePageVo memberMessagePageVo = new MemberMessagePageVo();
         memberMessagePageVo.setFinished(false);
-        List<MemberMessage> memberMessageList = memberMessageService.pages(title, JwtUtils.getUserId(), page, limit + 1, status);
+        List<MemberMessage> memberMessageList = memberMessageService.pages(title, SecurityUtils.getUserId(), page, limit + 1, status);
         if (CollectionUtils.isEmpty(memberMessageList)) {
             memberMessagePageVo.setFinished(true);
             memberMessagePageVo.setMessages(Lists.newArrayList());
@@ -75,7 +74,7 @@ public class MemberMessageAppController {
 
     @GetMapping("/count")
     public R<Long> count() {
-        return R.data(memberMessageService.count(Lists.newArrayList(Column.of("member_id", JwtUtils.getUserId()), Column.of("status", 0))));
+        return R.data(memberMessageService.count(Lists.newArrayList(Column.of("member_id", SecurityUtils.getUserId()), Column.of("status", 0))));
     }
 
     @GetMapping("")
@@ -91,7 +90,7 @@ public class MemberMessageAppController {
         memberMessage.setCreateTime(null);
         memberMessage.setUpdateTime(null);
         memberMessage.setStatus(1);
-        memberMessageService.update(memberMessage, Lists.newArrayList(Column.of("member_id", JwtUtils.getUserId()), Column.of("status", 0)));
+        memberMessageService.update(memberMessage, Lists.newArrayList(Column.of("member_id", SecurityUtils.getUserId()), Column.of("status", 0)));
         return R.status(true);
     }
 
@@ -127,7 +126,7 @@ public class MemberMessageAppController {
         List<MemberMessage> memberMessages = memberMessageService.find(
                 Lists.newArrayList(Column.in("id", param.getIds()),
                         Column.of("status", 0),
-                        Column.of("member_id", JwtUtils.getUserId()))
+                        Column.of("member_id", SecurityUtils.getUserId()))
         );
         if (CollectionUtils.isEmpty(memberMessages)) return R.fail("全部已读");
         memberMessages.stream().forEach(x -> x.setStatus(1));

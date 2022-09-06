@@ -18,7 +18,7 @@ import cn.com.xuct.calendar.common.module.params.GroupApplyParam;
 import cn.com.xuct.calendar.common.module.params.GroupJoinParam;
 import cn.com.xuct.calendar.common.module.params.GroupLeaveParam;
 import cn.com.xuct.calendar.common.module.params.GroupMemberIdsParam;
-import cn.com.xuct.calendar.common.web.utils.JwtUtils;
+import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
 import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
 import cn.com.xuct.calendar.ums.api.dto.GroupInfoDto;
 import cn.com.xuct.calendar.ums.api.dto.GroupMemberInfoDto;
@@ -67,7 +67,7 @@ public class MemberGroupAppController {
     @ApiOperation(value = "按拼音分组用户")
     @GetMapping("")
     public R<List<GroupMemberPinYinVo>> list(@RequestParam("groupId") Long groupId) {
-        List<GroupMemberInfoDto> memberInfoDtos = memberGroupService.list(groupId, JwtUtils.getUserId());
+        List<GroupMemberInfoDto> memberInfoDtos = memberGroupService.list(groupId, SecurityUtils.getUserId());
         if (CollectionUtils.isEmpty(memberInfoDtos)) return R.data(Lists.newArrayList());
         TreeMap<String, List<GroupMemberInfoDto>> pinyinVos = new TreeMap<String, List<GroupMemberInfoDto>>(
                 new Comparator<String>() {
@@ -98,7 +98,7 @@ public class MemberGroupAppController {
     @ApiOperation(value = "通过群组查询")
     @GetMapping("/query")
     public R<List<GroupMemberInfoDto>> queryMembers(@RequestParam("groupId") Long groupId) {
-        return R.data(memberGroupService.queryMembersByGroupId(groupId, JwtUtils.getUserId()));
+        return R.data(memberGroupService.queryMembersByGroupId(groupId, SecurityUtils.getUserId()));
     }
 
     @ApiOperation(value = "通过ids查询")
@@ -110,7 +110,7 @@ public class MemberGroupAppController {
     @ApiOperation(value = "申请入群")
     @PostMapping("/apply")
     public R<String> applyGroup(@RequestBody @Validated GroupJoinParam joinParam) {
-        MemberGroup memberGroup = memberGroupService.get(Lists.newArrayList(Column.of("group_id", joinParam.getId()), Column.of("member_id", JwtUtils.getUserId())));
+        MemberGroup memberGroup = memberGroupService.get(Lists.newArrayList(Column.of("group_id", joinParam.getId()), Column.of("member_id", SecurityUtils.getUserId())));
         if (memberGroup != null) {
             if (memberGroup.getStatus().equals(GroupMemberStatusEnum.APPLY)) return R.fail("已在申请中");
             return R.fail("已在群组");
@@ -124,9 +124,9 @@ public class MemberGroupAppController {
         /* 已有人数大于群组配置人数 */
         if (groupInfoDto.getCount() > groupInfoDto.getNum())
             return R.fail("群组已满");
-        memberGroupService.applyJoinGroup(groupInfoDto.getId(), groupInfoDto.getName(), groupInfoDto.getCreateMemberId(), JwtUtils.getUserId());
+        memberGroupService.applyJoinGroup(groupInfoDto.getId(), groupInfoDto.getName(), groupInfoDto.getCreateMemberId(), SecurityUtils.getUserId());
         /* 发出申请入群消息 */
-        SpringContextHolder.publishEvent(new GroupApplyEvent(this, JwtUtils.getUserId(), groupInfoDto.getId(), groupInfoDto.getName(), groupInfoDto.getCreateMemberId()));
+        SpringContextHolder.publishEvent(new GroupApplyEvent(this, SecurityUtils.getUserId(), groupInfoDto.getId(), groupInfoDto.getName(), groupInfoDto.getCreateMemberId()));
         return R.status(true);
     }
 
@@ -164,11 +164,11 @@ public class MemberGroupAppController {
         Group group = groupService.getById(param.getGroupId());
         Assert.notNull(group, "组不存在或非管理员");
         if (param.getAction() == 5) {
-            if (!String.valueOf(group.getMemberId()).equals(String.valueOf(JwtUtils.getUserId())))
+            if (!String.valueOf(group.getMemberId()).equals(String.valueOf(SecurityUtils.getUserId())))
                 return R.fail("非管理员");
             if (param.getMemberId() == null) return R.fail("会员ID不能为空");
         }
-        Long mId = param.getAction() == 4 ? JwtUtils.getUserId() : param.getMemberId();
+        Long mId = param.getAction() == 4 ? SecurityUtils.getUserId() : param.getMemberId();
         memberGroupService.leaveOut(param.getGroupId(), mId);
         /* 发出清理消息 */
         SpringContextHolder.publishEvent(new GroupLeaveEvent(this, group.getId(), group.getName(), mId, param.getAction()));

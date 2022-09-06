@@ -27,6 +27,8 @@ public interface SecurityConstants {
     String APP_GRANT_TYPE = "app";
 
 
+    String PHONE_PARAM = "phone";
+
     String WX_GRANT_TYPE = "wx";
 
 

@@ -15,6 +15,7 @@ import cn.com.xuct.calendar.common.core.constant.ServiceNameConstants;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.module.feign.UserInfo;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -29,5 +30,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = ServiceNameConstants.UMS_SERVICE, contextId = "users")
 public interface UserFeignClient {
 
+    @GetMapping("/api/feign/v1/user/get/username")
     R<UserInfo> info(@RequestParam("username") String username, @RequestHeader(SecurityConstants.FROM) String from);
 }

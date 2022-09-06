@@ -14,7 +14,7 @@ import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.module.enums.CommonPowerEnum;
 import cn.com.xuct.calendar.common.module.params.GroupAddParam;
 import cn.com.xuct.calendar.common.module.params.GroupDeleteParam;
-import cn.com.xuct.calendar.common.web.utils.JwtUtils;
+import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
 import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
 import cn.com.xuct.calendar.ums.api.dto.GroupInfoDto;
 import cn.com.xuct.calendar.ums.api.dto.GroupMemberInfoDto;
@@ -58,7 +58,7 @@ public class GroupAppController {
     @ApiOperation(value = "获取用户所在群组")
     @GetMapping("")
     public R<List<GroupInfoDto>> list() {
-        return R.data(groupService.findGroupCountByMember(JwtUtils.getUserId()));
+        return R.data(groupService.findGroupCountByMember(SecurityUtils.getUserId()));
     }
 
     @ApiOperation(value = "查询群组信息")
@@ -66,7 +66,7 @@ public class GroupAppController {
     public R<GroupInfoDto> get(@RequestParam("id") Long id) {
         GroupInfoDto groupInfoDto = groupService.getGroupCountByGroupId(id);
         Assert.notNull(groupInfoDto, "查询结果为空");
-        if (!String.valueOf(JwtUtils.getUserId()).equals(String.valueOf(groupInfoDto.getCreateMemberId())))
+        if (!String.valueOf(SecurityUtils.getUserId()).equals(String.valueOf(groupInfoDto.getCreateMemberId())))
             groupInfoDto.setPassword(null);
         return R.data(groupInfoDto);
     }
@@ -83,7 +83,7 @@ public class GroupAppController {
         dateScope = StringUtils.hasLength(dateScope) ? dateScope : null;
         numCount = StringUtils.hasLength(numCount) ? numCount : null;
 
-        List<GroupInfoDto> groupInfoDtos = groupService.findGroupBySearchByPage(JwtUtils.getUserId(), word, page, limit + 1, hasPass, dateScope, numCount);
+        List<GroupInfoDto> groupInfoDtos = groupService.findGroupBySearchByPage(SecurityUtils.getUserId(), word, page, limit + 1, hasPass, dateScope, numCount);
         if (groupInfoDtos.size() == limit + 1) {
             groupInfoDtos.remove(groupInfoDtos.size() - 1);
             groupSearchPageDto.setFinished(false);
@@ -95,13 +95,13 @@ public class GroupAppController {
     @ApiOperation(value = "我申请的群组")
     @GetMapping("/mine/apply")
     public R<List<GroupMemberInfoDto>> mineApplyGroup() {
-        return R.data(groupService.mineApplyGroup(JwtUtils.getUserId()));
+        return R.data(groupService.mineApplyGroup(SecurityUtils.getUserId()));
     }
 
     @ApiOperation(value = "申请我的群组")
     @GetMapping("/apply/mine")
     public R<List<GroupMemberInfoDto>> applyMineGroup() {
-        return R.data(groupService.applyMineGroup(JwtUtils.getUserId()));
+        return R.data(groupService.applyMineGroup(SecurityUtils.getUserId()));
     }
 
     @ApiOperation(value = "添加/修改群组")
@@ -110,7 +110,7 @@ public class GroupAppController {
         if (addParam.getId() != null) {
             Group group = groupService.getById(addParam.getId());
             if (group == null) return R.fail("群组不存在");
-            if (!String.valueOf(group.getMemberId()).equals(String.valueOf(JwtUtils.getUserId())))
+            if (!String.valueOf(group.getMemberId()).equals(String.valueOf(SecurityUtils.getUserId())))
                 return R.fail("非群组管理员");
             group.setName(addParam.getName());
             if (StringUtils.hasLength(addParam.getImageUrl()) && !addParam.getImageUrl().equals(group.getImages())) {
@@ -128,7 +128,7 @@ public class GroupAppController {
             groupService.updateById(group);
             return R.status(true);
         }
-        groupService.addGroup(JwtUtils.getUserId(), addParam.getName(), addParam.getPassword(), addParam.getImageUrl(), addParam.getPower(), addParam.getNum(), RandomUtil.randomNumbers(8));
+        groupService.addGroup(SecurityUtils.getUserId(), addParam.getName(), addParam.getPassword(), addParam.getImageUrl(), addParam.getPower(), addParam.getNum(), RandomUtil.randomNumbers(8));
         return R.status(true);
     }
 
@@ -138,12 +138,12 @@ public class GroupAppController {
         Group group = groupService.getById(param.getId());
         if (group == null)
             return R.fail("群组不存在");
-        if (!String.valueOf(group.getMemberId()).equals(String.valueOf(JwtUtils.getUserId())))
+        if (!String.valueOf(group.getMemberId()).equals(String.valueOf(SecurityUtils.getUserId())))
             return R.fail("非群组管理员");
         List<Long> memberIds = groupService.deleteGroup(param.getId());
         if (CollectionUtils.isEmpty(memberIds)) return R.status(true);
         /* 发出结算群组消息 */
-        SpringContextHolder.publishEvent(new GroupDeleteEvent(this, group.getName(), group.getId(), JwtUtils.getUserId(), memberIds));
+        SpringContextHolder.publishEvent(new GroupDeleteEvent(this, group.getName(), group.getId(), SecurityUtils.getUserId(), memberIds));
         return R.status(true);
     }
 }

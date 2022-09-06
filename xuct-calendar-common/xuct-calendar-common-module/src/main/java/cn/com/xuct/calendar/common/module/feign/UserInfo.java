@@ -32,9 +32,9 @@ import java.util.List;
 public class UserInfo implements Serializable {
 
 	/**
-	 * 用户基本信息
+	 * 为系统用户时为 user 会员时为member
 	 */
-	private MemberInfo memberInfo;
+	private PersonInfo personInfo;
 
 	/**
 	 * 权限标识集合

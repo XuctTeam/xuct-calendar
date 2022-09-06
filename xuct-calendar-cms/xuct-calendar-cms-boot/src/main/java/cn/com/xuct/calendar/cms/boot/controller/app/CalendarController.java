@@ -51,7 +51,7 @@ public class CalendarController {
     @ApiOperation(value = "日历列表")
     @GetMapping("/list")
     public R<List<MemberCalendar>> list() {
-        return R.data(memberCalendarService.queryMemberCalendar(JwtUtils.getUserId()));
+        return R.data(memberCalendarService.queryMemberCalendar(SecurityUtils.getUserId()));
     }
 
     @ApiOperation(value = "日历信息")
@@ -63,7 +63,7 @@ public class CalendarController {
     @ApiOperation(value = "新增日历")
     @PostMapping("")
     public R<String> createMemberCalendar(@Validated @RequestBody MemberCalendarUpdateReq memberCalendarUpdateReq) {
-        memberCalendarService.createMemberCalendar(JwtUtils.getUserId(), memberCalendarUpdateReq , false);
+        memberCalendarService.createMemberCalendar(SecurityUtils.getUserId(), memberCalendarUpdateReq , false);
         return R.status(true);
     }
 
@@ -72,15 +72,15 @@ public class CalendarController {
     public R<String> updateMemberCalendar(@Validated @RequestBody MemberCalendarUpdateReq memberCalendarUpdateReq) {
         MemberCalendar memberCalendar = memberCalendarService.getById(memberCalendarUpdateReq.getId());
         if (memberCalendar == null) return R.fail("未找到日历");
-        if (!JwtUtils.getUserId().toString().equals(memberCalendar.getMemberId().toString())) return R.fail("无权限修改");
-        memberCalendarService.updateMemberCalendar(JwtUtils.getUserId(), memberCalendar, memberCalendarUpdateReq);
+        if (!SecurityUtils.getUserId().toString().equals(memberCalendar.getMemberId().toString())) return R.fail("无权限修改");
+        memberCalendarService.updateMemberCalendar(SecurityUtils.getUserId(), memberCalendar, memberCalendarUpdateReq);
         return R.status(true);
     }
 
     @ApiOperation(value = "删除日历")
     @DeleteMapping
     public R<String> delete(@RequestParam("calendarId") Long calendarId) {
-        Long userId = JwtUtils.getUserId();
+        Long userId = SecurityUtils.getUserId();
         MemberCalendar memberCalendar = memberCalendarService.get(Lists.newArrayList(Column.of("member_id", userId), Column.of("calendar_id", calendarId)));
         if (memberCalendar == null) return R.fail("未找到日历");
         if(memberCalendar.getMajor() == 1) return R.fail("主日历无法删除");

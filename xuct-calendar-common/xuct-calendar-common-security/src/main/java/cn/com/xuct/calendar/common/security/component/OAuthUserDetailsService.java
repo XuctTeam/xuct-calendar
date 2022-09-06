@@ -4,7 +4,7 @@ import cn.com.xuct.calendar.common.core.constant.GlobalConstants;
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.res.RetOps;
-import cn.com.xuct.calendar.common.module.feign.MemberInfo;
+import cn.com.xuct.calendar.common.module.feign.PersonInfo;
 import cn.com.xuct.calendar.common.security.serivces.OAuthUser;
 import cn.com.xuct.calendar.common.module.feign.UserInfo;
 import cn.hutool.core.util.ArrayUtil;
@@ -64,13 +64,13 @@ public interface OAuthUserDetailsService extends UserDetailsService, Ordered {
         }
         Collection<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList(dbAuthsSet.toArray(new String[0]));
         if (appType) {
-            MemberInfo memberInfo = info.getMemberInfo();
-            if (memberInfo.getStatus() != 0) {
+            PersonInfo personInfo = info.getPersonInfo();
+            if (personInfo.getStatus() != 0) {
                 throw new DisabledException("该账户已被禁用!");
             }
-            return new OAuthUser(memberInfo.getUserId(), memberInfo.getUsername(),
-                    SecurityConstants.BCRYPT + memberInfo.getPassword(), memberInfo.getName(),
-                    true, true, true, StrUtil.equals(memberInfo.getStatus().toString(), GlobalConstants.STATUS_YES), authorities);
+            return new OAuthUser(personInfo.getUserId(), personInfo.getUsername(),
+                    SecurityConstants.BCRYPT + personInfo.getPassword(), personInfo.getName(),
+                    true, true, true, StrUtil.equals(personInfo.getStatus().toString(), GlobalConstants.STATUS_YES), authorities);
         }
         return null;
     }

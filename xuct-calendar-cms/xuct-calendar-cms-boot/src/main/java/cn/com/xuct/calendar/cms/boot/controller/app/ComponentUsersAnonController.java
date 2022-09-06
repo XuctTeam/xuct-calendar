@@ -16,13 +16,10 @@ import cn.com.xuct.calendar.cms.api.feign.UmsMemberFeignClient;
 import cn.com.xuct.calendar.cms.api.vo.ComponentShareVo;
 import cn.com.xuct.calendar.cms.boot.service.IComponentAttendService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentService;
-import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.vo.Column;
-import cn.com.xuct.calendar.common.module.feign.MemberFeignInfo;
-import cn.com.xuct.calendar.common.web.utils.JwtUtils;
-import cn.com.xuct.calendar.common.web.utils.WebUtils;
-import org.springframework.util.StringUtils;
+import cn.com.xuct.calendar.common.module.feign.PersonInfo;
+import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
@@ -60,16 +57,11 @@ public class ComponentUsersAnonController {
         if (component == null) return R.fail("未找到事件");
         ComponentShareVo shareVo = new ComponentShareVo();
         BeanUtils.copyProperties(component, shareVo);
-        R<MemberFeignInfo> memberFeignInfoR = umsMemberFeignClient.getMemberById(component.getCreatorMemberId());
+        R<PersonInfo> memberFeignInfoR = umsMemberFeignClient.getMemberById(component.getCreatorMemberId());
         if (memberFeignInfoR != null && memberFeignInfoR.isSuccess()) {
             shareVo.setCreateMemberName(memberFeignInfoR.getData().getName());
         }
-        String headerToken = WebUtils.getHeaders(SecurityConstants.JWT_PAYLOAD_KEY);
-        if (!StringUtils.hasLength(headerToken)) {
-            shareVo.setAttend(false);
-            return R.data(shareVo);
-        }
-        Long userId = JwtUtils.getUserId();
+        Long userId = SecurityUtils.getUserId();
         ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", componentId), Column.of("member_id", userId)));
         if (attend != null) {
             shareVo.setAttend(true);

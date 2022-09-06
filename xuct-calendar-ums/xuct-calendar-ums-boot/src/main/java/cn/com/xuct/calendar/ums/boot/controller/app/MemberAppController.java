@@ -26,7 +26,7 @@ import cn.com.xuct.calendar.common.module.feign.req.WxUserPhoneFeignInfo;
 import cn.com.xuct.calendar.common.module.params.*;
 import cn.com.xuct.calendar.common.module.req.MemberGetPhoneReq;
 import cn.com.xuct.calendar.common.module.vo.MemberPhoneAuthVo;
-import cn.com.xuct.calendar.common.web.utils.JwtUtils;
+import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
 import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
 import cn.com.xuct.calendar.ums.api.entity.Member;
 import cn.com.xuct.calendar.ums.api.entity.MemberAuth;
@@ -82,7 +82,7 @@ public class MemberAppController {
     @ApiOperation(value = "获取用户基础信息及所有认证")
     @GetMapping("/info/all")
     public R<MemberInfoVo> getAllInfo() {
-        Long userId = JwtUtils.getUserId();
+        Long userId = SecurityUtils.getUserId();
         Member member = memberService.findMemberById(userId);
         if (member == null) return R.fail("获取用户信息失败");
         MemberInfoVo memberInfoVo = new MemberInfoVo();
@@ -96,7 +96,7 @@ public class MemberAppController {
     @ApiOperation(value = "获取用户基础信息")
     @GetMapping("/info/base")
     public R<Member> getBaseInfo() {
-        Long userId = JwtUtils.getUserId();
+        Long userId = SecurityUtils.getUserId();
         Member member = memberService.findMemberById(userId);
         if (member == null) return R.fail("获取用户信息失败");
         return R.data(member);
@@ -105,7 +105,7 @@ public class MemberAppController {
     @ApiOperation(value = "获取用户所有认证")
     @GetMapping("/auths")
     public R<List<MemberAuth>> auths() {
-        Long userId = JwtUtils.getUserId();
+        Long userId = SecurityUtils.getUserId();
         List<MemberAuth> memberAuths = memberAuthService.find(Column.of("member_id", userId));
         memberAuths.stream().forEach(item -> item.setPassword(null));
         return R.data(memberAuths);
@@ -114,13 +114,13 @@ public class MemberAppController {
     @ApiOperation(value = "获取用户微信认证")
     @GetMapping("/auth/wechat")
     public R<MemberAuth> getWxAuth() {
-        return R.data(memberAuthService.get(Lists.newArrayList(Column.of("identity_type", IdentityTypeEnum.open_id), Column.of("member_id", JwtUtils.getUserId()))));
+        return R.data(memberAuthService.get(Lists.newArrayList(Column.of("identity_type", IdentityTypeEnum.open_id), Column.of("member_id", SecurityUtils.getUserId()))));
     }
 
     @ApiOperation(value = "修改密码")
     @PostMapping("/password")
     public R<String> modifyPassword(@Validated @RequestBody MemberPasswordParam param) {
-        Long userId = JwtUtils.getUserId();
+        Long userId = SecurityUtils.getUserId();
         String password = this.delegatingPassword(param.getPassword()).replace("{bcrypt}", "");
         List<MemberAuth> memberAuths = memberAuthService.find(Column.of("member_id", userId));
         memberAuths.stream().forEach(item -> item.setPassword(password));
@@ -131,7 +131,7 @@ public class MemberAppController {
     @ApiOperation(value = "修改名字")
     @PostMapping("/name")
     public R<Member> modifyName(@Validated @RequestBody MemberNameParam param) {
-        Long userId = JwtUtils.getUserId();
+        Long userId = SecurityUtils.getUserId();
         Member member = memberService.findMemberById(userId);
         if (member == null) return R.fail("获取用户信息失败");
         member.setName(param.getName());
@@ -152,7 +152,7 @@ public class MemberAppController {
     @ApiOperation(value = "修改头像")
     @PostMapping("/avatar")
     public R<Member> modifyAvatar(@Validated @RequestBody MemberAvatarParam param) {
-        Member member = memberService.findMemberById(JwtUtils.getUserId());
+        Member member = memberService.findMemberById(SecurityUtils.getUserId());
         if (member == null) return R.fail("获取用户信息失败");
         member.setAvatar(param.getAvatar());
         memberService.updateMember(member);
@@ -163,7 +163,7 @@ public class MemberAppController {
     @ApiOperation(value = "获取微信手机号")
     @PostMapping("/phone/get")
     public R<String> getWxPhone(@RequestBody MemberGetPhoneReq getPhoneReq) {
-        Long userId = JwtUtils.getUserId();
+        Long userId = SecurityUtils.getUserId();
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("member_id", userId), Column.of("identity_type", IdentityTypeEnum.open_id)));
         if (memberAuth == null) throw new SvrException(SvrResCode.UMS_MEMBER_AUTH_TYPE_ERROR);
         R<WxMaPhoneNumberInfo> wxMaPhoneNumberInfoR = basicServicesFeignClient.getPhoneNoInfo(WxUserPhoneFeignInfo.builder().code(getPhoneReq.getCode()).build());
@@ -174,7 +174,7 @@ public class MemberAppController {
     @ApiOperation(value = "手机号绑定")
     @PostMapping("/phone/bind")
     public R<MemberPhoneAuthVo> bindPhone(@Validated @RequestBody MemberPhoneParam param) {
-        Long userId = JwtUtils.getUserId();
+        Long userId = SecurityUtils.getUserId();
         /* 1.验证验证码 */
         smsCodeValidateSupport.validateCode(1, String.valueOf(param.getPhone()), param.getCode());
         /* 2.查询绑定*/
@@ -207,7 +207,7 @@ public class MemberAppController {
     @ApiOperation(value = "手机号解绑")
     @PostMapping("/phone/unbind")
     public R<String> unbindPhone(@Validated @RequestBody MemberPhoneParam param) {
-        Long userId = JwtUtils.getUserId();
+        Long userId = SecurityUtils.getUserId();
         /* 1.验证验证码 */
         smsCodeValidateSupport.validateCode(2, String.valueOf(param.getPhone()), param.getCode());
         /* 2.校验登陆方式 */
@@ -224,7 +224,7 @@ public class MemberAppController {
     public R<String> bindUserName(@RequestBody MemberUsernameParam param) {
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", param.getUsername()), Column.of("identity_type", IdentityTypeEnum.user_name)));
         if (memberAuth != null) return R.fail("账号已存在");
-        Long userId = JwtUtils.getUserId();
+        Long userId = SecurityUtils.getUserId();
         memberAuth = new MemberAuth();
         memberAuth.setMemberId(userId);
         memberAuth.setUsername(param.getUsername());
@@ -243,7 +243,7 @@ public class MemberAppController {
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", param.getEmail()), Column.of("identity_type", IdentityTypeEnum.email)));
         if (memberAuth != null) return R.fail("邮箱已存在");
         memberAuth = new MemberAuth();
-        memberAuth.setMemberId(JwtUtils.getUserId());
+        memberAuth.setMemberId(SecurityUtils.getUserId());
         memberAuth.setUsername(param.getEmail());
         memberAuth.setIdentityType(IdentityTypeEnum.email);
         memberAuthService.save(memberAuth);
@@ -256,7 +256,7 @@ public class MemberAppController {
         /* 1.验证验证码 */
         smsCodeValidateSupport.validateCode(4, String.valueOf(param.getEmail()), param.getCode());
         /* 2.校验登陆方式 */
-        List<MemberAuth> memberAuths = memberAuthService.find(Lists.newArrayList(Column.of("member_id", String.valueOf(JwtUtils.getUserId()))));
+        List<MemberAuth> memberAuths = memberAuthService.find(Lists.newArrayList(Column.of("member_id", String.valueOf(SecurityUtils.getUserId()))));
         if (CollectionUtils.isEmpty(memberAuths) || memberAuths.size() == 1) return R.fail("仅存在唯一登陆方式");
         Optional<MemberAuth> optPhoneAuth = memberAuths.stream().filter(x -> x.getIdentityType().equals(IdentityTypeEnum.email)).findFirst();
         if (!optPhoneAuth.isPresent()) return R.fail("未绑定邮箱");
@@ -278,7 +278,7 @@ public class MemberAppController {
         if (memberAuth != null) return R.fail("微信用户已绑定");
         WxMaUserInfo wxMaUserInfo = wxMaUserInfoR.getData();
         memberAuth = new MemberAuth();
-        memberAuth.setMemberId(JwtUtils.getUserId());
+        memberAuth.setMemberId(SecurityUtils.getUserId());
         memberAuth.setUsername(session.getOpenid());
         memberAuth.setNickName(wxMaUserInfo.getNickName());
         memberAuth.setIdentityType(IdentityTypeEnum.open_id);
@@ -291,22 +291,22 @@ public class MemberAppController {
     @ApiOperation(value = "使用微信头像昵称")
     @PostMapping("/wx/update/info")
     public R<Member> modifyNameAndAvatarToWx() {
-        MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("member_id", JwtUtils.getUserId()), Column.of("identity_type", IdentityTypeEnum.open_id)));
+        MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("member_id", SecurityUtils.getUserId()), Column.of("identity_type", IdentityTypeEnum.open_id)));
         if (memberAuth == null) return R.fail("未找到微信信息");
-        Member member = memberService.getById(JwtUtils.getUserId());
+        Member member = memberService.getById(SecurityUtils.getUserId());
         if (member == null) return R.fail("获取用户信息失败");
         member.setName(memberAuth.getNickName());
         member.setAvatar(memberAuth.getAvatar());
         memberService.updateById(member);
         /* 发送修改名称事件 */
-        SpringContextHolder.publishEvent(new MemberEvent(this, JwtUtils.getUserId(), memberAuth.getNickName(), 2));
+        SpringContextHolder.publishEvent(new MemberEvent(this, SecurityUtils.getUserId(), memberAuth.getNickName(), 2));
         return R.data(member);
     }
 
     @ApiOperation(value = "用户账号合并")
     @PostMapping("/merge")
     public R<String> mergeAccount(@Validated @RequestBody MemberMergeParam memberMergeParam) {
-        Long userId = JwtUtils.getUserId();
+        Long userId = SecurityUtils.getUserId();
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", memberMergeParam.getPhone()), Column.of("identity_type", IdentityTypeEnum.phone)));
         Assert.notNull(memberAuth, "获取用户信息失败");
         R<Long> memberCalendarNumberR = calendarFeignClient.countCalendarNumberByMemberIds(CalendarCountFeignInfo.builder().memberIds(Lists.newArrayList(userId, memberAuth.getMemberId())).build());
@@ -316,7 +316,7 @@ public class MemberAppController {
         if (mergeCalendarR == null || !mergeCalendarR.isSuccess()) return R.fail("合并日历失败");
         memberService.mergeMember(userId, memberAuth);
         /* 发送账号合并消息 */
-        SpringContextHolder.publishEvent(new MemberEvent(this, JwtUtils.getUserId(), memberAuth.getNickName(), 3));
+        SpringContextHolder.publishEvent(new MemberEvent(this, SecurityUtils.getUserId(), memberAuth.getNickName(), 3));
 
         return R.status(true);
     }

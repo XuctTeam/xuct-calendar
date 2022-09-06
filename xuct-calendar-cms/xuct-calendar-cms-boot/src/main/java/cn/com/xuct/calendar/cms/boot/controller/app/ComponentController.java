@@ -38,11 +38,11 @@ import cn.com.xuct.calendar.common.fdfs.exception.FdfsClientException;
 import cn.com.xuct.calendar.common.module.dto.AlarmInfoDto;
 import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
 import cn.com.xuct.calendar.common.module.enums.ComponentRepeatTypeEnum;
-import cn.com.xuct.calendar.common.module.feign.MemberFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.PersonInfo;
 import cn.com.xuct.calendar.common.module.feign.req.ShortChainFeignInfo;
 import cn.com.xuct.calendar.common.module.params.ComponentAddParam;
 import cn.com.xuct.calendar.common.module.params.ComponentAttendParam;
-import cn.com.xuct.calendar.common.web.utils.JwtUtils;
+import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
 import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DatePattern;
@@ -123,7 +123,7 @@ public class ComponentController {
         Component component = componentService.getById(id);
         if (component == null) throw new SvrException(SvrResCode.CMS_COMPONENT_NOT_FOUND);
         final List<DateTime> dayRanges = "0".equals(component.getRepeatStatus()) ?
-                DateHelper.getRangeDateList(component.getDtstart(), component.getDtend()) : DateHelper.getRepeatRangeDataList(component, JwtUtils.getTimeZone());
+                DateHelper.getRangeDateList(component.getDtstart(), component.getDtend()) : DateHelper.getRepeatRangeDataList(component, SecurityUtils.getTimeZone());
         if (CollectionUtils.isEmpty(dayRanges)) throw new SvrException(SvrResCode.CMS_COMPONENT_DAY_LIST_EMPTY);
         List<ComponentListVo> componentListVos = Lists.newArrayList();
         ComponentListVo componentListVo = null;
@@ -142,7 +142,7 @@ public class ComponentController {
     @GetMapping("/list/search")
     public R<ComponentSearchVo> listBySearch(@RequestParam("word") String word, @RequestParam("limit") Integer limit, @RequestParam("page") Integer page) {
         ComponentSearchVo componentSearchVo = new ComponentSearchVo();
-        List<CalendarComponentVo> calendarComponentVos = componentAttendService.searchWord(JwtUtils.getUserId(), word, page, limit + 1);
+        List<CalendarComponentVo> calendarComponentVos = componentAttendService.searchWord(SecurityUtils.getUserId(), word, page, limit + 1);
         if (calendarComponentVos.size() <= limit) {
             componentSearchVo.setFinished(true);
             componentSearchVo.setComponents(calendarComponentVos);
@@ -162,12 +162,12 @@ public class ComponentController {
         CalendarComponentVo calendarComponentVo = new CalendarComponentVo();
         BeanUtils.copyProperties(component, calendarComponentVo);
         Long calendarId = component.getCalendarId();
-        if (!String.valueOf(component.getCreatorMemberId()).equals(String.valueOf(JwtUtils.getUserId()))) {
-            ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", id), Column.of("member_id", JwtUtils.getUserId())));
+        if (!String.valueOf(component.getCreatorMemberId()).equals(String.valueOf(SecurityUtils.getUserId()))) {
+            ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", id), Column.of("member_id", SecurityUtils.getUserId())));
             Assert.notNull(attend, "邀请数据错误");
             calendarId = attend.getAttendCalendarId();
         }
-        MemberCalendar memberCalendar = memberCalendarService.get(Lists.newArrayList(Column.of("calendar_id", calendarId), Column.of("member_id", JwtUtils.getUserId())));
+        MemberCalendar memberCalendar = memberCalendarService.get(Lists.newArrayList(Column.of("calendar_id", calendarId), Column.of("member_id", SecurityUtils.getUserId())));
         Assert.notNull(memberCalendar, "日历不存在");
         calendarComponentVo.setColor(memberCalendar.getColor());
         calendarComponentVo.setCalendarName(memberCalendar.getName());
@@ -177,7 +177,7 @@ public class ComponentController {
     @ApiOperation(value = "新增或修改日程")
     @PostMapping
     public R<String> add(@Validated @RequestBody ComponentAddParam param) {
-        MemberCalendar memberCalendar = memberCalendarService.get(Lists.newArrayList(Column.of("calendar_id", Long.valueOf(param.getCalendarId())), Column.of("member_id", JwtUtils.getUserId())));
+        MemberCalendar memberCalendar = memberCalendarService.get(Lists.newArrayList(Column.of("calendar_id", Long.valueOf(param.getCalendarId())), Column.of("member_id", SecurityUtils.getUserId())));
         if (memberCalendar == null) throw new SvrException(SvrResCode.CMS_CALENDAR_NOT_FOUND);
         List<ComponentAlarm> componentAlarmList = null;
         Component component = null;
@@ -207,7 +207,7 @@ public class ComponentController {
     public R<String> delete(@PathVariable("id") Long id) {
         Component component = componentService.getById(id);
         Assert.notNull(component, "事件不存在");
-        List<Long> memberIds = componentService.deleteByComponentId(JwtUtils.getUserId(), id);
+        List<Long> memberIds = componentService.deleteByComponentId(SecurityUtils.getUserId(), id);
         /* 1.推送日程删除消息 */
         if (CollectionUtils.isEmpty(memberIds)) return R.status(true);
         SpringContextHolder.publishEvent(new ComponentDelEvent(this, component.getId(), component.getSummary(),
@@ -218,7 +218,7 @@ public class ComponentController {
     @ApiOperation(value = "查询所有邀请人ID")
     @GetMapping("/attend/member/ids")
     public R<List<String>> queryComponentMemberIds(@RequestParam("componentId") Long componentId) {
-        List<Long> memberIds = componentAttendService.listByComponentIdNoMemberId(JwtUtils.getUserId(), componentId);
+        List<Long> memberIds = componentAttendService.listByComponentIdNoMemberId(SecurityUtils.getUserId(), componentId);
         if (CollectionUtils.isEmpty(memberIds)) return R.data(Lists.newArrayList());
         return R.data(memberIds.stream().map(x -> String.valueOf(x)).collect(Collectors.toList()));
     }
@@ -228,7 +228,7 @@ public class ComponentController {
     public R<List<ComponentAttendVo>> queryComponentAttend(@RequestParam("componentId") Long componentId, @RequestParam("createMemberId") Long createMemberId) {
         List<Long> memberIds = componentAttendService.listByComponentIdNoMemberId(createMemberId, componentId);
         if (CollectionUtils.isEmpty(memberIds)) return R.data(Lists.newArrayList());
-        R<List<MemberFeignInfo>> memberInfoResult = umsMemberFeignClient.listMemberByIds(memberIds);
+        R<List<PersonInfo>> memberInfoResult = umsMemberFeignClient.listMemberByIds(memberIds);
         if (memberInfoResult == null || !memberInfoResult.isSuccess()) return R.data(Lists.newArrayList());
         return R.data(memberInfoResult.getData().stream().map(info -> {
             ComponentAttendVo attendVo = new ComponentAttendVo();
@@ -244,7 +244,7 @@ public class ComponentController {
     public R<Integer> getComponentAttendStatus(@RequestParam("componentId") Long componentId) {
         Component component = componentService.getById(componentId);
         Assert.notNull(component, "事件不存在");
-        ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", componentId), Column.of("member_id", JwtUtils.getUserId())));
+        ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", componentId), Column.of("member_id", SecurityUtils.getUserId())));
         Assert.notNull(attend, "邀请数据错误");
         return R.data(attend.getStatus());
     }
@@ -252,7 +252,7 @@ public class ComponentController {
     @ApiOperation(value = "邀请待定或接受")
     @PostMapping("/attend/status")
     public R<String> updateComponentAttendStatus(@RequestBody ComponentAttendParam param) {
-        ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", param.getComponentId()), Column.of("member_id", JwtUtils.getUserId())));
+        ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", param.getComponentId()), Column.of("member_id", SecurityUtils.getUserId())));
         Assert.notNull(attend, "邀请数据错误");
         attend.setStatus(param.getStatus());
         componentAttendService.updateById(attend);
@@ -262,7 +262,7 @@ public class ComponentController {
     @ApiOperation(value = "拒绝邀请")
     @DeleteMapping("/attend/{componentId}")
     public R<String> deleteComponentAttend(@PathVariable("componentId") Long componentId) {
-        ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", componentId), Column.of("member_id", JwtUtils.getUserId())));
+        ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", componentId), Column.of("member_id", SecurityUtils.getUserId())));
         Assert.notNull(attend, "邀请数据错误");
         componentAttendService.removeById(attend);
         return R.status(true);
@@ -273,7 +273,7 @@ public class ComponentController {
     public R<Integer> attendExists(@RequestParam("componentId") Long componentId) {
         Component component = componentService.getById(componentId);
         Assert.notNull(component, "事件不存在");
-        ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", componentId), Column.of("member_id", JwtUtils.getUserId())));
+        ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", componentId), Column.of("member_id", SecurityUtils.getUserId())));
         return R.data(attend == null ? 0 : 1);
     }
 
@@ -281,7 +281,7 @@ public class ComponentController {
     @PostMapping("/attend/accept")
     public R<String> acceptAttend(@RequestBody ComponentAttendParam param) {
         Component component = componentService.getById(param.getComponentId());
-        Long memberId = JwtUtils.getUserId();
+        Long memberId = SecurityUtils.getUserId();
         Assert.notNull(component, "事件不存在");
         ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", param.getComponentId()), Column.of("member_id", memberId)));
         Assert.isNull(attend, "已加入邀请");
@@ -336,7 +336,7 @@ public class ComponentController {
         if (!param.getRepeatStatus().equals("0") && param.getRepeatUntil() == null)
             throw new SvrException(SvrResCode.CMS_COMPONENT_REPEAT_UNTIL_EMPTY);
         this.setComponent(param, component);
-        return componentService.addComponent(JwtUtils.getUserId(), JwtUtils.getTimeZone(), Long.valueOf(param.getCalendarId()), component, param.getMemberIds(), param.getAlarmType(), param.getAlarmTimes());
+        return componentService.addComponent(SecurityUtils.getUserId(), SecurityUtils.getTimeZone(), Long.valueOf(param.getCalendarId()), component, param.getMemberIds(), param.getAlarmType(), param.getAlarmTimes());
     }
 
     /**
@@ -371,7 +371,7 @@ public class ComponentController {
             changed = true;
         }
         this.setComponent(param, component);
-        return componentService.updateComponent(oldCalendarId, JwtUtils.getUserId(), JwtUtils.getTimeZone(), component, param.getMemberIds(), param.getAlarmType(), param.getAlarmTimes(), changed);
+        return componentService.updateComponent(oldCalendarId, SecurityUtils.getUserId(), SecurityUtils.getTimeZone(), component, param.getMemberIds(), param.getAlarmType(), param.getAlarmTimes(), changed);
     }
 
 
@@ -380,7 +380,7 @@ public class ComponentController {
         component.setStartTime(param.getDtstart().getTime());
         component.setCalendarId(Long.valueOf(param.getCalendarId()));
         component.setEndTime(param.getDtend().getTime());
-        component.setCreatorMemberId(JwtUtils.getUserId());
+        component.setCreatorMemberId(SecurityUtils.getUserId());
         component.setStatus(CommonStatusEnum.NORMAL);
         if (param.getRepeatStatus().equals("0")) {
             component.setRepeatType(ComponentRepeatTypeEnum.UNKNOWN);
@@ -433,7 +433,7 @@ public class ComponentController {
             if ("0".equals(component.getRepeatStatus())) {
                 dayRanges.addAll(DateHelper.getRangeDateList(component.getDtstart(), component.getDtend()));
             } else {
-                dayRanges.addAll(DateHelper.getRepeatRangeDataList(component, JwtUtils.getTimeZone()));
+                dayRanges.addAll(DateHelper.getRepeatRangeDataList(component, SecurityUtils.getTimeZone()));
             }
             if (dayRanges.size() == 0) return;
             for (int i = 0; i < dayRanges.size(); i++) {

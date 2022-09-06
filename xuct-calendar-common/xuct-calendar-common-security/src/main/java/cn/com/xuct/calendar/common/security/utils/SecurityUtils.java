@@ -8,7 +8,7 @@
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package cn.com.xuct.calendar.uaa.boot.utils;
+package cn.com.xuct.calendar.common.security.utils;
 
 import cn.com.xuct.calendar.common.security.serivces.OAuthUser;
 import cn.hutool.core.util.StrUtil;
@@ -50,6 +50,27 @@ public class SecurityUtils {
             return (OAuthUser) principal;
         }
         return null;
+    }
+
+
+    public static Long getUserId() {
+        Authentication authentication = getAuthentication();
+        return getUser(authentication).getId();
+    }
+
+    /**
+     * 解析JWT获取时区
+     *
+     * @return
+     */
+    public static String getTimeZone() {
+        Authentication authentication = getAuthentication();
+        return "";
+    }
+
+    public static String getUserName(){
+        Authentication authentication = getAuthentication();
+        return getUser(authentication).getUsername();
     }
 
 

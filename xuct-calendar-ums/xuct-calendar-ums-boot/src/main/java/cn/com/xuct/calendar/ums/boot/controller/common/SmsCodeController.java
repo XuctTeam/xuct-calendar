@@ -12,9 +12,8 @@ package cn.com.xuct.calendar.ums.boot.controller.common;
 
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.res.R;
-import cn.com.xuct.calendar.common.module.feign.req.SmsCodeFeignInfo;
 import cn.com.xuct.calendar.common.module.params.MemberPhoneParam;
-import cn.com.xuct.calendar.common.web.utils.JwtUtils;
+import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
 import cn.com.xuct.calendar.ums.api.feign.BasicServicesFeignClient;
 import cn.hutool.core.util.RandomUtil;
 import com.google.common.collect.Lists;
@@ -62,7 +61,7 @@ public class SmsCodeController {
     }
 
     private String sendBindCode(String phone, Integer type) {
-        String userId = String.valueOf(JwtUtils.getUserId());
+        String userId = String.valueOf(SecurityUtils.getUserId());
         String key = type == 1 ? RedisConstants.MEMBER_BIND_PHONE_CODE_KEY : RedisConstants.MEMBER_UNBIND_PHONE_CODE_KEY;
         String code = RandomUtil.randomNumbers(6);
         stringRedisTemplate.opsForValue().set(key.concat(userId).concat(":").concat(phone), code, 60 * 2, TimeUnit.SECONDS);

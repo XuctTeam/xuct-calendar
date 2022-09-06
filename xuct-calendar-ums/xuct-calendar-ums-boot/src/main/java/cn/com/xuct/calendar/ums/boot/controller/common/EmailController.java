@@ -10,11 +10,12 @@
  */
 package cn.com.xuct.calendar.ums.boot.controller.common;
 
+import ch.qos.logback.core.net.SMTPAppenderBase;
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.module.feign.req.EmailFeignInfo;
 import cn.com.xuct.calendar.common.module.params.EmailCodeParam;
-import cn.com.xuct.calendar.common.web.utils.JwtUtils;
+import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
 import cn.com.xuct.calendar.ums.api.feign.BasicServicesFeignClient;
 import cn.hutool.core.util.RandomUtil;
 import com.google.common.collect.Lists;
@@ -62,7 +63,8 @@ public class EmailController {
                     .params(new HashMap<>() {{
                         put("title", param.getType() == 1 ? "邮箱绑定" : "邮箱解绑");
                         put("code", code);
-                        put("userName", JwtUtils.getUsername());
+                        SMTPAppenderBase<Object> JwtUtils;
+                        put("userName", SecurityUtils.getUserName());
                         put("duration", "2");
                     }})
                     .build());
@@ -71,7 +73,7 @@ public class EmailController {
     }
 
     private String bindEmail(final String email, final Integer type) {
-        String userId = String.valueOf(JwtUtils.getUserId());
+        String userId = String.valueOf(SecurityUtils.getUserId());
         String key = type == 1 ? RedisConstants.MEMBER_BIND_EMAIL_CODE_KEY : RedisConstants.MEMBER_UNBIND_EMAIL_CODE_KEY;
         String code = RandomUtil.randomNumbers(6);
         stringRedisTemplate.opsForValue().set(key.concat(userId).concat(":").concat(email), code, 60 * 2, TimeUnit.SECONDS);

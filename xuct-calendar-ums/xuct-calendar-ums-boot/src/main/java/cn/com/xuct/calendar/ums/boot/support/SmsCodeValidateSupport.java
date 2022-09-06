@@ -13,7 +13,7 @@ package cn.com.xuct.calendar.ums.boot.support;
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.exception.SvrException;
 import cn.com.xuct.calendar.common.core.res.SvrResCode;
-import cn.com.xuct.calendar.common.web.utils.JwtUtils;
+import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
@@ -46,7 +46,7 @@ public class SmsCodeValidateSupport {
      * @Date: 2022/3/28 15:00
      */
     public void validateCode(Integer type, String val, String code) {
-        String userId = String.valueOf(JwtUtils.getUserId());
+        String userId = String.valueOf(SecurityUtils.getUserId());
         String redisKeys = this.redisKey(type).concat(userId).concat(":").concat(val);
         String cacheCode = stringRedisTemplate.opsForValue().get(redisKeys);
         if (!StringUtils.hasLength(cacheCode)  || !code.toLowerCase().equals(cacheCode.toLowerCase()))

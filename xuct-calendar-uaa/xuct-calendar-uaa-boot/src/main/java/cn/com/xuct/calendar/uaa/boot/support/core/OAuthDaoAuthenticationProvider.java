@@ -1,8 +1,8 @@
 package cn.com.xuct.calendar.uaa.boot.support.core;
 
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
-import cn.com.xuct.calendar.common.web.utils.WebUtils;
 import cn.com.xuct.calendar.common.security.component.OAuthUserDetailsService;
+import cn.com.xuct.calendar.common.web.utils.WebUtils;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import cn.hutool.extra.spring.SpringUtil;
@@ -70,7 +70,7 @@ public class OAuthDaoAuthenticationProvider extends AbstractUserDetailsAuthentic
 
 		// app 模式不用校验密码
 		String grantType = WebUtils.getRequest().get().getParameter(OAuth2ParameterNames.GRANT_TYPE);
-		if (StrUtil.equals(SecurityConstants.PHONE_GRANT_TYPE, grantType)) {
+		if (StrUtil.equals(SecurityConstants.APP_GRANT_TYPE, grantType) || StrUtil.equals(SecurityConstants.WX_GRANT_TYPE, grantType)) {
 			return;
 		}
 
