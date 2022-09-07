@@ -8,7 +8,7 @@
  * <author>          <time>          <version>          <desc>
  * Derek Xu         修改时间           版本号              描述
  */
-package cn.com.xuct.calendar.uaa.boot.support.repository;
+package cn.com.xuct.calendar.uaa.boot.support.core;
 
 import cn.com.xuct.calendar.common.core.constant.CacheConstants;
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;

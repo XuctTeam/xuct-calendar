@@ -31,15 +31,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = ServiceNameConstants.UMS_SERVICE, contextId = "members")
 public interface MemberFeignClient {
 
-    @GetMapping("/api/feign/v1/member/get/phone")
-    R<UserInfo> loadMemberByMobile(@RequestParam("phone") String phone);
-
     @GetMapping("/api/feign/v1/member/get/openId")
-    R<UserInfo> loadMemberByOpenId(@RequestParam("openId") String openId ,  @RequestHeader(SecurityConstants.FROM) String from);
+    R<UserInfo> loadMemberByOpenId(@RequestParam("openId") String openId, @RequestHeader(SecurityConstants.FROM) String from);
 
     @GetMapping("/api/feign/v1/member/get/username")
-    R<UserInfo> loadMemberByUserName(@RequestParam("username") String username);
-
-    @GetMapping("/api/feign/v1/member/get/email")
-    R<UserInfo> loadMemberByEmail(@RequestParam("email") String email);
+    R<UserInfo> loadMemberByUserName(@RequestParam("username") String username, @RequestHeader(SecurityConstants.FROM) String from);
 }

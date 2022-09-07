@@ -37,7 +37,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Slf4j
 @Primary
 @RequiredArgsConstructor
-public class OAuthUserDetailsAppServiceImpl implements OAuthUserDetailsService {
+public class OAuthUserDetailsMemberServiceImpl implements OAuthUserDetailsService {
 
     private final MemberFeignClient memberFeignClient;
 
@@ -52,15 +52,15 @@ public class OAuthUserDetailsAppServiceImpl implements OAuthUserDetailsService {
     @Override
     @SneakyThrows
     public UserDetails loadUserByUsername(String username) {
-		Cache cache = cacheManager.getCache(CacheConstants.USER_DETAILS);
-//		if (cache != null && cache.get(username) != null) {
-//			return (PigUser) cache.get(username).get();
-//		}
-        R<UserInfo> result = memberFeignClient.loadMemberByUserName(username);
+        Cache cache = cacheManager.getCache(CacheConstants.USER_DETAILS);
+        if (cache != null && cache.get(username) != null) {
+            return (OAuthUser) cache.get(username).get();
+        }
+        R<UserInfo> result = memberFeignClient.loadMemberByUserName(username, SecurityConstants.FROM_IN);
         UserDetails userDetails = getUserDetails(result, true);
-		if (cache != null) {
-			cache.put(username, userDetails);
-		}
+        if (cache != null) {
+            cache.put(username, userDetails);
+        }
         return userDetails;
     }
 
@@ -68,6 +68,7 @@ public class OAuthUserDetailsAppServiceImpl implements OAuthUserDetailsService {
     public int getOrder() {
         return Integer.MIN_VALUE;
     }
+
 
     /**
      * 是否支持此客户端校验

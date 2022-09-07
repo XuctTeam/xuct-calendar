@@ -3,5 +3,4 @@ cn.com.xuct.calendar.common.security.serivces.OAuthRedisOAuth2AuthorizationConse
 cn.com.xuct.calendar.common.security.component.SecurityMessageSourceConfiguration
 cn.com.xuct.calendar.common.security.component.SecurityInnerAspect
 cn.com.xuct.calendar.common.security.serivces.OAuthUserDetailsServiceImpl
-cn.com.xuct.calendar.common.security.serivces.OAuthUserDetailsAppServiceImpl
-cn.com.xuct.calendar.common.security.serivces.OAuthUserDetailsWxServiceImpl
+cn.com.xuct.calendar.common.security.serivces.OAuthUserDetailsMemberServiceImpl

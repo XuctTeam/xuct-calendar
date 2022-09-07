@@ -15,8 +15,6 @@ import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.module.dto.CalendarMergeDto;
 import cn.com.xuct.calendar.common.module.feign.req.CalendarCountFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.CalendarInitFeignInfo;
-import cn.com.xuct.calendar.common.web.web.FeignConfiguration;
-import feign.Headers;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @create 2021/11/24
  * @since 1.0.0
  */
-@FeignClient(name = "dav-cms", contextId = "cms", configuration = FeignConfiguration.class)
+@FeignClient(name = "dav-cms", contextId = "cms")
 public interface CalendarFeignClient {
 
     /**

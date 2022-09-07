@@ -1,4 +1,4 @@
-package cn.com.xuct.calendar.uaa.boot.support.repository;
+package cn.com.xuct.calendar.uaa.boot.support.core;
 
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
 import cn.com.xuct.calendar.ums.oauth.dto.OAuthDetailsDto;

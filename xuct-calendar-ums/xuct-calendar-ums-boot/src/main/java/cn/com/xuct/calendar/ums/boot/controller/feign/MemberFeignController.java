@@ -18,10 +18,12 @@ import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.enums.IdentityTypeEnum;
 import cn.com.xuct.calendar.common.module.feign.PersonInfo;
+import cn.com.xuct.calendar.common.module.feign.UserInfo;
 import cn.com.xuct.calendar.common.module.feign.req.CalendarInitFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.MemberModifyPasswordFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.MemberRegisterFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.WxUserInfoFeignInfo;
+import cn.com.xuct.calendar.common.security.annotation.Inner;
 import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
 import cn.com.xuct.calendar.ums.api.entity.Member;
 import cn.com.xuct.calendar.ums.api.entity.MemberAuth;
@@ -69,15 +71,8 @@ public class MemberFeignController {
     private final BasicServicesFeignClient basicServicesFeignClient;
 
 
-    @ApiOperation(value = "通过手机号查询会员")
-    @GetMapping("/get/phone")
-    public R<PersonInfo> getUserByPhone(@RequestParam("phone") String phone) {
-        MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", phone), Column.of("identity_type", IdentityTypeEnum.phone)));
-        if (memberAuth == null) return R.fail("用户不存在");
-        Member member = memberService.getById(memberAuth.getMemberId());
-        return R.data(PersonInfo.builder().userId(member.getId()).username(memberAuth.getUsername()).password(memberAuth.getPassword()).status(member.getStatus()).timeZone(member.getTimeZone()).build());
-    }
 
+    @Inner
     @ApiOperation(value = "通过微信code查询会员")
     @PostMapping("/get/code")
     public R<PersonInfo> getUserByWechatCode(@RequestBody WxUserInfoFeignInfo wxUserInfoFeignInfo) {
@@ -117,9 +112,10 @@ public class MemberFeignController {
         return R.data(PersonInfo.builder().userId(member.getId()).username(memberAuth.getUsername()).password(memberAuth.getPassword()).timeZone(member.getTimeZone()).status(member.getStatus()).build());
     }
 
+    @Inner
     @ApiOperation(value = "通过登录用户名或邮箱查询会员")
     @GetMapping("/get/username")
-    public R<PersonInfo> getUserByUserName(@RequestParam("username") String username) {
+    public R<UserInfo> getUserByUserName(@RequestParam("username") String username) {
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", username), Column.of("identity_type", IdentityTypeEnum.user_name)));
         if (memberAuth == null) {
             memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", username), Column.of("identity_type", IdentityTypeEnum.phone)));
@@ -127,19 +123,12 @@ public class MemberFeignController {
         if (memberAuth == null) {
             memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", username), Column.of("identity_type", IdentityTypeEnum.email)));
         }
-        if (memberAuth == null) return R.fail("验证不存在");
+        if (memberAuth == null) return R.fail("登录方式不存在");
         Member member = memberService.getById(memberAuth.getMemberId());
-        if(member == null) return R.fail("用户不存在");
-        return R.data(PersonInfo.builder().userId(member.getId()).username(memberAuth.getUsername()).password(memberAuth.getPassword()).timeZone(member.getTimeZone()).status(member.getStatus()).build());
-    }
-
-    @ApiOperation(value = "通过邮箱查询会员")
-    @GetMapping("/get/email")
-    public R<PersonInfo> getUserByEmail(@RequestParam("email") String email) {
-        MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", email), Column.of("identity_type", IdentityTypeEnum.email)));
-        if (memberAuth == null) return R.fail("用户不存在");
-        Member member = memberService.getById(memberAuth.getMemberId());
-        return R.data(PersonInfo.builder().userId(member.getId()).username(memberAuth.getUsername()).password(memberAuth.getPassword()).status(member.getStatus()).timeZone(member.getTimeZone()).build());
+        if (member == null) return R.fail("用户不存在");
+        return R.data(UserInfo.builder()
+                .personInfo(PersonInfo.builder().userId(member.getId()).username(memberAuth.getUsername())
+                        .password(memberAuth.getPassword()).name(member.getName()).timeZone(member.getTimeZone()).status(member.getStatus()).build()).build());
     }
 
     @ApiOperation(value = "通过ID查询会员")

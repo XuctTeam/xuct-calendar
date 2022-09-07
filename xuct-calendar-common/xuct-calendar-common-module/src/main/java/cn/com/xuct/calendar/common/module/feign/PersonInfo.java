@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 /**
- * 〈一句话功能简述〉<br> 
+ * 〈一句话功能简述〉<br>
  * 〈〉
  *
  * @author Derek Xu
@@ -54,5 +54,6 @@ public class PersonInfo implements Serializable {
 
     @ApiModelProperty(value = "时区")
     private String timeZone;
+
 
 }

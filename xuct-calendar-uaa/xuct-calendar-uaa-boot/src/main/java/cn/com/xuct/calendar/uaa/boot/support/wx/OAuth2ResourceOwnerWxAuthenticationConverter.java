@@ -1,4 +1,4 @@
-package cn.com.xuct.calendar.uaa.boot.support.phone;
+package cn.com.xuct.calendar.uaa.boot.support.wx;
 
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
 import cn.com.xuct.calendar.uaa.boot.support.base.OAuth2ResourceOwnerBaseAuthenticationConverter;
@@ -19,8 +19,8 @@ import java.util.Set;
  * <p>
  * 短信登录转换器
  */
-public class OAuth2ResourceOwnerPhoneAuthenticationConverter
-        extends OAuth2ResourceOwnerBaseAuthenticationConverter<OAuth2ResourcePhoneSmsAuthenticationToken> {
+public class OAuth2ResourceOwnerWxAuthenticationConverter
+        extends OAuth2ResourceOwnerBaseAuthenticationConverter<OAuth2ResourceOwnerWxAuthenticationToken> {
 
     /**
      * 是否支持此convert
@@ -30,14 +30,12 @@ public class OAuth2ResourceOwnerPhoneAuthenticationConverter
      */
     @Override
     public boolean support(String grantType) {
-        return SecurityConstants.APP_GRANT_TYPE.equals(grantType);
+        return SecurityConstants.WX_GRANT_TYPE.equals(grantType);
     }
 
     @Override
-    public OAuth2ResourcePhoneSmsAuthenticationToken buildToken(Authentication clientPrincipal, Set requestedScopes,
-                                                                Map additionalParameters) {
-        return new OAuth2ResourcePhoneSmsAuthenticationToken(new AuthorizationGrantType(SecurityConstants.APP_GRANT_TYPE),
-                clientPrincipal, requestedScopes, additionalParameters);
+    public OAuth2ResourceOwnerWxAuthenticationToken buildToken(Authentication clientPrincipal, Set requestedScopes, Map additionalParameters) {
+        return new OAuth2ResourceOwnerWxAuthenticationToken(new AuthorizationGrantType(SecurityConstants.WX_GRANT_TYPE), clientPrincipal, requestedScopes, additionalParameters);
     }
 
     /**
@@ -48,10 +46,11 @@ public class OAuth2ResourceOwnerPhoneAuthenticationConverter
     @Override
     public void checkParams(HttpServletRequest request) {
         MultiValueMap<String, String> parameters = OAuth2EndpointUtils.getParameters(request);
-        // PHONE (REQUIRED)
-        String phone = parameters.getFirst(SecurityConstants.PHONE_PARAM);
-        if (!StringUtils.hasText(phone) || parameters.get(SecurityConstants.PHONE_PARAM).size() != 1) {
-            OAuth2EndpointUtils.throwError(OAuth2ErrorCodes.INVALID_REQUEST, SecurityConstants.PHONE_PARAM, OAuth2EndpointUtils.ACCESS_TOKEN_REQUEST_ERROR_URI);
+        String code = parameters.getFirst(SecurityConstants.CODE_PARAM);
+        String iv = parameters.getFirst(SecurityConstants.IV_PARAM);
+        String encryptedData = parameters.getFirst(SecurityConstants.ENCRYPTED_DATA_PARAM);
+        if(!(StringUtils.hasLength(code) && StringUtils.hasLength(iv) && StringUtils.hasLength(encryptedData))){
+            OAuth2EndpointUtils.throwError(OAuth2ErrorCodes.INVALID_REQUEST, SecurityConstants.USER_NAME_PARAM, OAuth2EndpointUtils.ACCESS_TOKEN_REQUEST_ERROR_URI);
         }
     }
 }

@@ -42,17 +42,12 @@ public class CustomOpaqueTokenIntrospector implements OpaqueTokenIntrospector {
 
         // 客户端模式默认返回
         if (AuthorizationGrantType.CLIENT_CREDENTIALS.equals(oldAuthorization.getAuthorizationGrantType())) {
-            return new ClientCredentialsOAuth2AuthenticatedPrincipal(oldAuthorization.getAttributes(),
-                    AuthorityUtils.NO_AUTHORITIES, oldAuthorization.getPrincipalName());
+            return new ClientCredentialsOAuth2AuthenticatedPrincipal(oldAuthorization.getAttributes(), AuthorityUtils.NO_AUTHORITIES, oldAuthorization.getPrincipalName());
         }
 
         Map<String, OAuthUserDetailsService> userDetailsServiceMap = SpringUtil.getBeansOfType(OAuthUserDetailsService.class);
 
-        Optional<OAuthUserDetailsService> optional = userDetailsServiceMap.values().stream()
-                .filter(service -> service.support(Objects.requireNonNull(oldAuthorization).getRegisteredClientId(),
-                        oldAuthorization.getAuthorizationGrantType().getValue()))
-                .max(Comparator.comparingInt(Ordered::getOrder));
-
+        Optional<OAuthUserDetailsService> optional = userDetailsServiceMap.values().stream().filter(service -> service.support(Objects.requireNonNull(oldAuthorization).getRegisteredClientId(), oldAuthorization.getAuthorizationGrantType().getValue())).max(Comparator.comparingInt(Ordered::getOrder));
         UserDetails userDetails = null;
         try {
             Object principal = Objects.requireNonNull(oldAuthorization).getAttributes().get(Principal.class.getName());
@@ -65,7 +60,7 @@ public class CustomOpaqueTokenIntrospector implements OpaqueTokenIntrospector {
         } catch (Exception ex) {
             log.error("资源服务器 introspect Token error {}", ex.getLocalizedMessage());
         }
-        return  null;
+        return null;
     }
 
 }

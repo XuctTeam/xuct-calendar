@@ -11,9 +11,7 @@
 package cn.com.xuct.calendar.cms.api.feign;
 
 import cn.com.xuct.calendar.common.core.res.R;
-import cn.com.xuct.calendar.common.module.feign.MemberFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.ComponentNotifyFeignInfo;
-import cn.com.xuct.calendar.common.web.web.FeignConfiguration;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @since 1.0.0
  */
 
-@FeignClient(name = "dav-ums", contextId = "component", configuration = FeignConfiguration.class)
+@FeignClient(name = "dav-ums", contextId = "component")
 public interface UmsComponentFeignClient {
 
 

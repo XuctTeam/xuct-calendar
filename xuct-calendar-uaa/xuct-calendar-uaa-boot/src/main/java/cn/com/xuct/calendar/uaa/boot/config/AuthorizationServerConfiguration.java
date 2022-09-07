@@ -14,13 +14,15 @@ import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
 import cn.com.xuct.calendar.uaa.boot.handler.AuthenticationFailureEventHandler;
 import cn.com.xuct.calendar.uaa.boot.handler.AuthenticationSuccessEventHandler;
 import cn.com.xuct.calendar.uaa.boot.support.CustomeOAuth2AccessTokenGenerator;
-import cn.com.xuct.calendar.uaa.boot.support.core.CustomeOAuth2TokenCustomizer;
+import cn.com.xuct.calendar.uaa.boot.support.app.OAuth2ResourceOwnerAppAuthenticationConverter;
+import cn.com.xuct.calendar.uaa.boot.support.app.OAuth2ResourceOwnerAppAuthenticationProvider;
+import cn.com.xuct.calendar.uaa.boot.support.core.CustomizerOAuth2TokenCustomizer;
 import cn.com.xuct.calendar.uaa.boot.support.core.FormIdentityLoginConfigurer;
 import cn.com.xuct.calendar.uaa.boot.support.core.OAuthDaoAuthenticationProvider;
 import cn.com.xuct.calendar.uaa.boot.support.password.OAuth2ResourceOwnerPasswordAuthenticationConverter;
 import cn.com.xuct.calendar.uaa.boot.support.password.OAuth2ResourceOwnerPasswordAuthenticationProvider;
-import cn.com.xuct.calendar.uaa.boot.support.phone.OAuth2ResourceOwnerPhoneAuthenticationConverter;
-import cn.com.xuct.calendar.uaa.boot.support.phone.OAuth2ResourceOwnerPhoneAuthenticationProvider;
+import cn.com.xuct.calendar.uaa.boot.support.wx.OAuth2ResourceOwnerWxAuthenticationConverter;
+import cn.com.xuct.calendar.uaa.boot.support.wx.OAuth2ResourceOwnerWxAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,7 +55,7 @@ import java.util.Arrays;
  */
 @Configuration
 @RequiredArgsConstructor
-public class AuthorizationServerConfiguration  {
+public class AuthorizationServerConfiguration {
 
     private final OAuth2AuthorizationService authorizationService;
 
@@ -65,10 +67,10 @@ public class AuthorizationServerConfiguration  {
 
         http.apply(authorizationServerConfigurer
                 .tokenEndpoint((tokenEndpoint) -> {// 个性化认证授权端点
-                tokenEndpoint.accessTokenRequestConverter(accessTokenRequestConverter()) // 注入自定义的授权认证Converter
-                    .accessTokenResponseHandler(new AuthenticationSuccessEventHandler()) // 登录成功处理器
-                    .errorResponseHandler(new AuthenticationFailureEventHandler());// 登录失败处理器
-        }).clientAuthentication(oAuth2ClientAuthenticationConfigurer -> // 个性化客户端认证
+                    tokenEndpoint.accessTokenRequestConverter(accessTokenRequestConverter()) // 注入自定义的授权认证Converter
+                            .accessTokenResponseHandler(new AuthenticationSuccessEventHandler()) // 登录成功处理器
+                            .errorResponseHandler(new AuthenticationFailureEventHandler());// 登录失败处理器
+                }).clientAuthentication(oAuth2ClientAuthenticationConfigurer -> // 个性化客户端认证
                         oAuth2ClientAuthenticationConfigurer.errorResponseHandler(new AuthenticationFailureEventHandler()))// 处理客户端认证异常
                 .authorizationEndpoint(authorizationEndpoint -> authorizationEndpoint// 授权码端点个性化confirm页面
                         .consentPage(SecurityConstants.CUSTOM_CONSENT_PAGE_URI)));
@@ -99,7 +101,8 @@ public class AuthorizationServerConfiguration  {
     private AuthenticationConverter accessTokenRequestConverter() {
         return new DelegatingAuthenticationConverter(Arrays.asList(
                 new OAuth2ResourceOwnerPasswordAuthenticationConverter(),
-                new OAuth2ResourceOwnerPhoneAuthenticationConverter(),
+                new OAuth2ResourceOwnerAppAuthenticationConverter(),
+                new OAuth2ResourceOwnerWxAuthenticationConverter(),
                 new OAuth2RefreshTokenAuthenticationConverter(),
                 new OAuth2ClientCredentialsAuthenticationConverter(),
                 new OAuth2AuthorizationCodeAuthenticationConverter(),
@@ -110,39 +113,40 @@ public class AuthorizationServerConfiguration  {
     /**
      * 令牌生成规则实现 </br>
      * client:username:uuid
+     *
      * @return OAuth2TokenGenerator
      */
     @Bean
     public OAuth2TokenGenerator oAuth2TokenGenerator() {
         CustomeOAuth2AccessTokenGenerator accessTokenGenerator = new CustomeOAuth2AccessTokenGenerator();
         // 注入Token 增加关联用户信息
-        accessTokenGenerator.setAccessTokenCustomizer(new CustomeOAuth2TokenCustomizer());
+        accessTokenGenerator.setAccessTokenCustomizer(new CustomizerOAuth2TokenCustomizer());
         return new DelegatingOAuth2TokenGenerator(accessTokenGenerator, new OAuth2RefreshTokenGenerator());
     }
 
     /**
      * 注入授权模式实现提供方
-     *
+     * <p>
      * 1. 密码模式 </br>
      * 2. 短信登录 </br>
-     *
      */
     @SuppressWarnings("unchecked")
     private void addCustomOAuth2GrantAuthenticationProvider(HttpSecurity http) {
         AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
         OAuth2AuthorizationService authorizationService = http.getSharedObject(OAuth2AuthorizationService.class);
 
-        OAuth2ResourceOwnerPasswordAuthenticationProvider resourceOwnerPasswordAuthenticationProvider = new OAuth2ResourceOwnerPasswordAuthenticationProvider(
-                authenticationManager, authorizationService, oAuth2TokenGenerator());
+        OAuth2ResourceOwnerPasswordAuthenticationProvider resourceOwnerPasswordAuthenticationProvider = new OAuth2ResourceOwnerPasswordAuthenticationProvider(authenticationManager, authorizationService, oAuth2TokenGenerator());
 
-        OAuth2ResourceOwnerPhoneAuthenticationProvider resourceOwnerSmsAuthenticationProvider = new OAuth2ResourceOwnerPhoneAuthenticationProvider(
-                authenticationManager, authorizationService, oAuth2TokenGenerator());
+        OAuth2ResourceOwnerAppAuthenticationProvider resourceOwnerSmsAuthenticationProvider = new OAuth2ResourceOwnerAppAuthenticationProvider(authenticationManager, authorizationService, oAuth2TokenGenerator());
 
+        OAuth2ResourceOwnerWxAuthenticationProvider resourceOwnerWxAuthenticationProvider = new OAuth2ResourceOwnerWxAuthenticationProvider(authenticationManager, authorizationService, oAuth2TokenGenerator());
         // 处理 UsernamePasswordAuthenticationToken
         http.authenticationProvider(new OAuthDaoAuthenticationProvider());
         // 处理 OAuth2ResourceOwnerPasswordAuthenticationToken
         http.authenticationProvider(resourceOwnerPasswordAuthenticationProvider);
         // 处理 OAuth2ResourceOwnerSmsAuthenticationToken
         http.authenticationProvider(resourceOwnerSmsAuthenticationProvider);
+        // 处理 OAuth2ResourceOwnerWxAuthenticationToken
+        http.authenticationProvider(resourceOwnerWxAuthenticationProvider);
     }
 }

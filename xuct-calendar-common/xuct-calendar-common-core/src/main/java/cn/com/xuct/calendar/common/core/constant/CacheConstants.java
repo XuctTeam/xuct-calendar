@@ -11,7 +11,7 @@
 package cn.com.xuct.calendar.common.core.constant;
 
 /**
- * 〈一句话功能简述〉<br> 
+ * 〈一句话功能简述〉<br>
  * 〈〉
  *
  * @author Derek Xu
@@ -24,7 +24,7 @@ public interface CacheConstants {
     /**
      * 用户信息缓存
      */
-    String USER_DETAILS = "user_details";
+    String USER_DETAILS = "security::user_details";
 
 
     /**

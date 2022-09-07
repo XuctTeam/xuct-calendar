@@ -39,33 +39,36 @@ import org.springframework.security.core.userdetails.UserDetails;
 @RequiredArgsConstructor
 public class OAuthUserDetailsServiceImpl implements OAuthUserDetailsService {
 
-	private final UserFeignClient userFeignClient;
+    private final UserFeignClient userFeignClient;
 
-	private final CacheManager cacheManager;
+    private final CacheManager cacheManager;
 
-	/**
-	 * 用户名密码登录
-	 * @param username 用户名
-	 * @return
-	 */
-	@Override
-	@SneakyThrows
-	public UserDetails loadUserByUsername(String username) {
-		Cache cache = cacheManager.getCache(CacheConstants.USER_DETAILS);
-//		if (cache != null && cache.get(username) != null) {
-//			return (PigUser) cache.get(username).get();
-//		}
-		R<UserInfo> result = userFeignClient.info(username, SecurityConstants.FROM_IN);
-		UserDetails userDetails = getUserDetails(result , false);
-		if (cache != null) {
-			cache.put(username, userDetails);
+    /**
+     * 用户名密码登录
+     *
+     * @param username 用户名
+     * @return
+     */
+    @Override
+    @SneakyThrows
+    public UserDetails loadUserByUsername(String username) {
+        Cache cache = cacheManager.getCache(CacheConstants.USER_DETAILS);
+		if (cache != null && cache.get(username) != null) {
+			return (OAuthUser) cache.get(username).get();
 		}
-		return userDetails;
-	}
+        R<UserInfo> result = userFeignClient.info(username, SecurityConstants.FROM_IN);
+        UserDetails userDetails = getUserDetails(result, false);
+        if (cache != null) {
+            cache.put(username, userDetails);
+        }
+        return userDetails;
+    }
 
-	@Override
-	public int getOrder() {
-		return Integer.MIN_VALUE;
-	}
+    @Override
+    public int getOrder() {
+        return Integer.MIN_VALUE;
+    }
+
+
 
 }

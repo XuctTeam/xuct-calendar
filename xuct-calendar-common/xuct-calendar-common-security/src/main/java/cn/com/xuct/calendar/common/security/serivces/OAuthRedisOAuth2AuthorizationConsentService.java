@@ -19,8 +19,7 @@ public class OAuthRedisOAuth2AuthorizationConsentService implements OAuth2Author
 	public void save(OAuth2AuthorizationConsent authorizationConsent) {
 		Assert.notNull(authorizationConsent, "authorizationConsent cannot be null");
 
-		redisTemplate.opsForValue().set(buildKey(authorizationConsent), authorizationConsent, TIMEOUT,
-				TimeUnit.MINUTES);
+		redisTemplate.opsForValue().set(buildKey(authorizationConsent), authorizationConsent, TIMEOUT, TimeUnit.MINUTES);
 
 	}
 

@@ -75,13 +75,5 @@ public interface OAuthUserDetailsService extends UserDetailsService, Ordered {
         return null;
     }
 
-    /**
-     * 通过用户实体查询
-     *
-     * @param pigUser user
-     * @return
-     */
-    default UserDetails loadUserByUser(OAuthUser oAuthUser) {
-        return this.loadUserByUsername(oAuthUser.getUsername());
-    }
+
 }

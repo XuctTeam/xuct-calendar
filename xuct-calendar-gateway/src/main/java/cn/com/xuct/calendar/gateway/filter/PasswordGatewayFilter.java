@@ -80,7 +80,7 @@ public class PasswordGatewayFilter extends AbstractGatewayFilterFactory<Password
 
 			// 2. 刷新token类型，直接向下执行
 			String grantType = request.getQueryParams().getFirst("grant_type");
-			if (StrUtil.equals(SecurityConstants.REFRESH_TOKEN, grantType)) {
+			if (StrUtil.equals(SecurityConstants.REFRESH_TOKEN_GRANT_TYPE, grantType)) {
 				return chain.filter(exchange);
 			}
 

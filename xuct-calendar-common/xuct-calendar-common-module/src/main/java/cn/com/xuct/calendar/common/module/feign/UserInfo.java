@@ -16,7 +16,10 @@
 
 package cn.com.xuct.calendar.common.module.feign;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.List;
@@ -29,6 +32,9 @@ import java.util.List;
  * commit('SET_INTRODUCTION', data) commit('SET_PERMISSIONS', data)
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserInfo implements Serializable {
 
 	/**

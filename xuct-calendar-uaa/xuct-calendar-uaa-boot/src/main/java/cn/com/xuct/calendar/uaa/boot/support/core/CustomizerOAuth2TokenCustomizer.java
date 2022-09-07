@@ -12,7 +12,7 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
  * @author lengleng
  * @date 2022/6/3
  */
-public class CustomeOAuth2TokenCustomizer implements OAuth2TokenCustomizer<OAuth2TokenClaimsContext> {
+public class CustomizerOAuth2TokenCustomizer implements OAuth2TokenCustomizer<OAuth2TokenClaimsContext> {
 
     /**
      * Customize the OAuth 2.0 Token attributes.

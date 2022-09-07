@@ -20,19 +20,40 @@ package cn.com.xuct.calendar.common.core.constant;
  */
 public interface SecurityConstants {
 
-    String GRANT_TYPE_KEY = "grant_type";
-
     String CLIENT_ID = "client_id";
 
+    /**
+     * grant_type
+     */
     String APP_GRANT_TYPE = "app";
 
+    /**
+     * grant_type
+     */
+    String WX_GRANT_TYPE = "wx";
+
+    /**
+     * grant_type
+     */
+    String REFRESH_TOKEN_GRANT_TYPE = "refresh_token";
 
     String PHONE_PARAM = "phone";
 
-    String WX_GRANT_TYPE = "wx";
+    String USER_NAME_PARAM = "username";
+
+    String PASSWORD_PARAM = "password";
+
+    String CODE_PARAM = "code";
 
 
-    String USER_ID_KEY = "userId";
+    String IV_PARAM = "iv";
+
+
+    String ENCRYPTED_DATA_PARAM ="encryptedData";
+
+    /* app登录方式 */
+    String APP_LOGIN_TYPE_PARAM = "loginType";
+
 
     /**
      * 协议字段
@@ -61,6 +82,13 @@ public interface SecurityConstants {
      */
     String CUSTOM_CONSENT_PAGE_URI = "/token/confirm_access";
 
+
+    /**
+     * 默认登录URL
+     */
+    String OAUTH_TOKEN_URL = "/oauth2/token";
+
+
     /**
      * 标志
      */
@@ -77,9 +105,6 @@ public interface SecurityConstants {
      * {bcrypt} 加密的特征码
      */
     String BCRYPT = "{bcrypt}";
-
-
-    String USER_NAME_KEY = "username";
 
 
     String TIME_ZONE = "timeZone";

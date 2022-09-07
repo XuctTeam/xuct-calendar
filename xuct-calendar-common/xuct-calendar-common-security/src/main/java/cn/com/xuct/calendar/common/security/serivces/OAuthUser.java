@@ -38,7 +38,8 @@ public class OAuthUser extends User implements OAuth2AuthenticatedPrincipal {
     @Getter
     private String name;
 
-    public OAuthUser(Long id, String username, String password, String name, boolean enabled,
+
+    public OAuthUser(Long id, String username, String password ,  String name, boolean enabled,
                      boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked,
                      Collection<? extends GrantedAuthority> authorities) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
