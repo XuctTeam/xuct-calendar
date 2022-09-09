@@ -1,5 +1,6 @@
 package cn.com.xuct.calendar.common.security.component;
 
+import cn.com.xuct.calendar.common.security.serivces.OAuthUser;
 import cn.com.xuct.calendar.common.security.serivces.OAuthUserDetailsService;
 import cn.hutool.extra.spring.SpringUtil;
 import lombok.RequiredArgsConstructor;
@@ -53,14 +54,14 @@ public class CustomOpaqueTokenIntrospector implements OpaqueTokenIntrospector {
             Object principal = Objects.requireNonNull(oldAuthorization).getAttributes().get(Principal.class.getName());
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = (UsernamePasswordAuthenticationToken) principal;
             Object tokenPrincipal = usernamePasswordAuthenticationToken.getPrincipal();
-            userDetails = optional.get().loadUserByUsername("");
+            userDetails = optional.get().loadUserByUser((OAuthUser)tokenPrincipal);
         } catch (UsernameNotFoundException notFoundException) {
             log.warn("用户不不存在 {}", notFoundException.getLocalizedMessage());
             throw notFoundException;
         } catch (Exception ex) {
             log.error("资源服务器 introspect Token error {}", ex.getLocalizedMessage());
         }
-        return null;
+        return (OAuthUser) userDetails;
     }
 
 }

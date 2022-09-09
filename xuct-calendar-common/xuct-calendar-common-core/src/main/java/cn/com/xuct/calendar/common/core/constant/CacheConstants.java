@@ -30,5 +30,5 @@ public interface CacheConstants {
     /**
      * oauth 客户端信息
      */
-    String CLIENT_DETAILS_KEY = "client:details";
+    String CLIENT_DETAILS_KEY = "security::client_details";
 }

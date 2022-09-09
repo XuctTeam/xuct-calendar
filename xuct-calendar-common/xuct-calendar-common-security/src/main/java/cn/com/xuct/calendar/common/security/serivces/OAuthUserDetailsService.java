@@ -5,7 +5,6 @@ import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.res.RetOps;
 import cn.com.xuct.calendar.common.module.feign.PersonInfo;
-import cn.com.xuct.calendar.common.security.serivces.OAuthUser;
 import cn.com.xuct.calendar.common.module.feign.UserInfo;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
@@ -75,5 +74,7 @@ public interface OAuthUserDetailsService extends UserDetailsService, Ordered {
         return null;
     }
 
-
+    default UserDetails loadUserByUser(OAuthUser oAuthUser) {
+        return this.loadUserByUsername(oAuthUser.getUsername());
+    }
 }

@@ -81,5 +81,8 @@ public class OAuthUserDetailsMemberServiceImpl implements OAuthUserDetailsServic
         return SecurityConstants.APP_GRANT_TYPE.equals(clientId);
     }
 
-
+    @Override
+    public UserDetails loadUserByUser(OAuthUser oAuthUser) {
+        return this.loadUserByUsername(oAuthUser.getUsername());
+    }
 }

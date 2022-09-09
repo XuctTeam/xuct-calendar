@@ -10,6 +10,7 @@
  */
 package cn.com.xuct.calendar.common.redis.annotation;
 
+import cn.com.xuct.calendar.common.redis.config.RedisCacheConfiguration;
 import cn.com.xuct.calendar.common.redis.config.RedisConfiguration;
 import cn.com.xuct.calendar.common.redis.config.RedisProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,7 +31,7 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 @EnableConfigurationProperties(RedisProperties.class)
-@Import({RedisConfiguration.class })
+@Import({RedisConfiguration.class , RedisCacheConfiguration.class})
 public @interface EnableRedisAutoConfiguration {
 
 }
