@@ -11,6 +11,7 @@
 package cn.com.xuct.calendar.common.web.utils;
 
 import lombok.SneakyThrows;
+import org.apache.commons.io.FileUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -23,7 +24,7 @@ import java.io.File;
  * @create 2022/2/13
  * @since 1.0.0
  */
-public class FileUtils {
+public class FilesUtils {
 
     /**
      * 功能描述: <br>
@@ -48,7 +49,7 @@ public class FileUtils {
         filepath.append(userHome).append(File.separator).append("files").append(File.separator).append(bh).append(File.separator);
         //创建文件夹
         toFile = new File(filepath.toString());
-        org.apache.commons.io.FileUtils.forceMkdir(toFile);
+        FileUtils.forceMkdir(toFile);
         //创建文件，此时文件为空
         String fileName = file.getOriginalFilename();
         if (fileName.lastIndexOf(".") > -1) {

@@ -39,7 +39,7 @@ public class OAuth2ResourceOwnerWxAuthenticationConverter
     }
 
     /**
-     * 校验扩展参数 密码模式密码必须不为空
+     * 校验扩展参数 微信三个参数不能为空
      *
      * @param request 参数列表
      */
@@ -49,7 +49,7 @@ public class OAuth2ResourceOwnerWxAuthenticationConverter
         String code = parameters.getFirst(SecurityConstants.CODE_PARAM);
         String iv = parameters.getFirst(SecurityConstants.IV_PARAM);
         String encryptedData = parameters.getFirst(SecurityConstants.ENCRYPTED_DATA_PARAM);
-        if(!(StringUtils.hasLength(code) && StringUtils.hasLength(iv) && StringUtils.hasLength(encryptedData))){
+        if (!(StringUtils.hasLength(code) && StringUtils.hasLength(iv) && StringUtils.hasLength(encryptedData))) {
             OAuth2EndpointUtils.throwError(OAuth2ErrorCodes.INVALID_REQUEST, SecurityConstants.USER_NAME_PARAM, OAuth2EndpointUtils.ACCESS_TOKEN_REQUEST_ERROR_URI);
         }
     }

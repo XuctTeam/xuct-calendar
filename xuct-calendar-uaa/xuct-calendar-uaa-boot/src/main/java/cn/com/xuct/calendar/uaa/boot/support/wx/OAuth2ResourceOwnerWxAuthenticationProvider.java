@@ -62,6 +62,6 @@ public class OAuth2ResourceOwnerWxAuthenticationProvider
         String code = (String) reqParameters.get(SecurityConstants.CODE_PARAM);
         String iv = (String) reqParameters.get(SecurityConstants.IV_PARAM);
         String encryptedData = (String) reqParameters.get(SecurityConstants.ENCRYPTED_DATA_PARAM);
-        return new UsernamePasswordAuthenticationToken(code.concat(";").concat(iv), encryptedData);
+        return new UsernamePasswordAuthenticationToken(code.concat(";").concat(iv).concat(";").concat(encryptedData), "");
     }
 }

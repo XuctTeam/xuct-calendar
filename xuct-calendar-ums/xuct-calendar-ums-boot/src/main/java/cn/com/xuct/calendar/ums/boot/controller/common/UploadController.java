@@ -14,7 +14,7 @@ import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.smms.client.SmmsClient;
 import cn.com.xuct.calendar.common.smms.vo.SmmsUploadRes;
 import cn.com.xuct.calendar.common.smms.vo.data.SmmsUploadData;
-import cn.com.xuct.calendar.common.web.utils.FileUtils;
+import cn.com.xuct.calendar.common.web.utils.FilesUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +45,7 @@ public class UploadController {
     @PostMapping(value = "/upload", consumes = "multipart/form-data")
     @ApiOperation(value = "上传图片")
     public R<SmmsUploadData> uploadImage(@RequestParam MultipartFile smsfile) {
-        SmmsUploadRes smmsRes = smmsClient.upload(FileUtils.multipartFileToFile(smsfile, "/temp", FileUtils.contentTypeToFileSuffix(smsfile.getContentType())));
+        SmmsUploadRes smmsRes = smmsClient.upload(FilesUtils.multipartFileToFile(smsfile, "/temp", FilesUtils.contentTypeToFileSuffix(smsfile.getContentType())));
         if (smmsRes == null || (!smmsRes.isSuccess() && !"image_repeated".equals(smmsRes.getCode())))
             return R.fail("上传失败");
         if (!smmsRes.isSuccess() && "image_repeated".equals(smmsRes.getCode())) {
