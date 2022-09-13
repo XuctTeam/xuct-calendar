@@ -38,13 +38,17 @@ public class OAuthUser extends User implements OAuth2AuthenticatedPrincipal {
     @Getter
     private String name;
 
+    @Getter
+    private String timeZone;
 
-    public OAuthUser(Long id, String username, String password ,  String name, boolean enabled,
+
+    public OAuthUser(Long id, String username, String password, String name, String timeZone, boolean enabled,
                      boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked,
                      Collection<? extends GrantedAuthority> authorities) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
         this.id = id;
         this.name = name;
+        this.timeZone  = timeZone;
     }
 
 

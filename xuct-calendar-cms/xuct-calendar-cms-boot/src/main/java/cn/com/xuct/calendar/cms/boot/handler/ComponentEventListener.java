@@ -21,7 +21,6 @@ import cn.com.xuct.calendar.cms.queue.event.ComponentDelEvent;
 import cn.com.xuct.calendar.common.core.utils.JsonUtils;
 import cn.com.xuct.calendar.common.module.dto.AlarmInfoDto;
 import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
-import cn.com.xuct.calendar.common.module.feign.MemberFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.ComponentNotifyFeignInfo;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;

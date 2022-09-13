@@ -49,7 +49,7 @@ public interface SecurityConstants {
     String IV_PARAM = "iv";
 
 
-    String ENCRYPTED_DATA_PARAM ="encryptedData";
+    String ENCRYPTED_DATA_PARAM = "encryptedData";
 
     /* app登录方式 */
     String APP_LOGIN_TYPE_PARAM = "loginType";
@@ -75,6 +75,16 @@ public interface SecurityConstants {
      * 用户信息
      */
     String DETAILS_USER = "user_info";
+
+    /**
+     * 用户id
+     */
+    String DETAILS_USER_NAME = "user_name";
+
+    /**
+     * 用户时区
+     */
+    String DETAILS_USER_TIMEZONE = "user_timezone";
 
 
     /**
@@ -113,4 +123,9 @@ public interface SecurityConstants {
      * 角色前缀
      */
     String ROLE = "ROLE_";
+
+    /**
+     * 验证码有效期,默认 60秒
+     */
+    long CODE_TIME = 60;
 }

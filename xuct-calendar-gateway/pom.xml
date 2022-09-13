@@ -75,6 +75,11 @@
             <artifactId>hutool-all</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.github.whvcse</groupId>
+            <artifactId>easy-captcha</artifactId>
+            <version>${utils.easy.captcha.version}</version>
+        </dependency>
+        <dependency>
             <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-common-redis</artifactId>
             <version>${project.version}</version>

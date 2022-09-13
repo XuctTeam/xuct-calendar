@@ -31,4 +31,10 @@ public interface CacheConstants {
      * oauth 客户端信息
      */
     String CLIENT_DETAILS_KEY = "security::client_details";
+
+
+    /**
+     * 验证码前缀
+     */
+    String DEFAULT_CODE_KEY = "security::login::code";
 }

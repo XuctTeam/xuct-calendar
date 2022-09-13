@@ -67,8 +67,8 @@ public interface OAuthUserDetailsService extends UserDetailsService, Ordered {
             if (personInfo.getStatus() != 0) {
                 throw new DisabledException("该账户已被禁用!");
             }
-            return new OAuthUser(personInfo.getUserId(), personInfo.getUsername(),
-                    SecurityConstants.BCRYPT + personInfo.getPassword(), personInfo.getName(),
+            return new OAuthUser(personInfo.getUserId(), personInfo.getUsername(), SecurityConstants.BCRYPT + personInfo.getPassword(),
+                    personInfo.getName(), personInfo.getTimeZone(),
                     true, true, true, StrUtil.equals(personInfo.getStatus().toString(), GlobalConstants.STATUS_YES), authorities);
         }
         return null;
