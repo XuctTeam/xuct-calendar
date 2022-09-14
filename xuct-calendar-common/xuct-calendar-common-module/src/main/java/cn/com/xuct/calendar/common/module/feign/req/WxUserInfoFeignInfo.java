@@ -30,8 +30,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class WxUserInfoFeignInfo {
 
-    @ApiModelProperty("小程序CODE")
-    private String code;
+    @ApiModelProperty("小程序openId")
+    private String openId;
 
     @ApiModelProperty("小程序SessionKey")
     private String sessionKey;

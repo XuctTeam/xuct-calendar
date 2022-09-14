@@ -17,6 +17,7 @@ import cn.com.xuct.calendar.common.core.enums.PasswordEncoderTypeEnum;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.enums.IdentityTypeEnum;
+import cn.com.xuct.calendar.common.module.feign.OpenIdInfo;
 import cn.com.xuct.calendar.common.module.feign.PersonInfo;
 import cn.com.xuct.calendar.common.module.feign.UserInfo;
 import cn.com.xuct.calendar.common.module.feign.req.CalendarInitFeignInfo;
@@ -71,46 +72,54 @@ public class MemberFeignController {
     private final BasicServicesFeignClient basicServicesFeignClient;
 
 
+    @Inner
+    @ApiOperation(value = "通过微信CODE获取OPENID")
+    @GetMapping("/code")
+    public R<OpenIdInfo> code(@RequestParam("code") String code) {
+        R<WxMaJscode2SessionResult> jscode2SessionResultR = basicServicesFeignClient.getSessionInfo(code);
+        if (jscode2SessionResultR == null || !jscode2SessionResultR.isSuccess()) return R.fail("获取微信OPENID失败");
+        WxMaJscode2SessionResult result = jscode2SessionResultR.getData();
+        return R.data(OpenIdInfo.builder().openId(result.getOpenid()).sessionKey(result.getSessionKey()).build());
+    }
 
     @Inner
-    @ApiOperation(value = "通过微信code查询会员")
-    @PostMapping("/get/code")
+    @ApiOperation(value = "通过OPENID查询会员")
+    @PostMapping("/get/openId")
     public R<PersonInfo> getUserByWechatCode(@RequestBody WxUserInfoFeignInfo wxUserInfoFeignInfo) {
-
-        R<WxMaJscode2SessionResult> jscode2SessionResultR = basicServicesFeignClient.getSessionInfo(wxUserInfoFeignInfo.getCode());
-        if (jscode2SessionResultR == null || !jscode2SessionResultR.isSuccess()) return R.fail("获取用户失败");
-        WxMaJscode2SessionResult session = jscode2SessionResultR.getData();
-        R<WxMaUserInfo> wxMaUserInfoR = basicServicesFeignClient.getUserInfo(WxUserInfoFeignInfo.builder().sessionKey(session.getSessionKey())
-                .encryptedData(wxUserInfoFeignInfo.getEncryptedData()).iv(wxUserInfoFeignInfo.getIv()).build());
+        R<WxMaUserInfo> wxMaUserInfoR = basicServicesFeignClient.getUserInfo(WxUserInfoFeignInfo.builder()
+                .sessionKey(wxUserInfoFeignInfo.getSessionKey())
+                .encryptedData(wxUserInfoFeignInfo.getEncryptedData())
+                .iv(wxUserInfoFeignInfo.getIv()).build());
         if (wxMaUserInfoR == null || !wxMaUserInfoR.isSuccess()) return R.fail("获取用户失败");
         WxMaUserInfo wxMaUserInfo = wxMaUserInfoR.getData();
-        MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", session.getOpenid()), Column.of("identity_type", IdentityTypeEnum.open_id)));
+        MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", wxUserInfoFeignInfo.getOpenId()), Column.of("identity_type", IdentityTypeEnum.open_id)));
         if (memberAuth != null) {
             memberAuth.setNickName(wxMaUserInfo.getNickName());
             memberAuth.setAvatar(wxMaUserInfo.getAvatarUrl());
-            memberAuth.setSessionKey(session.getSessionKey());
+            memberAuth.setSessionKey(wxUserInfoFeignInfo.getSessionKey());
             memberAuthService.updateById(memberAuth);
             Member member = memberService.getById(memberAuth.getMemberId());
             return R.data(PersonInfo.builder().userId(member.getId()).username(memberAuth.getUsername()).status(member.getStatus()).build());
         }
-        Member member = memberService.saveMemberByOpenId(session.getOpenid(), wxMaUserInfo.getNickName(), wxMaUserInfo.getAvatarUrl(), session.getSessionKey(), DictCacheManager.getDictByCode(DictConstants.TIME_ZONE_TYPE, DictConstants.EAST_8_CODE).getValue());
+        Member member = memberService.saveMemberByOpenId(wxUserInfoFeignInfo.getOpenId(), wxMaUserInfo.getNickName(), wxMaUserInfo.getAvatarUrl(),
+                wxUserInfoFeignInfo.getSessionKey(), DictCacheManager.getDictByCode(DictConstants.TIME_ZONE_TYPE, DictConstants.EAST_8_CODE).getValue());
         CalendarInitFeignInfo calendarInitFeignInfo = new CalendarInitFeignInfo();
         calendarInitFeignInfo.setMemberId(member.getId());
         calendarInitFeignInfo.setMemberNickName(member.getName());
         calendarFeignClient.addCalendar(calendarInitFeignInfo);
         /* 添加注册消息到用户 */
         SpringContextHolder.publishEvent(new MemberEvent(this, member.getId(), member.getName(), 0));
-        return R.data(PersonInfo.builder().userId(member.getId()).username(session.getOpenid()).status(member.getStatus()).timeZone(member.getTimeZone()).build());
+        return R.data(PersonInfo.builder().userId(member.getId()).username(wxUserInfoFeignInfo.getOpenId()).status(member.getStatus()).timeZone(member.getTimeZone()).build());
     }
 
-    @ApiOperation(value = "通过微信openId查询会员")
-    @GetMapping("/get/openId")
-    public R<PersonInfo> getUserByOpenId(@RequestParam("openId") String openId) {
-        MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", openId), Column.of("identity_type", IdentityTypeEnum.open_id)));
-        if (memberAuth == null) return R.fail("用户不存在");
-        Member member = memberService.getById(memberAuth.getMemberId());
-        return R.data(PersonInfo.builder().userId(member.getId()).username(memberAuth.getUsername()).password(memberAuth.getPassword()).timeZone(member.getTimeZone()).status(member.getStatus()).build());
-    }
+//    @ApiOperation(value = "通过微信openId查询会员")
+//    @GetMapping("/get/openId")
+//    public R<PersonInfo> getUserByOpenId(@RequestParam("openId") String openId) {
+//        MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", openId), Column.of("identity_type", IdentityTypeEnum.open_id)));
+//        if (memberAuth == null) return R.fail("用户不存在");
+//        Member member = memberService.getById(memberAuth.getMemberId());
+//        return R.data(PersonInfo.builder().userId(member.getId()).username(memberAuth.getUsername()).password(memberAuth.getPassword()).timeZone(member.getTimeZone()).status(member.getStatus()).build());
+//    }
 
     @Inner
     @ApiOperation(value = "通过登录用户名或邮箱查询会员")

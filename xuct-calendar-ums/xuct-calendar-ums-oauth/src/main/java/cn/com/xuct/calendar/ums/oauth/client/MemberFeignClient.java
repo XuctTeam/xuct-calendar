@@ -13,6 +13,7 @@ package cn.com.xuct.calendar.ums.oauth.client;
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
 import cn.com.xuct.calendar.common.core.constant.ServiceNameConstants;
 import cn.com.xuct.calendar.common.core.res.R;
+import cn.com.xuct.calendar.common.module.feign.OpenIdInfo;
 import cn.com.xuct.calendar.common.module.feign.UserInfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +31,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(name = ServiceNameConstants.UMS_SERVICE, contextId = "members")
 public interface MemberFeignClient {
+    @GetMapping("/api/feign/v1/member/code")
+    R<OpenIdInfo> getOpenInfo(@RequestParam("code") String code, @RequestHeader(SecurityConstants.FROM) String from);
 
     @GetMapping("/api/feign/v1/member/get/openId")
     R<UserInfo> loadMemberByOpenId(@RequestParam("openId") String openId, @RequestHeader(SecurityConstants.FROM) String from);
