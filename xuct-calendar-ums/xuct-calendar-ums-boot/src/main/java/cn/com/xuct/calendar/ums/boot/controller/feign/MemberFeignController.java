@@ -14,7 +14,10 @@ import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
 import cn.com.xuct.calendar.common.core.constant.DictConstants;
 import cn.com.xuct.calendar.common.core.enums.PasswordEncoderTypeEnum;
+import cn.com.xuct.calendar.common.core.exception.SvrException;
+import cn.com.xuct.calendar.common.core.res.AuthResCode;
 import cn.com.xuct.calendar.common.core.res.R;
+import cn.com.xuct.calendar.common.core.res.RetOps;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.enums.IdentityTypeEnum;
 import cn.com.xuct.calendar.common.module.feign.OpenIdInfo;
@@ -74,8 +77,8 @@ public class MemberFeignController {
 
     @Inner
     @ApiOperation(value = "通过微信CODE获取OPENID")
-    @GetMapping("/code")
-    public R<OpenIdInfo> code(@RequestParam("code") String code) {
+    @GetMapping("/wx/code")
+    public R<OpenIdInfo> wxCode(@RequestParam("code") String code) {
         R<WxMaJscode2SessionResult> jscode2SessionResultR = basicServicesFeignClient.getSessionInfo(code);
         if (jscode2SessionResultR == null || !jscode2SessionResultR.isSuccess()) return R.fail("获取微信OPENID失败");
         WxMaJscode2SessionResult result = jscode2SessionResultR.getData();
@@ -86,13 +89,16 @@ public class MemberFeignController {
     @ApiOperation(value = "通过OPENID查询会员")
     @PostMapping("/get/openId")
     public R<PersonInfo> getUserByWechatCode(@RequestBody WxUserInfoFeignInfo wxUserInfoFeignInfo) {
-        R<WxMaUserInfo> wxMaUserInfoR = basicServicesFeignClient.getUserInfo(WxUserInfoFeignInfo.builder()
-                .sessionKey(wxUserInfoFeignInfo.getSessionKey())
-                .encryptedData(wxUserInfoFeignInfo.getEncryptedData())
-                .iv(wxUserInfoFeignInfo.getIv()).build());
-        if (wxMaUserInfoR == null || !wxMaUserInfoR.isSuccess()) return R.fail("获取用户失败");
-        WxMaUserInfo wxMaUserInfo = wxMaUserInfoR.getData();
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", wxUserInfoFeignInfo.getOpenId()), Column.of("identity_type", IdentityTypeEnum.open_id)));
+        if (!wxUserInfoFeignInfo.isLogin()) {
+            if (memberAuth == null)
+                return R.fail("用户未找到");
+            Member member = memberService.getById(memberAuth.getMemberId());
+            return R.data(PersonInfo.builder().userId(member.getId()).username(memberAuth.getUsername()).status(member.getStatus()).build());
+        }
+        R<WxMaUserInfo> wxMaUserInfoR = basicServicesFeignClient.getUserInfo(WxUserInfoFeignInfo.builder().sessionKey(wxUserInfoFeignInfo.getSessionKey()).encryptedData(wxUserInfoFeignInfo.getEncryptedData()).iv(wxUserInfoFeignInfo.getIv()).build());
+        WxMaUserInfo wxMaUserInfo = RetOps.of(wxMaUserInfoR).getData().orElseThrow(() -> new SvrException(AuthResCode.ACCESS_UNAUTHORIZED));
+        /* 2. 如果存在更新基础信息直接返回 */
         if (memberAuth != null) {
             memberAuth.setNickName(wxMaUserInfo.getNickName());
             memberAuth.setAvatar(wxMaUserInfo.getAvatarUrl());
@@ -101,8 +107,8 @@ public class MemberFeignController {
             Member member = memberService.getById(memberAuth.getMemberId());
             return R.data(PersonInfo.builder().userId(member.getId()).username(memberAuth.getUsername()).status(member.getStatus()).build());
         }
-        Member member = memberService.saveMemberByOpenId(wxUserInfoFeignInfo.getOpenId(), wxMaUserInfo.getNickName(), wxMaUserInfo.getAvatarUrl(),
-                wxUserInfoFeignInfo.getSessionKey(), DictCacheManager.getDictByCode(DictConstants.TIME_ZONE_TYPE, DictConstants.EAST_8_CODE).getValue());
+        /* 3. 不存在则自动注册一个 */
+        Member member = memberService.saveMemberByOpenId(wxUserInfoFeignInfo.getOpenId(), wxMaUserInfo.getNickName(), wxMaUserInfo.getAvatarUrl(), wxUserInfoFeignInfo.getSessionKey(), DictCacheManager.getDictByCode(DictConstants.TIME_ZONE_TYPE, DictConstants.EAST_8_CODE).getValue());
         CalendarInitFeignInfo calendarInitFeignInfo = new CalendarInitFeignInfo();
         calendarInitFeignInfo.setMemberId(member.getId());
         calendarInitFeignInfo.setMemberNickName(member.getName());
@@ -112,14 +118,6 @@ public class MemberFeignController {
         return R.data(PersonInfo.builder().userId(member.getId()).username(wxUserInfoFeignInfo.getOpenId()).status(member.getStatus()).timeZone(member.getTimeZone()).build());
     }
 
-//    @ApiOperation(value = "通过微信openId查询会员")
-//    @GetMapping("/get/openId")
-//    public R<PersonInfo> getUserByOpenId(@RequestParam("openId") String openId) {
-//        MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", openId), Column.of("identity_type", IdentityTypeEnum.open_id)));
-//        if (memberAuth == null) return R.fail("用户不存在");
-//        Member member = memberService.getById(memberAuth.getMemberId());
-//        return R.data(PersonInfo.builder().userId(member.getId()).username(memberAuth.getUsername()).password(memberAuth.getPassword()).timeZone(member.getTimeZone()).status(member.getStatus()).build());
-//    }
 
     @Inner
     @ApiOperation(value = "通过登录用户名或邮箱查询会员")

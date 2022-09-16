@@ -133,7 +133,13 @@
         <dependency>
             <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-common-security</artifactId>
-            <version>1.0</version>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>cn.com.xuct</groupId>
+            <artifactId>xuct-calendar-common-redis</artifactId>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
 

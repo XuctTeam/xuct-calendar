@@ -66,9 +66,7 @@ public class OAuthUserDetailsServiceImpl implements OAuthUserDetailsService {
 
     @Override
     public int getOrder() {
-        return Integer.MIN_VALUE;
+        return 3;
     }
-
-
 
 }

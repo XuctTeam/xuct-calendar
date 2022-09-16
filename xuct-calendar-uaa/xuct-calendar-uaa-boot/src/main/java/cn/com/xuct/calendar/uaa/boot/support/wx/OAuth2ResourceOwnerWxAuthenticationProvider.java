@@ -1,6 +1,8 @@
 package cn.com.xuct.calendar.uaa.boot.support.wx;
 
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
+import cn.com.xuct.calendar.common.core.utils.JsonUtils;
+import cn.com.xuct.calendar.common.security.beans.WxUserName;
 import cn.com.xuct.calendar.uaa.boot.support.base.OAuth2ResourceOwnerBaseAuthenticationProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -62,6 +64,6 @@ public class OAuth2ResourceOwnerWxAuthenticationProvider
         String code = (String) reqParameters.get(SecurityConstants.CODE_PARAM);
         String iv = (String) reqParameters.get(SecurityConstants.IV_PARAM);
         String encryptedData = (String) reqParameters.get(SecurityConstants.ENCRYPTED_DATA_PARAM);
-        return new UsernamePasswordAuthenticationToken(code.concat(";").concat(iv).concat(";").concat(encryptedData), "");
+        return new UsernamePasswordAuthenticationToken(JsonUtils.obj2json(WxUserName.builder().code(code).iv(iv).encryptedData(encryptedData).build()), "");
     }
 }

@@ -12,7 +12,6 @@ package cn.com.xuct.calendar.cms.boot.controller.app;
 
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAttend;
-import cn.com.xuct.calendar.cms.api.feign.UmsMemberFeignClient;
 import cn.com.xuct.calendar.cms.api.vo.ComponentShareVo;
 import cn.com.xuct.calendar.cms.boot.service.IComponentAttendService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentService;
@@ -20,6 +19,7 @@ import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.feign.PersonInfo;
 import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
+import cn.com.xuct.calendar.ums.oauth.client.MemberFeignClient;
 import com.google.common.collect.Lists;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +49,7 @@ public class ComponentUsersAnonController {
 
     private final IComponentAttendService componentAttendService;
 
-    private final UmsMemberFeignClient umsMemberFeignClient;
+    private final MemberFeignClient memberFeignClient;
 
     @GetMapping("")
     public R<ComponentShareVo> getComponentInfo(@RequestParam("componentId") String componentId) {
@@ -57,7 +57,7 @@ public class ComponentUsersAnonController {
         if (component == null) return R.fail("未找到事件");
         ComponentShareVo shareVo = new ComponentShareVo();
         BeanUtils.copyProperties(component, shareVo);
-        R<PersonInfo> memberFeignInfoR = umsMemberFeignClient.getMemberById(component.getCreatorMemberId());
+        R<PersonInfo> memberFeignInfoR = memberFeignClient.getMemberById(component.getCreatorMemberId());
         if (memberFeignInfoR != null && memberFeignInfoR.isSuccess()) {
             shareVo.setCreateMemberName(memberFeignInfoR.getData().getName());
         }

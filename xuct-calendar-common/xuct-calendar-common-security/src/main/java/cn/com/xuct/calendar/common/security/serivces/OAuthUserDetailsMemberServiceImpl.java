@@ -66,7 +66,7 @@ public class OAuthUserDetailsMemberServiceImpl implements OAuthUserDetailsServic
 
     @Override
     public int getOrder() {
-        return Integer.MIN_VALUE;
+        return 5;
     }
 
 

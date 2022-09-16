@@ -10,21 +10,20 @@
  */
 package cn.com.xuct.calendar.uaa.boot.handler;
 
+import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
 import cn.com.xuct.calendar.common.core.res.R;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Map;
 
 
 /**
@@ -43,15 +42,22 @@ public class AuthenticationFailureEventHandler implements AuthenticationFailureH
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException exception) throws IOException {
-        String username = request.getParameter(OAuth2ParameterNames.USERNAME);
         // 写出错误信息
+        Map<String, String[]> params = request.getParameterMap();
+        if (params.containsKey(SecurityConstants.GRANT_TYPE)) {
+            String grantTypes = request.getParameter(SecurityConstants.GRANT_TYPE);
+            if (SecurityConstants.WX_GRANT_TYPE.equals(grantTypes)) {
+                //TODO:: 微信记录code
+            } else {
+                String username = request.getParameter(OAuth2ParameterNames.USERNAME);
+            }
+        }
         sendErrorResponse(response, exception);
     }
 
     private void sendErrorResponse(HttpServletResponse response, AuthenticationException exception) throws IOException {
         ServletServerHttpResponse httpResponse = new ServletServerHttpResponse(response);
         httpResponse.setStatusCode(HttpStatus.UNAUTHORIZED);
-        this.errorHttpResponseConverter.write(R.fail(exception.getLocalizedMessage()), MediaType.APPLICATION_JSON,
-                httpResponse);
+        this.errorHttpResponseConverter.write(R.fail(exception.getLocalizedMessage()), MediaType.APPLICATION_JSON, httpResponse);
     }
 }

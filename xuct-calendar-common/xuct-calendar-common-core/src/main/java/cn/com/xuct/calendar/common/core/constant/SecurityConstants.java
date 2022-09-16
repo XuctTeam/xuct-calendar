@@ -39,12 +39,13 @@ public interface SecurityConstants {
 
     String PHONE_PARAM = "phone";
 
+    String GRANT_TYPE = "grant_type";
+
     String USER_NAME_PARAM = "username";
 
     String PASSWORD_PARAM = "password";
 
     String CODE_PARAM = "code";
-
 
     String IV_PARAM = "iv";
 

@@ -41,4 +41,7 @@ public class WxUserInfoFeignInfo {
 
     @ApiModelProperty("小程序iv")
     private String iv;
+
+    @ApiModelProperty("是否是登录")
+    private boolean login = false;
 }

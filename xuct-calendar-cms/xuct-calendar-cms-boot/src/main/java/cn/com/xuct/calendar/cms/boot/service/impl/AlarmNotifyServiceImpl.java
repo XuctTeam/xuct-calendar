@@ -14,7 +14,6 @@ import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAlarm;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAttend;
 import cn.com.xuct.calendar.cms.api.feign.UmsComponentFeignClient;
-import cn.com.xuct.calendar.cms.api.feign.UmsMemberFeignClient;
 import cn.com.xuct.calendar.cms.boot.config.RabbitmqConfiguration;
 import cn.com.xuct.calendar.cms.boot.handler.RabbitmqOutChannel;
 import cn.com.xuct.calendar.cms.boot.service.IAlarmNotifyService;

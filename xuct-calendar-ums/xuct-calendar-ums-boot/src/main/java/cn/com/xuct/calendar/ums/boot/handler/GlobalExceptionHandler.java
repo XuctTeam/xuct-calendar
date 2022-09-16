@@ -13,7 +13,9 @@ package cn.com.xuct.calendar.ums.boot.handler;
 import cn.com.xuct.calendar.common.core.exception.SvrException;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.res.SvrResCode;
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -36,11 +38,12 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ResponseBody
-    @ExceptionHandler(value = AccessDeniedException.class)
-    public R<String> accessDeniedException(AccessDeniedException e) {
-        log.error("权限异常！原因是：{}", e.getMessage());
+    @ExceptionHandler(value = FeignException.class)
+    public R<String> accessDeniedException(FeignException e) {
+        log.error("远程调用接口异常！原因是：{}", e.getMessage());
         return R.fail(401, e.getMessage());
     }
+
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody

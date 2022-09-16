@@ -20,17 +20,18 @@ import cn.com.xuct.calendar.common.core.constant.CacheConstants;
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.res.RetOps;
+import cn.com.xuct.calendar.common.core.utils.JsonUtils;
 import cn.com.xuct.calendar.common.module.feign.OpenIdInfo;
 import cn.com.xuct.calendar.common.module.feign.UserInfo;
+import cn.com.xuct.calendar.common.module.feign.req.WxUserInfoFeignInfo;
+import cn.com.xuct.calendar.common.security.beans.WxUserName;
 import cn.com.xuct.calendar.ums.oauth.client.MemberFeignClient;
-import cn.hutool.core.util.ArrayUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Primary;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
@@ -57,26 +58,16 @@ public class OAuthUserDetailsWxMemberServiceImpl implements OAuthUserDetailsServ
     @Override
     @SneakyThrows
     public UserDetails loadUserByUsername(String username) {
-
-        R<OpenIdInfo> openIdInfoR = memberFeignClient.getOpenInfo(username, SecurityConstants.FROM_IN);
-        OpenIdInfo openIdInfo = RetOps.of(openIdInfoR).getData().orElseThrow(() -> new BadCredentialsException("获取OpenId无效"));
-        Cache cache = cacheManager.getCache(CacheConstants.USER_DETAILS);
-        if (cache != null && cache.get(openIdInfo.getOpenId()) != null) {
-            return (OAuthUser) cache.get(openIdInfo.getOpenId()).get();
-        }
-
-
-        R<UserInfo> result = memberFeignClient.loadMemberByUserName(username, SecurityConstants.FROM_IN);
-        UserDetails userDetails = getUserDetails(result, true);
-        if (cache != null) {
-            cache.put(username, userDetails);
-        }
-        return userDetails;
+        WxUserName wxUserName = JsonUtils.json2pojo(username, WxUserName.class);
+        if (wxUserName == null) new UsernameNotFoundException("获取OpenId无效");
+        R<OpenIdInfo> openIdInfoR = memberFeignClient.getOpenInfo(wxUserName.getCode(), SecurityConstants.FROM_IN);
+        OpenIdInfo openIdInfo = RetOps.of(openIdInfoR).getData().orElseThrow(() -> new UsernameNotFoundException("获取OpenId无效"));
+        return this.getByOpenId(true, openIdInfo.getOpenId(), openIdInfo.getSessionKey(), wxUserName.getIv(), wxUserName.getEncryptedData());
     }
 
     @Override
     public int getOrder() {
-        return Integer.MIN_VALUE;
+        return 4;
     }
 
 
@@ -93,6 +84,20 @@ public class OAuthUserDetailsWxMemberServiceImpl implements OAuthUserDetailsServ
 
     @Override
     public UserDetails loadUserByUser(OAuthUser oAuthUser) {
-        return this.loadUserByUsername(oAuthUser.getUsername());
+        return this.getByOpenId(false, oAuthUser.getUsername(), null, null, null);
+    }
+
+    private UserDetails getByOpenId(final Boolean login, final String openId, final String sessionKey, final String iv, final String encryptedData) {
+        Cache cache = cacheManager.getCache(CacheConstants.USER_DETAILS);
+        if (cache != null && cache.get(openId) != null) {
+            return (OAuthUser) cache.get(openId).get();
+        }
+        R<UserInfo> result = memberFeignClient.loadMemberByOpenId(WxUserInfoFeignInfo.builder().login(login).openId(openId).sessionKey(sessionKey).iv(iv)
+                .encryptedData(encryptedData).build(), SecurityConstants.FROM_IN);
+        UserDetails userDetails = getUserDetails(result, true);
+        if (cache != null) {
+            cache.put(userDetails.getUsername(), userDetails);
+        }
+        return userDetails;
     }
 }
