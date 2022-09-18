@@ -91,6 +91,7 @@ public class TokenEndpoint {
      * @return ModelAndView
      */
     @GetMapping("/login")
+    @SuppressWarnings("all")
     public ModelAndView require(ModelAndView modelAndView, @RequestParam(required = false) String error) {
         modelAndView.setViewName("ftl/login");
         modelAndView.addObject("error", error);
@@ -98,6 +99,7 @@ public class TokenEndpoint {
     }
 
     @GetMapping("/confirm_access")
+    @SuppressWarnings("all")
     public ModelAndView confirm(Principal principal, ModelAndView modelAndView,
                                 @RequestParam(OAuth2ParameterNames.CLIENT_ID) String clientId,
                                 @RequestParam(OAuth2ParameterNames.SCOPE) String scope,
