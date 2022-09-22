@@ -41,13 +41,11 @@ public class MemberServiceImpl extends BaseServiceImpl<MemberMapper, Member> imp
     private final IMemberAuthService memberAuthService;
 
     @Override
-    @Cacheable(value = RedisConstants.MEMBER_INFO_KEY, key = "#id", unless = "#result == null")
     public Member findMemberById(Long id) {
         return super.getById(id);
     }
 
     @Override
-    @CachePut(value = RedisConstants.MEMBER_INFO_KEY, key = "#member.id", unless = "#result == null")
     public Member updateMember(Member member) {
         super.updateById(member);
         return member;

@@ -42,21 +42,13 @@ public interface MemberFeignClient {
     @GetMapping("/api/feign/v1/member/get/username")
     R<UserInfo> loadMemberByUserName(@RequestParam("username") String username, @RequestHeader(SecurityConstants.FROM) String from);
 
-    /**
-     * 通过id查询会员信息
-     *
-     * @param id
-     * @return
-     */
     @GetMapping("/api/feign/v1/member/get/id")
     R<PersonInfo> getMemberById(@RequestParam("id") Long id);
 
-    /**
-     * 通过ids数组查询会员信息
-     *
-     * @param ids
-     * @return
-     */
     @PostMapping("/api/feign/v1/member/list/ids")
     R<List<PersonInfo>> listMemberByIds(@RequestBody List<Long> ids);
+
+
+
+
 }

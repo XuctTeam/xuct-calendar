@@ -78,8 +78,6 @@ public class TokenEndpoint {
 
     private final ClientDetailsFeignClient clientDetailsService;
 
-    private final RedisTemplate<String, Object> redisTemplate;
-
     private final CacheManager cacheManager;
 
 
@@ -125,9 +123,8 @@ public class TokenEndpoint {
         if (StrUtil.isBlank(authHeader)) {
             return R.status(false);
         }
-
         String tokenValue = authHeader.replace(OAuth2AccessToken.TokenType.BEARER.getValue(), StrUtil.EMPTY).trim();
-        return removeToken(tokenValue);
+        return R.status(this.deleteUser(tokenValue));
     }
 
     /**
@@ -166,22 +163,27 @@ public class TokenEndpoint {
     @Inner
     @DeleteMapping("/{token}")
     public R<Boolean> removeToken(@PathVariable("token") String token) {
+        return R.status(this.deleteUser(token));
+    }
+
+    private boolean deleteUser(String token) {
         OAuth2Authorization authorization = authorizationService.findByToken(token, OAuth2TokenType.ACCESS_TOKEN);
         if (authorization == null) {
-            return R.status(false);
+            return false;
         }
 
         OAuth2Authorization.Token<OAuth2AccessToken> accessToken = authorization.getAccessToken();
         if (accessToken == null || StrUtil.isBlank(accessToken.getToken().getTokenValue())) {
-            return R.status(false);
+            return false;
         }
         // 清空用户信息
         cacheManager.getCache(CacheConstants.USER_DETAILS).evict(authorization.getPrincipalName());
+
         // 清空access token
         authorizationService.remove(authorization);
         // 处理自定义退出事件，保存相关日志
         SpringContextHolder.publishEvent(new LogoutSuccessEvent(new PreAuthenticatedAuthenticationToken(authorization.getPrincipalName(), authorization.getRegisteredClientId())));
-        return R.data(true);
+        return true;
     }
 
 }

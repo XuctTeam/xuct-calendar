@@ -30,10 +30,6 @@ public interface RedisConstants {
      */
     public static final String MEMBER_OPEN_INFO_KEY = "member::open:info:";
 
-    /**
-     * 手机号缓存用户信息
-     */
-    public static final String MEMBER_INFO_KEY = "member:info:";
 
     /* 短信验证码 */
     public static final String MEMBER_PHONE_LOGIN_CODE_KEY = "member::login::sms:code:";
