@@ -64,7 +64,7 @@
         <utils.tencentcloud.version>4.0.11</utils.tencentcloud.version>
         <utils.biweekly.version>0.6.6</utils.biweekly.version>
         <utils.okhttp3.version>4.9.3</utils.okhttp3.version>
-        <utils.easy.captcha.version>1.6.2</utils.easy.captcha.version>
+        <utils.easy.captcha.version>2.2.2</utils.easy.captcha.version>
         <utils.pinyin.version>2.6.1</utils.pinyin.version>
     </properties>
 

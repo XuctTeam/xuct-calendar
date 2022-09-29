@@ -75,8 +75,8 @@
             <artifactId>hutool-all</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.whvcse</groupId>
-            <artifactId>easy-captcha</artifactId>
+            <groupId>com.pig4cloud.plugin</groupId>
+            <artifactId>captcha-core</artifactId>
             <version>${utils.easy.captcha.version}</version>
         </dependency>
         <dependency>
