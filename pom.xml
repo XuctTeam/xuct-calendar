@@ -58,7 +58,7 @@
         <!-- utils -->
         <utils.hutool.version>5.8.5</utils.hutool.version>
         <utils.guava.version>31.1-jre</utils.guava.version>
-        <utils.wxjava.version>4.3.0</utils.wxjava.version>
+        <utils.wxjava.version>4.4.0</utils.wxjava.version>
         <utils.jackson.version>2.13.3</utils.jackson.version>
         <utils.nimbusds.jwt.version>9.23</utils.nimbusds.jwt.version>
         <utils.tencentcloud.version>4.0.11</utils.tencentcloud.version>

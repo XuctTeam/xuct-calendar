@@ -10,8 +10,10 @@
  */
 package cn.com.xuct.calendar.common.module.feign;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -24,6 +26,8 @@ import java.io.Serializable;
  * @since 1.0.0
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class OpenIdInfo implements Serializable {
 

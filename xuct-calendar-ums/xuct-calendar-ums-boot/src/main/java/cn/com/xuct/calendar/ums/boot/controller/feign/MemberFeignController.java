@@ -88,13 +88,14 @@ public class MemberFeignController {
     @Inner
     @ApiOperation(value = "通过OPENID查询会员")
     @PostMapping("/get/openId")
-    public R<PersonInfo> getUserByWechatCode(@RequestBody WxUserInfoFeignInfo wxUserInfoFeignInfo) {
+    public R<UserInfo> getUserByWechatCode(@RequestBody WxUserInfoFeignInfo wxUserInfoFeignInfo) {
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", wxUserInfoFeignInfo.getOpenId()), Column.of("identity_type", IdentityTypeEnum.open_id)));
         if (!wxUserInfoFeignInfo.isLogin()) {
             if (memberAuth == null)
                 return R.fail("用户未找到");
             Member member = memberService.getById(memberAuth.getMemberId());
-            return R.data(PersonInfo.builder().userId(member.getId()).username(memberAuth.getUsername()).status(member.getStatus()).build());
+            return R.data(UserInfo.builder().personInfo(PersonInfo.builder().userId(member.getId()).username(memberAuth.getUsername()).name(member.getName())
+                    .status(member.getStatus()).timeZone(member.getTimeZone()).build()).build());
         }
         R<WxMaUserInfo> wxMaUserInfoR = basicServicesFeignClient.getUserInfo(WxUserInfoFeignInfo.builder().sessionKey(wxUserInfoFeignInfo.getSessionKey()).encryptedData(wxUserInfoFeignInfo.getEncryptedData()).iv(wxUserInfoFeignInfo.getIv()).build());
         WxMaUserInfo wxMaUserInfo = RetOps.of(wxMaUserInfoR).getData().orElseThrow(() -> new SvrException(AuthResCode.ACCESS_UNAUTHORIZED));
@@ -105,7 +106,8 @@ public class MemberFeignController {
             memberAuth.setSessionKey(wxUserInfoFeignInfo.getSessionKey());
             memberAuthService.updateById(memberAuth);
             Member member = memberService.getById(memberAuth.getMemberId());
-            return R.data(PersonInfo.builder().userId(member.getId()).username(memberAuth.getUsername()).status(member.getStatus()).build());
+            return R.data(UserInfo.builder().personInfo(PersonInfo.builder().userId(member.getId()).username(memberAuth.getUsername()).name(member.getName())
+                    .status(member.getStatus()).timeZone(member.getTimeZone()).build()).build());
         }
         /* 3. 不存在则自动注册一个 */
         Member member = memberService.saveMemberByOpenId(wxUserInfoFeignInfo.getOpenId(), wxMaUserInfo.getNickName(), wxMaUserInfo.getAvatarUrl(), wxUserInfoFeignInfo.getSessionKey(), DictCacheManager.getDictByCode(DictConstants.TIME_ZONE_TYPE, DictConstants.EAST_8_CODE).getValue());
@@ -115,7 +117,7 @@ public class MemberFeignController {
         calendarFeignClient.addCalendar(calendarInitFeignInfo);
         /* 添加注册消息到用户 */
         SpringContextHolder.publishEvent(new MemberEvent(this, member.getId(), member.getName(), 0));
-        return R.data(PersonInfo.builder().userId(member.getId()).username(wxUserInfoFeignInfo.getOpenId()).status(member.getStatus()).timeZone(member.getTimeZone()).build());
+        return R.data(UserInfo.builder().personInfo(PersonInfo.builder().userId(member.getId()).username(wxUserInfoFeignInfo.getOpenId()).name(member.getName()).status(member.getStatus()).timeZone(member.getTimeZone()).build()).build());
     }
 
 

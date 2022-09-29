@@ -16,6 +16,8 @@ import org.springframework.security.oauth2.server.authorization.OAuth2Authorizat
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
 
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.util.Map;
 
 /**
@@ -61,9 +63,9 @@ public class OAuth2ResourceOwnerWxAuthenticationProvider
 
     @Override
     public UsernamePasswordAuthenticationToken buildToken(Map<String, Object> reqParameters) {
-        String code = (String) reqParameters.get(SecurityConstants.CODE_PARAM);
+        String code = URLDecoder.decode((String) reqParameters.get(SecurityConstants.CODE_PARAM) , Charset.defaultCharset());
         String iv = (String) reqParameters.get(SecurityConstants.IV_PARAM);
-        String encryptedData = (String) reqParameters.get(SecurityConstants.ENCRYPTED_DATA_PARAM);
+        String encryptedData = URLDecoder.decode((String) reqParameters.get(SecurityConstants.ENCRYPTED_DATA_PARAM), Charset.defaultCharset());
         return new UsernamePasswordAuthenticationToken(JsonUtils.obj2json(WxUserName.builder().code(code).iv(iv).encryptedData(encryptedData).build()), "");
     }
 }
