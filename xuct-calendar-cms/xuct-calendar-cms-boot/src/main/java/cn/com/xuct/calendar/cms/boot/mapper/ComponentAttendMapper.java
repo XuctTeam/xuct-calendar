@@ -12,6 +12,7 @@ package cn.com.xuct.calendar.cms.boot.mapper;
 
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAttend;
+import cn.com.xuct.calendar.cms.api.vo.CalendarAttendCountVo;
 import cn.com.xuct.calendar.cms.api.vo.CalendarComponentVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
@@ -75,4 +76,12 @@ public interface ComponentAttendMapper extends BaseMapper<ComponentAttend> {
      * @param memberIds
      */
     void batchUpdateAttendMemberCalendarId(@Param("componentId") Long componentId, @Param("calendarId") Long calendarId, @Param("memberIds") List<Long> memberIds);
+
+    /**
+     * 日程邀请统计
+     *
+     * @param componentId
+     * @return
+     */
+    CalendarAttendCountVo statistics(@Param("componentId") Long componentId);
 }

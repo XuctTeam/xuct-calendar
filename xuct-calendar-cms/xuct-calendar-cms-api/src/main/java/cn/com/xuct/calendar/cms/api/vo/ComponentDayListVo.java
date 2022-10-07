@@ -10,12 +10,13 @@
  */
 package cn.com.xuct.calendar.cms.api.vo;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.List;
 
 /**
- * 〈一句话功能简述〉<br> 
+ * 〈一句话功能简述〉<br>
  * 〈〉
  *
  * @author Derek Xu
@@ -25,7 +26,9 @@ import java.util.List;
 @Data
 public class ComponentDayListVo {
 
+    @ApiModelProperty("天（日期）")
     private String day;
 
+    @ApiModelProperty("天内所有日程安排")
     private List<CalendarComponentVo> components;
 }

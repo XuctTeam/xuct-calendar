@@ -12,10 +12,7 @@ package cn.com.xuct.calendar.cms.boot.controller.app;
 
 import cn.com.xuct.calendar.cms.api.entity.*;
 import cn.com.xuct.calendar.cms.api.feign.BasicServicesFeignClient;
-import cn.com.xuct.calendar.cms.api.vo.CalendarComponentVo;
-import cn.com.xuct.calendar.cms.api.vo.ComponentAttendVo;
-import cn.com.xuct.calendar.cms.api.vo.ComponentListVo;
-import cn.com.xuct.calendar.cms.api.vo.ComponentSearchVo;
+import cn.com.xuct.calendar.cms.api.vo.*;
 import cn.com.xuct.calendar.cms.boot.config.DomainConfiguration;
 import cn.com.xuct.calendar.cms.boot.config.UploadConfiguration;
 import cn.com.xuct.calendar.cms.boot.handler.RabbitmqOutChannel;
@@ -29,6 +26,7 @@ import cn.com.xuct.calendar.common.core.constant.DateConstants;
 import cn.com.xuct.calendar.common.core.constant.RabbitmqConstants;
 import cn.com.xuct.calendar.common.core.exception.SvrException;
 import cn.com.xuct.calendar.common.core.res.R;
+import cn.com.xuct.calendar.common.core.res.RetOps;
 import cn.com.xuct.calendar.common.core.res.SvrResCode;
 import cn.com.xuct.calendar.common.core.utils.JsonUtils;
 import cn.com.xuct.calendar.common.core.vo.Column;
@@ -226,11 +224,12 @@ public class ComponentController {
 
     @ApiOperation(value = "查询所有邀请人")
     @GetMapping("/attend/member")
-    public R<List<ComponentAttendVo>> queryComponentAttend(@RequestParam("componentId") Long componentId, @RequestParam("createMemberId") Long createMemberId) {
+    public R<List<ComponentAttendVo>> queryComponentAttend(@RequestParam("componentId") Long componentId, @RequestParam(value = "createMemberId", required = false) Long createMemberId) {
         List<Long> memberIds = componentAttendService.listByComponentIdNoMemberId(createMemberId, componentId);
         if (CollectionUtils.isEmpty(memberIds)) return R.data(Lists.newArrayList());
         R<List<PersonInfo>> memberInfoResult = memberFeignClient.listMemberByIds(memberIds);
-        if (memberInfoResult == null || !memberInfoResult.isSuccess()) return R.data(Lists.newArrayList());
+        List<PersonInfo> personInfos = RetOps.of(memberInfoResult).getData().orElse(Lists.newArrayList());
+        if (CollectionUtils.isEmpty(personInfos)) return R.data(Lists.newArrayList());
         return R.data(memberInfoResult.getData().stream().map(info -> {
             ComponentAttendVo attendVo = new ComponentAttendVo();
             attendVo.setAvatar(info.getAvatar());
@@ -290,6 +289,12 @@ public class ComponentController {
         Assert.notNull(memberCalendar, "查询主日历失败");
         componentAttendService.acceptAttend(memberId, component.getCalendarId(), memberCalendar.getCalendarId(), param.getComponentId());
         return R.status(true);
+    }
+
+    @ApiOperation(value = "统计日程邀请")
+    @GetMapping("/attend/statistics")
+    public R<CalendarAttendCountVo> statistics(@RequestParam("componentId") String componentId) {
+        return R.data(componentAttendService.statistics(Long.valueOf(componentId)));
     }
 
     @ApiOperation(value = "获取短链接")

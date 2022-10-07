@@ -13,6 +13,7 @@ package cn.com.xuct.calendar.cms.boot.service.impl;
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAttend;
 import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
+import cn.com.xuct.calendar.cms.api.vo.CalendarAttendCountVo;
 import cn.com.xuct.calendar.cms.api.vo.CalendarComponentVo;
 import cn.com.xuct.calendar.cms.api.vo.ComponentAttendVo;
 import cn.com.xuct.calendar.cms.boot.mapper.ComponentAttendMapper;
@@ -39,32 +40,32 @@ import java.util.List;
 public class ComponentAttendServiceImpl extends BaseServiceImpl<ComponentAttendMapper, ComponentAttend> implements IComponentAttendService {
 
     @Override
-    public List<Component> listByCalendarId(Long calendarId, Long start, Long end) {
+    public List<Component> listByCalendarId(final Long calendarId, final Long start, final Long end) {
         return ((ComponentAttendMapper) super.getBaseMapper()).listByCalendarId(calendarId, start, end);
     }
 
     @Override
-    public List<CalendarComponentVo> searchWord(Long memberId, String word, Integer page, Integer limit) {
+    public List<CalendarComponentVo> searchWord(final Long memberId, final String word, final Integer page, final Integer limit) {
         return ((ComponentAttendMapper) super.getBaseMapper()).searchWord(memberId, word, page, limit);
     }
 
     @Override
-    public List<Long> listByComponentIdNoMemberId(Long memberId, Long componentId) {
+    public List<Long> listByComponentIdNoMemberId(final Long memberId, final Long componentId) {
         return ((ComponentAttendMapper) super.getBaseMapper()).listByComponentIdNoMemberId(memberId, componentId);
     }
 
     @Override
-    public void updateMemberAttendCalendarId(Long memberId, Long oldCalendarId, Long calendarId, Long componentId) {
+    public void updateMemberAttendCalendarId(final Long memberId, final Long oldCalendarId, final Long calendarId, final Long componentId) {
         ((ComponentAttendMapper) super.getBaseMapper()).updateMemberAttendCalendarId(memberId, oldCalendarId, calendarId, componentId);
     }
 
     @Override
-    public void batchUpdateAttendMemberCalendarId(Long componentId, Long calendarId, List<Long> memberIds) {
+    public void batchUpdateAttendMemberCalendarId(final Long componentId, final Long calendarId, final List<Long> memberIds) {
         ((ComponentAttendMapper) super.getBaseMapper()).batchUpdateAttendMemberCalendarId(componentId, calendarId, memberIds);
     }
 
     @Override
-    public void acceptAttend(Long memberId, Long calendarId, Long attendCalendarId, Long componentId) {
+    public void acceptAttend(final Long memberId, final Long calendarId, final Long attendCalendarId, final Long componentId) {
         ComponentAttend componentAttend = new ComponentAttend();
         componentAttend.setComponentId(componentId);
         componentAttend.setCalendarId(calendarId);
@@ -75,7 +76,7 @@ public class ComponentAttendServiceImpl extends BaseServiceImpl<ComponentAttendM
     }
 
     @Override
-    public void updateAttendMarjoCalendarId(Long oldCalendarId, Long newCalendarId) {
+    public void updateAttendMarjoCalendarId(final Long oldCalendarId, final Long newCalendarId) {
         ComponentAttend componentAttend = new ComponentAttend();
         componentAttend.setCreateTime(null);
         componentAttend.setAttendCalendarId(newCalendarId);
@@ -83,10 +84,15 @@ public class ComponentAttendServiceImpl extends BaseServiceImpl<ComponentAttendM
     }
 
     @Override
-    public void updateAttendCalendarId(Long oldCalendarId, Long newCalendarId) {
+    public void updateAttendCalendarId(final Long oldCalendarId, final Long newCalendarId) {
         ComponentAttend componentAttend = new ComponentAttend();
         componentAttend.setCreateTime(null);
         componentAttend.setCalendarId(newCalendarId);
         this.update(componentAttend, Column.of("calendar_id", oldCalendarId));
+    }
+
+    @Override
+    public CalendarAttendCountVo statistics(final Long componentId) {
+        return ((ComponentAttendMapper) super.getBaseMapper()).statistics(componentId);
     }
 }

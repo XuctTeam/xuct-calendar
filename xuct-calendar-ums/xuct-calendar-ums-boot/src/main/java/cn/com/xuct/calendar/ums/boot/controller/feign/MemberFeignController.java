@@ -156,6 +156,7 @@ public class MemberFeignController {
         return R.data(members.stream().map(member -> {
             PersonInfo memberFeignInfo = new PersonInfo();
             memberFeignInfo.setName(member.getName());
+            memberFeignInfo.setUserId(member.getId());
             memberFeignInfo.setAvatar(member.getAvatar());
             return memberFeignInfo;
         }).collect(Collectors.toList()));

@@ -12,6 +12,7 @@ package cn.com.xuct.calendar.cms.boot.service;
 
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAttend;
+import cn.com.xuct.calendar.cms.api.vo.CalendarAttendCountVo;
 import cn.com.xuct.calendar.cms.api.vo.CalendarComponentVo;
 import cn.com.xuct.calendar.cms.boot.mapper.ComponentAttendMapper;
 import cn.com.xuct.calendar.common.db.service.IBaseService;
@@ -47,7 +48,7 @@ public interface IComponentAttendService extends IBaseService<ComponentAttendMap
      * @param limit
      * @return
      */
-    List<CalendarComponentVo> searchWord(final Long memberId, String word, Integer page, Integer limit);
+    List<CalendarComponentVo> searchWord(final Long memberId, final String word, Integer page, Integer limit);
 
     /**
      * 查询不包括memberId的邀请
@@ -56,7 +57,7 @@ public interface IComponentAttendService extends IBaseService<ComponentAttendMap
      * @param componentId
      * @return
      */
-    List<Long> listByComponentIdNoMemberId(Long memberId, Long componentId);
+    List<Long> listByComponentIdNoMemberId(final Long memberId, final Long componentId);
 
     /**
      * 更新用户自己事件的邀请日历
@@ -66,7 +67,7 @@ public interface IComponentAttendService extends IBaseService<ComponentAttendMap
      * @param calendarId
      * @param componentId
      */
-    void updateMemberAttendCalendarId(Long memberId, Long oldCalendarId, Long calendarId, Long componentId);
+    void updateMemberAttendCalendarId(final Long memberId, final Long oldCalendarId, final Long calendarId, final Long componentId);
 
     /**
      * 批量更新被邀请人的日历
@@ -75,7 +76,7 @@ public interface IComponentAttendService extends IBaseService<ComponentAttendMap
      * @param calendarId
      * @param memberIds
      */
-    void batchUpdateAttendMemberCalendarId(Long componentId, Long calendarId, List<Long> memberIds);
+    void batchUpdateAttendMemberCalendarId(final Long componentId, final Long calendarId, final List<Long> memberIds);
 
     /**
      * 加入邀请
@@ -85,7 +86,7 @@ public interface IComponentAttendService extends IBaseService<ComponentAttendMap
      * @param attendCalendarId
      * @param componentId
      */
-    void acceptAttend(Long memberId, Long calendarId, Long attendCalendarId, Long componentId);
+    void acceptAttend(final Long memberId, final Long calendarId, final Long attendCalendarId, final Long componentId);
 
     /**
      * 更新被邀请日历到新日历
@@ -93,7 +94,7 @@ public interface IComponentAttendService extends IBaseService<ComponentAttendMap
      * @param oldCalendarId
      * @param newCalendarId
      */
-    void updateAttendMarjoCalendarId(Long oldCalendarId, Long newCalendarId);
+    void updateAttendMarjoCalendarId(final Long oldCalendarId, final Long newCalendarId);
 
     /**
      * 更新邀请的日历到新日历
@@ -101,7 +102,15 @@ public interface IComponentAttendService extends IBaseService<ComponentAttendMap
      * @param oldCalendarId
      * @param newCalendarId
      */
-    void updateAttendCalendarId(Long oldCalendarId, Long newCalendarId);
+    void updateAttendCalendarId(final Long oldCalendarId, final Long newCalendarId);
+
+    /**
+     * 日程邀请统计
+     *
+     * @param componentId
+     * @return
+     */
+    CalendarAttendCountVo statistics(final Long componentId);
 
 
 }
