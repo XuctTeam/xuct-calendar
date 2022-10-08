@@ -13,7 +13,7 @@ package cn.com.xuct.calendar.common.module.params;
 import cn.com.xuct.calendar.common.module.params.data.MemberEmailRegisterData;
 import cn.com.xuct.calendar.common.module.params.data.MemberPhoneRegisterData;
 import cn.com.xuct.calendar.common.module.params.data.MemberUserNameRegisterData;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -31,16 +31,16 @@ import java.io.Serializable;
 public class MemberRegisterParam implements Serializable {
 
     @NotNull
-    @ApiModelProperty("注册类型")
+    @Schema(name = "注册类型")
     private Integer formType;
 
-    @ApiModelProperty("用户名注册参数")
+    @Schema(name = "用户名注册参数")
     private MemberUserNameRegisterData username;
 
-    @ApiModelProperty("手机注册参数")
+    @Schema(name = "手机注册参数")
     private MemberPhoneRegisterData phone;
 
-    @ApiModelProperty("邮箱注册参数")
+    @Schema(name = "邮箱注册参数")
     private MemberEmailRegisterData email;
 
 }

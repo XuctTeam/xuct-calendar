@@ -11,6 +11,8 @@
 package cn.com.xuct.calendar.common.swagger.annotation;
 
 import cn.com.xuct.calendar.common.swagger.config.SwaggerAutoConfiguration;
+import cn.com.xuct.calendar.common.swagger.support.SwaggerProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
@@ -27,6 +29,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
+@EnableConfigurationProperties(SwaggerProperties.class)
 @Import({SwaggerAutoConfiguration.class})
-public @interface EnableSwagger2AutoConfiguration {
+public @interface EnableApiDoc {
 }

@@ -10,9 +10,7 @@
  */
 package cn.com.xuct.calendar.common.module.params;
 
-import cn.com.xuct.calendar.common.module.enums.ComponentRepeatTypeEnum;
-import cn.com.xuct.calendar.common.module.params.data.ComponentAddAlarmData;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -31,45 +29,45 @@ import java.util.List;
 @Data
 public class ComponentAddParam implements Serializable {
 
-    @ApiModelProperty("事件ID")
+    @Schema(name = "事件ID")
     private String id;
 
     @NotNull
-    @ApiModelProperty("标题")
+    @Schema(name ="标题")
     private String summary;
 
     @NotNull
-    @ApiModelProperty("日历ID")
+    @Schema(name ="日历ID")
     private String calendarId;
 
-    @ApiModelProperty("地点")
+    @Schema(name ="地点")
     private String location;
 
-    @ApiModelProperty("描述")
+    @Schema(name ="描述")
     private String description;
 
     @NotNull
-    @ApiModelProperty("日程的开始时间")
+    @Schema(name ="日程的开始时间")
     private Date dtstart;
 
     @NotNull
-    @ApiModelProperty("日程的结束时间")
+    @Schema(name ="日程的结束时间")
     private Date dtend;
 
     @NotNull
-    @ApiModelProperty("是否全天")
+    @Schema(name ="是否全天")
     private int fullDay;
 
-    @ApiModelProperty("是否循环")
+    @Schema(name ="是否循环")
     private String repeatStatus;
 
-    @ApiModelProperty("循环类型")
+    @Schema(name ="循环类型")
     private String repeatType;
 
-    @ApiModelProperty(value = "提醒设置", notes = "不提醒, ")
+    @Schema(name = "提醒设置", description = "不提醒, ")
     private String alarmType;
 
-    @ApiModelProperty(value = "提醒时间", notes = "时间逗号分割")
+    @Schema(name = "提醒时间", description = "时间逗号分割")
     private List<Integer> alarmTimes;
 
 
@@ -86,7 +84,7 @@ public class ComponentAddParam implements Serializable {
      * <p>
      * 每年的第几月
      */
-    @ApiModelProperty("循环指定某几个月份")
+    @Schema(name = "循环指定某几个月份")
     private String repeatBymonth;
 
     /** 循环指定一个月中的某几日 */
@@ -94,22 +92,22 @@ public class ComponentAddParam implements Serializable {
      * 每个月的第多少天
      * 每年的哪个月的第几天
      */
-    @ApiModelProperty("循环指定一个月中的某几日")
+    @Schema(name ="循环指定一个月中的某几日")
     private String repeatBymonthday;
 
     /**
      * 循环为周 1 3 5 步长
      * 循环为月 1 3 4月
      */
-    @ApiModelProperty("循环步长")
+    @Schema(name ="循环步长")
     private String repeatBysetpos;
 
-    @ApiModelProperty("循环间隔")
+    @Schema(name ="循环间隔")
     private int repeatInterval;
 
-    @ApiModelProperty("循环截止时间")
+    @Schema(name ="循环截止时间")
     private Date repeatUntil;
 
-    @ApiModelProperty("邀请人")
+    @Schema(name ="邀请人")
     private List<String> memberIds;
 }

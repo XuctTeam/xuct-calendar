@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.common.module.feign.req;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -35,14 +35,14 @@ import java.util.List;
 public class SmsCodeFeignInfo {
 
     @NotEmpty
-    @ApiModelProperty(name = "收短信人")
+    @Schema(name = "收短信人")
     private List<String> phones;
 
     @NotNull
-    @ApiModelProperty(name = "短信模板")
+    @Schema(name = "短信模板")
     private String template;
 
     @NotNull
-    @ApiModelProperty(name = "验证码")
+    @Schema(name = "验证码")
     private String code;
 }

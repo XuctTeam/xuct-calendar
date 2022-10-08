@@ -10,32 +10,23 @@
  */
 package cn.com.xuct.calendar.common.swagger.config;
 
-import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
-import com.google.common.collect.Sets;
+import cn.com.xuct.calendar.common.swagger.support.SwaggerProperties;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.OAuthFlow;
+import io.swagger.v3.oas.models.security.OAuthFlows;
+import io.swagger.v3.oas.models.security.Scopes;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.util.ReflectionUtils;
-import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping;
-import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.OAuthBuilder;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.*;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spi.service.contexts.SecurityContext;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.spring.web.plugins.WebMvcRequestHandlerProvider;
-import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
+import org.springframework.http.HttpHeaders;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -45,105 +36,36 @@ import java.util.stream.Collectors;
  * @create 2021/6/9
  * @since 1.0.0
  */
-@Configuration
-@EnableKnife4j
-@EnableSwagger2WebMvc
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "swagger.enabled", matchIfMissing = true)
+@ConditionalOnMissingClass("org.springframework.cloud.gateway.config.GatewayAutoConfiguration")
 public class SwaggerAutoConfiguration {
+    private final SwaggerProperties swaggerProperties;
+
+    private final ServiceInstance serviceInstance;
 
     @Bean
-    @ConditionalOnMissingBean
-    public SwaggerConfig swaggerProperties() {
-        return new SwaggerConfig();
+    public OpenAPI springOpenAPI() {
+        OpenAPI openAPI = new OpenAPI().info(new Info().title(swaggerProperties.getTitle()));
+        // oauth2.0 password
+        openAPI.schemaRequirement(HttpHeaders.AUTHORIZATION, this.securityScheme());
+        // servers
+        List<Server> serverList = new ArrayList<>();
+        String path = swaggerProperties.getServices().get(serviceInstance.getServiceId());
+        serverList.add(new Server().url(swaggerProperties.getGateway() + "/" + path));
+        openAPI.servers(serverList);
+        return openAPI;
     }
 
-    @Bean
-    public Docket api(SwaggerConfig swaggerProperties) {
-
-        Docket docket = new Docket(DocumentationType.SWAGGER_2)
-                //.pathMapping(swaggerProperties.getPath())
-                .apiInfo(apiInfo(swaggerProperties))
-                .select()
-                //这里指定Controller扫描包路径
-                .apis(RequestHandlerSelectors.basePackage(swaggerProperties.getBasePackages()))
-                .paths(PathSelectors.any())
-                .build()
-                .protocols(Sets.newHashSet("https", "http"));
-        if (swaggerProperties.getOauth2().isEnable()) {
-            docket.securityContexts(securityContext())
-                    .securitySchemes(securitySchemes(swaggerProperties.getOauth2().getPasswdUrl()));
-        }
-        return docket;
-    }
-
-    private ApiInfo apiInfo(SwaggerConfig swaggerProperties) {
-        return new ApiInfoBuilder().title(swaggerProperties.getTitle()).description(swaggerProperties.getDescription())
-                .license(swaggerProperties.getLicense()).licenseUrl(swaggerProperties.getLicenseUrl())
-                .termsOfServiceUrl(swaggerProperties.getTermsOfServiceUrl())
-                .contact(new Contact(swaggerProperties.getContact().getName(), swaggerProperties.getContact().getUrl(),
-                        swaggerProperties.getContact().getEmail()))
-                .version(swaggerProperties.getVersion()).build();
-    }
-
-    @SuppressWarnings("all")
-    private List<SecurityContext> securityContext() {
-        SecurityReference securityReference = new SecurityReference("oauth2", scopes().toArray(new AuthorizationScope[]{}));
-        return Collections.singletonList(SecurityContext.builder()
-                .securityReferences(Collections.singletonList(securityReference))
-                .forPaths(PathSelectors.ant("/**"))
-                .build());
-    }
-
-    private List<SecurityScheme> securitySchemes(String passwordTokenUrl) {
-        //schema
-        List<GrantType> grantTypes = new ArrayList<>();
-        ResourceOwnerPasswordCredentialsGrant resourceOwnerPasswordCredentialsGrant = new ResourceOwnerPasswordCredentialsGrant(passwordTokenUrl);
-        grantTypes.add(resourceOwnerPasswordCredentialsGrant);
-        OAuth oAuth = new OAuthBuilder().name("oauth2").scopes(scopes()).grantTypes(grantTypes).build();
-        return Collections.singletonList(oAuth);
-    }
-
-    private List<AuthorizationScope> scopes() {
-        //scope方位
-        List<AuthorizationScope> scopes = new ArrayList<>();
-        scopes.add(new AuthorizationScope("read", "read  resources"));
-        scopes.add(new AuthorizationScope("write", "write resources"));
-        scopes.add(new AuthorizationScope("reads", "read all resources"));
-        scopes.add(new AuthorizationScope("writes", "write all resources"));
-        return scopes;
-    }
-
-    @Bean
-    public static BeanPostProcessor springfoxHandlerProviderBeanPostProcessor() {
-        return new BeanPostProcessor() {
-
-            @Override
-            public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-                if (bean instanceof WebMvcRequestHandlerProvider) {
-                    customizeSpringfoxHandlerMappings(getHandlerMappings(bean));
-                }
-                return bean;
-            }
-
-            private <T extends RequestMappingInfoHandlerMapping> void customizeSpringfoxHandlerMappings(
-                    List<T> mappings) {
-                List<T> copy = mappings.stream().filter(mapping -> mapping.getPatternParser() == null)
-                        .collect(Collectors.toList());
-                mappings.clear();
-                mappings.addAll(copy);
-            }
-
-            @SuppressWarnings("unchecked")
-            private List<RequestMappingInfoHandlerMapping> getHandlerMappings(Object bean) {
-                try {
-                    Field field = ReflectionUtils.findField(bean.getClass(), "handlerMappings");
-                    field.setAccessible(true);
-                    return (List<RequestMappingInfoHandlerMapping>) field.get(bean);
-                }
-                catch (IllegalArgumentException | IllegalAccessException e) {
-                    throw new IllegalStateException(e);
-                }
-            }
-        };
+    private SecurityScheme securityScheme() {
+        OAuthFlow clientCredential = new OAuthFlow();
+        clientCredential.setTokenUrl(swaggerProperties.getTokenUrl());
+        clientCredential.setScopes(new Scopes().addString(swaggerProperties.getScope(), swaggerProperties.getScope()));
+        OAuthFlows oauthFlows = new OAuthFlows();
+        oauthFlows.password(clientCredential);
+        SecurityScheme securityScheme = new SecurityScheme();
+        securityScheme.setType(SecurityScheme.Type.OAUTH2);
+        securityScheme.setFlows(oauthFlows);
+        return securityScheme;
     }
 }

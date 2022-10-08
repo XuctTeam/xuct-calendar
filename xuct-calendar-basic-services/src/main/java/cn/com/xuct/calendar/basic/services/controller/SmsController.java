@@ -16,8 +16,8 @@ import cn.com.xuct.calendar.common.module.feign.req.SmsCodeFeignInfo;
 import cn.com.xuct.calendar.common.tencent.client.TencentSmsClient;
 import cn.com.xuct.calendar.common.tencent.config.TencentProperties;
 import com.tencentcloudapi.common.exception.TencentCloudSDKException;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Slf4j
 @RestController
-@Api(tags = "【基础服务】短信接口")
+@Tag(name = "【基础服务】短信接口")
 @RequiredArgsConstructor
 @RequestMapping("/api/basic/v1/sms")
 public class SmsController {
@@ -48,7 +48,7 @@ public class SmsController {
     private final TencentProperties tencentProperties;
 
 
-    @ApiOperation(value = "发送短信")
+    @Operation(summary = "发送短信")
     @PostMapping("")
     public R<String> smsCode(@Validated @RequestBody SmsCodeFeignInfo smsCodeFeignInfo) {
         Assert.isTrue(!CollectionUtils.isEmpty(smsCodeFeignInfo.getPhones()), "联系人为空");

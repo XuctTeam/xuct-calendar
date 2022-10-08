@@ -11,7 +11,7 @@
 package cn.com.xuct.calendar.cms.api.vo;
 
 import cn.com.xuct.calendar.cms.api.entity.Component;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.List;
@@ -27,12 +27,12 @@ import java.util.List;
 @Data
 public class CalendarComponentVo extends Component {
 
-    @ApiModelProperty("日历颜色")
+    @Schema(name = "日历颜色")
     private String color;
 
-    @ApiModelProperty("日历名称")
+    @Schema(name ="日历名称")
     private String calendarName;
 
-    @ApiModelProperty("邀请所有人ID")
+    @Schema(name ="邀请所有人ID")
     private List<String> memberIds;
 }

@@ -10,8 +10,7 @@
  */
 package cn.com.xuct.calendar.common.module.feign;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,28 +30,28 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(value = "会员类")
+@Schema(name = "会员类")
 public class PersonInfo implements Serializable {
 
-    @ApiModelProperty(value = "会员ID")
+    @Schema(name  = "会员ID")
     private Long userId;
 
-    @ApiModelProperty(value = "名称")
+    @Schema(name = "名称")
     private String name;
 
-    @ApiModelProperty(value = "头像")
+    @Schema(name = "头像")
     private String avatar;
 
-    @ApiModelProperty(value = "账号")
+    @Schema(name = "账号")
     private String username;
 
-    @ApiModelProperty(value = "状态")
+    @Schema(name = "状态")
     private Integer status;
 
-    @ApiModelProperty(value = "密码")
+    @Schema(name = "密码")
     private String password;
 
-    @ApiModelProperty(value = "时区")
+    @Schema(name = "时区")
     private String timeZone;
 
 

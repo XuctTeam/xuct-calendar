@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.common.module.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,9 +32,9 @@ import java.io.Serializable;
 @Builder(toBuilder = true)
 public class CalendarMergeDto implements Serializable {
 
-    @ApiModelProperty("当前用户ID")
+    @Schema(description = "当前用户ID")
     private Long memberId;
 
-    @ApiModelProperty("需合并的用户ID")
+    @Schema(description = "需合并的用户ID")
     private Long fromMemberId;
 }

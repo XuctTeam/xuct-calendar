@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.common.module.feign.req;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,12 +30,12 @@ import lombok.NoArgsConstructor;
 @Builder
 public class MemberRegisterFeignInfo {
 
-    @ApiModelProperty("注册类型")
+    @Schema(name = "注册类型")
     private Integer formType;
 
-    @ApiModelProperty("用户名/手机号/邮箱")
+    @Schema(name ="用户名/手机号/邮箱")
     public String username;
 
-    @ApiModelProperty("密码")
+    @Schema(name ="密码")
     private String password;
 }

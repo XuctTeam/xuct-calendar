@@ -12,7 +12,7 @@ package cn.com.xuct.calendar.cms.api.vo;
 
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import com.google.common.collect.Lists;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.List;
@@ -28,12 +28,12 @@ import java.util.List;
 @Data
 public class ComponentListVo {
 
-    @ApiModelProperty("日程发生天")
+    @Schema(name = "日程发生天")
     private String day;
 
-    @ApiModelProperty("日历ID")
+    @Schema(name ="日历ID")
     private String calendarId;
 
-    @ApiModelProperty("日程列表")
+    @Schema(name ="日程列表")
     private List<Component> components = Lists.newArrayList();
 }

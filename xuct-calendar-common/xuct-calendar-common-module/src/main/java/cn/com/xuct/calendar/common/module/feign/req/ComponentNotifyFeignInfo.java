@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.common.module.feign.req;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -33,30 +33,30 @@ import java.util.List;
 @Builder
 public class ComponentNotifyFeignInfo implements Serializable {
 
-    @ApiModelProperty("事件ID")
+    @Schema(description = "事件ID")
     private Long componentId;
 
-    @ApiModelProperty("事件标题")
+    @Schema(description ="事件标题")
     private String summary;
 
-    @ApiModelProperty("事件开始时间")
+    @Schema(description ="事件开始时间")
     private String startDate;
 
-    @ApiModelProperty("事件创建者")
+    @Schema(description ="事件创建者")
     private Long createMemberId;
 
-    @ApiModelProperty("地点")
+    @Schema(description ="地点")
     private String location;
 
-    @ApiModelProperty("周期事件")
+    @Schema(description ="周期事件")
     private Integer repeat;
 
-    @ApiModelProperty("提醒时间")
+    @Schema(description ="提醒时间")
     private String triggerSec;
 
-    @ApiModelProperty("参加人")
+    @Schema(description ="参加人")
     private List<Long> ids;
 
-    @ApiModelProperty("认证方式 1.站内信 2.邮件 3.订阅消息")
+    @Schema(description ="认证方式 1.站内信 2.邮件 3.订阅消息")
     private Integer type;
 }

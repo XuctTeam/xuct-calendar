@@ -93,12 +93,7 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>cn.com.xuct</groupId>
-            <artifactId>xuct-calendar-common-swagger</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
+
         <dependency>
             <groupId>cn.com.xuct</groupId>
             <artifactId>xuct-calendar-common-okfeign</artifactId>

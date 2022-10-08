@@ -15,7 +15,7 @@ import cn.com.xuct.calendar.common.http.annotation.EnableOkFeignAutoConfiguratio
 import cn.com.xuct.calendar.common.redis.annotation.EnableRedisAutoConfiguration;
 import cn.com.xuct.calendar.common.security.annotation.EnableOAuthResourceServer;
 import cn.com.xuct.calendar.common.smms.annotation.EnableSmmsClient;
-import cn.com.xuct.calendar.common.swagger.annotation.EnableSwagger2AutoConfiguration;
+import cn.com.xuct.calendar.common.swagger.annotation.EnableApiDoc;
 import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -34,7 +34,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @since 1.0.0
  */
 @EnableRedisAutoConfiguration
-@EnableSwagger2AutoConfiguration
+@EnableApiDoc
 @EnableOkFeignAutoConfiguration
 @SpringBootApplication
 @EnableDiscoveryClient

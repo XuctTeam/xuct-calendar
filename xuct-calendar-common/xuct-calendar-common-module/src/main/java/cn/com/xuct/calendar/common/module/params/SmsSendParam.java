@@ -1,19 +1,18 @@
 /**
- * Copyright (C), 2015-2021, XXX有限公司
- * FileName: MemberPhoneReq
+ * Copyright (C), 2015-2022, XXX有限公司
+ * FileName: SmsSendParam
  * Author:   Derek Xu
- * Date:     2021/12/13 16:58
+ * Date:     2022/10/8 8:53
  * Description:
  * History:
  * <author>          <time>          <version>          <desc>
- * 作者姓名           修改时间           版本号              描述
+ * Derek Xu         修改时间           版本号              描述
  */
 package cn.com.xuct.calendar.common.module.params;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -21,17 +20,17 @@ import java.io.Serializable;
  * 〈〉
  *
  * @author Derek Xu
- * @create 2021/12/13
+ * @create 2022/10/8
  * @since 1.0.0
  */
 @Data
-public class MemberPhoneParam implements Serializable {
+public class SmsSendParam implements Serializable {
 
-    @NotNull
+    @Schema(description = "电话号码" ,example = "17101991287")
     private String phone;
 
-    private String code;
-
-    @Schema(name = "类型", description = "1.绑定手机 2.解绑手机")
+    @Schema(description = "0.注册 1.绑定手机 2.解绑手机", example = "1")
     private Integer type;
+
+
 }

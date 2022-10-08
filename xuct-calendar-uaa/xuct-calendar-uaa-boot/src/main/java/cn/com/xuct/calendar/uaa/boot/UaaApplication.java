@@ -12,7 +12,6 @@ package cn.com.xuct.calendar.uaa.boot;
 
 import cn.com.xuct.calendar.common.http.annotation.EnableOkFeignAutoConfiguration;
 import cn.com.xuct.calendar.common.redis.annotation.EnableRedisAutoConfiguration;
-import cn.com.xuct.calendar.common.swagger.annotation.EnableSwagger2AutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
@@ -27,7 +26,6 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  * @since 1.0.0
  */
 @EnableRedisAutoConfiguration
-@EnableSwagger2AutoConfiguration
 @EnableCaching
 @SpringBootApplication(scanBasePackages = {"cn.com.xuct.calendar.uaa.boot"})
 @EnableDiscoveryClient

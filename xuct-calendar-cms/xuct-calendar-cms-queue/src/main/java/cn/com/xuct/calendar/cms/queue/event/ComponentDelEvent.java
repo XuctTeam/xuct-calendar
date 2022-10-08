@@ -10,7 +10,6 @@
  */
 package cn.com.xuct.calendar.cms.queue.event;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.ApplicationEvent;

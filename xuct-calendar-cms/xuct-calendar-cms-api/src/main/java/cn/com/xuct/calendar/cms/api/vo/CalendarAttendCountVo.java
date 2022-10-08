@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.cms.api.vo;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -26,16 +26,16 @@ import java.io.Serializable;
 @Data
 public class CalendarAttendCountVo implements Serializable {
 
-    @ApiModelProperty(value = "邀请总人数")
+    @Schema(name = "邀请总人数")
     private Integer attendSum;
 
-    @ApiModelProperty(value = "接受总人数")
+    @Schema(name = "接受总人数")
     private Integer accepted;
 
-    @ApiModelProperty(value = "拒绝总人数")
+    @Schema(name = "拒绝总人数")
     private Integer noAccepted;
 
-    @ApiModelProperty(value = "未操作总人数")
+    @Schema(name = "未操作总人数")
     private Integer noOperation;
 
 }

@@ -15,12 +15,13 @@ import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.module.feign.req.EmailFeignInfo;
 import cn.com.xuct.calendar.common.module.params.EmailCodeParam;
+import cn.com.xuct.calendar.common.security.annotation.Inner;
 import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
 import cn.com.xuct.calendar.ums.api.feign.BasicServicesFeignClient;
 import cn.hutool.core.util.RandomUtil;
 import com.google.common.collect.Lists;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -42,7 +43,7 @@ import java.util.concurrent.TimeUnit;
  * @since 1.0.0
  */
 @Slf4j
-@Api(tags = "【所有端】邮件接口")
+@Tag(name = "【所有端】邮件接口")
 @RestController
 @RequestMapping("/api/v1/common/email")
 @RequiredArgsConstructor
@@ -52,7 +53,8 @@ public class EmailController {
 
     private final StringRedisTemplate stringRedisTemplate;
 
-    @ApiOperation(value = "发送邮件")
+    @Inner(value = false)
+    @Operation(summary = "发送邮件")
     @PostMapping("")
     public R<String> sendEmail(@Validated @RequestBody EmailCodeParam param) {
         if (param.getType() == 1 || param.getType() == 2) {

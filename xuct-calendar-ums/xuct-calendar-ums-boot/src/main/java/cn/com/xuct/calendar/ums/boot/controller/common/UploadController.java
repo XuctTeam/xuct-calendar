@@ -15,8 +15,8 @@ import cn.com.xuct.calendar.common.smms.client.SmmsClient;
 import cn.com.xuct.calendar.common.smms.vo.SmmsUploadRes;
 import cn.com.xuct.calendar.common.smms.vo.data.SmmsUploadData;
 import cn.com.xuct.calendar.common.web.utils.FilesUtils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,7 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @since 1.0.0
  */
 @Slf4j
-@Api(tags = "【所有端】上传接口")
+@Tag(name = "【所有端】上传接口")
 @RestController
 @RequestMapping("/api/v1/common/file")
 @RequiredArgsConstructor
@@ -43,7 +43,7 @@ public class UploadController {
     private final SmmsClient smmsClient;
 
     @PostMapping(value = "/upload", consumes = "multipart/form-data")
-    @ApiOperation(value = "上传图片")
+    @Operation(summary = "上传图片")
     public R<SmmsUploadData> uploadImage(@RequestParam MultipartFile smsfile) {
         SmmsUploadRes smmsRes = smmsClient.upload(FilesUtils.multipartFileToFile(smsfile, "/temp", FilesUtils.contentTypeToFileSuffix(smsfile.getContentType())));
         if (smmsRes == null || (!smmsRes.isSuccess() && !"image_repeated".equals(smmsRes.getCode())))

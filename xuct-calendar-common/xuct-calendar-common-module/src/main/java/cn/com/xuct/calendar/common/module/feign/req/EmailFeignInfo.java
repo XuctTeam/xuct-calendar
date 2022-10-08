@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.common.module.feign.req;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,19 +34,19 @@ import java.util.Map;
 @Builder
 public class EmailFeignInfo implements Serializable {
 
-    @ApiModelProperty(name = "收件者")
+    @Schema(name = "收件者")
     private List<String> tos;
 
-    @ApiModelProperty(name = "抄送")
+    @Schema(name = "抄送")
     private List<String> ccs;
 
-    @ApiModelProperty(name = "主题")
+    @Schema(name = "主题")
     private String subject;
 
-    @ApiModelProperty(name = "参数")
+    @Schema(name = "参数")
     private Map<String, Object> params;
 
-    @ApiModelProperty(name = "模板")
+    @Schema(name = "模板")
     private String template;
 
 }

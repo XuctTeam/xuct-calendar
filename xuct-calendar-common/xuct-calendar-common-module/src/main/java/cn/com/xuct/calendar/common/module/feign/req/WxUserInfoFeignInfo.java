@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.common.module.feign.req;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,18 +30,18 @@ import lombok.NoArgsConstructor;
 @Builder
 public class WxUserInfoFeignInfo {
 
-    @ApiModelProperty("小程序openId")
+    @Schema(name = "小程序openId")
     private String openId;
 
-    @ApiModelProperty("小程序SessionKey")
+    @Schema(name = "小程序SessionKey")
     private String sessionKey;
 
-    @ApiModelProperty("小程序encryptedData")
+    @Schema(name = "小程序encryptedData")
     private String encryptedData;
 
-    @ApiModelProperty("小程序iv")
+    @Schema(name = "小程序iv")
     private String iv;
 
-    @ApiModelProperty("是否是登录")
+    @Schema(name =  "是否是登录")
     private boolean login = false;
 }

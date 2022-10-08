@@ -49,8 +49,8 @@
         <!-- compiler-->
         <compiler.lombok.version>1.18.24</compiler.lombok.version>
         <compiler.knife4j.verion>2.0.9</compiler.knife4j.verion>
-        <complier.swagger2.version>2.10.5</complier.swagger2.version>
-        <complier.swagger2.moudle.version>1.6.3</complier.swagger2.moudle.version>
+        <compiler.openapi.version>1.6.11</compiler.openapi.version>
+        <compiler.openapi.v3.annotations.version>2.2.2</compiler.openapi.v3.annotations.version>
         <complier.jaxb.impl.version>3.0.2</complier.jaxb.impl.version>
         <complier.log4j.version>1.7.32</complier.log4j.version>
         <complier.okhttp.version>4.9.3</complier.okhttp.version>
@@ -134,22 +134,28 @@
                 <version>${compiler.lombok.version}</version>
                 <scope>provided</scope>
             </dependency>
-            <dependency>
-                <groupId>com.github.xiaoymin</groupId>
-                <artifactId>knife4j-spring-boot-starter</artifactId>
-                <version>${compiler.knife4j.verion}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.swagger</groupId>
-                <artifactId>swagger-annotations</artifactId>
-                <version>${complier.swagger2.moudle.version}</version>
-            </dependency>
+
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${complier.log4j.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-webmvc-core</artifactId>
+                <version>${compiler.openapi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-security</artifactId>
+                <version>${compiler.openapi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-annotations</artifactId>
+                <version>${compiler.openapi.v3.annotations.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>cn.hutool</groupId>

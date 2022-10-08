@@ -15,7 +15,6 @@ import cn.com.xuct.calendar.ums.api.dto.GroupInfoDto;
 import cn.com.xuct.calendar.ums.api.dto.GroupMemberInfoDto;
 import cn.com.xuct.calendar.ums.api.entity.Group;
 import cn.com.xuct.calendar.ums.boot.mapper.GroupMapper;
-import io.swagger.models.auth.In;
 
 import java.util.List;
 

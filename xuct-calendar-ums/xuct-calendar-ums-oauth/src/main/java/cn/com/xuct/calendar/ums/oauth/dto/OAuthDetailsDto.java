@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.ums.oauth.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -28,13 +28,13 @@ public class OAuthDetailsDto implements Serializable {
     /**
      * 客户端ID
      */
-    @ApiModelProperty(value = "客户端id")
+    @Schema(name = "客户端id")
     private String clientId;
 
     /**
      * 客户端密钥
      */
-    @ApiModelProperty(value = "客户端密钥")
+    @Schema(name = "客户端密钥")
     private String clientSecret;
 
     /**
@@ -45,7 +45,7 @@ public class OAuthDetailsDto implements Serializable {
     /**
      * 作用域
      */
-    @ApiModelProperty(value = "作用域")
+    @Schema(name = "作用域")
     private String scope;
 
     /**

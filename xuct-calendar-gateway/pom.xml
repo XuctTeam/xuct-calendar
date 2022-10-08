@@ -56,15 +56,16 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!--caffeine 替换LB 默认缓存实现-->
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.alibaba.nacos</groupId>
             <artifactId>nacos-client</artifactId>
             <version>${lib.nacos.client.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.xiaoymin</groupId>
-            <artifactId>knife4j-spring-boot-starter</artifactId>
-            <version>${compiler.knife4j.verion}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -74,6 +75,13 @@
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
         </dependency>
+        <!--接口文档-->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-webflux-ui</artifactId>
+            <version>${compiler.openapi.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.pig4cloud.plugin</groupId>
             <artifactId>captcha-core</artifactId>

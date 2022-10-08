@@ -10,8 +10,7 @@
  */
 package cn.com.xuct.calendar.common.module.feign.req;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -33,26 +32,26 @@ import java.util.Map;
  */
 @Data
 @Builder
-@ApiModel("站内信消息体")
+@Schema(description = "站内信消息体")
 @NoArgsConstructor
 @AllArgsConstructor
 public class MemberMessageFeignInfo implements Serializable {
 
-    @ApiModelProperty("标题")
+    @Schema(name = "标题")
     private String title;
 
     @NotNull
-    @ApiModelProperty(value = "类型", notes = "SYSTEM,GROUP,EVENT")
+    @Schema(name = "类型", description = "SYSTEM,GROUP,EVENT")
     private String type;
 
     @NotEmpty
-    @ApiModelProperty("会员")
+    @Schema(name = "会员")
     private List<Long> memberIds;
 
     @NotNull
-    @ApiModelProperty("操作")
+    @Schema(name ="操作")
     private Integer operation;
 
-    @ApiModelProperty("消息体")
+    @Schema(name = "消息体")
     private Map<String, Object> content;
 }

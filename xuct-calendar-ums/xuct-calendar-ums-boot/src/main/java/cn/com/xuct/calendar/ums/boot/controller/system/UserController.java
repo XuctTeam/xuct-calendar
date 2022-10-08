@@ -10,15 +10,9 @@
  */
 package cn.com.xuct.calendar.ums.boot.controller.system;
 
-import cn.com.xuct.calendar.common.core.res.R;
-import cn.com.xuct.calendar.common.module.feign.UserInfo;
-import cn.com.xuct.calendar.common.security.annotation.Inner;
-import cn.com.xuct.calendar.ums.boot.service.IUserRoleService;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -30,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 1.0.0
  */
 @RestController
-@Api(tags = "系统管理员接口")
+@Tag(name = "系统管理员接口")
 @RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
 public class UserController {

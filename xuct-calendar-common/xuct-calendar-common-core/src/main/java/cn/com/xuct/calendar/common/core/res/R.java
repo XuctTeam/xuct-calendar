@@ -14,8 +14,7 @@ package cn.com.xuct.calendar.common.core.res;
 import cn.com.xuct.calendar.common.core.constant.RConstants;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -34,7 +33,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @ToString
-@ApiModel(description = "返回信息")
+@Schema(description = "返回信息")
 @NoArgsConstructor
 public class R<T> implements Serializable {
 
@@ -42,20 +41,20 @@ public class R<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty(value = "状态码", required = true)
+    @Schema(description = "状态码", required = true)
     private int code;
 
-    @ApiModelProperty(value = "是否成功", required = true)
+    @Schema(description = "是否成功", required = true)
     private boolean success;
 
     @JsonSerialize(nullsUsing = JsonSerializer.None.class)
-    @ApiModelProperty(value = "承载数据")
+    @Schema(description = "承载数据")
     private T data;
 
-    @ApiModelProperty(value = "返回消息", required = true)
+    @Schema(description = "返回消息", required = true)
     private String message;
 
-    @ApiModelProperty(value = "请求key", required = false)
+    @Schema(description = "请求key", required = false)
     private String logKey;
 
     private R(IResultCode resultCode) {

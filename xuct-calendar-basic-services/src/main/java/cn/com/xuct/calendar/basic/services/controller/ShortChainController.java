@@ -17,8 +17,8 @@ import cn.com.xuct.calendar.common.core.utils.JsonUtils;
 import cn.com.xuct.calendar.common.core.utils.StrUtils;
 import cn.com.xuct.calendar.common.module.feign.req.ShortChainFeignInfo;
 import cn.hutool.core.date.DateUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @RestController
-@Api(tags = "【基础服务】短链接口")
+@Tag(name = "【基础服务】短链接口")
 @RequiredArgsConstructor
 @RequestMapping("/api/basic/short/chain")
 public class ShortChainController {
@@ -49,7 +49,7 @@ public class ShortChainController {
 
     private final StringRedisTemplate stringRedisTemplate;
 
-    @ApiOperation(value = "获取短链")
+    @Operation(summary = "获取短链")
     @PostMapping("")
     public R<String> get(@Validated @RequestBody ShortChainFeignInfo shortChain) {
         String domain = domainConfiguration.getDomain(shortChain.getType());
@@ -71,7 +71,7 @@ public class ShortChainController {
         return R.data(respUrl);
     }
 
-    @ApiOperation(value = "短链换长链")
+    @Operation(summary = "短链换长链")
     @GetMapping("/{key:[a-zA-Z0-9]{6}}")
     public RedirectView join(HttpServletRequest request, @PathVariable("key") String key) {
 

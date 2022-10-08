@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.common.module.params.data;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -28,18 +28,18 @@ import java.io.Serializable;
 public class MemberUserNameRegisterData implements Serializable {
 
     @NotNull
-    @ApiModelProperty("用户名")
+    @Schema(name = "用户名")
     public String username;
 
     @NotNull
-    @ApiModelProperty("密码")
+    @Schema(name = "密码")
     private String password;
 
     @NotNull
-    @ApiModelProperty("请求key")
+    @Schema(name = "请求key")
     private String key;
 
     @NotNull
-    @ApiModelProperty("验证码")
+    @Schema(name = "验证码")
     private String captcha;
 }

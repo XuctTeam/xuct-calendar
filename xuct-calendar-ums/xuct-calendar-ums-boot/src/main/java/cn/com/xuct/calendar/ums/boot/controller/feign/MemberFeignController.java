@@ -38,8 +38,8 @@ import cn.com.xuct.calendar.ums.boot.event.MemberEvent;
 import cn.com.xuct.calendar.ums.boot.service.IMemberAuthService;
 import cn.com.xuct.calendar.ums.boot.service.IMemberService;
 import com.google.common.collect.Lists;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -59,7 +59,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RestController
-@Api(tags = "【远程调用】会员接口")
+@Tag(name = "【远程调用】会员接口")
 @RequestMapping("/api/feign/v1/member")
 @RequiredArgsConstructor
 public class MemberFeignController {
@@ -76,7 +76,7 @@ public class MemberFeignController {
 
 
     @Inner
-    @ApiOperation(value = "通过微信CODE获取OPENID")
+    @Operation(summary = "通过微信CODE获取OPENID")
     @GetMapping("/wx/code")
     public R<OpenIdInfo> wxCode(@RequestParam("code") String code) {
         R<WxMaJscode2SessionResult> jscode2SessionResultR = basicServicesFeignClient.getSessionInfo(code);
@@ -86,7 +86,7 @@ public class MemberFeignController {
     }
 
     @Inner
-    @ApiOperation(value = "通过OPENID查询会员")
+    @Operation(summary = "通过OPENID查询会员")
     @PostMapping("/get/openId")
     public R<UserInfo> getUserByWechatCode(@RequestBody WxUserInfoFeignInfo wxUserInfoFeignInfo) {
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", wxUserInfoFeignInfo.getOpenId()), Column.of("identity_type", IdentityTypeEnum.open_id)));
@@ -122,7 +122,7 @@ public class MemberFeignController {
 
 
     @Inner
-    @ApiOperation(value = "通过登录用户名或邮箱查询会员")
+    @Operation(summary = "通过登录用户名或邮箱查询会员")
     @GetMapping("/get/username")
     public R<UserInfo> getUserByUserName(@RequestParam("username") String username) {
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", username), Column.of("identity_type", IdentityTypeEnum.user_name)));
@@ -140,7 +140,7 @@ public class MemberFeignController {
                         .password(memberAuth.getPassword()).name(member.getName()).timeZone(member.getTimeZone()).status(member.getStatus()).build()).build());
     }
 
-    @ApiOperation(value = "通过ID查询会员")
+    @Operation(summary = "通过ID查询会员")
     @GetMapping("/get/id")
     public R<PersonInfo> getUserById(@RequestParam("id") Long id) {
         Member member = memberService.findMemberById(id);
@@ -148,7 +148,7 @@ public class MemberFeignController {
         return R.data(PersonInfo.builder().userId(member.getId()).name(member.getName()).status(member.getStatus()).timeZone(member.getTimeZone()).build());
     }
 
-    @ApiOperation(value = "通过IDS查询会员")
+    @Operation(summary = "通过IDS查询会员")
     @PostMapping("/list/ids")
     public R<List<PersonInfo>> listMemberByIds(@RequestBody List<String> ids) {
         List<Member> members = memberService.find(Column.in("id", ids));
@@ -162,7 +162,7 @@ public class MemberFeignController {
         }).collect(Collectors.toList()));
     }
 
-    @ApiOperation(value = "会员注册")
+    @Operation(summary = "会员注册")
     @PostMapping("/register")
     public R<String> register(@RequestBody MemberRegisterFeignInfo registerDto) {
         List<Column> qry = Lists.newArrayList(Column.of("user_name", registerDto.getUsername()));
@@ -204,7 +204,7 @@ public class MemberFeignController {
         return R.status(true);
     }
 
-    @ApiOperation(value = "修改密码")
+    @Operation(summary = "修改密码")
     @PostMapping("/modify/password")
     public R<String> modifyPassword(@RequestBody MemberModifyPasswordFeignInfo memberModifyPasswordFeignInfo) {
         Member member = memberService.getById(memberModifyPasswordFeignInfo.getMemberId());

@@ -16,7 +16,7 @@ import cn.com.xuct.calendar.common.module.enums.ComponentAlarmEnum;
 import cn.com.xuct.calendar.common.module.enums.ComponentRepeatTypeEnum;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -36,63 +36,63 @@ public class ComponentShareVo implements Serializable {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
     
-    @ApiModelProperty("日历ID")
+    @Schema(name ="日历ID")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long calendarId;
 
-    @ApiModelProperty("创建者ID")
+    @Schema(name ="创建者ID")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long creatorMemberId;
 
-    @ApiModelProperty("创建者名称")
+    @Schema(name ="创建者名称")
     private String createMemberName;
 
     /* 状态*/
-    @ApiModelProperty(value = "状态", notes = "正常、锁定、删除")
+    @Schema(name = "状态", description = "正常、锁定、删除")
     private CommonStatusEnum status;
 
     /* 数据权限*/
     private CommonPowerEnum power;
 
-    @ApiModelProperty("标题")
+    @Schema(name ="标题")
     private String summary;
 
-    @ApiModelProperty("地点")
+    @Schema(name ="地点")
     private String location;
 
-    @ApiModelProperty("描述")
+    @Schema(name ="描述")
     private String description;
 
-    @ApiModelProperty("事件的开始时间")
+    @Schema(name ="事件的开始时间")
     private Date dtstart;
 
-    @ApiModelProperty("事件的结束时间")
+    @Schema(name ="事件的结束时间")
     private Date dtend;
 
-    @ApiModelProperty("整个事件的开始时间(用于查询)")
+    @Schema(name ="整个事件的开始时间(用于查询)")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long startTime;
 
-    @ApiModelProperty("整个事件的结束时间(用于查询)")
+    @Schema(name ="整个事件的结束时间(用于查询)")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long endTime;
 
-    @ApiModelProperty("是否全天")
+    @Schema(name ="是否全天")
     private int fullDay;
 
-    @ApiModelProperty("是否循环")
+    @Schema(name ="是否循环")
     private String repeatStatus;
 
-    @ApiModelProperty(value = "循环类型", notes = "日、周、月、年")
+    @Schema(name = "循环类型", description = "日、周、月、年")
     private ComponentRepeatTypeEnum repeatType;
 
-    @ApiModelProperty("提醒方式")
+    @Schema(name ="提醒方式")
     private ComponentAlarmEnum alarmType;
 
-    @ApiModelProperty("提醒时间")
+    @Schema(name ="提醒时间")
     private String alarmTimes;
 
-    @ApiModelProperty("循环间隔")
+    @Schema(name ="循环间隔")
     private Integer repeatInterval;
 
 
@@ -117,9 +117,9 @@ public class ComponentShareVo implements Serializable {
      */
     private String repeatBymonthday;
 
-    @ApiModelProperty("循环截至时间")
+    @Schema(name ="循环截至时间")
     private Date repeatUntil;
 
-    @ApiModelProperty("是否被邀请者")
+    @Schema(name ="是否被邀请者")
     private Boolean attend;
 }

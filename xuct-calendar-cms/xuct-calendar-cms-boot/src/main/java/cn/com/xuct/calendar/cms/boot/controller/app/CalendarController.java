@@ -12,14 +12,14 @@ package cn.com.xuct.calendar.cms.boot.controller.app;
 
 import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
 import cn.com.xuct.calendar.cms.boot.service.IComponentService;
+import cn.com.xuct.calendar.cms.boot.service.IMemberCalendarService;
+import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.req.MemberCalendarUpdateReq;
-import cn.com.xuct.calendar.common.core.res.R;
-import cn.com.xuct.calendar.cms.boot.service.IMemberCalendarService;
 import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
 import com.google.common.collect.Lists;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -37,7 +37,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@Api(tags = "【移动端】日历服务")
+@Tag(name = "【移动端】日历服务")
 @RequestMapping("/api/app/v1/calendar")
 @RequiredArgsConstructor
 public class CalendarController {
@@ -47,26 +47,26 @@ public class CalendarController {
     private final IComponentService componentService;
 
 
-    @ApiOperation(value = "日历列表")
+    @Operation(summary = "日历列表")
     @GetMapping("/list")
     public R<List<MemberCalendar>> list() {
         return R.data(memberCalendarService.queryMemberCalendar(SecurityUtils.getUserId()));
     }
 
-    @ApiOperation(value = "日历信息")
+    @Operation(summary = "日历信息")
     @GetMapping
     public R<MemberCalendar> get(@RequestParam("id") Long id) {
         return R.data(memberCalendarService.getMemberCalendar(id));
     }
 
-    @ApiOperation(value = "新增日历")
+    @Operation(summary = "新增日历")
     @PostMapping("")
     public R<String> createMemberCalendar(@Validated @RequestBody MemberCalendarUpdateReq memberCalendarUpdateReq) {
         memberCalendarService.createMemberCalendar(SecurityUtils.getUserId(), memberCalendarUpdateReq , false);
         return R.status(true);
     }
 
-    @ApiOperation(value = "修改日历")
+    @Operation(summary = "修改日历")
     @PutMapping("")
     public R<String> updateMemberCalendar(@Validated @RequestBody MemberCalendarUpdateReq memberCalendarUpdateReq) {
         MemberCalendar memberCalendar = memberCalendarService.getById(memberCalendarUpdateReq.getId());
@@ -76,7 +76,7 @@ public class CalendarController {
         return R.status(true);
     }
 
-    @ApiOperation(value = "删除日历")
+    @Operation(summary = "删除日历")
     @DeleteMapping
     public R<String> delete(@RequestParam("calendarId") Long calendarId) {
         Long userId = SecurityUtils.getUserId();

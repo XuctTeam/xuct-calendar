@@ -11,7 +11,7 @@
 package cn.com.xuct.calendar.common.module.req;
 
 import cn.com.xuct.calendar.common.module.enums.RegisterEnum;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -29,18 +29,18 @@ import java.io.Serializable;
 public class MemberRegisterReq implements Serializable {
 
     @NotNull
-    @ApiModelProperty(notes = "注册类型")
+    @Schema(name = "注册类型")
     private RegisterEnum type;
 
-    @ApiModelProperty(notes = "用户名")
+    @Schema(name = "用户名")
     private String username;
 
-    @ApiModelProperty(notes = "密码")
+    @Schema(name = "密码")
     private String password;
 
-    @ApiModelProperty(notes = "手机号")
+    @Schema(name = "手机号")
     private String phone;
 
-    @ApiModelProperty(notes = "短信验证码")
+    @Schema(name = "短信验证码")
     private String smsCode;
 }

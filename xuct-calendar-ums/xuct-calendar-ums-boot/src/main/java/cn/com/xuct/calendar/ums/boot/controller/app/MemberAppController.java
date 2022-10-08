@@ -10,9 +10,7 @@
  */
 package cn.com.xuct.calendar.ums.boot.controller.app;
 
-import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
-import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
 import cn.com.xuct.calendar.common.core.enums.PasswordEncoderTypeEnum;
 import cn.com.xuct.calendar.common.core.exception.SvrException;
 import cn.com.xuct.calendar.common.core.res.R;
@@ -39,8 +37,8 @@ import cn.com.xuct.calendar.ums.boot.service.IMemberService;
 import cn.com.xuct.calendar.ums.boot.support.SmsCodeValidateSupport;
 import cn.hutool.core.lang.Assert;
 import com.google.common.collect.Lists;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -61,7 +59,7 @@ import java.util.Optional;
  */
 @Slf4j
 @RestController
-@Api(tags = "【移动端】会员接口")
+@Tag(name = "【移动端】会员接口")
 @RequestMapping("/api/app/v1/member")
 @RequiredArgsConstructor
 public class MemberAppController {
@@ -79,7 +77,7 @@ public class MemberAppController {
     private final CalendarFeignClient calendarFeignClient;
 
 
-    @ApiOperation(value = "获取用户基础信息及所有认证")
+    @Operation(summary = "获取用户基础信息及所有认证")
     @GetMapping("/info/all")
     public R<MemberInfoVo> getAllInfo() {
         Long userId = SecurityUtils.getUserId();
@@ -93,7 +91,7 @@ public class MemberAppController {
         return R.data(memberInfoVo);
     }
 
-    @ApiOperation(value = "获取用户基础信息")
+    @Operation(summary = "获取用户基础信息")
     @GetMapping("/info/base")
     public R<Member> getBaseInfo() {
         Long userId = SecurityUtils.getUserId();
@@ -102,7 +100,7 @@ public class MemberAppController {
         return R.data(member);
     }
 
-    @ApiOperation(value = "获取用户所有认证")
+    @Operation(summary = "获取用户所有认证")
     @GetMapping("/auths")
     public R<List<MemberAuth>> auths() {
         Long userId = SecurityUtils.getUserId();
@@ -111,13 +109,13 @@ public class MemberAppController {
         return R.data(memberAuths);
     }
 
-    @ApiOperation(value = "获取用户微信认证")
+    @Operation(summary = "获取用户微信认证")
     @GetMapping("/auth/wechat")
     public R<MemberAuth> getWxAuth() {
         return R.data(memberAuthService.get(Lists.newArrayList(Column.of("identity_type", IdentityTypeEnum.open_id), Column.of("member_id", SecurityUtils.getUserId()))));
     }
 
-    @ApiOperation(value = "修改密码")
+    @Operation(summary = "修改密码")
     @PostMapping("/password")
     public R<String> modifyPassword(@Validated @RequestBody MemberPasswordParam param) {
         Long userId = SecurityUtils.getUserId();
@@ -128,7 +126,7 @@ public class MemberAppController {
         return R.status(true);
     }
 
-    @ApiOperation(value = "修改名字")
+    @Operation(summary = "修改名字")
     @PostMapping("/name")
     public R<Member> modifyName(@Validated @RequestBody MemberNameParam param) {
         Long userId = SecurityUtils.getUserId();
@@ -141,7 +139,7 @@ public class MemberAppController {
         return R.data(member);
     }
 
-    @ApiOperation(value = "查询名字")
+    @Operation(summary = "查询名字")
     @GetMapping("/name")
     public R<String> getName(@RequestParam("memberId") Long memberId) {
         Member member = memberService.findMemberById(memberId);
@@ -149,7 +147,7 @@ public class MemberAppController {
         return R.data(member.getName());
     }
 
-    @ApiOperation(value = "修改头像")
+    @Operation(summary = "修改头像")
     @PostMapping("/avatar")
     public R<Member> modifyAvatar(@Validated @RequestBody MemberAvatarParam param) {
         Member member = memberService.findMemberById(SecurityUtils.getUserId());
@@ -160,7 +158,7 @@ public class MemberAppController {
     }
 
 
-    @ApiOperation(value = "获取微信手机号")
+    @Operation(summary = "获取微信手机号")
     @PostMapping("/phone/get")
     public R<String> getWxPhone(@RequestBody MemberGetPhoneReq getPhoneReq) {
         Long userId = SecurityUtils.getUserId();
@@ -171,7 +169,7 @@ public class MemberAppController {
         return R.data(wxMaPhoneNumberInfoR.getData().getPhoneNumber());
     }
 
-    @ApiOperation(value = "手机号绑定")
+    @Operation(summary = "手机号绑定")
     @PostMapping("/phone/bind")
     public R<MemberPhoneAuthVo> bindPhone(@Validated @RequestBody MemberPhoneParam param) {
         Long userId = SecurityUtils.getUserId();
@@ -204,7 +202,7 @@ public class MemberAppController {
         return R.data(memberPhoneAuthVo);
     }
 
-    @ApiOperation(value = "手机号解绑")
+    @Operation(summary = "手机号解绑")
     @PostMapping("/phone/unbind")
     public R<String> unbindPhone(@Validated @RequestBody MemberPhoneParam param) {
         Long userId = SecurityUtils.getUserId();
@@ -219,7 +217,7 @@ public class MemberAppController {
         return R.status(true);
     }
 
-    @ApiOperation(value = "账号绑定")
+    @Operation(summary = "账号绑定")
     @PostMapping("/username/bind")
     public R<String> bindUserName(@RequestBody MemberUsernameParam param) {
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", param.getUsername()), Column.of("identity_type", IdentityTypeEnum.user_name)));
@@ -234,7 +232,7 @@ public class MemberAppController {
         return R.status(true);
     }
 
-    @ApiOperation(value = "邮箱绑定")
+    @Operation(summary = "邮箱绑定")
     @PostMapping("/email/bind")
     public R<String> bindEmail(@Validated @RequestBody EmailCodeParam param) {
         /* 1.验证验证码 */
@@ -250,7 +248,7 @@ public class MemberAppController {
         return R.status(true);
     }
 
-    @ApiOperation(value = "邮箱解绑")
+    @Operation(summary = "邮箱解绑")
     @PostMapping("/email/unbind")
     public R<String> unbindEmail(@Validated @RequestBody EmailCodeParam param) {
         /* 1.验证验证码 */
@@ -264,7 +262,7 @@ public class MemberAppController {
         return R.status(true);
     }
 
-    @ApiOperation(value = "微信绑定")
+    @Operation(summary = "微信绑定")
     @PostMapping("/wx/bind")
     public R<String> bindWechat(@RequestBody WxUserInfoFeignInfo wxUserInfoFeignInfo) {
 //        R<WxMaJscode2SessionResult> jscode2SessionResultR = basicServicesFeignClient.getSessionInfo(wxUserInfoFeignInfo.getCode());
@@ -288,7 +286,7 @@ public class MemberAppController {
         return R.status(true);
     }
 
-    @ApiOperation(value = "使用微信头像昵称")
+    @Operation(summary = "使用微信头像昵称")
     @PostMapping("/wx/update/info")
     public R<Member> modifyNameAndAvatarToWx() {
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("member_id", SecurityUtils.getUserId()), Column.of("identity_type", IdentityTypeEnum.open_id)));
@@ -303,7 +301,7 @@ public class MemberAppController {
         return R.data(member);
     }
 
-    @ApiOperation(value = "用户账号合并")
+    @Operation(summary = "用户账号合并")
     @PostMapping("/merge")
     public R<String> mergeAccount(@Validated @RequestBody MemberMergeParam memberMergeParam) {
         Long userId = SecurityUtils.getUserId();

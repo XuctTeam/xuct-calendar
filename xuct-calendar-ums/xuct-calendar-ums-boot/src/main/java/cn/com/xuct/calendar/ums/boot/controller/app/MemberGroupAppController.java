@@ -31,8 +31,8 @@ import cn.com.xuct.calendar.ums.boot.event.GroupLeaveEvent;
 import cn.com.xuct.calendar.ums.boot.service.IGroupService;
 import cn.com.xuct.calendar.ums.boot.service.IMemberGroupService;
 import com.google.common.collect.Lists;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
@@ -54,7 +54,7 @@ import java.util.TreeMap;
  * @since 1.0.0
  */
 @Slf4j
-@Api(tags = "【移动端】会员群组接口")
+@Tag(name = "【移动端】会员群组接口")
 @RestController
 @RequestMapping("/api/app/v1/mbr/group")
 @RequiredArgsConstructor
@@ -64,7 +64,7 @@ public class MemberGroupAppController {
 
     private final IMemberGroupService memberGroupService;
 
-    @ApiOperation(value = "按拼音分组用户")
+    @Operation(summary = "按拼音分组用户")
     @GetMapping("")
     public R<List<GroupMemberPinYinVo>> list(@RequestParam("groupId") Long groupId) {
         List<GroupMemberInfoDto> memberInfoDtos = memberGroupService.list(groupId, SecurityUtils.getUserId());
@@ -95,19 +95,19 @@ public class MemberGroupAppController {
         return R.data(groupMemberPinYinVos);
     }
 
-    @ApiOperation(value = "通过群组查询")
+    @Operation(summary = "通过群组查询")
     @GetMapping("/query")
     public R<List<GroupMemberInfoDto>> queryMembers(@RequestParam("groupId") Long groupId) {
         return R.data(memberGroupService.queryMembersByGroupId(groupId, SecurityUtils.getUserId()));
     }
 
-    @ApiOperation(value = "通过ids查询")
+    @Operation(summary = "通过ids查询")
     @PostMapping("/ids")
     public R<List<GroupMemberInfoDto>> queryMemberIds(@RequestBody GroupMemberIdsParam idsParam) {
         return R.data(memberGroupService.queryMemberIds(idsParam.getIds()));
     }
 
-    @ApiOperation(value = "申请入群")
+    @Operation(summary = "申请入群")
     @PostMapping("/apply")
     public R<String> applyGroup(@RequestBody @Validated GroupJoinParam joinParam) {
         MemberGroup memberGroup = memberGroupService.get(Lists.newArrayList(Column.of("group_id", joinParam.getId()), Column.of("member_id", SecurityUtils.getUserId())));
@@ -130,7 +130,7 @@ public class MemberGroupAppController {
         return R.status(true);
     }
 
-    @ApiOperation(value = "同意入群")
+    @Operation(summary = "同意入群")
     @PostMapping("/apply/agree")
     public R<String> agreeApply(@RequestBody @Validated GroupApplyParam groupApplyParam) {
         MemberGroup memberGroup = memberGroupService.getById(groupApplyParam.getId());
@@ -145,7 +145,7 @@ public class MemberGroupAppController {
         return R.status(true);
     }
 
-    @ApiOperation(value = "拒绝或撤回申请")
+    @Operation(summary = "拒绝或撤回申请")
     @PostMapping("/apply/refuse")
     public R<String> refuseApply(@RequestBody @Validated GroupApplyParam groupApplyParam) {
         MemberGroup memberGroup = memberGroupService.getById(groupApplyParam.getId());
@@ -158,7 +158,7 @@ public class MemberGroupAppController {
         return R.status(true);
     }
 
-    @ApiOperation(value = "请离或主动退组")
+    @Operation(summary = "请离或主动退组")
     @PostMapping("/leave")
     public R<String> leave(@RequestBody @Validated GroupLeaveParam param) {
         Group group = groupService.getById(param.getGroupId());

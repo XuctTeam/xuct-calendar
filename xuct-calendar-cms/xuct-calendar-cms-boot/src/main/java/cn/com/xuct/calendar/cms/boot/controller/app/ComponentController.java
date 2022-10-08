@@ -49,9 +49,8 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.map.MapUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -79,7 +78,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RestController
-@Api(tags = "【移动端】事件服务")
+@Tag(name = "【移动端】事件服务")
 @RequestMapping("/api/app/v1/component")
 @RequiredArgsConstructor
 public class ComponentController {
@@ -95,7 +94,7 @@ public class ComponentController {
     private final BasicServicesFeignClient basicServicesFeignClient;
     private final RabbitmqOutChannel rabbitmqOutChannel;
 
-    @ApiOperation(value = "通过日历查询日程-天分组")
+    @Operation(summary = "通过日历查询日程-天分组")
     @GetMapping("/list/calendar/days")
     public R<List<ComponentListVo>> listByCalendarId(@RequestParam("calendarId") String calendarId, @RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date start,
                                                      @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date end) {
@@ -116,7 +115,7 @@ public class ComponentController {
         return R.data(componentListVos);
     }
 
-    @ApiOperation(value = "通过ID查询日程-天分组")
+    @Operation(summary = "通过ID查询日程-天分组")
     @GetMapping("/days/{id}")
     public R<List<ComponentListVo>> getComponentDaysById(@PathVariable("id") String id) {
         Component component = componentService.getById(id);
@@ -137,7 +136,7 @@ public class ComponentController {
     }
 
 
-    @ApiOperation(value = "通过关键字查询日程")
+    @Operation(summary = "通过关键字查询日程")
     @GetMapping("/list/search")
     public R<ComponentSearchVo> listBySearch(@RequestParam("word") String word, @RequestParam("limit") Integer limit, @RequestParam("page") Integer page) {
         ComponentSearchVo componentSearchVo = new ComponentSearchVo();
@@ -153,7 +152,7 @@ public class ComponentController {
     }
 
 
-    @ApiOperation(value = "获取日程详情")
+    @Operation(summary = "获取日程详情")
     @GetMapping("/{id}")
     public R<CalendarComponentVo> getComponentById(@PathVariable("id") String id) {
         Component component = componentService.getById(id);
@@ -173,7 +172,7 @@ public class ComponentController {
         return R.data(calendarComponentVo);
     }
 
-    @ApiOperation(value = "新增或修改日程")
+    @Operation(summary = "新增或修改日程")
     @PostMapping
     public R<String> add(@Validated @RequestBody ComponentAddParam param) {
         MemberCalendar memberCalendar = memberCalendarService.get(Lists.newArrayList(Column.of("calendar_id", Long.valueOf(param.getCalendarId())), Column.of("member_id", SecurityUtils.getUserId())));
@@ -200,8 +199,7 @@ public class ComponentController {
         return R.data(String.valueOf(component.getId()));
     }
 
-    @ApiOperation(value = "删除日程")
-    @ApiImplicitParam(name = "id", value = "日程ID")
+    @Operation(summary = "删除日程")
     @DeleteMapping("/{id}")
     public R<String> delete(@PathVariable("id") Long id) {
         Component component = componentService.getById(id);
@@ -214,7 +212,7 @@ public class ComponentController {
         return R.status(true);
     }
 
-    @ApiOperation(value = "查询所有邀请人ID")
+    @Operation(summary = "查询所有邀请人ID")
     @GetMapping("/attend/member/ids")
     public R<List<String>> queryComponentMemberIds(@RequestParam("componentId") Long componentId) {
         List<Long> memberIds = componentAttendService.listByComponentIdNoMemberId(SecurityUtils.getUserId(), componentId);
@@ -222,7 +220,7 @@ public class ComponentController {
         return R.data(memberIds.stream().map(x -> String.valueOf(x)).collect(Collectors.toList()));
     }
 
-    @ApiOperation(value = "查询所有邀请人")
+    @Operation(summary = "查询所有邀请人")
     @GetMapping("/attend/member")
     public R<List<ComponentAttendVo>> queryComponentAttend(@RequestParam("componentId") Long componentId, @RequestParam(value = "createMemberId", required = false) Long createMemberId) {
         List<Long> memberIds = componentAttendService.listByComponentIdNoMemberId(createMemberId, componentId);
@@ -239,7 +237,7 @@ public class ComponentController {
         }).collect(Collectors.toList()));
     }
 
-    @ApiOperation(value = "获取邀请状态")
+    @Operation(summary = "获取邀请状态")
     @GetMapping("/attend/status")
     public R<Integer> getComponentAttendStatus(@RequestParam("componentId") Long componentId) {
         Component component = componentService.getById(componentId);
@@ -249,7 +247,7 @@ public class ComponentController {
         return R.data(attend.getStatus());
     }
 
-    @ApiOperation(value = "邀请待定或接受")
+    @Operation(summary = "邀请待定或接受")
     @PostMapping("/attend/status")
     public R<String> updateComponentAttendStatus(@RequestBody ComponentAttendParam param) {
         ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", param.getComponentId()), Column.of("member_id", SecurityUtils.getUserId())));
@@ -259,7 +257,7 @@ public class ComponentController {
         return R.status(true);
     }
 
-    @ApiOperation(value = "拒绝邀请")
+    @Operation(summary = "拒绝邀请")
     @DeleteMapping("/attend/{componentId}")
     public R<String> deleteComponentAttend(@PathVariable("componentId") Long componentId) {
         ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", componentId), Column.of("member_id", SecurityUtils.getUserId())));
@@ -268,7 +266,7 @@ public class ComponentController {
         return R.status(true);
     }
 
-    @ApiOperation(value = "判断邀请是否存在")
+    @Operation(summary = "判断邀请是否存在")
     @GetMapping("/attend/exists")
     public R<Integer> attendExists(@RequestParam("componentId") Long componentId) {
         Component component = componentService.getById(componentId);
@@ -277,7 +275,7 @@ public class ComponentController {
         return R.data(attend == null ? 0 : 1);
     }
 
-    @ApiOperation(value = "加入邀请")
+    @Operation(summary = "加入邀请")
     @PostMapping("/attend/accept")
     public R<String> acceptAttend(@RequestBody ComponentAttendParam param) {
         Component component = componentService.getById(param.getComponentId());
@@ -291,20 +289,20 @@ public class ComponentController {
         return R.status(true);
     }
 
-    @ApiOperation(value = "统计日程邀请")
+    @Operation(summary = "统计日程邀请")
     @GetMapping("/attend/statistics")
     public R<CalendarAttendCountVo> statistics(@RequestParam("componentId") String componentId) {
         return R.data(componentAttendService.statistics(Long.valueOf(componentId)));
     }
 
-    @ApiOperation(value = "获取短链接")
+    @Operation(summary = "获取短链接")
     @GetMapping("/short")
     public R<String> getShortChain(@RequestParam("componentId") String componentId) {
         return basicServicesFeignClient.shortChain(ShortChainFeignInfo.builder().url(domainConfiguration.getCalendar().concat("?componentId=").concat(componentId))
                 .type("calendar").expire(7200000).build());
     }
 
-    @ApiOperation(value = "上传附件")
+    @Operation(summary = "上传附件")
     @PostMapping("/upload")
     public R<ComponentAttachment> upload(@RequestParam("file") MultipartFile file, @RequestParam("uuid") String uuid, @RequestParam(value = "componentId", required = false) Long componentId) throws IOException, FdfsClientException {
         Assert.isTrue(!(StringUtils.hasText(uuid) && componentId == null), "参数错误");

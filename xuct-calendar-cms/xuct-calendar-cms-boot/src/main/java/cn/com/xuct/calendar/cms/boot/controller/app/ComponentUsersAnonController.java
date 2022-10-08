@@ -21,7 +21,7 @@ import cn.com.xuct.calendar.common.module.feign.PersonInfo;
 import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
 import cn.com.xuct.calendar.ums.oauth.client.MemberFeignClient;
 import com.google.common.collect.Lists;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -40,7 +40,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Slf4j
 @RestController
-@Api(tags = "【移动端】事件非登录服务")
+@Tag(name = "【移动端】事件非登录服务")
 @RequestMapping("/api/v1/anon/component")
 @RequiredArgsConstructor
 public class ComponentUsersAnonController {

@@ -11,10 +11,8 @@
 package cn.com.xuct.calendar.ums.api.entity;
 
 import cn.com.xuct.calendar.common.db.dao.base.SuperEntity;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -35,68 +33,68 @@ public class OAuthClientDetails extends SuperEntity<OAuthClientDetails> {
      * 客户端ID
      */
     @NotBlank(message = "client_id 不能为空")
-    @ApiModelProperty(value = "客户端id")
+    @Schema(name = "客户端id")
     private String clientId;
 
     /**
      * 客户端密钥
      */
     @NotBlank(message = "client_secret 不能为空")
-    @ApiModelProperty(value = "客户端密钥")
+    @Schema(name = "客户端密钥")
     private String clientSecret;
 
     /**
      * 资源ID
      */
-    @ApiModelProperty(value = "资源id列表")
+    @Schema(name = "资源id列表")
     private String resourceIds;
 
     /**
      * 作用域
      */
     @NotBlank(message = "scope 不能为空")
-    @ApiModelProperty(value = "作用域")
+    @Schema(name = "作用域")
     private String scope;
 
     /**
      * 授权方式（A,B,C）
      */
-    @ApiModelProperty(value = "授权方式")
+    @Schema(name = "授权方式")
     private String authorizedGrantTypes;
 
     /**
      * 回调地址
      */
-    @ApiModelProperty(value = "回调地址")
+    @Schema(name = "回调地址")
     private String webServerRedirectUri;
 
     /**
      * 权限
      */
-    @ApiModelProperty(value = "权限列表")
+    @Schema(name = "权限列表")
     private String authorities;
 
     /**
      * 请求令牌有效时间
      */
-    @ApiModelProperty(value = "请求令牌有效时间")
+    @Schema(name = "请求令牌有效时间")
     private Integer accessTokenValidity;
 
     /**
      * 刷新令牌有效时间
      */
-    @ApiModelProperty(value = "刷新令牌有效时间")
+    @Schema(name = "刷新令牌有效时间")
     private Integer refreshTokenValidity;
 
     /**
      * 扩展信息
      */
-    @ApiModelProperty(value = "扩展信息")
+    @Schema(name = "扩展信息")
     private String additionalInformation;
 
     /**
      * 是否自动放行
      */
-    @ApiModelProperty(value = "是否自动放行")
+    @Schema(name = "是否自动放行")
     private String autoapprove;
 }

@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.cms.api.vo;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.List;
@@ -26,9 +26,9 @@ import java.util.List;
 @Data
 public class ComponentDayListVo {
 
-    @ApiModelProperty("天（日期）")
+    @Schema(name = "天（日期）")
     private String day;
 
-    @ApiModelProperty("天内所有日程安排")
+    @Schema(name = "天内所有日程安排")
     private List<CalendarComponentVo> components;
 }

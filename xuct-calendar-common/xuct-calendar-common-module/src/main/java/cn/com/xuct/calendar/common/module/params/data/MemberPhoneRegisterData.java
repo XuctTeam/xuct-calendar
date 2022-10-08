@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.common.module.params.data;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -26,12 +26,12 @@ import java.io.Serializable;
 @Data
 public class MemberPhoneRegisterData implements Serializable {
 
-    @ApiModelProperty("手机号")
+    @Schema(name = "手机号")
     private String phone;
 
-    @ApiModelProperty("密码")
+    @Schema(name ="密码")
     private String password;
 
-    @ApiModelProperty("验证码")
+    @Schema(name ="验证码")
     private String smsCode;
 }

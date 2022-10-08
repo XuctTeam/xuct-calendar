@@ -10,10 +10,9 @@
  */
 package cn.com.xuct.calendar.ums.api.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -30,25 +29,25 @@ import java.util.Date;
 @Data
 public class GroupInfoDto implements Serializable {
 
-    @ApiModelProperty(notes = "ID")
+    @Schema(name = "ID")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
-    @ApiModelProperty(notes = "群组名称")
+    @Schema(name = "群组名称")
     private String name;
 
     private Date createTime;
 
-    @ApiModelProperty(notes = "群组图片")
+    @Schema(name = "群组图片")
     private String images;
 
-    @ApiModelProperty(notes = "编号")
+    @Schema(name = "编号")
     private String no;
 
-    @ApiModelProperty(notes = "密码")
+    @Schema(name = "密码")
     private String password;
 
-    @ApiModelProperty(notes = "总人数")
+    @Schema(name = "总人数")
     private Integer count;
 
     @JsonSerialize(using = ToStringSerializer.class)
@@ -56,12 +55,12 @@ public class GroupInfoDto implements Serializable {
 
     private String createMemberName;
 
-    @ApiModelProperty(notes = "是否公开")
+    @Schema(name = "是否公开")
     private String power;
 
-    @ApiModelProperty(notes = "最大人数")
+    @Schema(name = "最大人数")
     private Integer num;
 
-    @ApiModelProperty(notes = "是否需要免密加入")
+    @Schema(name = "是否需要免密加入")
     private int hasPasswordJoin = 0;
 }

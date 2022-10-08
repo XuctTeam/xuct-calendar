@@ -16,6 +16,7 @@ spring:
         namespace: f46a2ffa-4a48-4986-93bc-c3503dd030c6
   config:
     import:
+      - optional:nacos:dav-application.yaml
       - optional:nacos:dav-ums.yaml  # 监听 DEFAULT_GROUP:test.yml
 
 feign:

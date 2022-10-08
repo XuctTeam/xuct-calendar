@@ -22,11 +22,9 @@ import cn.com.xuct.calendar.ums.api.dto.GroupSearchPageDto;
 import cn.com.xuct.calendar.ums.api.entity.Group;
 import cn.com.xuct.calendar.ums.boot.event.GroupDeleteEvent;
 import cn.com.xuct.calendar.ums.boot.service.IGroupService;
-import cn.hutool.core.lang.UUID;
-import cn.hutool.core.math.MathUtil;
 import cn.hutool.core.util.RandomUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
@@ -35,7 +33,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -47,7 +44,7 @@ import java.util.List;
  * @since 1.0.0
  */
 @Slf4j
-@Api(tags = "【移动端】群组接口")
+@Tag(name = "【移动端】群组接口")
 @RestController
 @RequestMapping("/api/app/v1/group")
 @RequiredArgsConstructor
@@ -55,13 +52,13 @@ public class GroupAppController {
 
     private final IGroupService groupService;
 
-    @ApiOperation(value = "获取用户所在群组")
+    @Operation(summary = "获取用户所在群组")
     @GetMapping("")
     public R<List<GroupInfoDto>> list() {
         return R.data(groupService.findGroupCountByMember(SecurityUtils.getUserId()));
     }
 
-    @ApiOperation(value = "查询群组信息")
+    @Operation(summary = "查询群组信息")
     @GetMapping("/get")
     public R<GroupInfoDto> get(@RequestParam("id") Long id) {
         GroupInfoDto groupInfoDto = groupService.getGroupCountByGroupId(id);
@@ -71,7 +68,7 @@ public class GroupAppController {
         return R.data(groupInfoDto);
     }
 
-    @ApiOperation(value = "搜索群组")
+    @Operation(summary = "搜索群组")
     @GetMapping("/search")
     public R<GroupSearchPageDto> search(@RequestParam("word") String word, @RequestParam("page") Integer page, @RequestParam("limit") Integer limit,
                                         @RequestParam(value = "hasPass", required = false) String hasPass, @RequestParam(value = "dateScope", required = false) String dateScope,
@@ -92,19 +89,19 @@ public class GroupAppController {
         return R.data(groupSearchPageDto);
     }
 
-    @ApiOperation(value = "我申请的群组")
+    @Operation(summary = "我申请的群组")
     @GetMapping("/mine/apply")
     public R<List<GroupMemberInfoDto>> mineApplyGroup() {
         return R.data(groupService.mineApplyGroup(SecurityUtils.getUserId()));
     }
 
-    @ApiOperation(value = "申请我的群组")
+    @Operation(summary = "申请我的群组")
     @GetMapping("/apply/mine")
     public R<List<GroupMemberInfoDto>> applyMineGroup() {
         return R.data(groupService.applyMineGroup(SecurityUtils.getUserId()));
     }
 
-    @ApiOperation(value = "添加/修改群组")
+    @Operation(summary = "添加/修改群组")
     @PostMapping
     public R<String> addGroup(@RequestBody @Validated GroupAddParam addParam) {
         if (addParam.getId() != null) {
@@ -132,7 +129,7 @@ public class GroupAppController {
         return R.status(true);
     }
 
-    @ApiOperation(value = "解散群组")
+    @Operation(summary = "解散群组")
     @PostMapping("/delete")
     public R<String> deleteGroup(@RequestBody @Validated GroupDeleteParam param) {
         Group group = groupService.getById(param.getId());

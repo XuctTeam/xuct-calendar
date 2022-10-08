@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.common.module.req;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -28,37 +28,37 @@ import java.io.Serializable;
 public class MemberCalendarUpdateReq implements Serializable {
 
     @NotNull
-    @ApiModelProperty("日历ID")
+    @Schema(name = "日历ID")
     private Long id;
 
     @NotNull
-    @ApiModelProperty("颜色Code")
+    @Schema(name ="颜色Code")
     private String color;
 
-    @ApiModelProperty("创建者昵称")
+    @Schema(name ="创建者昵称")
     private String createMemberName;
 
     @NotNull
-    @ApiModelProperty("日历名称")
+    @Schema(name ="日历名称")
     private String name;
 
     @NotNull
-    @ApiModelProperty("日历描述")
+    @Schema(name ="日历描述")
     private String description;
 
     @NotNull
-    @ApiModelProperty("是否显示")
+    @Schema(name ="是否显示")
     private Integer display;
 
-    @ApiModelProperty("提醒时间")
+    @Schema(name ="提醒时间")
     @NotNull
     private String alarmTime;
 
-    @ApiModelProperty("提醒类型")
+    @Schema(name ="提醒类型")
     @NotNull
     private String alarmType;
 
-    @ApiModelProperty("是否共享")
+    @Schema(name ="是否共享")
     @NotNull
     private Integer isShare;
 }

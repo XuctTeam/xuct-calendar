@@ -25,8 +25,8 @@ import cn.com.xuct.calendar.ums.boot.event.ComponentDelEvent;
 import cn.com.xuct.calendar.ums.boot.service.IMemberAuthService;
 import cn.com.xuct.calendar.ums.boot.service.IMemberService;
 import com.google.common.collect.Lists;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RestController
-@Api(tags = "【远程调用】通知接口")
+@Tag(name = "【远程调用】通知接口")
 @RequestMapping("/api/feign/v1/component")
 @RequiredArgsConstructor
 public class ComponentFeignController {
@@ -61,7 +61,7 @@ public class ComponentFeignController {
     private final BasicServicesFeignClient basicServicesFeignClient;
 
 
-    @ApiOperation(value = "删除通知")
+    @Operation(summary = "删除通知")
     @PostMapping("/delete")
     public R<String> delete(@RequestBody ComponentNotifyFeignInfo componentNotifyFeignInfo) {
         String memberName = null;
@@ -78,7 +78,7 @@ public class ComponentFeignController {
     }
 
 
-    @ApiOperation(value = "发送提醒")
+    @Operation(summary = "发送提醒")
     @PostMapping("/alarm")
     public R<String> notify(@RequestBody ComponentNotifyFeignInfo componentNotifyFeignInfo) {
         Member member = memberService.getById(componentNotifyFeignInfo.getCreateMemberId());

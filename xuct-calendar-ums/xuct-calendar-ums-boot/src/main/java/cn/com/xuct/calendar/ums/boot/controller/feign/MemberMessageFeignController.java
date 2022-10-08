@@ -16,7 +16,8 @@ import cn.com.xuct.calendar.common.module.feign.req.MemberMessageFeignInfo;
 import cn.com.xuct.calendar.ums.api.entity.MemberMessage;
 import cn.com.xuct.calendar.ums.boot.service.IMemberMessageService;
 import com.google.common.collect.Lists;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.util.CollectionUtils;
@@ -37,13 +38,14 @@ import java.util.List;
  * @since 1.0.0
  */
 @RestController
-@Api(tags = "【远程调用】消息接口")
+@Tag(name = "【远程调用】消息接口")
 @RequestMapping("/api/feign/v1/message")
 @RequiredArgsConstructor
 public class MemberMessageFeignController {
 
     private final IMemberMessageService memberMessageService;
 
+    @Operation(summary = "发送消息提醒")
     @PostMapping("")
     public R<String> sendMemberMessage(@Validated @RequestBody MemberMessageFeignInfo memberMessageFeignInfo) {
         MemberMessage memberMessage = null;

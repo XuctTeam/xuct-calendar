@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.common.module.feign.req;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -37,10 +37,10 @@ public class ShortChainFeignInfo implements Serializable {
     private String url;
 
     @NotNull
-    @ApiModelProperty(notes = "申请类型")
+    @Schema(description = "申请类型")
     private String type;
 
     @NotNull
-    @ApiModelProperty(notes = "有效时间(ms)0为不过期")
+    @Schema(description = "有效时间(ms)0为不过期")
     private long expire = 0;
 }

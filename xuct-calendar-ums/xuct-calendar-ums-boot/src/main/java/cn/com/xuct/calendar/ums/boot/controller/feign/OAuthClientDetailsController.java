@@ -15,7 +15,7 @@ import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.security.annotation.Inner;
 import cn.com.xuct.calendar.ums.api.entity.OAuthClientDetails;
 import cn.com.xuct.calendar.ums.boot.service.IOAuthClientDetailsService;
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Slf4j
 @RestController
-@Api(tags = "【远程调用】客户端管理接口")
+@Tag(name = "【远程调用】客户端管理接口")
 @RequestMapping("/api/feign/v1/oauth/client")
 @RequiredArgsConstructor
 public class OAuthClientDetailsController {
