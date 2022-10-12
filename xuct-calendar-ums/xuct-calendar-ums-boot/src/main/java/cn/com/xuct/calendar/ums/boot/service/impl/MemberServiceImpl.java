@@ -16,7 +16,9 @@ import cn.com.xuct.calendar.ums.api.entity.Member;
 import cn.com.xuct.calendar.ums.api.entity.MemberAuth;
 import cn.com.xuct.calendar.ums.boot.mapper.MemberMapper;
 import cn.com.xuct.calendar.common.db.service.BaseServiceImpl;
+import cn.com.xuct.calendar.ums.boot.service.IGroupService;
 import cn.com.xuct.calendar.ums.boot.service.IMemberAuthService;
+import cn.com.xuct.calendar.ums.boot.service.IMemberMessageService;
 import cn.com.xuct.calendar.ums.boot.service.IMemberService;
 import cn.hutool.core.util.RandomUtil;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +41,9 @@ import org.springframework.util.StringUtils;
 public class MemberServiceImpl extends BaseServiceImpl<MemberMapper, Member> implements IMemberService {
 
     private final IMemberAuthService memberAuthService;
+    private final IGroupService groupService;
+
+    private final IMemberMessageService memberMessageService;
 
     @Override
     public Member findMemberById(Long id) {
@@ -110,6 +115,11 @@ public class MemberServiceImpl extends BaseServiceImpl<MemberMapper, Member> imp
         Long deleteMemberId = memberAuth.getMemberId();
         memberAuth.setMemberId(memberId);
         memberAuthService.updateById(memberAuth);
+        /* 1.删除用户下创建所有的分组 */
+        groupService.removeAllGroupByMemberId(deleteMemberId);
+        /* 2.删除用户所有消息 */
+        memberMessageService.removeAllMessageByMemberId(memberId);
+        /*3.删除用户*/
         this.removeById(deleteMemberId);
     }
 

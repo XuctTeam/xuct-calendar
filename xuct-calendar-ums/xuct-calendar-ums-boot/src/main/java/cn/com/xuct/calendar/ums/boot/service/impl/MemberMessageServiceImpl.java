@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -36,5 +37,11 @@ public class MemberMessageServiceImpl extends BaseServiceImpl<MemberMessageMappe
     @Override
     public List<MemberMessage> pages(String title, Long memberId, Integer page, Integer limit, Integer status) {
         return ((MemberMessageMapper) super.getBaseMapper()).pages(title, memberId, page * limit, limit, status);
+    }
+    @Override
+    public void removeAllMessageByMemberId(final Long memberId) {
+        super.removeByMap(new HashMap<>() {{
+            put("member_id", memberId);
+        }});
     }
 }

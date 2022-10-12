@@ -36,5 +36,12 @@ public interface IMemberMessageService extends IBaseService<MemberMessageMapper,
      * @param status
      * @return
      */
-    List<MemberMessage> pages(String title, Long memberId, Integer page, Integer limit , Integer status );
+    List<MemberMessage> pages(String title, Long memberId, Integer page, Integer limit, Integer status);
+
+    /**
+     * 通过用户ID删除用户所有消息
+     *
+     * @param memberId
+     */
+    void removeAllMessageByMemberId(final Long memberId);
 }

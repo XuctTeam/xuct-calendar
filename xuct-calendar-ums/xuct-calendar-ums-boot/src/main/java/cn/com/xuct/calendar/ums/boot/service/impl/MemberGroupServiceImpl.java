@@ -80,4 +80,9 @@ public class MemberGroupServiceImpl extends BaseServiceImpl<MemberGroupMapper, M
             put("member_id", memberId);
         }});
     }
+
+    @Override
+    public void removeGroupMemberByMemberId(Long memberId) {
+
+    }
 }
