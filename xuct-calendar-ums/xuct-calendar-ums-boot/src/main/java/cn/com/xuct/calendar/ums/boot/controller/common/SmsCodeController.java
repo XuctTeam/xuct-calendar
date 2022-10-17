@@ -13,7 +13,6 @@ package cn.com.xuct.calendar.ums.boot.controller.common;
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.module.params.SmsSendParam;
-import cn.com.xuct.calendar.common.security.annotation.Inner;
 import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
 import cn.com.xuct.calendar.ums.api.feign.BasicServicesFeignClient;
 import cn.hutool.core.util.RandomUtil;
@@ -23,7 +22,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.concurrent.TimeUnit;
 
@@ -46,6 +48,15 @@ public class SmsCodeController {
 
     private final BasicServicesFeignClient basicServicesFeignClient;
 
+    @Operation(summary = "登录短信")
+    @PostMapping("/login")
+    public R<String> sendLoginSmsCode(@Validated @RequestBody SmsSendParam param) {
+        String code = this.sendBindCode(param.getPhone(), 0);
+        //basicServicesFeignClient.smsCode(SmsCodeFeignInfo.builder().phones(Lists.newArrayList(param.getPhone())).code(code).template("login").build());
+        return R.status(true);
+    }
+
+
     @Operation(summary = "其他短信")
     @PostMapping("")
     public R<String> sendSmsCode(@Validated @RequestBody SmsSendParam param) {
@@ -55,17 +66,9 @@ public class SmsCodeController {
         return R.status(true);
     }
 
-    @Inner(value = false)
-    @Operation(summary = "登录短信")
-    @PostMapping("/login")
-    public R<String> sendLoginSmsCode(@RequestParam("phone") String phone) {
-        String code = this.sendBindCode(phone, 0);
-        //basicServicesFeignClient.smsCode(SmsCodeFeignInfo.builder().phones(Lists.newArrayList(param.getPhone())).code(code).template("login").build());
-        return R.status(true);
-    }
 
     private String sendBindCode(String phone, Integer type) {
-        String userId = String.valueOf(SecurityUtils.getUserId());
+
         String key = null;
         switch (type) {
             case 0:
@@ -79,6 +82,7 @@ public class SmsCodeController {
                 break;
         }
         String code = RandomUtil.randomNumbers(6);
+        String userId =  type  != 0 ? String.valueOf(SecurityUtils.getUserId()) : "";
         stringRedisTemplate.opsForValue().set(key.concat(userId).concat(":").concat(phone), code, 60 * 2, TimeUnit.SECONDS);
         return code;
     }
