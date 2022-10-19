@@ -22,21 +22,18 @@ public interface SecurityConstants {
 
     String CLIENT_ID = "client_id";
 
-    /**
-     * grant_type
-     */
+    /* 电话扩展验证方式  */
     String APP_GRANT_TYPE = "app";
 
-    /**
-     * grant_type
-     */
+    /* 微信扩展验证方式 */
     String WX_GRANT_TYPE = "wx";
 
-    /**
-     * grant_type
-     */
+    /* token刷新验证方式 */
     String REFRESH_TOKEN_GRANT_TYPE = "refresh_token";
 
+    /**
+     * phone参数
+     */
     String PHONE_PARAM = "phone";
 
     String GRANT_TYPE = "grant_type";
@@ -52,7 +49,7 @@ public interface SecurityConstants {
 
     String ENCRYPTED_DATA_PARAM = "encryptedData";
 
-    /* app登录方式 */
+    /* client为app时多校验方式 */
     String APP_LOGIN_TYPE_PARAM = "loginType";
 
 

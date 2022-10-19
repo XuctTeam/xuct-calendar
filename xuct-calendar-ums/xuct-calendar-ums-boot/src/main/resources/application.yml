@@ -18,11 +18,3 @@ spring:
     import:
       - optional:nacos:dav-application.yaml
       - optional:nacos:dav-ums.yaml  # 监听 DEFAULT_GROUP:test.yml
-
-feign:
-  httpclient:
-    enabled: false
-    hc5:
-      enabled: false
-  okhttp:
-    enabled: true

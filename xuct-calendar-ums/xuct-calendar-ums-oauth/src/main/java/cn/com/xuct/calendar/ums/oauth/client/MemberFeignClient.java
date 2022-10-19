@@ -42,6 +42,9 @@ public interface MemberFeignClient {
     @GetMapping("/api/feign/v1/member/get/username")
     R<UserInfo> loadMemberByUserName(@RequestParam("username") String username, @RequestHeader(SecurityConstants.FROM) String from);
 
+
+
+
     @GetMapping("/api/feign/v1/member/get/id")
     R<PersonInfo> getMemberById(@RequestParam("id") Long id);
 

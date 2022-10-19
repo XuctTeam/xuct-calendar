@@ -8,7 +8,7 @@
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package cn.com.xuct.calendar.ums.boot.controller.common;
+package cn.com.xuct.calendar.ums.boot.controller.app;
 
 import ch.qos.logback.core.net.SMTPAppenderBase;
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
@@ -53,7 +53,6 @@ public class EmailController {
 
     private final StringRedisTemplate stringRedisTemplate;
 
-    @Inner(value = false)
     @Operation(summary = "发送邮件")
     @PostMapping("")
     public R<String> sendEmail(@Validated @RequestBody EmailCodeParam param) {

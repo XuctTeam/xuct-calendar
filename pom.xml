@@ -40,7 +40,7 @@
         <lib.mybaties.plus.version>3.5.2</lib.mybaties.plus.version>
         <lib.mysql.version>8.0.29</lib.mysql.version>
         <lib.servlet.version>4.0.1</lib.servlet.version>
-        <lib.nacos.client.version>2.1.1</lib.nacos.client.version>
+        <lib.nacos.client.version>2.1.2</lib.nacos.client.version>
         <lib.jedis.lock.version>1.0.0</lib.jedis.lock.version>
         <lib.caffeine.version>2.9.3</lib.caffeine.version>
         <lib.google.prone.version>2.11.0</lib.google.prone.version>
