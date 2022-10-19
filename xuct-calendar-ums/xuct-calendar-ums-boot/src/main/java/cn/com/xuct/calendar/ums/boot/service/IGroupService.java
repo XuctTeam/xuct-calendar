@@ -87,4 +87,11 @@ public interface IGroupService extends IBaseService<GroupMapper, Group> {
      * @param id
      */
     List<Long> deleteGroup(Long id);
+
+    /**
+     * 通过用户id删除所有分组
+     *
+     * @param memberId
+     */
+    void removeAllGroupByMemberId(final Long memberId);
 }

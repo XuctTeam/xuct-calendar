@@ -5,6 +5,7 @@
 
 <mapper namespace="cn.com.xuct.calendar.ums.boot.mapper.MemberGroupMapper">
 
+
     <select id="list" resultType="cn.com.xuct.calendar.ums.api.dto.GroupMemberInfoDto">
 
         select m.name, mg.member_id, m.avatar, g.id as groupId, g.name as groupName
@@ -45,5 +46,11 @@
                 #{item}
             </foreach>
     </select>
+
+    <delete id="removeGroupMemberByMemberId">
+        delete from sys_member_group
+          where group_id in
+          (select id from sys_group where member_id = #{memberId})
+    </delete>
 
 </mapper>

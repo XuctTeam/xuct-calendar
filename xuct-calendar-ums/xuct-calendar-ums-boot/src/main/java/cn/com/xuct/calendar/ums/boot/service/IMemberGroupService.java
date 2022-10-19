@@ -41,7 +41,7 @@ public interface IMemberGroupService extends IBaseService<MemberGroupMapper, Mem
      * @param groupId
      * @return
      */
-    List<GroupMemberInfoDto> queryMembersByGroupId(Long groupId , final Long memberId);
+    List<GroupMemberInfoDto> queryMembersByGroupId(Long groupId, final Long memberId);
 
     /**
      * 通过会员id查询
@@ -75,4 +75,11 @@ public interface IMemberGroupService extends IBaseService<MemberGroupMapper, Mem
      * @param memberId
      */
     void leaveOut(Long groupId, Long memberId);
+
+    /**
+     * 通过用户id删除用户下所有组内用户
+     *
+     * @param memberId
+     */
+    void removeGroupMemberByMemberId(final Long memberId);
 }

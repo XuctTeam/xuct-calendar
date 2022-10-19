@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -91,5 +92,13 @@ public class GroupServiceImpl extends BaseServiceImpl<GroupMapper, Group> implem
         List<Long> memberIds = memberGroupService.deleteAllByGroupId(id);
         super.removeById(id);
         return memberIds;
+    }
+
+    @Override
+    public void removeAllGroupByMemberId(Long memberId) {
+        memberGroupService.removeGroupMemberByMemberId(memberId);
+        super.removeByMap(new HashMap<String, Object>() {{
+            put("member_id", memberId);
+        }});
     }
 }
