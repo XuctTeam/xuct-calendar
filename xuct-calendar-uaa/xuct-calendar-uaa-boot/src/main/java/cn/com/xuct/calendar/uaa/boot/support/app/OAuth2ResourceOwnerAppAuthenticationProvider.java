@@ -59,9 +59,10 @@ public class OAuth2ResourceOwnerAppAuthenticationProvider
 
     @Override
     public UsernamePasswordAuthenticationToken buildToken(Map<String, Object> reqParameters) {
+        String loginType = (String) reqParameters.get(SecurityConstants.APP_LOGIN_TYPE_PARAM);
+        String phone = (String) reqParameters.get(SecurityConstants.PHONE_PARAM);
         String username = (String) reqParameters.get(SecurityConstants.USER_NAME_PARAM);
         String password = (String) reqParameters.get(SecurityConstants.PASSWORD_PARAM);
-        return new UsernamePasswordAuthenticationToken(username, password);
+        return new UsernamePasswordAuthenticationToken(loginType.equals(SecurityConstants.PHONE_PARAM) ? phone : username, password);
     }
-
 }
