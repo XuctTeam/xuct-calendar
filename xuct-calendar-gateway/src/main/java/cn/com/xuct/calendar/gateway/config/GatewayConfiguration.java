@@ -3,6 +3,7 @@ package cn.com.xuct.calendar.gateway.config;
 import cn.com.xuct.calendar.gateway.filter.PasswordGatewayFilter;
 import cn.com.xuct.calendar.gateway.filter.RequestGlobalFilter;
 import cn.com.xuct.calendar.gateway.filter.SwaggerBasicGatewayFilter;
+import cn.com.xuct.calendar.gateway.filter.ValidateCodeGatewayFilter;
 import cn.com.xuct.calendar.gateway.handler.GlobalExceptionHandler;
 import cn.com.xuct.calendar.gateway.handler.ImageCodeHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -49,4 +50,9 @@ public class GatewayConfiguration {
 		return new ImageCodeHandler(redisTemplate);
 	}
 
+	@Bean
+	public ValidateCodeGatewayFilter validateCodeGatewayFilter(GatewayConfigProperties configProperties,
+                                                               ObjectMapper objectMapper, RedisTemplate redisTemplate) {
+		return new ValidateCodeGatewayFilter(configProperties, objectMapper, redisTemplate);
+	}
 }

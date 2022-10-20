@@ -31,6 +31,4 @@ public class SmsSendParam implements Serializable {
 
     @Schema(description = "0.登录 1.绑定手机 2.解绑手机 3.注册", example = "1")
     private Integer type;
-
-
 }

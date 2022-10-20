@@ -19,12 +19,15 @@ package cn.com.xuct.calendar.common.web.utils;
  * @since 1.0.0
  */
 
-import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
+import cn.com.xuct.calendar.common.core.exception.CheckedException;
+import cn.hutool.core.codec.Base64;
 import cn.hutool.json.JSONUtil;
-import com.google.common.collect.Maps;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -33,10 +36,11 @@ import org.springframework.web.method.HandlerMethod;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -50,6 +54,9 @@ public class WebUtils extends org.springframework.web.util.WebUtils {
 
 
     private final String UNKNOWN = "unknown";
+
+    private final String BASIC_ = "Basic ";
+
 
     /**
      * 判断是否ajax请求 spring ajax 返回含有 ResponseBody 或者 RestController注解
@@ -175,5 +182,39 @@ public class WebUtils extends org.springframework.web.util.WebUtils {
         Enumeration<String> header = requestOpt.get().getHeaders(name);
         if (header.hasMoreElements()) return header.nextElement();
         return null;
+    }
+
+    /**
+     * 从request 获取CLIENT_ID
+     * @return
+     */
+    @SneakyThrows
+    public String getClientId(ServerHttpRequest request) {
+        String header = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        return splitClient(header)[0];
+    }
+
+    @NotNull
+    private static String[] splitClient(String header) {
+        if (header == null || !header.startsWith(BASIC_)) {
+            throw new CheckedException("请求头中client信息为空");
+        }
+        byte[] base64Token = header.substring(6).getBytes(StandardCharsets.UTF_8);
+        byte[] decoded;
+        try {
+            decoded = Base64.decode(base64Token);
+        }
+        catch (IllegalArgumentException e) {
+            throw new CheckedException("Failed to decode basic authentication token");
+        }
+
+        String token = new String(decoded, StandardCharsets.UTF_8);
+
+        int delim = token.indexOf(":");
+
+        if (delim == -1) {
+            throw new CheckedException("Invalid basic authentication token");
+        }
+        return new String[] { token.substring(0, delim), token.substring(delim + 1) };
     }
 }

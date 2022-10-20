@@ -50,7 +50,7 @@ public interface SecurityConstants {
     String ENCRYPTED_DATA_PARAM = "encryptedData";
 
     /* client为app时多校验方式 */
-    String APP_LOGIN_TYPE_PARAM = "loginType";
+    String APP_LOGIN_TYPE_PARAM = "login_type";
 
 
     /**
@@ -95,6 +95,11 @@ public interface SecurityConstants {
      * 默认登录URL
      */
     String OAUTH_TOKEN_URL = "/oauth2/token";
+
+    /**
+     * 刷新token
+     */
+    String REFRESH_TOKEN = "refresh_token";
 
 
     /**

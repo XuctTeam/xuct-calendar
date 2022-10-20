@@ -13,6 +13,7 @@ package cn.com.xuct.calendar.ums.boot.controller.app;
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.module.params.SmsSendParam;
+import cn.com.xuct.calendar.common.security.annotation.Inner;
 import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
 import cn.com.xuct.calendar.ums.api.feign.BasicServicesFeignClient;
 import cn.hutool.core.util.RandomUtil;
@@ -20,6 +21,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,15 +40,24 @@ import java.util.concurrent.TimeUnit;
  * @since 1.0.0
  */
 @Slf4j
-@Tag(name = "【所有端】【认证】短信接口")
+@Tag(name = "【所有端】短信接口")
 @RestController
 @RequestMapping("/api/v1/sms")
 @RequiredArgsConstructor
 public class SmsController {
 
-    private final StringRedisTemplate stringRedisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     private final BasicServicesFeignClient basicServicesFeignClient;
+
+    @Inner(value = false)
+    @Operation(summary = "【非登录】登录短信")
+    @PostMapping("/anno/login")
+    public R<String> sendLoginSmsCode(@Validated @RequestBody SmsSendParam param) {
+        String code = this.sendBindCode(param.getPhone(), 0);
+        //basicServicesFeignClient.smsCode(SmsCodeFeignInfo.builder().phones(Lists.newArrayList(param.getPhone())).code(code).template("login").build());
+        return R.status(true);
+    }
 
     @Operation(summary = "发送短信")
     @PostMapping("")
@@ -58,9 +69,15 @@ public class SmsController {
     }
 
     private String sendBindCode(String phone, Integer type) {
-        String userId = String.valueOf(SecurityUtils.getUserId());;
+        String userId = "";
+        if (type != 0) {
+            userId = String.valueOf(SecurityUtils.getUserId());
+        }
         String key = null;
         switch (type) {
+            case 0:
+                key = RedisConstants.MEMBER_PHONE_LOGIN_CODE_KEY;
+                break;
             case 1:
                 key = RedisConstants.MEMBER_BIND_PHONE_CODE_KEY;
                 break;
@@ -69,7 +86,7 @@ public class SmsController {
                 break;
         }
         String code = RandomUtil.randomNumbers(6);
-        stringRedisTemplate.opsForValue().set(key.concat(userId).concat(":").concat(phone), code, 60 * 2, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(key.concat(userId).concat(":").concat(phone), code, 60 * 10, TimeUnit.SECONDS);
         return code;
     }
 }
