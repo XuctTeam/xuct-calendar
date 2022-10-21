@@ -40,15 +40,15 @@ public interface BasicServicesFeignClient {
     @PostMapping("/api/basic/v1/email")
     R<String> sendEmail(@RequestBody EmailFeignInfo emailFeignInfo);
 
-    @GetMapping("/api/basic/v1/wx/miniapp/getSessionInfo")
+    @GetMapping("/api/basic/v1/wx/ma/getSessionInfo")
     R<WxMaJscode2SessionResult> getSessionInfo(@RequestParam("code") String code);
 
-    @PostMapping("/api/basic/v1/wx/miniapp/getUserInfo")
+    @PostMapping("/api/basic/v1/wx/ma/getUserInfo")
     R<WxMaUserInfo> getUserInfo(@RequestBody WxUserInfoFeignInfo wxUserInfoFeignInfo);
 
-    @PostMapping("/api/basic/v1/wx/miniapp/getPhoneNoInfo")
+    @PostMapping("/api/basic/v1/wx/ma/getPhoneNoInfo")
     R<WxMaPhoneNumberInfo> getPhoneNoInfo(@RequestBody WxUserPhoneFeignInfo wxUserPhoneFeignInfo);
 
-    @PostMapping("/api/basic/v1/wx/miniapp/sendSubscribeMsg")
+    @PostMapping("/api/basic/v1/wx/ma/sendSubscribeMsg")
     R<String> sendSubscribeMsg(@RequestBody List<WxSubscribeMessageFeignInfo> wxSubscribeMessageFeignInfos);
 }
