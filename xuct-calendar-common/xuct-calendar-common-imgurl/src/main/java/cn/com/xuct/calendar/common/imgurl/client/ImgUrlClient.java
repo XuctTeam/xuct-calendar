@@ -8,12 +8,11 @@
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package cn.com.xuct.calendar.common.smms.client;
+package cn.com.xuct.calendar.common.imgurl.client;
 
 import cn.com.xuct.calendar.common.core.utils.JsonUtils;
-import cn.com.xuct.calendar.common.smms.config.SmmsProperties;
-import cn.com.xuct.calendar.common.smms.vo.SmmsRes;
-import cn.com.xuct.calendar.common.smms.vo.SmmsUploadRes;
+import cn.com.xuct.calendar.common.imgurl.config.ImgURLProperties;
+import cn.com.xuct.calendar.common.imgurl.vo.ImgUrlReq;
 import com.github.chengtengfei.bean.OkHttp3Fast;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -33,33 +32,34 @@ import java.util.HashMap;
  */
 @Component
 @RequiredArgsConstructor
-public class SmmsClient {
+public class ImgUrlClient {
 
-    private final SmmsProperties smmsProperties;
+    private final ImgURLProperties imgURLProperties;
 
     private final OkHttp3Fast okHttp3Fast;
-
-    private static final MediaType FROM_DATA = MediaType.parse("multipart/form-data");
 
     /**
      * 功能描述: <br>
      * 〈上传图片文件〉
      *
      * @param file
-     * @return:cn.com.xuct.calendar.common.smms.vo.SmmsRes
+     * @return:cn.com.xuct.calendar.common.imgurl.vo.ImgUrlReq
      * @since: 1.0.0
      * @Author:
      * @Date: 2022/2/13 9:25
      */
     @SneakyThrows
-    public SmmsUploadRes upload(File file) {
-        MultipartBody formBody = new MultipartBody.Builder().setType(FROM_DATA).addFormDataPart("smfile", file.getName(), RequestBody.create(MediaType.parse("image/png"), file)).build();
-        Response response = okHttp3Fast.postMultipart(smmsProperties.getUrl().concat("upload"), formBody, Headers.of(new HashMap<String, String>() {{
-            put("Authorization", smmsProperties.getToken());
+    public ImgUrlReq upload(File file) {
+
+        MediaType mediaType = MediaType.Companion.parse("image/png");
+        RequestBody fileBody = RequestBody.Companion.create(file, mediaType);
+        Response response = okHttp3Fast.postMultipart(imgURLProperties.getUrl().concat("upload"), new MultipartBody.Builder()
+                .addFormDataPart("file", file.getName(), fileBody).addFormDataPart("token", "").addFormDataPart("uid", "").build(), Headers.of(new HashMap<String, String>() {{
+            put("Authorization", imgURLProperties.getToken());
             put("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36 Edg/80.0.361.62");
         }}));
         if (response.isSuccessful()) {
-            return JsonUtils.json2pojo(response.body().string(), SmmsUploadRes.class);
+            return JsonUtils.json2pojo(response.body().string(), ImgUrlReq.class);
         }
         return null;
     }

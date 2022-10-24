@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>xuct-calendar-common-smms</artifactId>
+    <artifactId>xuct-calendar-common-imgurl</artifactId>
 
     <properties>
         <maven.compiler.source>10</maven.compiler.source>

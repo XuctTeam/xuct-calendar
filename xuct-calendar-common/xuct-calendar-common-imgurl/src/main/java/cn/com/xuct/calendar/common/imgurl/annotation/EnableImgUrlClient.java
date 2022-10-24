@@ -8,10 +8,10 @@
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package cn.com.xuct.calendar.common.smms.annotation;
+package cn.com.xuct.calendar.common.imgurl.annotation;
 
-import cn.com.xuct.calendar.common.smms.client.SmmsClient;
-import cn.com.xuct.calendar.common.smms.config.SmmsProperties;
+import cn.com.xuct.calendar.common.imgurl.client.ImgUrlClient;
+import cn.com.xuct.calendar.common.imgurl.config.ImgURLProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Import;
 
@@ -29,8 +29,8 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@EnableConfigurationProperties(SmmsProperties.class)
-@Import({SmmsClient.class })
+@EnableConfigurationProperties(ImgURLProperties.class)
+@Import({ImgUrlClient.class })
 public @interface EnableSmmsClient {
 
 }

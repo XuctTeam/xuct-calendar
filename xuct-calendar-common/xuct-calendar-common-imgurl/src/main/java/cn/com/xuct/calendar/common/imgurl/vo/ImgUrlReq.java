@@ -1,16 +1,15 @@
 /**
  * Copyright (C), 2015-2022, 楚恬
- * FileName: SmmsRes
+ * FileName: SmmsUploadRes
  * Author:   Derek Xu
- * Date:     2022/2/13 9:00
+ * Date:     2022/2/13 16:13
  * Description:
  * History:
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package cn.com.xuct.calendar.common.smms.vo;
+package cn.com.xuct.calendar.common.imgurl.vo;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -24,16 +23,11 @@ import java.io.Serializable;
  * @since 1.0.0
  */
 @Data
-public class SmmsRes implements Serializable {
+public class ImgUrlReq implements Serializable {
 
-    @JsonProperty("RequestId")
-    private String requestId;
+    private String file;
 
-    private String images;
+    private String uid;
 
-    private boolean success;
-
-    private String code;
-
-    private String message;
+    private String token;
 }

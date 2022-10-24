@@ -118,7 +118,7 @@
         </dependency>
         <dependency>
             <groupId>cn.com.xuct</groupId>
-            <artifactId>xuct-calendar-common-smms</artifactId>
+            <artifactId>xuct-calendar-common-imgurl</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>

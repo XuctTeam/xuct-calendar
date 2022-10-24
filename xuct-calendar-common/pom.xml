@@ -20,7 +20,7 @@
         <module>xuct-calendar-common-swagger</module>
         <module>xuct-calendar-common-tencent</module>
         <module>xuct-calendar-common-web</module>
-        <module>xuct-calendar-common-smms</module>
+        <module>xuct-calendar-common-imgurl</module>
         <module>xuct-calendar-common-nacos</module>
         <module>xuct-calendar-common-db</module>
         <module>xuct-calendar-common-fdfs</module>

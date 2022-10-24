@@ -14,7 +14,7 @@ import cn.com.xuct.calendar.common.db.dao.config.MybatisPlusConfig;
 import cn.com.xuct.calendar.common.http.annotation.EnableOkFeignAutoConfiguration;
 import cn.com.xuct.calendar.common.redis.annotation.EnableRedisAutoConfiguration;
 import cn.com.xuct.calendar.common.security.annotation.EnableOAuthResourceServer;
-import cn.com.xuct.calendar.common.smms.annotation.EnableSmmsClient;
+import cn.com.xuct.calendar.common.imgurl.annotation.EnableImgUrlClient;
 import cn.com.xuct.calendar.common.swagger.annotation.EnableApiDoc;
 import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
 import org.springframework.boot.SpringApplication;
@@ -40,7 +40,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableDiscoveryClient
 @EnableCaching
 @EnableTransactionManagement
-@EnableSmmsClient
+@EnableImgUrlClient
 @EnableAsync
 @EnableOAuthResourceServer
 @Import({MybatisPlusConfig.class, SpringContextHolder.class})

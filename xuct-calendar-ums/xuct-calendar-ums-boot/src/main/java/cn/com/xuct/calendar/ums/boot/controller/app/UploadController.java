@@ -11,9 +11,9 @@
 package cn.com.xuct.calendar.ums.boot.controller.app;
 
 import cn.com.xuct.calendar.common.core.res.R;
-import cn.com.xuct.calendar.common.smms.client.SmmsClient;
-import cn.com.xuct.calendar.common.smms.vo.SmmsUploadRes;
-import cn.com.xuct.calendar.common.smms.vo.data.SmmsUploadData;
+import cn.com.xuct.calendar.common.imgurl.client.ImgUrlClient;
+import cn.com.xuct.calendar.common.imgurl.vo.ImgUrlReq;
+import cn.com.xuct.calendar.common.imgurl.vo.data.ImgUrlUploadData;
 import cn.com.xuct.calendar.common.web.utils.FilesUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,18 +40,18 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class UploadController {
 
-    private final SmmsClient smmsClient;
+    private final ImgUrlClient imgUrlClient;
 
     @PostMapping(value = "/upload", consumes = "multipart/form-data")
     @Operation(summary = "上传图片")
-    public R<SmmsUploadData> uploadImage(@RequestParam MultipartFile smsfile) {
-        SmmsUploadRes smmsRes = smmsClient.upload(FilesUtils.multipartFileToFile(smsfile, "/temp", FilesUtils.contentTypeToFileSuffix(smsfile.getContentType())));
+    public R<ImgUrlUploadData> uploadImage(@RequestParam MultipartFile smsfile) {
+        ImgUrlReq smmsRes = imgUrlClient.upload(FilesUtils.multipartFileToFile(smsfile, "/temp", FilesUtils.contentTypeToFileSuffix(smsfile.getContentType())));
         if (smmsRes == null || (!smmsRes.isSuccess() && !"image_repeated".equals(smmsRes.getCode())))
             return R.fail("上传失败");
         if (!smmsRes.isSuccess() && "image_repeated".equals(smmsRes.getCode())) {
-            SmmsUploadData smmsUploadData = new SmmsUploadData();
-            smmsUploadData.setUrl(smmsRes.getImages());
-            return R.data(smmsUploadData);
+            ImgUrlUploadData imgUrlUploadData = new ImgUrlUploadData();
+            imgUrlUploadData.setUrl(smmsRes.getImages());
+            return R.data(imgUrlUploadData);
         }
         return R.data(smmsRes.getData());
     }
