@@ -25,7 +25,7 @@
                                and status = 'NORMAL'
                              group by group_id) mg on g.id = mg.group_id
                  left join sys_member m on g.member_id = m.id
-
+        order by g.create_time desc
     </select>
 
     <select id="getGroupCountByGroupId" resultType="cn.com.xuct.calendar.ums.api.dto.GroupInfoDto">

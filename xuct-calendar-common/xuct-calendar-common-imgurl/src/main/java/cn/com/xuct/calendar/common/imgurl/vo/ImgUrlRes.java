@@ -24,12 +24,12 @@ import java.io.Serializable;
  * @since 1.0.0
  */
 @Data
-public class ImgUrlRes implements Serializable {
+public class ImgUrlRes<T> implements Serializable {
 
 
     private Integer code;
 
-    private ImgUrlData data;
+    private T data;
 
     private String msg;
 }

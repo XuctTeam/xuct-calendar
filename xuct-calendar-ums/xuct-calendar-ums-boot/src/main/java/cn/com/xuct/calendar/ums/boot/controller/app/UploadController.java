@@ -12,9 +12,9 @@ package cn.com.xuct.calendar.ums.boot.controller.app;
 
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.imgurl.client.ImgUrlClient;
-import cn.com.xuct.calendar.common.imgurl.vo.ImgUrlReq;
-import cn.com.xuct.calendar.common.imgurl.vo.data.ImgUrlUploadData;
+import cn.com.xuct.calendar.common.imgurl.vo.data.ImgUrlData;
 import cn.com.xuct.calendar.common.web.utils.FilesUtils;
+import cn.com.xuct.calendar.ums.api.vo.UploadImageVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -44,15 +44,11 @@ public class UploadController {
 
     @PostMapping(value = "/upload", consumes = "multipart/form-data")
     @Operation(summary = "上传图片")
-    public R<ImgUrlUploadData> uploadImage(@RequestParam MultipartFile smsfile) {
-        ImgUrlReq smmsRes = imgUrlClient.upload(FilesUtils.multipartFileToFile(smsfile, "/temp", FilesUtils.contentTypeToFileSuffix(smsfile.getContentType())));
-        if (smmsRes == null || (!smmsRes.isSuccess() && !"image_repeated".equals(smmsRes.getCode())))
-            return R.fail("上传失败");
-        if (!smmsRes.isSuccess() && "image_repeated".equals(smmsRes.getCode())) {
-            ImgUrlUploadData imgUrlUploadData = new ImgUrlUploadData();
-            imgUrlUploadData.setUrl(smmsRes.getImages());
-            return R.data(imgUrlUploadData);
-        }
-        return R.data(smmsRes.getData());
+    public R<UploadImageVo> uploadImage(@RequestParam MultipartFile file) {
+        ImgUrlData imgUrlData = imgUrlClient.upload(FilesUtils.multipartFileToFile(file, "/temp", FilesUtils.contentTypeToFileSuffix(file.getContentType())));
+        if (imgUrlData == null) return R.fail("上传失败");
+        return R.data(UploadImageVo.builder().url(imgUrlData.getUrl()).width(imgUrlData.getImageWidth()).height(imgUrlData.getImageHeight())
+                .thumbnailUrl(imgUrlData.getThumbnailUrl())
+                .build());
     }
 }

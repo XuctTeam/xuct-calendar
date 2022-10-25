@@ -15,6 +15,7 @@ import cn.com.xuct.calendar.common.core.exception.SvrException;
 import cn.com.xuct.calendar.common.core.res.SvrResCode;
 import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -31,7 +32,7 @@ import org.springframework.util.StringUtils;
 @RequiredArgsConstructor
 public class SmsCodeValidateSupport {
 
-    private final StringRedisTemplate stringRedisTemplate;
+    private final RedisTemplate<String, Object> stringRedisTemplate;
 
     /**
      * 功能描述: <br>
@@ -48,8 +49,8 @@ public class SmsCodeValidateSupport {
     public void validateCode(Integer type, String val, String code) {
         String userId = String.valueOf(SecurityUtils.getUserId());
         String redisKeys = this.redisKey(type).concat(userId).concat(":").concat(val);
-        String cacheCode = stringRedisTemplate.opsForValue().get(redisKeys);
-        if (!StringUtils.hasLength(cacheCode)  || !code.toLowerCase().equals(cacheCode.toLowerCase()))
+        Object cacheCode = stringRedisTemplate.opsForValue().get(redisKeys);
+        if (!StringUtils.hasLength(cacheCode.toString()) || !code.toLowerCase().equals(cacheCode.toString().toLowerCase()))
             throw new SvrException(SvrResCode.UMS_SMS_CODE_ERROR);
         stringRedisTemplate.delete(redisKeys);
     }

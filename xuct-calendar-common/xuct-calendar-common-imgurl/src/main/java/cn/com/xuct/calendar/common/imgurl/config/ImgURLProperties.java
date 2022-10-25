@@ -24,10 +24,12 @@ import org.springframework.context.annotation.Configuration;
  */
 @Data
 @Configuration
-@ConfigurationProperties("smms")
+@ConfigurationProperties("img.url")
 public class ImgURLProperties {
 
     private String token;
 
-    private String url;
+    private String path;
+
+    private String uid;
 }

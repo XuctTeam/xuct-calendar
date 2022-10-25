@@ -31,6 +31,6 @@ import java.lang.annotation.*;
 @Inherited
 @EnableConfigurationProperties(ImgURLProperties.class)
 @Import({ImgUrlClient.class })
-public @interface EnableSmmsClient {
+public @interface EnableImgUrlClient {
 
 }
