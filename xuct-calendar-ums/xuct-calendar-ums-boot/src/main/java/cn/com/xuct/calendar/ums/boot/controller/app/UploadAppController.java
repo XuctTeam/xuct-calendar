@@ -36,9 +36,9 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @Tag(name = "【所有端】上传接口")
 @RestController
-@RequestMapping("/api/v1/file")
+@RequestMapping("/api/v1/app/file")
 @RequiredArgsConstructor
-public class UploadController {
+public class UploadAppController {
 
     private final ImgUrlClient imgUrlClient;
 

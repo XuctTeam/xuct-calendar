@@ -61,9 +61,6 @@ public interface RedisConstants {
     /* 邮箱忘记密码 */
     public static final String MEMBER_FORGET_PASSWORD_EMAIL_CODE_KEY = "member::forget::password::email::code:";
 
-    /* 忘记密码 CODE 与 Member 对应*/
-    public static final String MEMBER_FORGET_PASSWORD_CODE_MEMBER_KEY = "member::forget::password::code::member:";
-
     /* 短链接与长链接对应关系 */
     public static final String BASIC_SHORT_URL_KEY = "bacis::short::url:";
 

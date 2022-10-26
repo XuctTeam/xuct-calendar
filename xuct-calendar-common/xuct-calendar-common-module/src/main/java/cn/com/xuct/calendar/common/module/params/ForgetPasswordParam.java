@@ -10,6 +10,7 @@
  */
 package cn.com.xuct.calendar.common.module.params;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -25,12 +26,16 @@ import javax.validation.constraints.NotNull;
 @Data
 public class ForgetPasswordParam {
 
+    @Schema(name = "邮箱")
     private String email;
 
+    @Schema(name = "电话")
     private String phone;
 
+    @Schema(name = "验证码")
     private String code;
 
+    @Schema(name = "验证类型")
     @NotNull
     private Integer type;
 }

@@ -11,6 +11,7 @@
 package cn.com.xuct.calendar.ums.boot.controller.app;
 
 import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
+import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.enums.PasswordEncoderTypeEnum;
 import cn.com.xuct.calendar.common.core.exception.SvrException;
 import cn.com.xuct.calendar.common.core.res.R;
@@ -24,6 +25,7 @@ import cn.com.xuct.calendar.common.module.feign.req.WxUserPhoneFeignInfo;
 import cn.com.xuct.calendar.common.module.params.*;
 import cn.com.xuct.calendar.common.module.req.MemberGetPhoneReq;
 import cn.com.xuct.calendar.common.module.vo.MemberPhoneAuthVo;
+import cn.com.xuct.calendar.common.security.annotation.Inner;
 import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
 import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
 import cn.com.xuct.calendar.ums.api.entity.Member;
@@ -41,6 +43,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
@@ -76,6 +79,7 @@ public class MemberAppController {
 
     private final CalendarFeignClient calendarFeignClient;
 
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @Operation(summary = "获取用户基础信息及所有认证")
     @GetMapping("/info/all")
@@ -156,7 +160,6 @@ public class MemberAppController {
         memberService.updateMember(member);
         return R.data(member);
     }
-
 
     @Operation(summary = "获取微信手机号")
     @PostMapping("/phone/get")
@@ -316,6 +319,48 @@ public class MemberAppController {
         /* 发送账号合并消息 */
         SpringContextHolder.publishEvent(new MemberEvent(this, SecurityUtils.getUserId(), memberAuth.getNickName(), 3));
 
+        return R.status(true);
+    }
+
+    @Inner(value = false)
+    @Operation(summary = "【非登录】找回密码验证")
+    @PostMapping("/anno/forget/check")
+    public R<String> forgetPasswordCheckCode(@Validated @RequestBody ForgetPasswordParam param) {
+        Object redisVal = redisTemplate.opsForValue().get(param.getType() == 1 ?
+                RedisConstants.MEMBER_FORGET_PASSWORD_PHONE_CODE_KEY.concat(":").concat(param.getPhone()) :
+                RedisConstants.MEMBER_FORGET_PASSWORD_EMAIL_CODE_KEY.concat(":").concat(param.getEmail()));
+        if (redisVal == null || !String.valueOf(redisVal).equals(param.getCode())) return R.fail("验证码错误");
+        MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("identity_type", param.getType() == 1 ? IdentityTypeEnum.phone : IdentityTypeEnum.email),
+                Column.of("user_name", param.getType() == 1 ? param.getPhone() : param.getEmail())));
+
+        if (memberAuth == null) return R.fail("验证失败");
+        return R.data(memberAuth.getMemberId().toString());
+    }
+
+    @Inner(value = false)
+    @Operation(summary = "【非登录】找回密码更新")
+    @PostMapping("/anno/forget/modify")
+    public R<String> forgetPasswordModify(@Validated @RequestBody ForgetModifyParam param) {
+        Member member = memberService.findMemberById(param.getMemberId());
+        if (member == null) return R.fail("修改密码失败");
+        List<MemberAuth> auths = memberAuthService.find(Column.of("member_id", param.getMemberId()));
+        if (CollectionUtils.isEmpty(auths)) return R.fail("修改密码失败");
+        Optional<MemberAuth> authOpt = auths.stream().filter(auth -> auth.getIdentityType().equals(IdentityTypeEnum.phone)).findFirst();
+        if (!authOpt.isPresent()) {
+            authOpt = auths.stream().filter(auth -> auth.getIdentityType().equals(IdentityTypeEnum.email)).findFirst();
+        }
+        if (!authOpt.isPresent()) return R.fail("修改密码失败");
+        String redisKey =
+                (authOpt.get().getIdentityType().equals(IdentityTypeEnum.phone) ?
+                        RedisConstants.MEMBER_FORGET_PASSWORD_PHONE_CODE_KEY : RedisConstants.MEMBER_FORGET_PASSWORD_EMAIL_CODE_KEY)
+                        .concat(":").concat(authOpt.get().getUsername());
+        Object redisVal = redisTemplate.opsForValue().get(redisKey);
+        if (redisVal == null || !String.valueOf(redisVal).equals(param.getCode())) return R.fail("修改密码失败");
+        /* 此时删除redis的验证码缓存 */
+        redisTemplate.delete(redisKey);
+        String password = this.delegatingPassword(param.getPassword()).replace("{bcrypt}", "");
+        auths.forEach(auth -> auth.setPassword(password));
+        memberAuthService.saveOrUpdateBatch(auths);
         return R.status(true);
     }
 

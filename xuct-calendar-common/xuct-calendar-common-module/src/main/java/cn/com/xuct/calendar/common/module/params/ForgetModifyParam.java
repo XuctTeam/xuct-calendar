@@ -26,7 +26,7 @@ import javax.validation.constraints.NotNull;
 public class ForgetModifyParam {
 
     @NotNull
-    private String memberId;
+    private Long memberId;
 
     @NotNull
     private String password;
