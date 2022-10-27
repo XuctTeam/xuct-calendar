@@ -25,6 +25,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -45,6 +47,9 @@ import java.io.PrintWriter;
 @RequiredArgsConstructor
 public class ResourceAuthExceptionEntryPoint implements AuthenticationEntryPoint {
 
+
+    private final MessageSource messageSource;
+
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) {
@@ -57,11 +62,10 @@ public class ResourceAuthExceptionEntryPoint implements AuthenticationEntryPoint
             result.setMessage("error");
             result.setData(authException.getMessage());
         }
-
         // 针对令牌过期返回特殊的 424
         if (authException instanceof InvalidBearerTokenException) {
             response.setStatus(org.springframework.http.HttpStatus.FAILED_DEPENDENCY.value());
-            result.setMessage("token expire");
+            result.setMessage(this.messageSource.getMessage("OAuth2ResourceOwnerBaseAuthenticationProvider.tokenExpired", null, LocaleContextHolder.getLocale()));
         }
         String jsonResult = JsonUtils.obj2json(result);
         try {

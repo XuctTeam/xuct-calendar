@@ -139,7 +139,7 @@ public class ValidateCodeGatewayFilter extends AbstractGatewayFilterFactory<Obje
 
         Object codeObj = redisTemplate.opsForValue().get(key);
         if (ObjectUtil.isEmpty(codeObj) || !code.equals(codeObj)) {
-            throw new ValidateCodeException("验证码不合法");
+            throw new ValidateCodeException("验证码无效或已过期");
         }
         redisTemplate.delete(key);
     }

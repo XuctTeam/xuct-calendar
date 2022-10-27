@@ -12,6 +12,7 @@ package cn.com.xuct.calendar.uaa.boot.handler;
 
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
 import cn.com.xuct.calendar.common.core.res.R;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
