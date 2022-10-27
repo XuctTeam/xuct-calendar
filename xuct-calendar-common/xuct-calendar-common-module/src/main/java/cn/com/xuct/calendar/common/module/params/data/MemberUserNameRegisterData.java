@@ -28,18 +28,18 @@ import java.io.Serializable;
 public class MemberUserNameRegisterData implements Serializable {
 
     @NotNull
-    @Schema(name = "用户名")
+    @Schema(title = "用户名")
     public String username;
 
     @NotNull
-    @Schema(name = "密码")
+    @Schema(title = "密码")
     private String password;
 
     @NotNull
-    @Schema(name = "请求key")
+    @Schema(title = "请求key")
     private String key;
 
     @NotNull
-    @Schema(name = "验证码")
+    @Schema(title = "验证码")
     private String captcha;
 }

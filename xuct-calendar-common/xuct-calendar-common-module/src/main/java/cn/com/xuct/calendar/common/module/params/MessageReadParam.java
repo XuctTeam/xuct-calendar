@@ -10,6 +10,7 @@
  */
 package cn.com.xuct.calendar.common.module.params;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -25,5 +26,6 @@ import java.io.Serializable;
 @Data
 public class MessageReadParam implements Serializable {
 
+    @Schema(title = "消息ID")
     private String id;
 }

@@ -10,6 +10,7 @@
  */
 package cn.com.xuct.calendar.common.module.req;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 /**
@@ -23,5 +24,6 @@ import lombok.Data;
 @Data
 public class MemberGetPhoneReq {
 
+    @Schema(title = "验证码")
     private String code;
 }

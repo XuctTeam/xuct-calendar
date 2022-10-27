@@ -29,45 +29,45 @@ import java.util.List;
 @Data
 public class ComponentAddParam implements Serializable {
 
-    @Schema(name = "事件ID")
+    @Schema(title = "事件ID")
     private String id;
 
     @NotNull
-    @Schema(name ="标题")
+    @Schema(title ="标题")
     private String summary;
 
     @NotNull
-    @Schema(name ="日历ID")
+    @Schema(title ="日历ID")
     private String calendarId;
 
-    @Schema(name ="地点")
+    @Schema(title ="地点")
     private String location;
 
-    @Schema(name ="描述")
+    @Schema(title ="描述")
     private String description;
 
     @NotNull
-    @Schema(name ="日程的开始时间")
+    @Schema(title ="日程的开始时间")
     private Date dtstart;
 
     @NotNull
-    @Schema(name ="日程的结束时间")
+    @Schema(title ="日程的结束时间")
     private Date dtend;
 
     @NotNull
-    @Schema(name ="是否全天")
+    @Schema(title ="是否全天")
     private int fullDay;
 
-    @Schema(name ="是否循环")
+    @Schema(title ="是否循环")
     private String repeatStatus;
 
-    @Schema(name ="循环类型")
+    @Schema(title ="循环类型")
     private String repeatType;
 
-    @Schema(name = "提醒设置", description = "不提醒, ")
+    @Schema(title = "提醒设置", description = "不提醒, ")
     private String alarmType;
 
-    @Schema(name = "提醒时间", description = "时间逗号分割")
+    @Schema(title = "提醒时间", description = "时间逗号分割")
     private List<Integer> alarmTimes;
 
 
@@ -84,7 +84,7 @@ public class ComponentAddParam implements Serializable {
      * <p>
      * 每年的第几月
      */
-    @Schema(name = "循环指定某几个月份")
+    @Schema(title = "循环指定某几个月份")
     private String repeatBymonth;
 
     /** 循环指定一个月中的某几日 */
@@ -92,22 +92,22 @@ public class ComponentAddParam implements Serializable {
      * 每个月的第多少天
      * 每年的哪个月的第几天
      */
-    @Schema(name ="循环指定一个月中的某几日")
+    @Schema(title ="循环指定一个月中的某几日")
     private String repeatBymonthday;
 
     /**
      * 循环为周 1 3 5 步长
      * 循环为月 1 3 4月
      */
-    @Schema(name ="循环步长")
+    @Schema(title ="循环步长")
     private String repeatBysetpos;
 
-    @Schema(name ="循环间隔")
+    @Schema(title ="循环间隔")
     private int repeatInterval;
 
-    @Schema(name ="循环截止时间")
+    @Schema(title ="循环截止时间")
     private Date repeatUntil;
 
-    @Schema(name ="邀请人")
+    @Schema(title ="邀请人")
     private List<String> memberIds;
 }

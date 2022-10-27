@@ -29,18 +29,18 @@ import java.io.Serializable;
 public class MemberRegisterReq implements Serializable {
 
     @NotNull
-    @Schema(name = "注册类型")
+    @Schema(title = "注册类型")
     private RegisterEnum type;
 
-    @Schema(name = "用户名")
+    @Schema(title = "用户名")
     private String username;
 
-    @Schema(name = "密码")
+    @Schema(title = "密码")
     private String password;
 
-    @Schema(name = "手机号")
+    @Schema(title = "手机号")
     private String phone;
 
-    @Schema(name = "短信验证码")
+    @Schema(title = "短信验证码")
     private String smsCode;
 }

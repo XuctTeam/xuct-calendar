@@ -40,7 +40,7 @@ public class WxSubscribeMessageFeignInfo implements Serializable {
      * 描述： 接收者（用户）的 openid
      * </pre>
      */
-    @Schema(name = "接收者(OPENID)")
+    @Schema(title = "接收者(OPENID)")
     private String toUser;
 
     /**
@@ -51,7 +51,7 @@ public class WxSubscribeMessageFeignInfo implements Serializable {
      * 描述： 所需下发的模板消息的id
      * </pre>
      */
-    @Schema(name ="所需下发的模板消息的id")
+    @Schema(title ="所需下发的模板消息的id")
     private String templateId;
 
     /**
@@ -62,7 +62,7 @@ public class WxSubscribeMessageFeignInfo implements Serializable {
      * 描述： 点击模板卡片后的跳转页面，仅限本小程序内的页面。支持带参数,（示例index?foo=bar）。该字段不填则模板无跳转。
      * </pre>
      */
-    @Schema(name ="点击模板卡片后的跳转页面")
+    @Schema(title ="点击模板卡片后的跳转页面")
     private String page;
 
     /**
@@ -73,19 +73,19 @@ public class WxSubscribeMessageFeignInfo implements Serializable {
      * 描述： 模板内容，不填则下发空模板
      * </pre>
      */
-    @Schema(name ="模板内容")
+    @Schema(title ="模板内容")
     private List<MsgData> data;
 
     /**
      * 跳转小程序类型：developer为开发版；trial为体验版；formal为正式版；默认为正式版
      */
-    @Schema(name = " 跳转小程序类型" , description = "developer为开发版；trial为体验版；formal为正式版")
+    @Schema(title = " 跳转小程序类型" , description = "developer为开发版；trial为体验版；formal为正式版")
     private String miniprogramState = "formal";
 
     /**
      * 进入小程序查看的语言类型，支持zh_CN(简体中文)、en_US(英文)、zh_HK(繁体中文)、zh_TW(繁体中文)，默认为zh_CN
      */
-    @Schema(name = "进入小程序查看的语言类型")
+    @Schema(title = "进入小程序查看的语言类型")
     private String lang = "ZH_CN";
 
     public WxSubscribeMessageFeignInfo addData(MsgData datum) {

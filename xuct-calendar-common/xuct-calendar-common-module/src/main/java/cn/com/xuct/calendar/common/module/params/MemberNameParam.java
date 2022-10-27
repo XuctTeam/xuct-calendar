@@ -10,12 +10,13 @@
  */
 package cn.com.xuct.calendar.common.module.params;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
 
 /**
- * 〈一句话功能简述〉<br> 
+ * 〈一句话功能简述〉<br>
  * 〈〉
  *
  * @author Derek Xu
@@ -25,5 +26,6 @@ import java.io.Serializable;
 @Data
 public class MemberNameParam implements Serializable {
 
+    @Schema(title = "姓名")
     private String name;
 }

@@ -10,6 +10,7 @@
  */
 package cn.com.xuct.calendar.common.module.params;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -25,12 +26,15 @@ import javax.validation.constraints.NotNull;
 @Data
 public class ForgetModifyParam {
 
+    @Schema(title = "会员ID")
     @NotNull
     private Long memberId;
 
+    @Schema(title = "密码")
     @NotNull
     private String password;
 
+    @Schema(title = "验证码")
     @NotNull
     private String code;
 }

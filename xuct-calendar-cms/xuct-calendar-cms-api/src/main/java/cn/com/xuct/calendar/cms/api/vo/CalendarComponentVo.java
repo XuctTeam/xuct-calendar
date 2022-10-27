@@ -27,12 +27,12 @@ import java.util.List;
 @Data
 public class CalendarComponentVo extends Component {
 
-    @Schema(name = "日历颜色")
+    @Schema(title = "日历颜色")
     private String color;
 
-    @Schema(name ="日历名称")
+    @Schema(title ="日历名称")
     private String calendarName;
 
-    @Schema(name ="邀请所有人ID")
+    @Schema(title ="邀请所有人ID")
     private List<String> memberIds;
 }

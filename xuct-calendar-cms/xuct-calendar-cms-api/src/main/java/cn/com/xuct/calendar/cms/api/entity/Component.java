@@ -36,70 +36,70 @@ import java.util.Date;
 @TableName("cms_component")
 public class Component extends SuperEntity<Component> {
 
-    @Schema(name = "日历ID")
+    @Schema(title = "日历ID")
     @JsonSerialize(using = ToStringSerializer.class)
     @TableField("calendar_id")
     private Long calendarId;
 
-    @Schema(name ="创建者ID")
+    @Schema(title ="创建者ID")
     @JsonSerialize(using = ToStringSerializer.class)
     @TableField("creator_member_id")
     private Long creatorMemberId;
 
     /* 状态*/
-    @Schema(name = "状态", description = "正常、锁定、删除")
+    @Schema(title = "状态", description = "正常、锁定、删除")
     private CommonStatusEnum status;
 
     /* 数据权限*/
     private CommonPowerEnum power;
 
-    @Schema(name ="标题")
+    @Schema(title ="标题")
     private String summary;
 
-    @Schema(name ="地点")
+    @Schema(title ="地点")
     private String location;
 
-    @Schema(name ="描述")
+    @Schema(title ="描述")
     private String description;
 
-    @Schema(name ="事件的开始时间")
+    @Schema(title ="事件的开始时间")
     private Date dtstart;
 
-    @Schema(name ="事件的结束时间")
+    @Schema(title ="事件的结束时间")
     private Date dtend;
 
-    @Schema(name ="整个事件的开始时间(用于查询)")
+    @Schema(title ="整个事件的开始时间(用于查询)")
     @JsonSerialize(using = ToStringSerializer.class)
     @TableField("start_time")
     private Long startTime;
 
-    @Schema(name ="整个事件的结束时间(用于查询)")
+    @Schema(title ="整个事件的结束时间(用于查询)")
     @JsonSerialize(using = ToStringSerializer.class)
     @TableField("end_time")
     private Long endTime;
 
-    @Schema(name ="是否全天")
+    @Schema(title ="是否全天")
     @TableField("full_day")
     private int fullDay;
 
-    @Schema(name ="是否循环")
+    @Schema(title ="是否循环")
     @TableField("repeat_status")
     private String repeatStatus;
 
-    @Schema(name = "循环类型", description = "日、周、月、年")
+    @Schema(title = "循环类型", description = "日、周、月、年")
     @TableField("repeat_type")
     private ComponentRepeatTypeEnum repeatType;
 
-    @Schema(name ="提醒方式")
+    @Schema(title ="提醒方式")
     @TableField("alarm_type")
     private ComponentAlarmEnum alarmType;
 
-    @Schema(name ="提醒时间")
+    @Schema(title ="提醒时间")
     @TableField("alarm_times")
     private String alarmTimes;
 
 
-    @Schema(name ="循环间隔")
+    @Schema(title ="循环间隔")
     @TableField("repeat_interval")
     private Integer repeatInterval;
 
@@ -135,11 +135,11 @@ public class Component extends SuperEntity<Component> {
     @TableField("repeat_bysetpos")
     private String repeatBysetpos;
 
-    @Schema(name ="循环截至时间")
+    @Schema(title ="循环截至时间")
     @TableField("repeat_until")
     private Date repeatUntil;
 
-    @Schema(name ="事件时区")
+    @Schema(title ="事件时区")
     @TableField("time_zone")
     private String timeZone;
 }

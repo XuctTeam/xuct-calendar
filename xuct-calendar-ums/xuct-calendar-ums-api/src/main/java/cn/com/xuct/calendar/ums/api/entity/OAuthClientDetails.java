@@ -33,68 +33,68 @@ public class OAuthClientDetails extends SuperEntity<OAuthClientDetails> {
      * 客户端ID
      */
     @NotBlank(message = "client_id 不能为空")
-    @Schema(name = "客户端id")
+    @Schema(title = "客户端id")
     private String clientId;
 
     /**
      * 客户端密钥
      */
     @NotBlank(message = "client_secret 不能为空")
-    @Schema(name = "客户端密钥")
+    @Schema(title = "客户端密钥")
     private String clientSecret;
 
     /**
      * 资源ID
      */
-    @Schema(name = "资源id列表")
+    @Schema(title = "资源id列表")
     private String resourceIds;
 
     /**
      * 作用域
      */
     @NotBlank(message = "scope 不能为空")
-    @Schema(name = "作用域")
+    @Schema(title = "作用域")
     private String scope;
 
     /**
      * 授权方式（A,B,C）
      */
-    @Schema(name = "授权方式")
+    @Schema(title = "授权方式")
     private String authorizedGrantTypes;
 
     /**
      * 回调地址
      */
-    @Schema(name = "回调地址")
+    @Schema(title = "回调地址")
     private String webServerRedirectUri;
 
     /**
      * 权限
      */
-    @Schema(name = "权限列表")
+    @Schema(title = "权限列表")
     private String authorities;
 
     /**
      * 请求令牌有效时间
      */
-    @Schema(name = "请求令牌有效时间")
+    @Schema(title = "请求令牌有效时间")
     private Integer accessTokenValidity;
 
     /**
      * 刷新令牌有效时间
      */
-    @Schema(name = "刷新令牌有效时间")
+    @Schema(title = "刷新令牌有效时间")
     private Integer refreshTokenValidity;
 
     /**
      * 扩展信息
      */
-    @Schema(name = "扩展信息")
+    @Schema(title = "扩展信息")
     private String additionalInformation;
 
     /**
      * 是否自动放行
      */
-    @Schema(name = "是否自动放行")
+    @Schema(title = "是否自动放行")
     private String autoapprove;
 }

@@ -26,16 +26,16 @@ import java.io.Serializable;
 @Data
 public class CalendarAttendCountVo implements Serializable {
 
-    @Schema(name = "邀请总人数")
+    @Schema(title = "邀请总人数")
     private Integer attendSum;
 
-    @Schema(name = "接受总人数")
+    @Schema(title = "接受总人数")
     private Integer accepted;
 
-    @Schema(name = "拒绝总人数")
+    @Schema(title = "拒绝总人数")
     private Integer noAccepted;
 
-    @Schema(name = "未操作总人数")
+    @Schema(title = "未操作总人数")
     private Integer noOperation;
 
 }

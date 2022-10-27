@@ -26,12 +26,12 @@ import java.io.Serializable;
 @Data
 public class MemberEmailRegisterData implements Serializable {
 
-    @Schema(name = "邮箱")
+    @Schema(title = "邮箱")
     private String email;
 
-    @Schema(name ="密码")
+    @Schema(title ="密码")
     private String password;
 
-    @Schema(name ="验证码")
+    @Schema(title ="验证码")
     private String code;
 }

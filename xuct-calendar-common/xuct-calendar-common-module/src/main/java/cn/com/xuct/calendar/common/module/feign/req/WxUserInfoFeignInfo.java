@@ -30,18 +30,18 @@ import lombok.NoArgsConstructor;
 @Builder
 public class WxUserInfoFeignInfo {
 
-    @Schema(name = "小程序openId")
+    @Schema(title = "小程序openId")
     private String openId;
 
-    @Schema(name = "小程序SessionKey")
+    @Schema(title = "小程序SessionKey")
     private String sessionKey;
 
-    @Schema(name = "小程序encryptedData")
+    @Schema(title = "小程序encryptedData")
     private String encryptedData;
 
-    @Schema(name = "小程序iv")
+    @Schema(title = "小程序iv")
     private String iv;
 
-    @Schema(name =  "是否是登录")
+    @Schema(title =  "是否是登录")
     private boolean login = false;
 }

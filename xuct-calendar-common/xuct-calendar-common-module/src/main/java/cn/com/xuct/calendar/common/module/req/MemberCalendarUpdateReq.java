@@ -28,37 +28,37 @@ import java.io.Serializable;
 public class MemberCalendarUpdateReq implements Serializable {
 
     @NotNull
-    @Schema(name = "日历ID")
+    @Schema(title = "日历ID")
     private Long id;
 
     @NotNull
-    @Schema(name ="颜色Code")
+    @Schema(title ="颜色Code")
     private String color;
 
-    @Schema(name ="创建者昵称")
+    @Schema(title ="创建者昵称")
     private String createMemberName;
 
     @NotNull
-    @Schema(name ="日历名称")
+    @Schema(title ="日历名称")
     private String name;
 
     @NotNull
-    @Schema(name ="日历描述")
+    @Schema(title ="日历描述")
     private String description;
 
     @NotNull
-    @Schema(name ="是否显示")
+    @Schema(title ="是否显示")
     private Integer display;
 
-    @Schema(name ="提醒时间")
+    @Schema(title ="提醒时间")
     @NotNull
     private String alarmTime;
 
-    @Schema(name ="提醒类型")
+    @Schema(title ="提醒类型")
     @NotNull
     private String alarmType;
 
-    @Schema(name ="是否共享")
+    @Schema(title ="是否共享")
     @NotNull
     private Integer isShare;
 }

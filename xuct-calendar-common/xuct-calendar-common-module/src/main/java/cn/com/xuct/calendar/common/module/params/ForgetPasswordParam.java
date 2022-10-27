@@ -26,16 +26,16 @@ import javax.validation.constraints.NotNull;
 @Data
 public class ForgetPasswordParam {
 
-    @Schema(name = "邮箱")
+    @Schema(title = "邮箱")
     private String email;
 
-    @Schema(name = "电话")
+    @Schema(title = "电话")
     private String phone;
 
-    @Schema(name = "验证码")
+    @Schema(title = "验证码")
     private String code;
 
-    @Schema(name = "验证类型")
+    @Schema(title = "验证类型")
     @NotNull
     private Integer type;
 }

@@ -49,7 +49,7 @@ import java.util.concurrent.TimeUnit;
  * @since 1.0.0
  */
 @Slf4j
-@Tag(name = "【所有端】邮件接口")
+@Tag(name = "【移动端】邮件接口")
 @RestController
 @RequestMapping("/api/app/v1/email")
 @RequiredArgsConstructor
@@ -60,7 +60,6 @@ public class EmailAppController {
     private final RedisTemplate<String, Object> stringRedisTemplate;
 
     private final IMemberAuthService memberAuthService;
-
 
     @Inner(value = false)
     @Operation(summary = "【非登录】密码找回")
@@ -80,7 +79,6 @@ public class EmailAppController {
                 }})
                 .build());
     }
-
 
     @Operation(summary = "【登录】发送邮件")
     @PostMapping("")

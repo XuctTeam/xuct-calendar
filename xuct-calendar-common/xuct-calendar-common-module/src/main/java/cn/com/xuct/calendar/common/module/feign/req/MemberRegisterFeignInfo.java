@@ -30,12 +30,12 @@ import lombok.NoArgsConstructor;
 @Builder
 public class MemberRegisterFeignInfo {
 
-    @Schema(name = "注册类型")
+    @Schema(title = "注册类型")
     private Integer formType;
 
-    @Schema(name ="用户名/手机号/邮箱")
+    @Schema(title ="用户名/手机号/邮箱")
     public String username;
 
-    @Schema(name ="密码")
+    @Schema(title ="密码")
     private String password;
 }

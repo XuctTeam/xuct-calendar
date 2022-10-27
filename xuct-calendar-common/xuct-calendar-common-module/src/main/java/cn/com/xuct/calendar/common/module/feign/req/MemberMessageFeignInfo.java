@@ -37,21 +37,21 @@ import java.util.Map;
 @AllArgsConstructor
 public class MemberMessageFeignInfo implements Serializable {
 
-    @Schema(name = "标题")
+    @Schema(title = "标题")
     private String title;
 
     @NotNull
-    @Schema(name = "类型", description = "SYSTEM,GROUP,EVENT")
+    @Schema(title = "类型", description = "SYSTEM,GROUP,EVENT")
     private String type;
 
     @NotEmpty
-    @Schema(name = "会员")
+    @Schema(title = "会员")
     private List<Long> memberIds;
 
     @NotNull
-    @Schema(name ="操作")
+    @Schema(title ="操作")
     private Integer operation;
 
-    @Schema(name = "消息体")
+    @Schema(title = "消息体")
     private Map<String, Object> content;
 }

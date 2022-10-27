@@ -34,19 +34,19 @@ import java.util.Map;
 @Builder
 public class EmailFeignInfo implements Serializable {
 
-    @Schema(name = "收件者")
+    @Schema(title = "收件者")
     private List<String> tos;
 
-    @Schema(name = "抄送")
+    @Schema(title = "抄送")
     private List<String> ccs;
 
-    @Schema(name = "主题")
+    @Schema(title = "主题")
     private String subject;
 
-    @Schema(name = "参数")
+    @Schema(title = "参数")
     private Map<String, Object> params;
 
-    @Schema(name = "模板")
+    @Schema(title = "模板")
     private String template;
 
 }

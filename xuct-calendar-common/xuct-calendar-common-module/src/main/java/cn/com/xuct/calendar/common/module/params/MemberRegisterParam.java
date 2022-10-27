@@ -31,16 +31,16 @@ import java.io.Serializable;
 public class MemberRegisterParam implements Serializable {
 
     @NotNull
-    @Schema(name = "注册类型")
+    @Schema(title = "注册类型")
     private Integer formType;
 
-    @Schema(name = "用户名注册参数")
+    @Schema(title = "用户名注册参数")
     private MemberUserNameRegisterData username;
 
-    @Schema(name = "手机注册参数")
+    @Schema(title = "手机注册参数")
     private MemberPhoneRegisterData phone;
 
-    @Schema(name = "邮箱注册参数")
+    @Schema(title = "邮箱注册参数")
     private MemberEmailRegisterData email;
 
 }

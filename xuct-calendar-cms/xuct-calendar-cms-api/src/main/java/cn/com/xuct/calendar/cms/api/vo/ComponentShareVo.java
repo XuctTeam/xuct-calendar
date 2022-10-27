@@ -36,63 +36,63 @@ public class ComponentShareVo implements Serializable {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
     
-    @Schema(name ="日历ID")
+    @Schema(title ="日历ID")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long calendarId;
 
-    @Schema(name ="创建者ID")
+    @Schema(title ="创建者ID")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long creatorMemberId;
 
-    @Schema(name ="创建者名称")
+    @Schema(title ="创建者名称")
     private String createMemberName;
 
     /* 状态*/
-    @Schema(name = "状态", description = "正常、锁定、删除")
+    @Schema(title = "状态", description = "正常、锁定、删除")
     private CommonStatusEnum status;
 
     /* 数据权限*/
     private CommonPowerEnum power;
 
-    @Schema(name ="标题")
+    @Schema(title ="标题")
     private String summary;
 
-    @Schema(name ="地点")
+    @Schema(title ="地点")
     private String location;
 
-    @Schema(name ="描述")
+    @Schema(title ="描述")
     private String description;
 
-    @Schema(name ="事件的开始时间")
+    @Schema(title ="事件的开始时间")
     private Date dtstart;
 
-    @Schema(name ="事件的结束时间")
+    @Schema(title ="事件的结束时间")
     private Date dtend;
 
-    @Schema(name ="整个事件的开始时间(用于查询)")
+    @Schema(title ="整个事件的开始时间(用于查询)")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long startTime;
 
-    @Schema(name ="整个事件的结束时间(用于查询)")
+    @Schema(title ="整个事件的结束时间(用于查询)")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long endTime;
 
-    @Schema(name ="是否全天")
+    @Schema(title ="是否全天")
     private int fullDay;
 
-    @Schema(name ="是否循环")
+    @Schema(title ="是否循环")
     private String repeatStatus;
 
-    @Schema(name = "循环类型", description = "日、周、月、年")
+    @Schema(title = "循环类型", description = "日、周、月、年")
     private ComponentRepeatTypeEnum repeatType;
 
-    @Schema(name ="提醒方式")
+    @Schema(title ="提醒方式")
     private ComponentAlarmEnum alarmType;
 
-    @Schema(name ="提醒时间")
+    @Schema(title ="提醒时间")
     private String alarmTimes;
 
-    @Schema(name ="循环间隔")
+    @Schema(title ="循环间隔")
     private Integer repeatInterval;
 
 
@@ -117,9 +117,9 @@ public class ComponentShareVo implements Serializable {
      */
     private String repeatBymonthday;
 
-    @Schema(name ="循环截至时间")
+    @Schema(title ="循环截至时间")
     private Date repeatUntil;
 
-    @Schema(name ="是否被邀请者")
+    @Schema(title ="是否被邀请者")
     private Boolean attend;
 }

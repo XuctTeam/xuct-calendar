@@ -10,13 +10,14 @@
  */
 package cn.com.xuct.calendar.common.module.params;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.List;
 
 /**
- * 〈一句话功能简述〉<br> 
+ * 〈一句话功能简述〉<br>
  * 〈〉
  *
  * @author Derek Xu
@@ -26,5 +27,6 @@ import java.util.List;
 @Data
 public class GroupMemberIdsParam implements Serializable {
 
+    @Schema(title = "群组ID集合")
     private List<Long> ids;
 }

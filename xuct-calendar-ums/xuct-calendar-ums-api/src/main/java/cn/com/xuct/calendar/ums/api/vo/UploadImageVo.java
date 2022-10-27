@@ -32,15 +32,15 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class UploadImageVo implements Serializable {
 
-    @Schema(name = "图片地址")
+    @Schema(title = "图片地址")
     private String url;
 
-    @Schema(name = "缩略图")
+    @Schema(title = "缩略图")
     private String thumbnailUrl;
 
-    @Schema(name = "图片宽")
+    @Schema(title = "图片宽")
     private Integer width;
 
-    @Schema(name = "图片高")
+    @Schema(title = "图片高")
     private Integer height;
 }

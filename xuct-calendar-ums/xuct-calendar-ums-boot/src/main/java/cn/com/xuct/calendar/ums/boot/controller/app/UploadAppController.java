@@ -34,7 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @since 1.0.0
  */
 @Slf4j
-@Tag(name = "【所有端】上传接口")
+@Tag(name = "【移动端】上传接口")
 @RestController
 @RequestMapping("/api/v1/app/file")
 @RequiredArgsConstructor

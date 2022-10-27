@@ -323,21 +323,6 @@ public class MemberAppController {
     }
 
     @Inner(value = false)
-    @Operation(summary = "【非登录】找回密码验证")
-    @PostMapping("/anno/forget/check")
-    public R<String> forgetPasswordCheckCode(@Validated @RequestBody ForgetPasswordParam param) {
-        Object redisVal = redisTemplate.opsForValue().get(param.getType() == 1 ?
-                RedisConstants.MEMBER_FORGET_PASSWORD_PHONE_CODE_KEY.concat(":").concat(param.getPhone()) :
-                RedisConstants.MEMBER_FORGET_PASSWORD_EMAIL_CODE_KEY.concat(":").concat(param.getEmail()));
-        if (redisVal == null || !String.valueOf(redisVal).equals(param.getCode())) return R.fail("验证码错误");
-        MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("identity_type", param.getType() == 1 ? IdentityTypeEnum.phone : IdentityTypeEnum.email),
-                Column.of("user_name", param.getType() == 1 ? param.getPhone() : param.getEmail())));
-
-        if (memberAuth == null) return R.fail("验证失败");
-        return R.data(memberAuth.getMemberId().toString());
-    }
-
-    @Inner(value = false)
     @Operation(summary = "【非登录】找回密码更新")
     @PostMapping("/anno/forget/modify")
     public R<String> forgetPasswordModify(@Validated @RequestBody ForgetModifyParam param) {
@@ -362,6 +347,21 @@ public class MemberAppController {
         auths.forEach(auth -> auth.setPassword(password));
         memberAuthService.saveOrUpdateBatch(auths);
         return R.status(true);
+    }
+
+    @Inner(value = false)
+    @Operation(summary = "【非登录】找回密码验证")
+    @PostMapping("/anno/forget/check")
+    public R<String> forgetPasswordCheckCode(@Validated @RequestBody ForgetPasswordParam param) {
+        Object redisVal = redisTemplate.opsForValue().get(param.getType() == 1 ?
+                RedisConstants.MEMBER_FORGET_PASSWORD_PHONE_CODE_KEY.concat(":").concat(param.getPhone()) :
+                RedisConstants.MEMBER_FORGET_PASSWORD_EMAIL_CODE_KEY.concat(":").concat(param.getEmail()));
+        if (redisVal == null || !String.valueOf(redisVal).equals(param.getCode())) return R.fail("验证码错误");
+        MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("identity_type", param.getType() == 1 ? IdentityTypeEnum.phone : IdentityTypeEnum.email),
+                Column.of("user_name", param.getType() == 1 ? param.getPhone() : param.getEmail())));
+
+        if (memberAuth == null) return R.fail("验证失败");
+        return R.data(memberAuth.getMemberId().toString());
     }
 
     private String delegatingPassword(String password) {

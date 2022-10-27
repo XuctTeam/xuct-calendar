@@ -28,13 +28,13 @@ public class OAuthDetailsDto implements Serializable {
     /**
      * 客户端ID
      */
-    @Schema(name = "客户端id")
+    @Schema(title = "客户端id")
     private String clientId;
 
     /**
      * 客户端密钥
      */
-    @Schema(name = "客户端密钥")
+    @Schema(title = "客户端密钥")
     private String clientSecret;
 
     /**
@@ -45,7 +45,7 @@ public class OAuthDetailsDto implements Serializable {
     /**
      * 作用域
      */
-    @Schema(name = "作用域")
+    @Schema(title = "作用域")
     private String scope;
 
     /**

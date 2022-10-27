@@ -28,12 +28,12 @@ import java.util.List;
 @Data
 public class ComponentListVo {
 
-    @Schema(name = "日程发生天")
+    @Schema(title = "日程发生天")
     private String day;
 
-    @Schema(name ="日历ID")
+    @Schema(title ="日历ID")
     private String calendarId;
 
-    @Schema(name ="日程列表")
+    @Schema(title ="日程列表")
     private List<Component> components = Lists.newArrayList();
 }

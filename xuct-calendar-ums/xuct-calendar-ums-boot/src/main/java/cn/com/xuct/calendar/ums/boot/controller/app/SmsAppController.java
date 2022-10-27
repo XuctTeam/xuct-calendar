@@ -45,7 +45,7 @@ import java.util.concurrent.TimeUnit;
  * @since 1.0.0
  */
 @Slf4j
-@Tag(name = "【所有端】短信接口")
+@Tag(name = "【移动端】短信接口")
 @RestController
 @RequestMapping("/api/app/v1/sms")
 @RequiredArgsConstructor

@@ -26,12 +26,12 @@ import java.io.Serializable;
 @Data
 public class MemberPhoneRegisterData implements Serializable {
 
-    @Schema(name = "手机号")
+    @Schema(title = "手机号")
     private String phone;
 
-    @Schema(name ="密码")
+    @Schema(title ="密码")
     private String password;
 
-    @Schema(name ="验证码")
+    @Schema(title ="验证码")
     private String smsCode;
 }

@@ -27,11 +27,13 @@ import java.io.Serializable;
 @Data
 public class MemberPhoneParam implements Serializable {
 
+    @Schema(title = "手机号")
     @NotNull
     private String phone;
 
+    @Schema(title = "验证码")
     private String code;
 
-    @Schema(name = "类型", description = "1.绑定手机 2.解绑手机")
+    @Schema(title = "类型", description = "1.绑定手机 2.解绑手机")
     private Integer type;
 }

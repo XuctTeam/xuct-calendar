@@ -10,6 +10,7 @@
  */
 package cn.com.xuct.calendar.common.module.params;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -25,9 +26,12 @@ import java.io.Serializable;
 @Data
 public class GroupLeaveParam implements Serializable {
 
+    @Schema(title = "会员ID")
     private Long memberId;
 
+    @Schema(title = "群组ID")
     private Long groupId;
 
+    @Schema(title = "操作类型", description = "4.主动离开 5.拒绝入群 ")
     private Integer action;
 }

@@ -10,13 +10,14 @@
  */
 package cn.com.xuct.calendar.common.module.params;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
- * 〈一句话功能简述〉<br> 
+ * 〈一句话功能简述〉<br>
  * 〈〉
  *
  * @author Derek Xu
@@ -26,6 +27,7 @@ import java.io.Serializable;
 @Data
 public class MemberPasswordParam implements Serializable {
 
+    @Schema(title = "密码")
     @NotNull
     private String password;
 }

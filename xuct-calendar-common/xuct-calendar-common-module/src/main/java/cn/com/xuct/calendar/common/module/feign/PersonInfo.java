@@ -30,28 +30,28 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(name = "会员类")
+@Schema(title = "会员类")
 public class PersonInfo implements Serializable {
 
-    @Schema(name  = "会员ID")
+    @Schema(title  = "会员ID")
     private Long userId;
 
-    @Schema(name = "名称")
+    @Schema(title = "名称")
     private String name;
 
-    @Schema(name = "头像")
+    @Schema(title = "头像")
     private String avatar;
 
-    @Schema(name = "账号")
+    @Schema(title = "账号")
     private String username;
 
-    @Schema(name = "状态")
+    @Schema(title = "状态")
     private Integer status;
 
-    @Schema(name = "密码")
+    @Schema(title = "密码")
     private String password;
 
-    @Schema(name = "时区")
+    @Schema(title = "时区")
     private String timeZone;
 
 

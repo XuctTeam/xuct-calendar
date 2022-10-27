@@ -35,14 +35,14 @@ import java.util.List;
 public class SmsCodeFeignInfo {
 
     @NotEmpty
-    @Schema(name = "收短信人")
+    @Schema(title = "收短信人")
     private List<String> phones;
 
     @NotNull
-    @Schema(name = "短信模板")
+    @Schema(title = "短信模板")
     private String template;
 
     @NotNull
-    @Schema(name = "验证码")
+    @Schema(title = "验证码")
     private String code;
 }

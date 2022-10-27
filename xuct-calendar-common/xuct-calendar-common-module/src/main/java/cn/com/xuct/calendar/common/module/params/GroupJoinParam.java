@@ -10,6 +10,7 @@
  */
 package cn.com.xuct.calendar.common.module.params;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -26,8 +27,10 @@ import java.io.Serializable;
 @Data
 public class GroupJoinParam implements Serializable {
 
+    @Schema(title = "群组ID")
     @NotNull
     private Long id;
 
+    @Schema(title = "加入密码")
     private String password;
 }

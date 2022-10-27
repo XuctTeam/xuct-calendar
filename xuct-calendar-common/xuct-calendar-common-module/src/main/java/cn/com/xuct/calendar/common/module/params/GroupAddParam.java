@@ -11,6 +11,7 @@
 package cn.com.xuct.calendar.common.module.params;
 
 import cn.com.xuct.calendar.common.module.enums.CommonPowerEnum;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -27,17 +28,23 @@ import java.io.Serializable;
 @Data
 public class GroupAddParam implements Serializable {
 
+    @Schema(title = "群组ID")
     private Long id;
 
+    @Schema(title = "群组图片")
     private String imageUrl;
 
+    @Schema(title = "群组名称")
     @NotNull
     private String name;
 
+    @Schema(title = "是否可搜索")
     @NotNull
     private String power;
 
+    @Schema(title = "密码")
     private String password;
 
+    @Schema(title = "群组人数")
     private Integer num;
 }

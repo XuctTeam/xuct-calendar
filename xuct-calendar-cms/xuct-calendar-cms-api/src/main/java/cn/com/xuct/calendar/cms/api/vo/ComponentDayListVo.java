@@ -26,9 +26,9 @@ import java.util.List;
 @Data
 public class ComponentDayListVo {
 
-    @Schema(name = "天（日期）")
+    @Schema(title = "天（日期）")
     private String day;
 
-    @Schema(name = "天内所有日程安排")
+    @Schema(title = "天内所有日程安排")
     private List<CalendarComponentVo> components;
 }

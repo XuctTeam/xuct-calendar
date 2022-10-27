@@ -29,25 +29,25 @@ import java.util.Date;
 @Data
 public class GroupInfoDto implements Serializable {
 
-    @Schema(name = "ID")
+    @Schema(title = "ID")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
-    @Schema(name = "群组名称")
+    @Schema(title = "群组名称")
     private String name;
 
     private Date createTime;
 
-    @Schema(name = "群组图片")
+    @Schema(title = "群组图片")
     private String images;
 
-    @Schema(name = "编号")
+    @Schema(title = "编号")
     private String no;
 
-    @Schema(name = "密码")
+    @Schema(title = "密码")
     private String password;
 
-    @Schema(name = "总人数")
+    @Schema(title = "总人数")
     private Integer count;
 
     @JsonSerialize(using = ToStringSerializer.class)
@@ -55,12 +55,12 @@ public class GroupInfoDto implements Serializable {
 
     private String createMemberName;
 
-    @Schema(name = "是否公开")
+    @Schema(title = "是否公开")
     private String power;
 
-    @Schema(name = "最大人数")
+    @Schema(title = "最大人数")
     private Integer num;
 
-    @Schema(name = "是否需要免密加入")
+    @Schema(title = "是否需要免密加入")
     private int hasPasswordJoin = 0;
 }

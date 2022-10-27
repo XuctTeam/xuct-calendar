@@ -26,12 +26,14 @@ import javax.validation.constraints.NotNull;
 @Data
 public class EmailCodeParam {
 
+    @Schema(title = "验证码")
     private String code;
 
+    @Schema(title = "邮箱")
     @NotNull
     private String email;
 
-    @Schema(name = "类型", description = "1.绑定邮箱 2.解绑邮箱 4.密码找回")
+    @Schema(title = "类型", description = "1.绑定邮箱 2.解绑邮箱 4.密码找回")
     private Integer type;
 
 }
