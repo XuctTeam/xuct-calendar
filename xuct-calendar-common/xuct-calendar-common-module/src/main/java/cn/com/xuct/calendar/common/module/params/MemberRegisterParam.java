@@ -10,6 +10,7 @@
  */
 package cn.com.xuct.calendar.common.module.params;
 
+import cn.com.xuct.calendar.common.module.enums.RegisterEnum;
 import cn.com.xuct.calendar.common.module.params.data.MemberEmailRegisterData;
 import cn.com.xuct.calendar.common.module.params.data.MemberPhoneRegisterData;
 import cn.com.xuct.calendar.common.module.params.data.MemberUserNameRegisterData;
@@ -32,7 +33,7 @@ public class MemberRegisterParam implements Serializable {
 
     @NotNull
     @Schema(title = "注册类型")
-    private Integer formType;
+    private RegisterEnum formType;
 
     @Schema(title = "用户名注册参数")
     private MemberUserNameRegisterData username;

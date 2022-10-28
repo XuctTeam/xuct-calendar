@@ -86,7 +86,7 @@ public class MemberFeignController {
     }
 
     @Inner
-    @Operation(summary = "通过OPENID查询会员")
+    @Operation(summary = "通过OPENID查询")
     @PostMapping("/get/openId")
     public R<UserInfo> getUserByWechatCode(@RequestBody WxUserInfoFeignInfo wxUserInfoFeignInfo) {
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", wxUserInfoFeignInfo.getOpenId()), Column.of("identity_type", IdentityTypeEnum.open_id)));
@@ -122,16 +122,10 @@ public class MemberFeignController {
 
 
     @Inner
-    @Operation(summary = "通过登录用户名或邮箱查询会员")
+    @Operation(summary = "通过用户名/手机号/邮箱查询")
     @GetMapping("/get/username")
     public R<UserInfo> getUserByUserName(@RequestParam("username") String username) {
-        MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", username), Column.of("identity_type", IdentityTypeEnum.user_name)));
-        if (memberAuth == null) {
-            memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", username), Column.of("identity_type", IdentityTypeEnum.phone)));
-        }
-        if (memberAuth == null) {
-            memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", username), Column.of("identity_type", IdentityTypeEnum.email)));
-        }
+        MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", username), Column.in("identity_type", Lists.newArrayList(IdentityTypeEnum.user_name, IdentityTypeEnum.phone, IdentityTypeEnum.email))));
         if (memberAuth == null) return R.fail("登录方式不存在");
         Member member = memberService.getById(memberAuth.getMemberId());
         if (member == null) return R.fail("用户不存在");
@@ -140,7 +134,7 @@ public class MemberFeignController {
                         .password(memberAuth.getPassword()).name(member.getName()).timeZone(member.getTimeZone()).status(member.getStatus()).build()).build());
     }
 
-    @Operation(summary = "通过ID查询会员")
+    @Operation(summary = "通过ID查询")
     @GetMapping("/get/id")
     public R<PersonInfo> getUserById(@RequestParam("id") Long id) {
         Member member = memberService.findMemberById(id);
@@ -148,7 +142,7 @@ public class MemberFeignController {
         return R.data(PersonInfo.builder().userId(member.getId()).name(member.getName()).status(member.getStatus()).timeZone(member.getTimeZone()).build());
     }
 
-    @Operation(summary = "通过IDS查询会员")
+    @Operation(summary = "通过IDS查询")
     @PostMapping("/list/ids")
     public R<List<PersonInfo>> listMemberByIds(@RequestBody List<String> ids) {
         List<Member> members = memberService.find(Column.in("id", ids));

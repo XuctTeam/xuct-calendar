@@ -37,7 +37,7 @@ public class MemberUserNameRegisterData implements Serializable {
 
     @NotNull
     @Schema(title = "请求key")
-    private String key;
+    private String randomStr;
 
     @NotNull
     @Schema(title = "验证码")

@@ -61,7 +61,6 @@ public class EmailAppController {
 
     private final IMemberAuthService memberAuthService;
 
-    @Inner(value = false)
     @Operation(summary = "【非登录】密码找回")
     @PostMapping("/anno/forget")
     public R<String> forgetPasswordCode(@Validated @RequestBody EmailCodeParam param) {

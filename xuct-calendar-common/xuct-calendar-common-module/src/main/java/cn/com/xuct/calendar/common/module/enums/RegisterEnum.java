@@ -22,5 +22,7 @@ public enum RegisterEnum {
 
     password,
 
-    phone
+    phone,
+
+    username
 }

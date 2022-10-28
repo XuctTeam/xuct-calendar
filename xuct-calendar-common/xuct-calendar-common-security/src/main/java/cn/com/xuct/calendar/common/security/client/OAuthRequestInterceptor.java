@@ -45,29 +45,17 @@ public class OAuthRequestInterceptor implements RequestInterceptor {
 		if (CollUtil.isNotEmpty(fromHeader) && fromHeader.contains(SecurityConstants.FROM_IN)) {
 			return;
 		}
-
 		// 非web 请求直接跳过
 		if (!WebUtils.getRequest().isPresent()) {
 			return;
 		}
 		HttpServletRequest request = WebUtils.getRequest().get();
-		Enumeration<String> headerNames = request.getHeaderNames();
-		if (headerNames != null) {
-			while (headerNames.hasMoreElements()) {
-				String name = headerNames.nextElement();
-				String values = request.getHeader(name);
-				template.header(name, values);
-
-			}
-		}
-
 		// 避免请求参数的 query token 无法传递
 		String token = tokenResolver.resolve(request);
 		if (StrUtil.isBlank(token)) {
 			return;
 		}
-		template.header(HttpHeaders.AUTHORIZATION, String.format("%s %s", OAuth2AccessToken.TokenType.BEARER, token));
+		template.header(HttpHeaders.AUTHORIZATION, String.format("%s %s", OAuth2AccessToken.TokenType.BEARER.getValue(), token));
 
 	}
-
 }

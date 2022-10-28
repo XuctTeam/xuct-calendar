@@ -57,7 +57,6 @@ public class SmsAppController {
 
     private final IMemberAuthService memberAuthService;
 
-    @Inner(value = false)
     @Operation(summary = "【非登录】登录短信")
     @PostMapping("/anno/login")
     public R<String> loginSmsCode(@Validated @RequestBody SmsSendParam param) {
@@ -66,7 +65,6 @@ public class SmsAppController {
         return R.status(true);
     }
 
-    @Inner(value = false)
     @Operation(summary = "【非登录】密码找回")
     @PostMapping("/anno/forget")
     public R<String> forgetPasswordCode(@Validated @RequestBody SmsSendParam param) {

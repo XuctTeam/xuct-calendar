@@ -46,7 +46,7 @@ public class OAuthMemberDetailsServiceImpl implements OAuthUserDetailsService {
     /**
      * 手机号登录
      *
-     * @param username 手机号
+     * @param username 账号/手机号/账号密码
      * @return
      */
     @Override

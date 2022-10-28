@@ -33,5 +33,5 @@ public class MemberPhoneRegisterData implements Serializable {
     private String password;
 
     @Schema(title ="验证码")
-    private String smsCode;
+    private String code;
 }

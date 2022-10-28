@@ -37,7 +37,6 @@ import cn.com.xuct.calendar.ums.boot.event.MemberEvent;
 import cn.com.xuct.calendar.ums.boot.service.IMemberAuthService;
 import cn.com.xuct.calendar.ums.boot.service.IMemberService;
 import cn.com.xuct.calendar.ums.boot.support.SmsCodeValidateSupport;
-import cn.hutool.core.lang.Assert;
 import com.google.common.collect.Lists;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -45,6 +44,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -224,7 +224,7 @@ public class MemberAppController {
     @PostMapping("/username/bind")
     public R<String> bindUserName(@RequestBody MemberUsernameParam param) {
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", param.getUsername()), Column.of("identity_type", IdentityTypeEnum.user_name)));
-        if (memberAuth != null) return R.fail("账号已存在");
+        Assert.isNull(memberAuth != null, "账号已存在");
         Long userId = SecurityUtils.getUserId();
         memberAuth = new MemberAuth();
         memberAuth.setMemberId(userId);
@@ -242,7 +242,7 @@ public class MemberAppController {
         smsCodeValidateSupport.validateCode(3, String.valueOf(param.getEmail()), param.getCode());
         /* 2.读取记录 */
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", param.getEmail()), Column.of("identity_type", IdentityTypeEnum.email)));
-        if (memberAuth != null) return R.fail("邮箱已存在");
+        Assert.isNull(memberAuth != null, "邮箱已存在");
         memberAuth = new MemberAuth();
         memberAuth.setMemberId(SecurityUtils.getUserId());
         memberAuth.setUsername(param.getEmail());
@@ -265,37 +265,13 @@ public class MemberAppController {
         return R.status(true);
     }
 
-    @Operation(summary = "微信绑定")
-    @PostMapping("/wx/bind")
-    public R<String> bindWechat(@RequestBody WxUserInfoFeignInfo wxUserInfoFeignInfo) {
-//        R<WxMaJscode2SessionResult> jscode2SessionResultR = basicServicesFeignClient.getSessionInfo(wxUserInfoFeignInfo.getCode());
-//        if (jscode2SessionResultR == null || !jscode2SessionResultR.isSuccess())
-//            return R.fail(jscode2SessionResultR.getMessage());
-//        WxMaJscode2SessionResult session = jscode2SessionResultR.getData();
-//        R<WxMaUserInfo> wxMaUserInfoR = basicServicesFeignClient.getUserInfo(WxUserInfoFeignInfo.builder().sessionKey(session.getSessionKey())
-//                .encryptedData(wxUserInfoFeignInfo.getEncryptedData()).iv(wxUserInfoFeignInfo.getIv()).build());
-//        if (wxMaUserInfoR == null || !wxMaUserInfoR.isSuccess()) return R.fail(wxMaUserInfoR.getMessage());
-//        MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", session.getOpenid()), Column.of("identity_type", IdentityTypeEnum.open_id)));
-//        if (memberAuth != null) return R.fail("微信用户已绑定");
-//        WxMaUserInfo wxMaUserInfo = wxMaUserInfoR.getData();
-//        memberAuth = new MemberAuth();
-//        memberAuth.setMemberId(SecurityUtils.getUserId());
-//        memberAuth.setUsername(session.getOpenid());
-//        memberAuth.setNickName(wxMaUserInfo.getNickName());
-//        memberAuth.setIdentityType(IdentityTypeEnum.open_id);
-//        memberAuth.setSessionKey(session.getSessionKey());
-//        memberAuth.setAvatar(wxMaUserInfo.getAvatarUrl());
-//        memberAuthService.save(memberAuth);
-        return R.status(true);
-    }
-
     @Operation(summary = "使用微信头像昵称")
     @PostMapping("/wx/update/info")
     public R<Member> modifyNameAndAvatarToWx() {
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("member_id", SecurityUtils.getUserId()), Column.of("identity_type", IdentityTypeEnum.open_id)));
-        if (memberAuth == null) return R.fail("未找到微信信息");
+        Assert.notNull(memberAuth, "未找到微信信息");
         Member member = memberService.getById(SecurityUtils.getUserId());
-        if (member == null) return R.fail("获取用户信息失败");
+        Assert.notNull(member, "获取用户信息失败");
         member.setName(memberAuth.getNickName());
         member.setAvatar(memberAuth.getAvatar());
         memberService.updateById(member);
@@ -318,18 +294,16 @@ public class MemberAppController {
         memberService.mergeMember(userId, memberAuth);
         /* 发送账号合并消息 */
         SpringContextHolder.publishEvent(new MemberEvent(this, SecurityUtils.getUserId(), memberAuth.getNickName(), 3));
-
         return R.status(true);
     }
 
-    @Inner(value = false)
     @Operation(summary = "【非登录】找回密码更新")
     @PostMapping("/anno/forget/modify")
     public R<String> forgetPasswordModify(@Validated @RequestBody ForgetModifyParam param) {
         Member member = memberService.findMemberById(param.getMemberId());
-        if (member == null) return R.fail("修改密码失败");
+        Assert.notNull(member, "修改密码失败");
         List<MemberAuth> auths = memberAuthService.find(Column.of("member_id", param.getMemberId()));
-        if (CollectionUtils.isEmpty(auths)) return R.fail("修改密码失败");
+        Assert.notEmpty(auths, "修改密码失败");
         Optional<MemberAuth> authOpt = auths.stream().filter(auth -> auth.getIdentityType().equals(IdentityTypeEnum.phone)).findFirst();
         if (!authOpt.isPresent()) {
             authOpt = auths.stream().filter(auth -> auth.getIdentityType().equals(IdentityTypeEnum.email)).findFirst();
@@ -349,7 +323,6 @@ public class MemberAppController {
         return R.status(true);
     }
 
-    @Inner(value = false)
     @Operation(summary = "【非登录】找回密码验证")
     @PostMapping("/anno/forget/check")
     public R<String> forgetPasswordCheckCode(@Validated @RequestBody ForgetPasswordParam param) {
@@ -364,7 +337,59 @@ public class MemberAppController {
         return R.data(memberAuth.getMemberId().toString());
     }
 
+    @Operation(summary = "【非登录】用户注册")
+    @PostMapping("/anno/register")
+    public R<String> registerMember(@Validated @RequestBody MemberRegisterParam param) {
+        Assert.notNull(param.getFormType(), "注册信息错误");
+        boolean register = false;
+        switch (param.getFormType()) {
+            case username:
+                Assert.notNull(param.getUsername(), "注册信息错误");
+                register = this.registerByUserName(param.getUsername().getUsername(), param.getUsername().getPassword(), param.getUsername().getRandomStr(), param.getUsername().getCaptcha());
+                break;
+            case phone:
+                register = this.registerByPhone(param.getPhone().getPhone(), param.getPhone().getPassword(), param.getPhone().getCode());
+                break;
+        }
+        return R.status(register);
+    }
+
     private String delegatingPassword(String password) {
         return passwordEncoder.encode(password).replace(PasswordEncoderTypeEnum.BCRYPT.getPrefix(), "");
     }
+
+    /**
+     * 功能描述: <br>
+     * 〈通过用户名注册〉
+     *
+     * @param username
+     * @param password
+     * @param randomStr
+     * @param code
+     * @return:boolean
+     * @since: 1.0.0
+     * @Author:
+     * @Date: 2022/10/28 17:52
+     */
+    private boolean registerByUserName(final String username, final String password, final String randomStr, final String code) {
+        return true;
+    }
+
+    /**
+     * 功能描述: <br>
+     * 〈通过电话注册〉
+     *
+     * @param phone
+     * @param password
+     * @param code
+     * @return:boolean
+     * @since: 1.0.0
+     * @Author:
+     * @Date: 2022/10/28 17:56
+     */
+    private boolean registerByPhone(final String phone, final String password, final String code) {
+        return true;
+    }
+
+
 }

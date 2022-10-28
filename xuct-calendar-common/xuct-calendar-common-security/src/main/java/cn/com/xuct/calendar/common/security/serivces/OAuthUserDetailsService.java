@@ -62,16 +62,14 @@ public interface OAuthUserDetailsService extends UserDetailsService, Ordered {
             dbAuthsSet.addAll(Arrays.asList(info.getPermissions()));
         }
         Collection<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList(dbAuthsSet.toArray(new String[0]));
-        if (appType) {
-            PersonInfo personInfo = info.getPersonInfo();
-            if (personInfo.getStatus() != 0) {
-                throw new DisabledException("该账户已被禁用!");
-            }
-            return new OAuthUser(personInfo.getUserId(), personInfo.getUsername(), SecurityConstants.BCRYPT + personInfo.getPassword(),
-                    personInfo.getName(), personInfo.getTimeZone(),
-                    true, true, true, StrUtil.equals(personInfo.getStatus().toString(), GlobalConstants.STATUS_YES), authorities);
+        if (!appType) return null;
+        PersonInfo personInfo = info.getPersonInfo();
+        if (personInfo.getStatus() != 0) {
+            throw new DisabledException("该账户已被禁用!");
         }
-        return null;
+        return new OAuthUser(personInfo.getUserId(), personInfo.getUsername(), SecurityConstants.BCRYPT + personInfo.getPassword(),
+                personInfo.getName(), personInfo.getTimeZone(),
+                true, true, true, StrUtil.equals(personInfo.getStatus().toString(), GlobalConstants.STATUS_YES), authorities);
     }
 
     default UserDetails loadUserByUser(OAuthUser oAuthUser) {
