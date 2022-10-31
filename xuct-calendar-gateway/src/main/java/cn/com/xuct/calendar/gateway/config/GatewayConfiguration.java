@@ -1,6 +1,6 @@
 package cn.com.xuct.calendar.gateway.config;
 
-import cn.com.xuct.calendar.gateway.filter.PasswordGatewayFilter;
+import cn.com.xuct.calendar.gateway.filter.PasswordDecoderFilter;
 import cn.com.xuct.calendar.gateway.filter.RequestGlobalFilter;
 import cn.com.xuct.calendar.gateway.filter.SwaggerBasicGatewayFilter;
 import cn.com.xuct.calendar.gateway.filter.ValidateCodeGatewayFilter;
@@ -23,8 +23,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 public class GatewayConfiguration {
 
 	@Bean
-	public PasswordGatewayFilter passwordGatewayFilter(GatewayConfigProperties configProperties) {
-		return new PasswordGatewayFilter(configProperties);
+	public PasswordDecoderFilter passwordGatewayFilter(GatewayConfigProperties configProperties) {
+		return new PasswordDecoderFilter(configProperties);
 	}
 
 	@Bean

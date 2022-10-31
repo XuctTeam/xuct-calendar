@@ -24,13 +24,11 @@ import cn.hutool.crypto.Mode;
 import cn.hutool.crypto.Padding;
 import cn.hutool.crypto.symmetric.AES;
 import cn.hutool.http.HttpUtil;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.cloud.gateway.filter.factory.rewrite.CachedBodyOutputMessage;
 import org.springframework.cloud.gateway.support.BodyInserterContext;
-import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -54,7 +52,7 @@ import java.util.function.Function;
 
 
 @Slf4j
-public class PasswordGatewayFilter extends AbstractGatewayFilterFactory<PasswordGatewayFilter.Config> {
+public class PasswordDecoderFilter extends AbstractGatewayFilterFactory<PasswordDecoderFilter.Config> {
 
     private static final List<HttpMessageReader<?>> messageReaders = HandlerStrategies.withDefaults().messageReaders();
 
@@ -64,7 +62,7 @@ public class PasswordGatewayFilter extends AbstractGatewayFilterFactory<Password
 
     private final GatewayConfigProperties gatewayConfig;
 
-    public PasswordGatewayFilter(GatewayConfigProperties gatewayConfig) {
+    public PasswordDecoderFilter(GatewayConfigProperties gatewayConfig) {
         super(Config.class);
         this.gatewayConfig = gatewayConfig;
     }
