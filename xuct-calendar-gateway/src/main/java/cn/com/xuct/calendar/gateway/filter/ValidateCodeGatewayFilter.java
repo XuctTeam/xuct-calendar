@@ -110,7 +110,7 @@ public class ValidateCodeGatewayFilter extends AbstractGatewayFilterFactory<Obje
 
     @Override
     public String name() {
-        return "validateCodeGatewayFilter";
+        return "ValidateCodeGatewayFilter";
     }
 
     @SneakyThrows

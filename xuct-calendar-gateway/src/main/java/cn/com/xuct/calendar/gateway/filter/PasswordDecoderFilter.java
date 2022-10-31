@@ -106,7 +106,7 @@ public class PasswordDecoderFilter extends AbstractGatewayFilterFactory<Password
     //这个name方法 用来在yml配置中指定对应的过滤器名称
     @Override
     public String name() {
-        return "passwordGatewayFilter";
+        return "PasswordDecoderFilter";
     }
 
 
