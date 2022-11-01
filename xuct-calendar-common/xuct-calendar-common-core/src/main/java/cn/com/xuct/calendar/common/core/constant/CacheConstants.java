@@ -36,5 +36,8 @@ public interface CacheConstants {
     /**
      * 验证码前缀
      */
-    String DEFAULT_CODE_KEY = "security::login::code";
+    String DEFAULT_LOGIN_CODE_KEY = "security::login::code";
+
+
+
 }

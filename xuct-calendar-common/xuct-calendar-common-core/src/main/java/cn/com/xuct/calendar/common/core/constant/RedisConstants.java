@@ -20,16 +20,6 @@ package cn.com.xuct.calendar.common.core.constant;
  */
 public interface RedisConstants {
 
-    /**
-     * 用户session key信息
-     */
-    public static final String WX_USER_SESSION_KEY = "member::session:key:";
-
-    /**
-     * openID缓存用户信息
-     */
-    public static final String MEMBER_OPEN_INFO_KEY = "member::open:info:";
-
 
     /* 短信验证码 */
     public static final String MEMBER_PHONE_LOGIN_CODE_KEY = "member::login::sms:code:";
