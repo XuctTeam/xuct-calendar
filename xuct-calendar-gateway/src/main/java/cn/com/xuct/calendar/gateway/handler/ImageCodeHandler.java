@@ -67,8 +67,9 @@ public class ImageCodeHandler implements HandlerFunction<ServerResponse> {
         // 保存验证码信息
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         if (imgType.isPresent()) {
-            String key = imgType.get().toLowerCase().equals(REGISTER_IMG) ? RedisConstants.MEMBER_EMAIL_REGISTER_CODE_KEY : CacheConstants.DEFAULT_LOGIN_CODE_KEY;
-            randomStr.ifPresent(s -> redisTemplate.opsForValue().set(key.concat(s), text, SecurityConstants.CODE_TIME, TimeUnit.SECONDS));
+            randomStr.ifPresent(s -> redisTemplate.opsForValue().set(
+                    (imgType.get().equals(REGISTER_IMG) ? RedisConstants.MEMBER_CAPTCHA_REGISTER_CODE_KEY : CacheConstants.DEFAULT_LOGIN_CODE_KEY)
+                            .concat(s), text, SecurityConstants.CODE_TIME, TimeUnit.SECONDS));
         }
         // 转换流信息写出
         FastByteArrayOutputStream os = new FastByteArrayOutputStream();

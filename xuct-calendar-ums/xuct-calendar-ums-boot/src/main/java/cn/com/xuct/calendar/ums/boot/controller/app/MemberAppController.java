@@ -11,6 +11,7 @@
 package cn.com.xuct.calendar.ums.boot.controller.app;
 
 import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
+import cn.com.xuct.calendar.common.core.constant.DictConstants;
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.enums.PasswordEncoderTypeEnum;
 import cn.com.xuct.calendar.common.core.exception.SvrException;
@@ -19,7 +20,9 @@ import cn.com.xuct.calendar.common.core.res.SvrResCode;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.dto.CalendarMergeDto;
 import cn.com.xuct.calendar.common.module.enums.IdentityTypeEnum;
+import cn.com.xuct.calendar.common.module.enums.RegisterEnum;
 import cn.com.xuct.calendar.common.module.feign.req.CalendarCountFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.req.CalendarInitFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.WxUserInfoFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.WxUserPhoneFeignInfo;
 import cn.com.xuct.calendar.common.module.params.*;
@@ -33,6 +36,7 @@ import cn.com.xuct.calendar.ums.api.entity.MemberAuth;
 import cn.com.xuct.calendar.ums.api.feign.BasicServicesFeignClient;
 import cn.com.xuct.calendar.ums.api.feign.CalendarFeignClient;
 import cn.com.xuct.calendar.ums.api.vo.MemberInfoVo;
+import cn.com.xuct.calendar.ums.boot.config.DictCacheManager;
 import cn.com.xuct.calendar.ums.boot.event.MemberEvent;
 import cn.com.xuct.calendar.ums.boot.service.IMemberAuthService;
 import cn.com.xuct.calendar.ums.boot.service.IMemberService;
@@ -46,6 +50,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -341,15 +346,17 @@ public class MemberAppController {
     @PostMapping("/anno/register")
     public R<String> registerMember(@Validated @RequestBody MemberRegisterParam param) {
         Assert.notNull(param.getFormType(), "注册信息错误");
+        Assert.isTrue(param.getFormType().equals(RegisterEnum.username) && param.getUsername() == null, "注册信息错误");
         boolean register = false;
         switch (param.getFormType()) {
             case username:
-                Assert.notNull(param.getUsername(), "注册信息错误");
                 register = this.registerByUserName(param.getUsername().getUsername(), param.getUsername().getPassword(), param.getUsername().getRandomStr(), param.getUsername().getCaptcha());
                 break;
             case phone:
-                register = this.registerByPhone(param.getPhone().getPhone(), param.getPhone().getPassword(), param.getPhone().getCode());
+                register = this.registerByPhoneOrEmail(param.getPhone().getPhone(), null, param.getPhone().getPassword(), param.getPhone().getCode());
                 break;
+            case email:
+                register = this.registerByPhoneOrEmail(null, param.getEmail().getEmail(), param.getEmail().getPassword(), param.getEmail().getCode());
         }
         return R.status(register);
     }
@@ -358,37 +365,43 @@ public class MemberAppController {
         return passwordEncoder.encode(password).replace(PasswordEncoderTypeEnum.BCRYPT.getPrefix(), "");
     }
 
-    /**
-     * 功能描述: <br>
-     * 〈通过用户名注册〉
-     *
-     * @param username
-     * @param password
-     * @param randomStr
-     * @param code
-     * @return:boolean
-     * @since: 1.0.0
-     * @Author:
-     * @Date: 2022/10/28 17:52
-     */
     private boolean registerByUserName(final String username, final String password, final String randomStr, final String code) {
+        String redisKey = RedisConstants.MEMBER_CAPTCHA_REGISTER_CODE_KEY.concat(randomStr);
+        Object redisObj = redisTemplate.opsForValue().get(redisKey);
+        if (redisObj == null || !String.valueOf(redisObj).equals(code)) return false;
+        MemberAuth memberAuth = memberAuthService.get(Column.of("user_name", username));
+        if (memberAuth != null) return false;
+        String bcryptPassword = this.delegatingPassword(password).replace("{bcrypt}", "");
+        this.createCalendar(memberService.saveMemberByUserName(username, bcryptPassword, DictCacheManager.getDictByCode(DictConstants.TIME_ZONE_TYPE, DictConstants.EAST_8_CODE).getValue()));
         return true;
     }
 
-    /**
-     * 功能描述: <br>
-     * 〈通过电话注册〉
-     *
-     * @param phone
-     * @param password
-     * @param code
-     * @return:boolean
-     * @since: 1.0.0
-     * @Author:
-     * @Date: 2022/10/28 17:56
-     */
-    private boolean registerByPhone(final String phone, final String password, final String code) {
+    private boolean registerByPhoneOrEmail(final String phone, final String email, final String password, final String code) {
+        boolean isPhone = StringUtils.hasLength(phone);
+        Object redisObj = redisTemplate.opsForValue().get(isPhone ? RedisConstants.MEMBER_PHONE_REGISTER_CODE_KEY.concat(phone) : RedisConstants.MEMBER_EMAIL_REGISTER_CODE_KEY.concat(email));
+        if (redisObj == null || !String.valueOf(redisObj).equals(code)) return false;
+        List<Column> columns = isPhone ?
+                Lists.newArrayList(Column.of("user_name", phone), Column.of("identity_type", IdentityTypeEnum.phone)) :
+                Lists.newArrayList(Column.of("user_name", email), Column.of("identity_type", IdentityTypeEnum.email));
+        MemberAuth memberAuth = memberAuthService.get(columns);
+        if (memberAuth != null) return false;
+        String bcryptPassword = this.delegatingPassword(password).replace("{bcrypt}", "");
+        Member member = isPhone ?
+                memberService.saveMemberByPhone(phone, bcryptPassword, DictCacheManager.getDictByCode(DictConstants.TIME_ZONE_TYPE, DictConstants.EAST_8_CODE).getValue()) :
+                memberService.saveMemberByEmail(email, bcryptPassword, DictCacheManager.getDictByCode(DictConstants.TIME_ZONE_TYPE, DictConstants.EAST_8_CODE).getValue());
+        this.createCalendar(member);
         return true;
+    }
+
+
+    private void createCalendar(final Member member) {
+        /* 添加日历 */
+        CalendarInitFeignInfo calendarInitFeignInfo = new CalendarInitFeignInfo();
+        calendarInitFeignInfo.setMemberId(member.getId());
+        calendarInitFeignInfo.setMemberNickName(member.getName());
+        calendarFeignClient.addCalendar(calendarInitFeignInfo);
+        /* 添加注册消息到用户 */
+        SpringContextHolder.publishEvent(new MemberEvent(this, member.getId(), member.getName(), 0));
     }
 
 

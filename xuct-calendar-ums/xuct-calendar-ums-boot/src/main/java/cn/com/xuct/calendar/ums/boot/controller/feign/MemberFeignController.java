@@ -70,8 +70,6 @@ public class MemberFeignController {
 
     private final CalendarFeignClient calendarFeignClient;
 
-    private final PasswordEncoder passwordEncoder;
-
     private final BasicServicesFeignClient basicServicesFeignClient;
 
 
@@ -154,63 +152,5 @@ public class MemberFeignController {
             memberFeignInfo.setAvatar(member.getAvatar());
             return memberFeignInfo;
         }).collect(Collectors.toList()));
-    }
-
-    @Operation(summary = "会员注册")
-    @PostMapping("/register")
-    public R<String> register(@RequestBody MemberRegisterFeignInfo registerDto) {
-        List<Column> qry = Lists.newArrayList(Column.of("user_name", registerDto.getUsername()));
-        switch (registerDto.getFormType()) {
-            case 0:
-                qry.add(Column.of("identity_type", IdentityTypeEnum.user_name));
-                break;
-            case 1:
-                qry.add(Column.of("identity_type", IdentityTypeEnum.phone));
-                break;
-            case 2:
-                qry.add(Column.of("identity_type", IdentityTypeEnum.email));
-                break;
-        }
-        MemberAuth memberAuth = memberAuthService.get(qry);
-        if (memberAuth != null) return R.fail("账号已存在");
-        Member member = null;
-        String timeZone = DictCacheManager.getDictByCode(DictConstants.TIME_ZONE_TYPE, DictConstants.EAST_8_CODE).getValue();
-        String password = this.delegatingPassword(registerDto.getPassword()).replace("{bcrypt}", "");
-        switch (registerDto.getFormType()) {
-            case 0:
-                member = memberService.saveMemberByUserName(registerDto.getUsername(), password, timeZone);
-                break;
-            case 1:
-                member = memberService.saveMemberByPhone(registerDto.getUsername(), password, timeZone);
-                break;
-            case 2:
-                member = memberService.saveMemberByEmail(registerDto.getUsername(), password, timeZone);
-                break;
-        }
-        if (member == null) return R.fail("注册失败");
-        /* 添加日历 */
-        CalendarInitFeignInfo calendarInitFeignInfo = new CalendarInitFeignInfo();
-        calendarInitFeignInfo.setMemberId(member.getId());
-        calendarInitFeignInfo.setMemberNickName(member.getName());
-        calendarFeignClient.addCalendar(calendarInitFeignInfo);
-        /* 添加注册消息到用户 */
-        SpringContextHolder.publishEvent(new MemberEvent(this, member.getId(), member.getName(), 0));
-        return R.status(true);
-    }
-
-    @Operation(summary = "修改密码")
-    @PostMapping("/modify/password")
-    public R<String> modifyPassword(@RequestBody MemberModifyPasswordFeignInfo memberModifyPasswordFeignInfo) {
-        Member member = memberService.getById(memberModifyPasswordFeignInfo.getMemberId());
-        if (member == null) return R.fail("用户不存在");
-        final String password = this.delegatingPassword(memberModifyPasswordFeignInfo.getPassword());
-        List<MemberAuth> memberAuths = memberAuthService.find(Column.of("member_id", member.getId()));
-        memberAuths.stream().forEach(item -> item.setPassword(password));
-        memberAuthService.updateBatchById(memberAuths, memberAuths.size());
-        return R.status(true);
-    }
-
-    private String delegatingPassword(String password) {
-        return passwordEncoder.encode(password).replace(PasswordEncoderTypeEnum.BCRYPT.getPrefix(), "");
     }
 }

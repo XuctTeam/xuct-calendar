@@ -20,7 +20,7 @@ package cn.com.xuct.calendar.common.module.enums;
  */
 public enum RegisterEnum {
 
-    password,
+    email,
 
     phone,
 
