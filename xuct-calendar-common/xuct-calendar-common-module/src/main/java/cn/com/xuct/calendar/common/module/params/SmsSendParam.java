@@ -26,9 +26,9 @@ import java.io.Serializable;
 @Data
 public class SmsSendParam implements Serializable {
 
-    @Schema(description = "电话号码" ,example = "17101991287")
+    @Schema(description = "电话号码", example = "17101991287")
     private String phone;
 
-    @Schema(description = "0.登录 1.绑定手机 2.解绑手机 3.注册 4.忘记密码", example = "1")
+    @Schema(description = "0.登录 1.手机注册  2.忘记密码  3.绑定手机 4.解绑手机", example = "1")
     private Integer type;
 }

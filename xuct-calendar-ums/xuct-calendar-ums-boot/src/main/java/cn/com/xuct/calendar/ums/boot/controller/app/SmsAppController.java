@@ -64,7 +64,13 @@ public class SmsAppController {
         //basicServicesFeignClient.smsCode(SmsCodeFeignInfo.builder().phones(Lists.newArrayList(param.getPhone())).code(code).template("login").build());
         return R.status(true);
     }
-
+    @Operation(summary = "【非登录】注册短信")
+    @PostMapping("/anno/register")
+    public R<String> registerSmsCode(@Validated @RequestBody SmsSendParam param) {
+        String code = this.sendBindCode(param.getPhone(), param.getType());
+        //basicServicesFeignClient.smsCode(SmsCodeFeignInfo.builder().phones(Lists.newArrayList(param.getPhone())).code(code).template("login").build());
+        return R.status(true);
+    }
     @Operation(summary = "【非登录】密码找回")
     @PostMapping("/anno/forget")
     public R<String> forgetPasswordCode(@Validated @RequestBody SmsSendParam param) {
@@ -85,7 +91,7 @@ public class SmsAppController {
 
     private String sendBindCode(String phone, Integer type) {
         String userId = "";
-        if (type != 0 && type != 4) {
+        if (type == 3 || type == 4) {
             userId = String.valueOf(SecurityUtils.getUserId());
         }
         String key = null;
@@ -94,13 +100,16 @@ public class SmsAppController {
                 key = RedisConstants.MEMBER_PHONE_LOGIN_CODE_KEY;
                 break;
             case 1:
-                key = RedisConstants.MEMBER_BIND_PHONE_CODE_KEY;
+                key = RedisConstants.MEMBER_PHONE_REGISTER_CODE_KEY;
                 break;
             case 2:
-                key = RedisConstants.MEMBER_UNBIND_PHONE_CODE_KEY;
+                key = RedisConstants.MEMBER_FORGET_PASSWORD_PHONE_CODE_KEY;
+                break;
+            case 3:
+                key = RedisConstants.MEMBER_BIND_PHONE_CODE_KEY;
                 break;
             case 4:
-                key = RedisConstants.MEMBER_FORGET_PASSWORD_PHONE_CODE_KEY;
+                key = RedisConstants.MEMBER_UNBIND_PHONE_CODE_KEY;
                 break;
         }
         String code = RandomUtil.randomNumbers(6);
