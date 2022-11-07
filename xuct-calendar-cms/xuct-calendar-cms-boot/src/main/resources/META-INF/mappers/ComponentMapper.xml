@@ -39,7 +39,7 @@
 
     <update id="updateCalendarIdByCalendarId">
         update cms_component
-        set calendar_id = #{newCalendarId}
+        set calendar_id = #{newCalendarId}, update_time = now()
         where 1 = 1
           and calendar_id = #{oldCalendarId}
     </update>

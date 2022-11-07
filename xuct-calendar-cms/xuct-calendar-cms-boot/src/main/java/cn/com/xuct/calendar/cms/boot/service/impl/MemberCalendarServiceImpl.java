@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -122,9 +123,11 @@ public class MemberCalendarServiceImpl extends BaseServiceImpl<MemberCalendarMap
         if (CollectionUtils.isEmpty(memberCalendars)) return;
         /* 1. 更新非主日历到新ID下 */
         List<MemberCalendar> notMajorCalendars = memberCalendars.stream().filter(calendar -> calendar.getMajor() == 0).collect(Collectors.toList());
+        Date updateTime = new Date();
         notMajorCalendars.forEach(calendar -> {
             calendar.setMemberId(memberId);
             calendar.setCreateMemberId(memberId);
+            calendar.setUpdateTime(updateTime);
         });
         this.updateBatchById(notMajorCalendars);
         /*2. 更新邀请数据 */

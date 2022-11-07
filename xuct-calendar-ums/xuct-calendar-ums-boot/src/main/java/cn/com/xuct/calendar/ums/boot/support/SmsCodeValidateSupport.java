@@ -50,7 +50,7 @@ public class SmsCodeValidateSupport {
         String userId = String.valueOf(SecurityUtils.getUserId());
         String redisKeys = this.redisKey(type).concat(userId).concat(":").concat(val);
         Object cacheCode = stringRedisTemplate.opsForValue().get(redisKeys);
-        if (!StringUtils.hasLength(cacheCode.toString()) || !code.toLowerCase().equals(cacheCode.toString().toLowerCase()))
+        if (cacheCode == null || !StringUtils.hasLength(cacheCode.toString()) || !code.toLowerCase().equals(cacheCode.toString().toLowerCase()))
             throw new SvrException(SvrResCode.UMS_SMS_CODE_ERROR);
         stringRedisTemplate.delete(redisKeys);
     }

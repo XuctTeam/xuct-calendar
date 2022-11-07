@@ -25,6 +25,7 @@ import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -80,6 +81,7 @@ public class ComponentAttendServiceImpl extends BaseServiceImpl<ComponentAttendM
         ComponentAttend componentAttend = new ComponentAttend();
         componentAttend.setCreateTime(null);
         componentAttend.setAttendCalendarId(newCalendarId);
+        componentAttend.setUpdateTime(new Date());
         this.update(componentAttend, Column.of("attend_calendar_id", oldCalendarId));
     }
 
@@ -88,6 +90,7 @@ public class ComponentAttendServiceImpl extends BaseServiceImpl<ComponentAttendM
         ComponentAttend componentAttend = new ComponentAttend();
         componentAttend.setCreateTime(null);
         componentAttend.setCalendarId(newCalendarId);
+        componentAttend.setUpdateTime(new Date());
         this.update(componentAttend, Column.of("calendar_id", oldCalendarId));
     }
 

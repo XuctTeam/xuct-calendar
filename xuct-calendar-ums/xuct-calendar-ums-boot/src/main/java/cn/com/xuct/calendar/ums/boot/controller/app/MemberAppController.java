@@ -374,7 +374,7 @@ public class MemberAppController {
         String redisKey = RedisConstants.MEMBER_CAPTCHA_REGISTER_CODE_KEY.concat(randomStr);
         Object redisObj = redisTemplate.opsForValue().get(redisKey);
         if (redisObj == null || !String.valueOf(redisObj).equals(code))
-            return MemberRegisterDto.builder().code(1000).message("验证码无效").build();
+            return MemberRegisterDto.builder().code(1000).message("图形码错误").build();
         MemberAuth memberAuth = memberAuthService.get(Column.of("user_name", username));
         if (memberAuth != null)
             return MemberRegisterDto.builder().code(2000).message("注册信息无效").build();

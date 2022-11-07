@@ -83,7 +83,7 @@ public class SmsAppController {
     @Operation(summary = "【登录】发送短信")
     @PostMapping("")
     public R<String> sendSmsCode(@Validated @RequestBody SmsSendParam param) {
-        if (!(param.getType() == 1 || param.getType() == 2)) return R.fail("类型错误");
+        if (!(param.getType() == 3 || param.getType() == 4)) return R.fail("类型错误");
         String code = this.sendBindCode(param.getPhone(), param.getType());
         //basicServicesFeignClient.smsCode(SmsCodeFeignInfo.builder().phones(Lists.newArrayList(param.getPhone())).code(code).template("bind").build());
         return R.status(true);
