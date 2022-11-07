@@ -10,15 +10,12 @@
  */
 package cn.com.xuct.calendar.ums.boot.controller.app;
 
-import ch.qos.logback.core.net.SMTPAppenderBase;
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.enums.IdentityTypeEnum;
 import cn.com.xuct.calendar.common.module.feign.req.EmailFeignInfo;
 import cn.com.xuct.calendar.common.module.params.EmailCodeParam;
-import cn.com.xuct.calendar.common.module.params.SmsSendParam;
-import cn.com.xuct.calendar.common.security.annotation.Inner;
 import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
 import cn.com.xuct.calendar.ums.api.entity.MemberAuth;
 import cn.com.xuct.calendar.ums.api.feign.BasicServicesFeignClient;
@@ -30,7 +27,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -79,6 +75,22 @@ public class EmailAppController {
                 .build());
     }
 
+    @Operation(summary = "【非登录】注册邮件")
+    @PostMapping("/anno/register")
+    public R<String> register(@Validated @RequestBody EmailCodeParam param) {
+        String code = this.bindEmail(param.getEmail(), param.getType());
+        return basicServicesFeignClient.sendEmail(EmailFeignInfo.builder().subject("【楚日历】注册邮件")
+                .template("code")
+                .tos(Lists.newArrayList(param.getEmail()))
+                .params(new HashMap<>() {{
+                    put("title", "邮件注册");
+                    put("code", code);
+                    put("userName", param.getEmail());
+                    put("duration", "10");
+                }})
+                .build());
+    }
+
     @Operation(summary = "【登录】发送邮件")
     @PostMapping("")
     public R<String> sendEmail(@Validated @RequestBody EmailCodeParam param) {
@@ -100,19 +112,23 @@ public class EmailAppController {
 
     private String bindEmail(final String email, final Integer type) {
         String userId = "";
-        if (type != 4) {
+        if (type == 3 || type == 4) {
             userId = String.valueOf(SecurityUtils.getUserId());
         }
         String key = "";
         switch (type) {
             case 1:
-                key = RedisConstants.MEMBER_BIND_EMAIL_CODE_KEY;
+                key = RedisConstants.MEMBER_EMAIL_REGISTER_CODE_KEY;
                 break;
             case 2:
-                key = RedisConstants.MEMBER_UNBIND_EMAIL_CODE_KEY;
+                key = RedisConstants.MEMBER_FORGET_PASSWORD_EMAIL_CODE_KEY;
+                break;
+            case 3:
+                key = RedisConstants.MEMBER_BIND_EMAIL_CODE_KEY;
                 break;
             case 4:
-                key = RedisConstants.MEMBER_FORGET_PASSWORD_EMAIL_CODE_KEY;
+                key = RedisConstants.MEMBER_UNBIND_EMAIL_CODE_KEY;
+                break;
         }
         String code = RandomUtil.randomNumbers(6);
         stringRedisTemplate.opsForValue().set(key.concat(userId).concat(":").concat(email), code, 60 * 10, TimeUnit.SECONDS);

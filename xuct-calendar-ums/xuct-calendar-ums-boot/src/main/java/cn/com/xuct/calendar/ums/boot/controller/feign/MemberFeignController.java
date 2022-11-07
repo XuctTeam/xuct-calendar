@@ -13,6 +13,7 @@ package cn.com.xuct.calendar.ums.boot.controller.feign;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
 import cn.com.xuct.calendar.common.core.constant.DictConstants;
+import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
 import cn.com.xuct.calendar.common.core.enums.PasswordEncoderTypeEnum;
 import cn.com.xuct.calendar.common.core.exception.SvrException;
 import cn.com.xuct.calendar.common.core.res.AuthResCode;
@@ -112,7 +113,7 @@ public class MemberFeignController {
         CalendarInitFeignInfo calendarInitFeignInfo = new CalendarInitFeignInfo();
         calendarInitFeignInfo.setMemberId(member.getId());
         calendarInitFeignInfo.setMemberNickName(member.getName());
-        calendarFeignClient.addCalendar(calendarInitFeignInfo);
+        calendarFeignClient.addCalendar(calendarInitFeignInfo, SecurityConstants.FROM_IN);
         /* 添加注册消息到用户 */
         SpringContextHolder.publishEvent(new MemberEvent(this, member.getId(), member.getName(), 0));
         return R.data(UserInfo.builder().personInfo(PersonInfo.builder().userId(member.getId()).username(wxUserInfoFeignInfo.getOpenId()).name(member.getName()).status(member.getStatus()).timeZone(member.getTimeZone()).build()).build());

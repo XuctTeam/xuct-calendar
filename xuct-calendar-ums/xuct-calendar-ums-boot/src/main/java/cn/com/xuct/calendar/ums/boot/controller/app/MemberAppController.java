@@ -13,6 +13,7 @@ package cn.com.xuct.calendar.ums.boot.controller.app;
 import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
 import cn.com.xuct.calendar.common.core.constant.DictConstants;
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
+import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
 import cn.com.xuct.calendar.common.core.enums.PasswordEncoderTypeEnum;
 import cn.com.xuct.calendar.common.core.exception.SvrException;
 import cn.com.xuct.calendar.common.core.res.R;
@@ -23,14 +24,13 @@ import cn.com.xuct.calendar.common.module.enums.IdentityTypeEnum;
 import cn.com.xuct.calendar.common.module.enums.RegisterEnum;
 import cn.com.xuct.calendar.common.module.feign.req.CalendarCountFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.CalendarInitFeignInfo;
-import cn.com.xuct.calendar.common.module.feign.req.WxUserInfoFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.WxUserPhoneFeignInfo;
 import cn.com.xuct.calendar.common.module.params.*;
 import cn.com.xuct.calendar.common.module.req.MemberGetPhoneReq;
 import cn.com.xuct.calendar.common.module.vo.MemberPhoneAuthVo;
-import cn.com.xuct.calendar.common.security.annotation.Inner;
 import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
 import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
+import cn.com.xuct.calendar.ums.api.dto.MemberRegisterDto;
 import cn.com.xuct.calendar.ums.api.entity.Member;
 import cn.com.xuct.calendar.ums.api.entity.MemberAuth;
 import cn.com.xuct.calendar.ums.api.feign.BasicServicesFeignClient;
@@ -291,10 +291,10 @@ public class MemberAppController {
         Long userId = SecurityUtils.getUserId();
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", memberMergeParam.getPhone()), Column.of("identity_type", IdentityTypeEnum.phone)));
         Assert.notNull(memberAuth, "获取用户信息失败");
-        R<Long> memberCalendarNumberR = calendarFeignClient.countCalendarNumberByMemberIds(CalendarCountFeignInfo.builder().memberIds(Lists.newArrayList(userId, memberAuth.getMemberId())).build());
+        R<Long> memberCalendarNumberR = calendarFeignClient.countCalendarNumberByMemberIds(CalendarCountFeignInfo.builder().memberIds(Lists.newArrayList(userId, memberAuth.getMemberId())).build(), SecurityConstants.FROM_IN);
         if (memberCalendarNumberR == null || !memberCalendarNumberR.isSuccess()) return R.fail("获取用户日历失败");
         if (memberCalendarNumberR.getData() > 5) return R.fail("超过最大日历数");
-        R<String> mergeCalendarR = calendarFeignClient.mergeCalendar(CalendarMergeDto.builder().fromMemberId(memberAuth.getMemberId()).memberId(userId).build());
+        R<String> mergeCalendarR = calendarFeignClient.mergeCalendar(CalendarMergeDto.builder().fromMemberId(memberAuth.getMemberId()).memberId(userId).build(), SecurityConstants.FROM_IN);
         if (mergeCalendarR == null || !mergeCalendarR.isSuccess()) return R.fail("合并日历失败");
         memberService.mergeMember(userId, memberAuth);
         /* 发送账号合并消息 */
@@ -322,8 +322,8 @@ public class MemberAppController {
         if (redisVal == null || !String.valueOf(redisVal).equals(param.getCode())) return R.fail("修改密码失败");
         /* 此时删除redis的验证码缓存 */
         redisTemplate.delete(redisKey);
-        String password = this.delegatingPassword(param.getPassword()).replace("{bcrypt}", "");
-        auths.forEach(auth -> auth.setPassword(password));
+        String bcryptPassword = this.delegatingPassword(param.getPassword()).replace("{bcrypt}", "");
+        auths.forEach(auth -> auth.setPassword(bcryptPassword));
         memberAuthService.saveOrUpdateBatch(auths);
         return R.status(true);
     }
@@ -346,63 +346,85 @@ public class MemberAppController {
     @PostMapping("/anno/register")
     public R<String> registerMember(@Validated @RequestBody MemberRegisterParam param) {
         Assert.notNull(param.getFormType(), "注册信息错误");
-        Assert.isTrue(param.getFormType().equals(RegisterEnum.username) && param.getUsername() == null, "注册信息错误");
-        boolean register = false;
+        if (param.getFormType().equals(RegisterEnum.username) && param.getUsername() == null ||
+                param.getFormType().equals(RegisterEnum.phone) && param.getPhone() == null ||
+                param.getFormType().equals(RegisterEnum.email) && param.getEmail() == null)
+            return R.fail("注册信息错误");
+
+        MemberRegisterDto registerDto = null;
         switch (param.getFormType()) {
             case username:
-                register = this.registerByUserName(param.getUsername().getUsername(), param.getUsername().getPassword(), param.getUsername().getRandomStr(), param.getUsername().getCaptcha());
+                registerDto = this.registerByUserName(param.getUsername().getUsername(), param.getUsername().getPassword(), param.getUsername().getRandomStr(), param.getUsername().getCaptcha());
                 break;
             case phone:
-                register = this.registerByPhoneOrEmail(param.getPhone().getPhone(), null, param.getPhone().getPassword(), param.getPhone().getCode());
+                registerDto = this.registerByPhoneOrEmail(param.getPhone().getPhone(), null, param.getPhone().getPassword(), param.getPhone().getCode());
                 break;
             case email:
-                register = this.registerByPhoneOrEmail(null, param.getEmail().getEmail(), param.getEmail().getPassword(), param.getEmail().getCode());
+                registerDto = this.registerByPhoneOrEmail(null, param.getEmail().getEmail(), param.getEmail().getPassword(), param.getEmail().getCode());
         }
-        return R.status(register);
+        if (registerDto.getCode() == 0) return R.status(true);
+        return R.fail(registerDto.getCode(), registerDto.getMessage());
     }
 
     private String delegatingPassword(String password) {
         return passwordEncoder.encode(password).replace(PasswordEncoderTypeEnum.BCRYPT.getPrefix(), "");
     }
 
-    private boolean registerByUserName(final String username, final String password, final String randomStr, final String code) {
+    private MemberRegisterDto registerByUserName(final String username, final String password, final String randomStr, final String code) {
         String redisKey = RedisConstants.MEMBER_CAPTCHA_REGISTER_CODE_KEY.concat(randomStr);
         Object redisObj = redisTemplate.opsForValue().get(redisKey);
-        if (redisObj == null || !String.valueOf(redisObj).equals(code)) return false;
+        if (redisObj == null || !String.valueOf(redisObj).equals(code))
+            return MemberRegisterDto.builder().code(1000).message("验证码无效").build();
         MemberAuth memberAuth = memberAuthService.get(Column.of("user_name", username));
-        if (memberAuth != null) return false;
+        if (memberAuth != null)
+            return MemberRegisterDto.builder().code(2000).message("注册信息无效").build();
         String bcryptPassword = this.delegatingPassword(password).replace("{bcrypt}", "");
-        this.createCalendar(memberService.saveMemberByUserName(username, bcryptPassword, DictCacheManager.getDictByCode(DictConstants.TIME_ZONE_TYPE, DictConstants.EAST_8_CODE).getValue()));
-        return true;
+        Member member = memberService.saveMemberByUserName(username, bcryptPassword, DictCacheManager.getDictByCode(DictConstants.TIME_ZONE_TYPE, DictConstants.EAST_8_CODE).getValue());
+        boolean remoteCreateCalendar = this.createCalendar(member);
+        if (!remoteCreateCalendar) {
+            /* 删除保存的会员信息 */
+            memberService.deleteMemberById(member.getId());
+            return MemberRegisterDto.builder().code(3000).message("注册日程失败").build();
+        }
+        return MemberRegisterDto.builder().code(0).build();
     }
 
-    private boolean registerByPhoneOrEmail(final String phone, final String email, final String password, final String code) {
+    private MemberRegisterDto registerByPhoneOrEmail(final String phone, final String email, final String password, final String code) {
         boolean isPhone = StringUtils.hasLength(phone);
-        Object redisObj = redisTemplate.opsForValue().get(isPhone ? RedisConstants.MEMBER_PHONE_REGISTER_CODE_KEY.concat(phone) : RedisConstants.MEMBER_EMAIL_REGISTER_CODE_KEY.concat(email));
-        if (redisObj == null || !String.valueOf(redisObj).equals(code)) return false;
+        String redisKey = isPhone ? RedisConstants.MEMBER_PHONE_REGISTER_CODE_KEY.concat(":").concat(phone) : RedisConstants.MEMBER_EMAIL_REGISTER_CODE_KEY.concat(":").concat(email);
+        Object redisObj = redisTemplate.opsForValue().get(redisKey);
+        if (redisObj == null || !String.valueOf(redisObj).equals(code))
+            return MemberRegisterDto.builder().code(1000).message("验证码无效").build();
         List<Column> columns = isPhone ?
                 Lists.newArrayList(Column.of("user_name", phone), Column.of("identity_type", IdentityTypeEnum.phone)) :
                 Lists.newArrayList(Column.of("user_name", email), Column.of("identity_type", IdentityTypeEnum.email));
         MemberAuth memberAuth = memberAuthService.get(columns);
-        if (memberAuth != null) return false;
+        if (memberAuth != null)
+            return MemberRegisterDto.builder().code(2000).message("注册信息无效").build();
         String bcryptPassword = this.delegatingPassword(password).replace("{bcrypt}", "");
         Member member = isPhone ?
                 memberService.saveMemberByPhone(phone, bcryptPassword, DictCacheManager.getDictByCode(DictConstants.TIME_ZONE_TYPE, DictConstants.EAST_8_CODE).getValue()) :
                 memberService.saveMemberByEmail(email, bcryptPassword, DictCacheManager.getDictByCode(DictConstants.TIME_ZONE_TYPE, DictConstants.EAST_8_CODE).getValue());
-        this.createCalendar(member);
-        return true;
+        boolean remoteCreateCalendar = this.createCalendar(member);
+        if (!remoteCreateCalendar) {
+            /* 删除保存的会员信息 */
+            memberService.deleteMemberById(member.getId());
+            return MemberRegisterDto.builder().code(3000).message("注册日程失败").build();
+        }
+        redisTemplate.delete(redisKey);
+        return MemberRegisterDto.builder().code(0).build();
     }
 
 
-    private void createCalendar(final Member member) {
+    private boolean createCalendar(final Member member) {
         /* 添加日历 */
         CalendarInitFeignInfo calendarInitFeignInfo = new CalendarInitFeignInfo();
         calendarInitFeignInfo.setMemberId(member.getId());
         calendarInitFeignInfo.setMemberNickName(member.getName());
-        calendarFeignClient.addCalendar(calendarInitFeignInfo);
+        R<String> remoteRes = calendarFeignClient.addCalendar(calendarInitFeignInfo, SecurityConstants.FROM_IN);
+        if (!remoteRes.isSuccess()) return false;
         /* 添加注册消息到用户 */
         SpringContextHolder.publishEvent(new MemberEvent(this, member.getId(), member.getName(), 0));
+        return true;
     }
-
-
 }

@@ -90,4 +90,7 @@ public interface IMemberService extends IBaseService<MemberMapper, Member> {
      * @param memberAuth
      */
     void mergeMember(Long memberId, MemberAuth memberAuth);
+
+
+    void deleteMemberById(final Long memberId);
 }

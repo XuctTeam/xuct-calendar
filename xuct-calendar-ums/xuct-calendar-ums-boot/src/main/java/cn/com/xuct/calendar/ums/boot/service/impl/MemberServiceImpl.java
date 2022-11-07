@@ -11,6 +11,7 @@
 package cn.com.xuct.calendar.ums.boot.service.impl;
 
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
+import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.enums.IdentityTypeEnum;
 import cn.com.xuct.calendar.ums.api.entity.Member;
 import cn.com.xuct.calendar.ums.api.entity.MemberAuth;
@@ -121,6 +122,13 @@ public class MemberServiceImpl extends BaseServiceImpl<MemberMapper, Member> imp
         memberMessageService.removeAllMessageByMemberId(memberId);
         /*3.删除用户*/
         this.removeById(deleteMemberId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteMemberById(Long memberId) {
+        memberAuthService.delete(Column.of("member_id", memberId));
+        this.removeById(memberId);
     }
 
     private Member saveMember(String timeZone, String avatar) {

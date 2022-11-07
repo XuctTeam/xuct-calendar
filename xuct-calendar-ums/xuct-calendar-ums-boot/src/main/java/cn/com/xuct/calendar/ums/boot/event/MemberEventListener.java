@@ -10,6 +10,7 @@
  */
 package cn.com.xuct.calendar.ums.boot.event;
 
+import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
 import cn.com.xuct.calendar.common.module.feign.req.CalendarInitFeignInfo;
 import cn.com.xuct.calendar.common.module.enums.MemberMessageTypeEnum;
 import cn.com.xuct.calendar.ums.api.entity.MemberMessage;
@@ -45,7 +46,7 @@ public class MemberEventListener {
         CalendarInitFeignInfo calendarInitFeignInfo = new CalendarInitFeignInfo();
         calendarInitFeignInfo.setMemberId(nameEvent.getMemberId());
         calendarInitFeignInfo.setMemberNickName(nameEvent.getName());
-        calendarFeignClient.updateMemberCalendarName(calendarInitFeignInfo);
+        calendarFeignClient.updateMemberCalendarName(calendarInitFeignInfo , SecurityConstants.FROM_IN);
     }
 
     @Async

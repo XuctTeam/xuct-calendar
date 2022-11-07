@@ -33,7 +33,7 @@ public class EmailCodeParam {
     @NotNull
     private String email;
 
-    @Schema(title = "类型", description = "1.绑定邮箱 2.解绑邮箱 4.密码找回")
+    @Schema(title = "类型", description = "1.邮箱注册  2.忘记密码  3.绑定邮箱 4.解绑邮箱")
     private Integer type;
 
 }

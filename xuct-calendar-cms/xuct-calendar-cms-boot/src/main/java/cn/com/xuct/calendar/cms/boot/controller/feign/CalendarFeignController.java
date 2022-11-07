@@ -19,6 +19,7 @@ import cn.com.xuct.calendar.common.module.dto.CalendarMergeDto;
 import cn.com.xuct.calendar.common.module.feign.req.CalendarCountFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.CalendarInitFeignInfo;
 import cn.com.xuct.calendar.common.module.req.MemberCalendarUpdateReq;
+import cn.com.xuct.calendar.common.security.annotation.Inner;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +44,7 @@ public class CalendarFeignController {
 
     private final IMemberCalendarService memberCalendarService;
 
-
+    @Inner
     @Operation(summary = "新建主日历")
     @PostMapping
     public R<String> createCalendar(@RequestBody CalendarInitFeignInfo calendarInitFeignInfo) {
@@ -54,10 +55,11 @@ public class CalendarFeignController {
         updateReq.setAlarmType("0");
         updateReq.setCreateMemberName(calendarInitFeignInfo.getMemberNickName());
         updateReq.setDisplay(1);
-        memberCalendarService.createMemberCalendar(calendarInitFeignInfo.getMemberId(), updateReq , true);
+        memberCalendarService.createMemberCalendar(calendarInitFeignInfo.getMemberId(), updateReq, true);
         return R.status(true);
     }
 
+    @Inner
     @Operation(summary = "更新日历创建用户名称")
     @PostMapping("/modify/name")
     public R<String> updateMemberCalendarName(@RequestBody CalendarInitFeignInfo calendarInitFeignInfo) {
@@ -66,16 +68,18 @@ public class CalendarFeignController {
     }
 
 
+    @Inner
     @Operation(summary = "更新日历创建用户名称")
     @PostMapping("/member/ids/count")
     public R<Long> countCalendarNumberByMemberIds(@RequestBody CalendarCountFeignInfo calendarCountFeignInfo) {
         return R.data(memberCalendarService.count(Column.in("member_id", calendarCountFeignInfo.getMemberIds())));
     }
 
+    @Inner
     @Operation(summary = "日历合并")
     @PostMapping("/merge")
     public R<String> mergeCalendar(@RequestBody CalendarMergeDto calendarMergeDto) {
-        memberCalendarService.mergeMemberCalendar(calendarMergeDto.getFromMemberId() , calendarMergeDto.getMemberId());
+        memberCalendarService.mergeMemberCalendar(calendarMergeDto.getFromMemberId(), calendarMergeDto.getMemberId());
         return R.status(true);
     }
 }
