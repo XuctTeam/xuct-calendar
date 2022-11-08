@@ -41,7 +41,7 @@ public class ComponentAttend extends SuperEntity<ComponentAttend> {
     @TableField("member_id")
     private Long memberId;
 
-    /*0待定 1接受 */
+    /*0待定 1接受 2 拒绝*/
     private Integer status;
 
 

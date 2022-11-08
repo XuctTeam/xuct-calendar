@@ -259,15 +259,6 @@ public class ComponentController {
         return R.status(true);
     }
 
-    @Operation(summary = "拒绝邀请")
-    @DeleteMapping("/attend/{componentId}")
-    public R<String> deleteComponentAttend(@PathVariable("componentId") Long componentId) {
-        ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", componentId), Column.of("member_id", SecurityUtils.getUserId())));
-        Assert.notNull(attend, "邀请数据错误");
-        componentAttendService.removeById(attend);
-        return R.status(true);
-    }
-
     @Operation(summary = "判断邀请是否存在")
     @GetMapping("/attend/exists")
     public R<Integer> attendExists(@RequestParam("componentId") Long componentId) {
