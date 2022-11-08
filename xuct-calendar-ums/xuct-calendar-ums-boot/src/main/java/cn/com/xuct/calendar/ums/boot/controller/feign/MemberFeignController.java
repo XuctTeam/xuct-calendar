@@ -133,6 +133,7 @@ public class MemberFeignController {
                         .password(memberAuth.getPassword()).name(member.getName()).timeZone(member.getTimeZone()).status(member.getStatus()).build()).build());
     }
 
+    @Inner
     @Operation(summary = "通过ID查询")
     @GetMapping("/get/id")
     public R<PersonInfo> getUserById(@RequestParam("id") Long id) {

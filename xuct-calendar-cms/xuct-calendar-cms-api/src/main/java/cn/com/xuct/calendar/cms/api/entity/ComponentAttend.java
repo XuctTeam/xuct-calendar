@@ -27,9 +27,11 @@ import lombok.Data;
 @TableName("cms_component_attend")
 public class ComponentAttend extends SuperEntity<ComponentAttend> {
 
+    /* 创建者日历ID */
     @TableField("calendar_id")
     private Long calendarId;
 
+    /* 邀请者日历ID */
     @TableField("attend_calendar_id")
     private Long attendCalendarId;
 

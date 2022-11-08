@@ -11,6 +11,7 @@
 package cn.com.xuct.calendar.ums.boot.controller.app;
 
 import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
+import cn.com.xuct.calendar.common.core.constant.CacheConstants;
 import cn.com.xuct.calendar.common.core.constant.DictConstants;
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
@@ -297,6 +298,8 @@ public class MemberAppController {
         R<String> mergeCalendarR = calendarFeignClient.mergeCalendar(CalendarMergeDto.builder().fromMemberId(memberAuth.getMemberId()).memberId(userId).build(), SecurityConstants.FROM_IN);
         if (mergeCalendarR == null || !mergeCalendarR.isSuccess()) return R.fail("合并日历失败");
         memberService.mergeMember(userId, memberAuth);
+        /* 清除当前账号登录的缓存,避免合并和登录方式错误 */
+        redisTemplate.delete(CacheConstants.USER_DETAILS.concat("::").concat(memberMergeParam.getPhone()));
         /* 发送账号合并消息 */
         SpringContextHolder.publishEvent(new MemberEvent(this, SecurityUtils.getUserId(), memberAuth.getNickName(), 3));
         return R.status(true);

@@ -46,8 +46,8 @@ import java.util.stream.Collectors;
 @RestController
 @Tag(name = "【基础服务】微信小程序接口")
 @RequiredArgsConstructor
-@RequestMapping("/api/basic/v1/wx/miniapp")
-public class WxMiniappController {
+@RequestMapping("/api/basic/v1/wx/ma")
+public class WxMaController {
 
     private final WxMaConfiguration wxMaConfiguration;
 

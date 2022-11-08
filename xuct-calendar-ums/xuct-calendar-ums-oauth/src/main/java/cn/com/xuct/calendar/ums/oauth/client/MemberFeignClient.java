@@ -43,7 +43,7 @@ public interface MemberFeignClient {
     R<UserInfo> loadMemberByUserName(@RequestParam("username") String username, @RequestHeader(SecurityConstants.FROM) String from);
 
     @GetMapping("/api/feign/v1/member/get/id")
-    R<PersonInfo> getMemberById(@RequestParam("id") Long id);
+    R<PersonInfo> getMemberById(@RequestParam("id") Long id , @RequestHeader(SecurityConstants.FROM) String from);
 
     @PostMapping("/api/feign/v1/member/list/ids")
     R<List<PersonInfo>> listMemberByIds(@RequestBody List<Long> ids);

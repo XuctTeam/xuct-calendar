@@ -74,9 +74,9 @@
 
     <select id="listByComponentIdNoMemberId" resultType="java.lang.Long">
         select member_id
-        from cms_component_attend
+            from cms_component_attend
         where 1 = 1
-        and component_id = #{componentId}
+            and component_id = #{componentId}
         <if test="memberId !=null ">
             and member_id &lt;&gt; #{memberId}
         </if>
@@ -85,7 +85,7 @@
     <!-- 统计邀请数据 -->
     <select id="statistics" resultType="cn.com.xuct.calendar.cms.api.vo.CalendarAttendCountVo">
         select count(1) as attendSum, sum(if(status = 1, 1, 0)) accepted, sum(if(status = 0, 1, 0)) noOperation
-        from cms_component_attend
+            from cms_component_attend
         where component_id = #{componentId}
     </select>
 
@@ -100,11 +100,23 @@
 
     <update id="batchUpdateAttendMemberCalendarId">
         update cms_component_attend
-        set calendar_id = #{calendarId}
+            set calendar_id = #{calendarId}
         where component_id = #{componentId}
-        and member_id in
-        <foreach item="item" index="index" collection="memberIds" open="(" separator="," close=")">
-            #{item}
-        </foreach>
+             and member_id in
+            <foreach item="item" index="index" collection="memberIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+    </update>
+
+    <update id="updateAttendMarjoCalendarId">
+        update cms_component_attend
+            set attend_calendar_id = #{newCalendarId}
+        where attend_calendar_id = #{oldCalendarId}
+    </update>
+
+    <update id="updateAttendCalendarId">
+        update cms_component_attend
+            set calendar_id = #{newCalendarId}
+        where calendar_id = #{oldCalendarId}
     </update>
 </mapper>

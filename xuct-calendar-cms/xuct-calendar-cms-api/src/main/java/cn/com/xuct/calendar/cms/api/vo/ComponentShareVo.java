@@ -35,6 +35,12 @@ public class ComponentShareVo implements Serializable {
 
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
+
+    @Schema(title ="日历颜色")
+    private String color;
+
+    @Schema(title ="日历名称")
+    private String calendarName;
     
     @Schema(title ="日历ID")
     @JsonSerialize(using = ToStringSerializer.class)

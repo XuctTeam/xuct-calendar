@@ -24,6 +24,7 @@ import cn.com.xuct.calendar.cms.boot.utils.DateHelper;
 import cn.com.xuct.calendar.cms.queue.event.ComponentDelEvent;
 import cn.com.xuct.calendar.common.core.constant.DateConstants;
 import cn.com.xuct.calendar.common.core.constant.RabbitmqConstants;
+import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
 import cn.com.xuct.calendar.common.core.exception.SvrException;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.res.RetOps;
@@ -39,6 +40,7 @@ import cn.com.xuct.calendar.common.module.feign.PersonInfo;
 import cn.com.xuct.calendar.common.module.feign.req.ShortChainFeignInfo;
 import cn.com.xuct.calendar.common.module.params.ComponentAddParam;
 import cn.com.xuct.calendar.common.module.params.ComponentAttendParam;
+import cn.com.xuct.calendar.common.security.serivces.OAuthUser;
 import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
 import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
 import cn.com.xuct.calendar.ums.oauth.client.MemberFeignClient;
@@ -323,6 +325,33 @@ public class ComponentController {
         }
         componentAttachmentService.save(componentAttachment);
         return R.data(componentAttachment);
+    }
+
+    @Operation(summary = "【非登录】日程共享")
+    @GetMapping("/anno/share")
+    public R<ComponentShareVo> getComponentInfo(@RequestParam("componentId") String componentId) {
+        Component component = componentService.getById(componentId);
+        if (component == null) return R.fail("未找到事件");
+        ComponentShareVo shareVo = new ComponentShareVo();
+        MemberCalendar memberCalendar = memberCalendarService.get(Lists.newArrayList(Column.of("member_id", component.getCreatorMemberId()), Column.of("calendar_id", component.getCalendarId())));
+        if (memberCalendar == null) return R.fail("未找到日历");
+        BeanUtils.copyProperties(component, shareVo);
+        shareVo.setColor(memberCalendar.getColor());
+        shareVo.setCalendarName(memberCalendar.getName());
+        R<PersonInfo> memberFeignInfoR = memberFeignClient.getMemberById(component.getCreatorMemberId(), SecurityConstants.FROM_IN);
+        if (memberFeignInfoR != null && memberFeignInfoR.isSuccess()) {
+            shareVo.setCreateMemberName(memberFeignInfoR.getData().getName());
+        }
+        OAuthUser authUser = SecurityUtils.getUser(SecurityUtils.getAuthentication());
+        if (authUser == null) {
+            shareVo.setAttend(false);
+            return R.data(shareVo);
+        }
+        ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", componentId), Column.of("member_id", authUser.getId())));
+        if (attend != null) {
+            shareVo.setAttend(true);
+        }
+        return R.data(shareVo);
     }
 
 

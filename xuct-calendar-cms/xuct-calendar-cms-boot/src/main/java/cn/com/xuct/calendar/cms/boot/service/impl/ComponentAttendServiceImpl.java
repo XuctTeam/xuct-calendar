@@ -78,20 +78,12 @@ public class ComponentAttendServiceImpl extends BaseServiceImpl<ComponentAttendM
 
     @Override
     public void updateAttendMarjoCalendarId(final Long oldCalendarId, final Long newCalendarId) {
-        ComponentAttend componentAttend = new ComponentAttend();
-        componentAttend.setCreateTime(null);
-        componentAttend.setAttendCalendarId(newCalendarId);
-        componentAttend.setUpdateTime(new Date());
-        this.update(componentAttend, Column.of("attend_calendar_id", oldCalendarId));
+        ((ComponentAttendMapper) super.getBaseMapper()).updateAttendMarjoCalendarId(oldCalendarId, newCalendarId);
     }
 
     @Override
     public void updateAttendCalendarId(final Long oldCalendarId, final Long newCalendarId) {
-        ComponentAttend componentAttend = new ComponentAttend();
-        componentAttend.setCreateTime(null);
-        componentAttend.setCalendarId(newCalendarId);
-        componentAttend.setUpdateTime(new Date());
-        this.update(componentAttend, Column.of("calendar_id", oldCalendarId));
+        ((ComponentAttendMapper) super.getBaseMapper()).updateAttendCalendarId(oldCalendarId, newCalendarId);
     }
 
     @Override
