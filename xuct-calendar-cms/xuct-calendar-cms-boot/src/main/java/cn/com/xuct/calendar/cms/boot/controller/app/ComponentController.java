@@ -206,6 +206,14 @@ public class ComponentController {
     public R<String> delete(@PathVariable("id") Long id) {
         Component component = componentService.getById(id);
         Assert.notNull(component, "事件不存在");
+        /* 非自己创建日程，判断是否删除邀请数据 */
+        if (!component.getCreatorMemberId().toString().equals(SecurityUtils.getUserId().toString())) {
+            ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", id), Column.of("member_id", SecurityUtils.getUserId())));
+            Assert.notNull(attend, "邀请事件不存在");
+            componentAttendService.removeById(attend.getId());
+            //TODO 增加邀请删除消息
+            return R.status(true);
+        }
         List<Long> memberIds = componentService.deleteByComponentId(SecurityUtils.getUserId(), id);
         /* 1.推送日程删除消息 */
         if (CollectionUtils.isEmpty(memberIds)) return R.status(true);
@@ -279,6 +287,7 @@ public class ComponentController {
         MemberCalendar memberCalendar = memberCalendarService.get(Lists.newArrayList(Column.of("member_id", memberId), Column.of("major", 1)));
         Assert.notNull(memberCalendar, "查询主日历失败");
         componentAttendService.acceptAttend(memberId, component.getCalendarId(), memberCalendar.getCalendarId(), param.getComponentId());
+        //TODO 增加加入邀请消息
         return R.status(true);
     }
 
