@@ -162,10 +162,10 @@ public class MemberGroupAppController {
     @PostMapping("/leave")
     public R<String> leave(@RequestBody @Validated GroupLeaveParam param) {
         Group group = groupService.getById(param.getGroupId());
-        Assert.notNull(group, "组不存在或非管理员");
+        Assert.notNull(group, "组不存在或非群主");
         if (param.getAction() == 5) {
             if (!String.valueOf(group.getMemberId()).equals(String.valueOf(SecurityUtils.getUserId())))
-                return R.fail("非管理员");
+                return R.fail("非群主");
             if (param.getMemberId() == null) return R.fail("会员ID不能为空");
         }
         Long mId = param.getAction() == 4 ? SecurityUtils.getUserId() : param.getMemberId();
@@ -173,5 +173,11 @@ public class MemberGroupAppController {
         /* 发出清理消息 */
         SpringContextHolder.publishEvent(new GroupLeaveEvent(this, group.getId(), group.getName(), mId, param.getAction()));
         return R.status(true);
+    }
+
+    @Operation(summary = "查询组内用户")
+    @GetMapping("/get")
+    public R<GroupMemberInfoDto> getGroupMember(@RequestParam("groupId") Long groupId, @RequestParam("memberId") Long memberId) {
+        return R.data(memberGroupService.getGroupMember(groupId, memberId));
     }
 }

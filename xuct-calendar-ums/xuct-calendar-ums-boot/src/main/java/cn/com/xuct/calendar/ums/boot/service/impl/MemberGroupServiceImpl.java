@@ -81,8 +81,9 @@ public class MemberGroupServiceImpl extends BaseServiceImpl<MemberGroupMapper, M
         }});
     }
 
-    @Override
-    public void removeGroupMemberByMemberId(Long memberId) {
 
+    @Override
+    public GroupMemberInfoDto getGroupMember(Long groupId, Long memberId) {
+        return ((MemberGroupMapper) super.getBaseMapper()).getGroupMember(groupId, memberId);
     }
 }

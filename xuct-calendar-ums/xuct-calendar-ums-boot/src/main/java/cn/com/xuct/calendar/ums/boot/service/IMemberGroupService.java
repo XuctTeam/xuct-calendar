@@ -76,10 +76,6 @@ public interface IMemberGroupService extends IBaseService<MemberGroupMapper, Mem
      */
     void leaveOut(Long groupId, Long memberId);
 
-    /**
-     * 通过用户id删除用户下所有组内用户
-     *
-     * @param memberId
-     */
-    void removeGroupMemberByMemberId(final Long memberId);
+
+    GroupMemberInfoDto getGroupMember(final Long groupId, final Long memberId);
 }

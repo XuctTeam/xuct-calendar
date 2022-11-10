@@ -96,7 +96,6 @@ public class GroupServiceImpl extends BaseServiceImpl<GroupMapper, Group> implem
 
     @Override
     public void removeAllGroupByMemberId(Long memberId) {
-        memberGroupService.removeGroupMemberByMemberId(memberId);
         super.removeByMap(new HashMap<String, Object>() {{
             put("member_id", memberId);
         }});

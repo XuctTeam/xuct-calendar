@@ -32,6 +32,6 @@ public class GroupLeaveParam implements Serializable {
     @Schema(title = "群组ID")
     private Long groupId;
 
-    @Schema(title = "操作类型", description = "4.主动离开 5.拒绝入群 ")
+    @Schema(title = "操作类型", description = "4.主动离开 5.踢出 ")
     private Integer action;
 }

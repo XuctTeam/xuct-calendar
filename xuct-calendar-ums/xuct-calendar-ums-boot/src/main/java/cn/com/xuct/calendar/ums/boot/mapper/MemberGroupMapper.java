@@ -61,9 +61,11 @@ public interface MemberGroupMapper extends BaseMapper<MemberGroup> {
     List<GroupMemberInfoDto> queryMemberIds(@Param("memberIds") List<Long> memberIds);
 
     /**
-     * 通过用户ID删除用户下所有组内用户
+     * 通过ID查询组内用户
      *
+     * @param groupId
      * @param memberId
+     * @return
      */
-    void removeGroupMemberByMemberId(@Param("memberId") Long memberId);
+    GroupMemberInfoDto getGroupMember(@Param("groupId") Long groupId, @Param("memberId") Long memberId);
 }
