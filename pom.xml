@@ -20,15 +20,15 @@
     </modules>
 
     <properties>
-        <maven.compiler.source>10</maven.compiler.source>
-        <maven.compiler.target>10</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <spring.boot.version>2.7.5</spring.boot.version>
 
         <!-- alibaba -->
         <alibaba.cloud.version>2021.0.4.0</alibaba.cloud.version>
         <spring.colud.version>2021.0.5</spring.colud.version>
-        <maven.compiler.source>10</maven.compiler.source>
-        <maven.compiler.target>10</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
 
         <!--start-->
         <utils.okhttp3.start.version>0.0.3-SNAPSHOT</utils.okhttp3.start.version>
@@ -48,11 +48,12 @@
         <lib.authorization.server.verion>0.3.1</lib.authorization.server.verion>
         <!-- compiler-->
         <compiler.lombok.version>1.18.24</compiler.lombok.version>
-        <compiler.openapi.version>1.6.11</compiler.openapi.version>
+        <compiler.openapi.version>1.6.12</compiler.openapi.version>
         <compiler.openapi.v3.annotations.version>2.2.2</compiler.openapi.v3.annotations.version>
         <complier.jaxb.impl.version>3.0.2</complier.jaxb.impl.version>
         <complier.log4j.version>1.7.32</complier.log4j.version>
         <complier.jaxb.runtime.version>2.3.5</complier.jaxb.runtime.version>
+        <complier.boot.maven.version>2.7.5</complier.boot.maven.version>
         <!-- utils -->
         <utils.hutool.version>5.8.8</utils.hutool.version>
         <utils.guava.version>31.1-jre</utils.guava.version>

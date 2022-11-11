@@ -301,7 +301,7 @@ public class ComponentController {
     @GetMapping("/short")
     public R<String> getShortChain(@RequestParam("componentId") String componentId) {
         return basicServicesFeignClient.shortChain(ShortChainFeignInfo.builder().url(domainConfiguration.getCalendar().concat("?componentId=").concat(componentId))
-                .type("calendar").expire(7200000).build());
+                .type("calendar").expire(7200000L).build());
     }
 
     @Operation(summary = "上传附件")

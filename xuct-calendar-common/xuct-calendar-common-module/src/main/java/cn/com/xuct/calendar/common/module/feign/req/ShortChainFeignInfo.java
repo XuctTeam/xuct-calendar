@@ -42,5 +42,5 @@ public class ShortChainFeignInfo implements Serializable {
 
     @NotNull
     @Schema(description = "有效时间(ms)0为不过期")
-    private long expire = 0;
+    private Long expire = 0L;
 }

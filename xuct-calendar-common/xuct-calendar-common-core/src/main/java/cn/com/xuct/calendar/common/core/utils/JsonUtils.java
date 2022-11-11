@@ -43,7 +43,6 @@ import java.util.*;
  * @create 2020/5/23
  * @since 1.0.0
  */
-@SuppressWarnings("all")
 public class JsonUtils {
 
     private final static ObjectMapper objectMapper = customObjectMapper(new ObjectMapper());
