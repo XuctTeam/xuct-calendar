@@ -18,7 +18,7 @@ import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.dto.CalendarMergeDto;
 import cn.com.xuct.calendar.common.module.feign.req.CalendarCountFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.CalendarInitFeignInfo;
-import cn.com.xuct.calendar.common.module.req.MemberCalendarUpdateReq;
+import cn.com.xuct.calendar.common.module.params.MemberCalendarUpdateParam;
 import cn.com.xuct.calendar.common.security.annotation.Inner;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -48,7 +48,7 @@ public class CalendarFeignController {
     @Operation(summary = "新建主日历")
     @PostMapping
     public R<String> createCalendar(@RequestBody CalendarInitFeignInfo calendarInitFeignInfo) {
-        MemberCalendarUpdateReq updateReq = new MemberCalendarUpdateReq();
+        MemberCalendarUpdateParam updateReq = new MemberCalendarUpdateParam();
         updateReq.setName("日程");
         updateReq.setColor(DictCacheManager.getDictByCode(DictConstants.COLOR_TYPE, DictConstants.RED_COLOR_CODE).getValue());
         updateReq.setAlarmTime("0");

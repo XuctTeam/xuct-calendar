@@ -8,7 +8,7 @@
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package cn.com.xuct.calendar.common.module.req;
+package cn.com.xuct.calendar.common.module.params;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -22,7 +22,7 @@ import lombok.Data;
  * @since 1.0.0
  */
 @Data
-public class MemberGetPhoneReq {
+public class MemberGetPhoneParam {
 
     @Schema(title = "验证码")
     private String code;

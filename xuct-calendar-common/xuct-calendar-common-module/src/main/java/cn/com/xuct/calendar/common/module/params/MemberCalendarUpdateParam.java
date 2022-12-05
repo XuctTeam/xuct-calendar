@@ -8,7 +8,7 @@
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package cn.com.xuct.calendar.common.module.req;
+package cn.com.xuct.calendar.common.module.params;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -25,7 +25,7 @@ import java.io.Serializable;
  * @since 1.0.0
  */
 @Data
-public class MemberCalendarUpdateReq implements Serializable {
+public class MemberCalendarUpdateParam implements Serializable {
 
     @NotNull
     @Schema(title = "日历ID")

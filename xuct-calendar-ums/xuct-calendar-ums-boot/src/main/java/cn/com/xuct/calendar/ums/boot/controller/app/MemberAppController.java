@@ -27,7 +27,7 @@ import cn.com.xuct.calendar.common.module.feign.req.CalendarCountFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.CalendarInitFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.WxUserPhoneFeignInfo;
 import cn.com.xuct.calendar.common.module.params.*;
-import cn.com.xuct.calendar.common.module.req.MemberGetPhoneReq;
+import cn.com.xuct.calendar.common.module.params.MemberGetPhoneParam;
 import cn.com.xuct.calendar.common.module.vo.MemberPhoneAuthVo;
 import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
 import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
@@ -169,7 +169,7 @@ public class MemberAppController {
 
     @Operation(summary = "获取微信手机号")
     @PostMapping("/phone/get")
-    public R<String> getWxPhone(@RequestBody MemberGetPhoneReq getPhoneReq) {
+    public R<String> getWxPhone(@RequestBody MemberGetPhoneParam getPhoneReq) {
         Long userId = SecurityUtils.getUserId();
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("member_id", userId), Column.of("identity_type", IdentityTypeEnum.open_id)));
         if (memberAuth == null) throw new SvrException(SvrResCode.UMS_MEMBER_AUTH_TYPE_ERROR);

@@ -20,7 +20,7 @@ import cn.com.xuct.calendar.cms.boot.service.IComponentAttendService;
 import cn.com.xuct.calendar.cms.boot.service.IMemberCalendarService;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.db.service.BaseServiceImpl;
-import cn.com.xuct.calendar.common.module.req.MemberCalendarUpdateReq;
+import cn.com.xuct.calendar.common.module.params.MemberCalendarUpdateParam;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -69,21 +69,21 @@ public class MemberCalendarServiceImpl extends BaseServiceImpl<MemberCalendarMap
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void createMemberCalendar(Long memberId, MemberCalendarUpdateReq memberCalendarUpdateReq, final boolean major) {
+    public void createMemberCalendar(Long memberId, MemberCalendarUpdateParam memberCalendarUpdateParam, final boolean major) {
         Calendar calendar = new Calendar();
         calendar.setMemberId(memberId);
-        calendar.setAlarmTime(Integer.parseInt(memberCalendarUpdateReq.getAlarmTime()));
-        calendar.setAlarmType(Integer.parseInt(memberCalendarUpdateReq.getAlarmType()));
+        calendar.setAlarmTime(Integer.parseInt(memberCalendarUpdateParam.getAlarmTime()));
+        calendar.setAlarmType(Integer.parseInt(memberCalendarUpdateParam.getAlarmType()));
         calendarService.save(calendar);
         MemberCalendar memberCalendar = new MemberCalendar();
-        memberCalendar.setName(memberCalendarUpdateReq.getName());
+        memberCalendar.setName(memberCalendarUpdateParam.getName());
         memberCalendar.setMemberId(calendar.getMemberId());
         memberCalendar.setCalendarId(calendar.getId());
         memberCalendar.setCreateMemberId(calendar.getMemberId());
-        memberCalendar.setDescription(memberCalendarUpdateReq.getDescription());
-        memberCalendar.setCreateMemberName(memberCalendarUpdateReq.getCreateMemberName());
-        memberCalendar.setColor(memberCalendarUpdateReq.getColor());
-        memberCalendar.setDisplay(memberCalendarUpdateReq.getDisplay());
+        memberCalendar.setDescription(memberCalendarUpdateParam.getDescription());
+        memberCalendar.setCreateMemberName(memberCalendarUpdateParam.getCreateMemberName());
+        memberCalendar.setColor(memberCalendarUpdateParam.getColor());
+        memberCalendar.setDisplay(memberCalendarUpdateParam.getDisplay());
         memberCalendar.setMajor(major ? 1 : 0);
         this.save(memberCalendar);
     }
@@ -99,18 +99,18 @@ public class MemberCalendarServiceImpl extends BaseServiceImpl<MemberCalendarMap
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateMemberCalendar(Long memberId, MemberCalendar memberCalendar, MemberCalendarUpdateReq memberCalendarUpdateReq) {
-        memberCalendar.setName(memberCalendarUpdateReq.getName());
-        memberCalendar.setColor(memberCalendarUpdateReq.getColor());
-        memberCalendar.setDescription(memberCalendarUpdateReq.getDescription());
-        memberCalendar.setDisplay(memberCalendarUpdateReq.getDisplay());
-        memberCalendar.setIsShare(memberCalendarUpdateReq.getIsShare());
+    public void updateMemberCalendar(Long memberId, MemberCalendar memberCalendar, MemberCalendarUpdateParam memberCalendarUpdateParam) {
+        memberCalendar.setName(memberCalendarUpdateParam.getName());
+        memberCalendar.setColor(memberCalendarUpdateParam.getColor());
+        memberCalendar.setDescription(memberCalendarUpdateParam.getDescription());
+        memberCalendar.setDisplay(memberCalendarUpdateParam.getDisplay());
+        memberCalendar.setIsShare(memberCalendarUpdateParam.getIsShare());
         this.updateById(memberCalendar);
         if (memberId.toString().equals(memberCalendar.getCreateMemberId().toString())) {
             Calendar calendar = new Calendar();
             calendar.setId(memberCalendar.getCalendarId());
-            calendar.setAlarmTime(Integer.parseInt(memberCalendarUpdateReq.getAlarmTime()));
-            calendar.setAlarmType(Integer.parseInt(memberCalendarUpdateReq.getAlarmType()));
+            calendar.setAlarmTime(Integer.parseInt(memberCalendarUpdateParam.getAlarmTime()));
+            calendar.setAlarmType(Integer.parseInt(memberCalendarUpdateParam.getAlarmType()));
             calendar.setIsShare(memberCalendar.getIsShare());
             calendarService.updateById(calendar);
         }

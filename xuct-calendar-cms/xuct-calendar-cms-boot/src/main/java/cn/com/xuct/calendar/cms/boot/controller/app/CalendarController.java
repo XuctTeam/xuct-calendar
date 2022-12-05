@@ -15,13 +15,15 @@ import cn.com.xuct.calendar.cms.boot.service.IComponentService;
 import cn.com.xuct.calendar.cms.boot.service.IMemberCalendarService;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.vo.Column;
-import cn.com.xuct.calendar.common.module.req.MemberCalendarUpdateReq;
+import cn.com.xuct.calendar.common.module.params.CalendarUpdateDisplayStatusParam;
+import cn.com.xuct.calendar.common.module.params.MemberCalendarUpdateParam;
 import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
 import com.google.common.collect.Lists;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,24 +61,31 @@ public class CalendarController {
         return R.data(memberCalendarService.getMemberCalendar(id));
     }
 
-    public
-
-
-
     @Operation(summary = "新增日历")
     @PostMapping("")
-    public R<String> createMemberCalendar(@Validated @RequestBody MemberCalendarUpdateReq memberCalendarUpdateReq) {
-        memberCalendarService.createMemberCalendar(SecurityUtils.getUserId(), memberCalendarUpdateReq , false);
+    public R<String> createMemberCalendar(@Validated @RequestBody MemberCalendarUpdateParam memberCalendarUpdateParam) {
+        memberCalendarService.createMemberCalendar(SecurityUtils.getUserId(), memberCalendarUpdateParam, false);
         return R.status(true);
     }
 
     @Operation(summary = "修改日历")
     @PutMapping("")
-    public R<String> updateMemberCalendar(@Validated @RequestBody MemberCalendarUpdateReq memberCalendarUpdateReq) {
-        MemberCalendar memberCalendar = memberCalendarService.getById(memberCalendarUpdateReq.getId());
-        if (memberCalendar == null) return R.fail("未找到日历");
-        if (!SecurityUtils.getUserId().toString().equals(memberCalendar.getMemberId().toString())) return R.fail("无权限修改");
-        memberCalendarService.updateMemberCalendar(SecurityUtils.getUserId(), memberCalendar, memberCalendarUpdateReq);
+    public R<String> updateMemberCalendar(@Validated @RequestBody MemberCalendarUpdateParam memberCalendarUpdateParam) {
+        MemberCalendar memberCalendar = memberCalendarService.getById(memberCalendarUpdateParam.getId());
+        Assert.notNull(memberCalendar, "未找到日历");
+        if (!SecurityUtils.getUserId().toString().equals(memberCalendar.getMemberId().toString()))
+            return R.fail("无权限修改");
+        memberCalendarService.updateMemberCalendar(SecurityUtils.getUserId(), memberCalendar, memberCalendarUpdateParam);
+        return R.status(true);
+    }
+
+    @Operation(summary = "更新日历显示状态")
+    @PostMapping("/display/status")
+    public R<String> updateDisplayStatus(@Validated @RequestBody CalendarUpdateDisplayStatusParam params) {
+        MemberCalendar memberCalendar = memberCalendarService.getById(params.getCalendarId());
+        Assert.notNull(memberCalendar, "未找到日历");
+        memberCalendar.setDisplay(params.getDisplay());
+        memberCalendarService.updateById(memberCalendar);
         return R.status(true);
     }
 
@@ -86,7 +95,7 @@ public class CalendarController {
         Long userId = SecurityUtils.getUserId();
         MemberCalendar memberCalendar = memberCalendarService.get(Lists.newArrayList(Column.of("member_id", userId), Column.of("calendar_id", calendarId)));
         if (memberCalendar == null) return R.fail("未找到日历");
-        if(memberCalendar.getMajor() == 1) return R.fail("主日历无法删除");
+        if (memberCalendar.getMajor() == 1) return R.fail("主日历无法删除");
         /* 不是自己创建创建 则删除对应关系 */
         if (!memberCalendar.getCreateMemberId().toString().equals(userId.toString())) {
             memberCalendarService.removeById(memberCalendar.getId());

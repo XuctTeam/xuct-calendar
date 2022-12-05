@@ -14,7 +14,7 @@ import cn.com.xuct.calendar.cms.api.dodo.MemberMarjoCalendarDo;
 import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
 import cn.com.xuct.calendar.cms.boot.mapper.MemberCalendarMapper;
 import cn.com.xuct.calendar.common.db.service.IBaseService;
-import cn.com.xuct.calendar.common.module.req.MemberCalendarUpdateReq;
+import cn.com.xuct.calendar.common.module.params.MemberCalendarUpdateParam;
 
 import java.util.List;
 
@@ -57,9 +57,9 @@ public interface IMemberCalendarService extends IBaseService<MemberCalendarMappe
      * 新增日历
      *
      * @param memberId
-     * @param memberCalendarUpdateReq
+     * @param memberCalendarUpdateParam
      */
-    void createMemberCalendar(Long memberId, MemberCalendarUpdateReq memberCalendarUpdateReq, final boolean major);
+    void createMemberCalendar(Long memberId, MemberCalendarUpdateParam memberCalendarUpdateParam, final boolean major);
 
     /**
      * 更新日历创建用户显示名称
@@ -75,9 +75,9 @@ public interface IMemberCalendarService extends IBaseService<MemberCalendarMappe
      *
      * @param memberId
      * @param memberCalendar
-     * @param memberCalendarUpdateReq
+     * @param memberCalendarUpdateParam
      */
-    void updateMemberCalendar(Long memberId, MemberCalendar memberCalendar, MemberCalendarUpdateReq memberCalendarUpdateReq);
+    void updateMemberCalendar(Long memberId, MemberCalendar memberCalendar, MemberCalendarUpdateParam memberCalendarUpdateParam);
 
     /**
      * 日历合并
