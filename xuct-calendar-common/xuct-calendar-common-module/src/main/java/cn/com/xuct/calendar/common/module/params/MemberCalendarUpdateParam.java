@@ -27,7 +27,6 @@ import java.io.Serializable;
 @Data
 public class MemberCalendarUpdateParam implements Serializable {
 
-    @NotNull
     @Schema(title = "日历ID")
     private Long id;
 
