@@ -50,6 +50,7 @@
         <compiler.lombok.version>1.18.24</compiler.lombok.version>
         <compiler.openapi.version>1.6.14</compiler.openapi.version>
         <compiler.openapi.v3.annotations.version>2.2.7</compiler.openapi.v3.annotations.version>
+        <compiler.knife4j.v4.version>4.0.0</compiler.knife4j.v4.version>
         <complier.jaxb.impl.version>3.0.2</complier.jaxb.impl.version>
         <complier.log4j.version>1.7.32</complier.log4j.version>
         <complier.jaxb.runtime.version>2.3.5</complier.jaxb.runtime.version>

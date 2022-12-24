@@ -81,6 +81,11 @@
             <artifactId>springdoc-openapi-webflux-ui</artifactId>
             <version>${compiler.openapi.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-openapi3-ui</artifactId>
+            <version>${compiler.knife4j.v4.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.pig4cloud.plugin</groupId>
