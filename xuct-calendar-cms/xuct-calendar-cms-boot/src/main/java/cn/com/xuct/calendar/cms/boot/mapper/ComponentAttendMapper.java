@@ -57,7 +57,7 @@ public interface ComponentAttendMapper extends BaseMapper<ComponentAttend> {
      * @param componentId
      * @return
      */
-    List<Long> listByComponentIdNoMemberId(@Param("memberId") Long memberId, @Param("componentId") Long componentId);
+    List<ComponentAttend> listByComponentIdNoMemberId(@Param("memberId") Long memberId, @Param("componentId") Long componentId);
 
     /**
      * 更新用户自己事件的邀请日历

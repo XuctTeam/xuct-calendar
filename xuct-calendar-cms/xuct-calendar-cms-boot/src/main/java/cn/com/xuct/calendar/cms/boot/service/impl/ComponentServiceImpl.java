@@ -75,7 +75,7 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
         if (component.getFullDay() == 1) {
             Date date = component.getDtstart();
             component.setDtstart(DateUtil.beginOfDay(date));
-            component.setDtend(DateUtil.endOfDay(date).offset(DateField.MILLISECOND,-999));
+            component.setDtend(DateUtil.endOfDay(date).offset(DateField.MILLISECOND, -999));
         }
         this.save(component);
         /* 增加邀请人数据 */
@@ -186,7 +186,7 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
      * @Date: 2022/3/13 21:00
      */
     private void updateComponentAttend(final Long oldCalendarId, Long memberId, Long calendarId, Component component, List<String> memberIds) {
-        List<Long> attends = componentAttendService.listByComponentIdNoMemberId(memberId, component.getId());
+        List<Long> attends = componentAttendService.listByComponentIdNoMemberId(memberId, component.getId()).stream().map(ComponentAttend::getMemberId).collect(Collectors.toList());
         /* 1. 更新自己邀请事件表 */
         boolean isNewCalendar = !String.valueOf(oldCalendarId).equals(String.valueOf(calendarId));
         if (isNewCalendar) {

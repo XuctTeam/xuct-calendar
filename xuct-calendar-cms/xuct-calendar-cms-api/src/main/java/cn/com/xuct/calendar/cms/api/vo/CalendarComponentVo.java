@@ -30,9 +30,9 @@ public class CalendarComponentVo extends Component {
     @Schema(title = "日历颜色")
     private String color;
 
-    @Schema(title ="日历名称")
+    @Schema(title = "日历名称")
     private String calendarName;
 
-    @Schema(title ="邀请所有人ID")
+    @Schema(title = "邀请所有人ID")
     private List<String> memberIds;
 }

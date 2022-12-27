@@ -24,9 +24,11 @@ import cn.com.xuct.calendar.common.db.service.BaseServiceImpl;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -51,7 +53,7 @@ public class ComponentAttendServiceImpl extends BaseServiceImpl<ComponentAttendM
     }
 
     @Override
-    public List<Long> listByComponentIdNoMemberId(final Long memberId, final Long componentId) {
+    public List<ComponentAttend> listByComponentIdNoMemberId(final Long memberId, final Long componentId) {
         return ((ComponentAttendMapper) super.getBaseMapper()).listByComponentIdNoMemberId(memberId, componentId);
     }
 

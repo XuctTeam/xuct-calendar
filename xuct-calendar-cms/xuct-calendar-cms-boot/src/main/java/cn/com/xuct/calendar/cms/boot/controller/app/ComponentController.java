@@ -68,6 +68,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -225,24 +226,26 @@ public class ComponentController {
     @Operation(summary = "查询所有邀请人ID")
     @GetMapping("/attend/member/ids")
     public R<List<String>> queryComponentMemberIds(@RequestParam("componentId") Long componentId) {
-        List<Long> memberIds = componentAttendService.listByComponentIdNoMemberId(SecurityUtils.getUserId(), componentId);
+        List<Long> memberIds = componentAttendService.listByComponentIdNoMemberId(SecurityUtils.getUserId(), componentId).stream().map(ComponentAttend::getMemberId).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(memberIds)) return R.data(Lists.newArrayList());
-        return R.data(memberIds.stream().map(x -> String.valueOf(x)).collect(Collectors.toList()));
+        return R.data(memberIds.stream().map(String::valueOf).collect(Collectors.toList()));
     }
 
     @Operation(summary = "查询所有邀请人")
     @GetMapping("/attend/member")
     public R<List<ComponentAttendVo>> queryComponentAttend(@RequestParam("componentId") Long componentId, @RequestParam(value = "createMemberId", required = false) Long createMemberId) {
-        List<Long> memberIds = componentAttendService.listByComponentIdNoMemberId(createMemberId, componentId);
-        if (CollectionUtils.isEmpty(memberIds)) return R.data(Lists.newArrayList());
-        R<List<PersonInfo>> memberInfoResult = memberFeignClient.listMemberByIds(memberIds);
+        List<ComponentAttend> members = componentAttendService.listByComponentIdNoMemberId(createMemberId, componentId);
+        if (CollectionUtils.isEmpty(members)) return R.data(Lists.newArrayList());
+        R<List<PersonInfo>> memberInfoResult = memberFeignClient.listMemberByIds(members.stream().map(ComponentAttend::getMemberId).collect(Collectors.toList()));
         List<PersonInfo> personInfos = RetOps.of(memberInfoResult).getData().orElse(Lists.newArrayList());
         if (CollectionUtils.isEmpty(personInfos)) return R.data(Lists.newArrayList());
+        Map<Long, ComponentAttend> attendMap = members.stream().collect(Collectors.toMap(ComponentAttend::getMemberId, attend -> attend, (oldValue, newValue) -> newValue));
         return R.data(memberInfoResult.getData().stream().map(info -> {
             ComponentAttendVo attendVo = new ComponentAttendVo();
             attendVo.setAvatar(info.getAvatar());
             attendVo.setMemberId(String.valueOf(info.getUserId()));
             attendVo.setName(info.getName());
+            attendVo.setStatus(attendMap.get(Long.valueOf(attendVo.getMemberId())).getStatus());
             return attendVo;
         }).collect(Collectors.toList()));
     }

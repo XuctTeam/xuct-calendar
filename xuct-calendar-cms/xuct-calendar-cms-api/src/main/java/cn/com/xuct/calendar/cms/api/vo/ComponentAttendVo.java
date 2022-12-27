@@ -10,6 +10,7 @@
  */
 package cn.com.xuct.calendar.cms.api.vo;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 /**
@@ -23,9 +24,16 @@ import lombok.Data;
 @Data
 public class ComponentAttendVo {
 
+    @Schema(description = "参与者姓名")
     private String name;
 
+    @Schema(description = "参与者头像")
     private String avatar;
 
+    @Schema(description = "参与者ID")
     private String memberId;
+
+    @Schema(description = "接受状态")
+    private Integer status;
+
 }
