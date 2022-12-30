@@ -56,11 +56,8 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!--caffeine 替换LB 默认缓存实现-->
-        <dependency>
-            <groupId>com.github.ben-manes.caffeine</groupId>
-            <artifactId>caffeine</artifactId>
-        </dependency>
+
+
 
         <dependency>
             <groupId>com.alibaba.nacos</groupId>
@@ -75,12 +72,12 @@
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
         </dependency>
-        <!--接口文档-->
         <dependency>
             <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-webflux-ui</artifactId>
-            <version>${compiler.openapi.version}</version>
+            <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
+            <version>${doc.openapi.start.version}</version>
         </dependency>
+
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-openapi3-ui</artifactId>

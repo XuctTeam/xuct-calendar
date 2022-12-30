@@ -10,18 +10,15 @@
  */
 package cn.com.xuct.calendar.cms.boot;
 
-import cn.com.xuct.calendar.common.db.dao.config.MybatisPlusConfig;
-import cn.com.xuct.calendar.common.http.annotation.EnableOkFeignAutoConfiguration;
+import cn.com.xuct.calendar.common.http.annotation.EnableAutoFeignClients;
 import cn.com.xuct.calendar.common.redis.annotation.EnableRedisAutoConfiguration;
 import cn.com.xuct.calendar.common.security.annotation.EnableOAuthResourceServer;
 import cn.com.xuct.calendar.common.swagger.annotation.EnableApiDoc;
-import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -35,15 +32,14 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @EnableRedisAutoConfiguration
 @EnableApiDoc
-@EnableOkFeignAutoConfiguration
-@SpringBootApplication
+@EnableAutoFeignClients
 @EnableDiscoveryClient
+@EnableAsync
 @EnableCaching
 @EnableTransactionManagement
-@EnableAsync
 @EnableOAuthResourceServer
 @ComponentScan(basePackages = {"cn.com.xuct.calendar.cms.boot" , "cn.com.xuct.calendar.cms.queue"})
-@Import({MybatisPlusConfig.class, SpringContextHolder.class})
+@SpringBootApplication
 public class CmsApplication {
 
     public static void main(String[] args) {

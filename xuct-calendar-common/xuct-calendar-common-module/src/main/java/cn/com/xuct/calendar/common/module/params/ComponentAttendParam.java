@@ -10,9 +10,9 @@
  */
 package cn.com.xuct.calendar.common.module.params;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**

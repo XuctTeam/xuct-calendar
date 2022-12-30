@@ -14,6 +14,10 @@ import cn.com.xuct.calendar.cms.api.dodo.MemberMarjoCalendarDo;
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAlarm;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAttend;
+import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
+import cn.com.xuct.calendar.cms.api.vo.CalendarComponentVo;
+import cn.com.xuct.calendar.cms.api.vo.ComponentListVo;
+import cn.com.xuct.calendar.cms.api.vo.ComponentSearchVo;
 import cn.com.xuct.calendar.cms.boot.config.RabbitmqConfiguration;
 import cn.com.xuct.calendar.cms.boot.mapper.ComponentMapper;
 import cn.com.xuct.calendar.cms.boot.service.IComponentAlarmService;
@@ -21,17 +25,24 @@ import cn.com.xuct.calendar.cms.boot.service.IComponentAttendService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentService;
 import cn.com.xuct.calendar.cms.boot.service.IMemberCalendarService;
 import cn.com.xuct.calendar.cms.boot.utils.DateHelper;
+import cn.com.xuct.calendar.common.core.constant.DateConstants;
+import cn.com.xuct.calendar.common.core.exception.SvrException;
+import cn.com.xuct.calendar.common.core.res.SvrResCode;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.db.service.BaseServiceImpl;
 import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
 import cn.com.xuct.calendar.common.module.enums.ComponentAlarmEnum;
+import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.NumberUtil;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -39,6 +50,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,12 +68,86 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
 
     private final IMemberCalendarService calendarService;
 
+    private final IMemberCalendarService memberCalendarService;
     private final IComponentAttendService componentAttendService;
-
     private final IComponentAlarmService componentAlarmService;
-
     private final RabbitmqConfiguration rabbitmqConfiguration;
 
+    @Override
+    public List<ComponentListVo> listDaysComponentByCalendar(Long calendarId, Long startDate, Long endDate) {
+        List<Component> componentList = componentAttendService.listByCalendarId(Long.valueOf(calendarId), startDate, endDate);
+        if (CollectionUtils.isEmpty(componentList)) return Lists.newArrayList();
+        LinkedHashMap<String, List<Component>> componentListMap = Maps.newLinkedHashMap();
+        this.covertComponentMaps(componentList, componentListMap);
+        List<ComponentListVo> componentListVos = Lists.newArrayList();
+        if (MapUtil.isEmpty(componentListMap)) return componentListVos;
+        ComponentListVo componentListVo;
+        for (String day : componentListMap.keySet()) {
+            componentListVo = new ComponentListVo();
+            componentListVo.setCalendarId(String.valueOf(calendarId));
+            componentListVo.setDay(day);
+            componentListVo.setComponents(componentListMap.get(day));
+            componentListVos.add(componentListVo);
+        }
+        return componentListVos;
+    }
+
+    @Override
+    public List<ComponentListVo> listDaysComponentByComponentId(Long componentId) {
+        Component component = super.getById(componentId);
+        if (component == null)
+            throw new SvrException(SvrResCode.CMS_COMPONENT_NOT_FOUND);
+        final List<DateTime> dayRanges = "0".equals(component.getRepeatStatus()) ? DateHelper.getRangeDateList(component.getDtstart(), component.getDtend()) : DateHelper.getRepeatRangeDataList(component, SecurityUtils.getTimeZone());
+        if (CollectionUtils.isEmpty(dayRanges))
+            throw new SvrException(SvrResCode.CMS_COMPONENT_DAY_LIST_EMPTY);
+        List<ComponentListVo> componentListVos = Lists.newArrayList();
+        ComponentListVo componentListVo = null;
+        for (int i = 0, j = dayRanges.size(); i < j; i++) {
+            componentListVo = new ComponentListVo();
+            componentListVo.setCalendarId(String.valueOf(component.getCalendarId()));
+            componentListVo.setDay(DateUtil.format(dayRanges.get(i), DateConstants.PATTERN_DATE));
+            componentListVo.getComponents().add(component);
+            componentListVos.add(componentListVo);
+        }
+        return componentListVos;
+    }
+
+    @Override
+    public ComponentSearchVo searchComponentPageByWord(final Long userId, final String word, final Integer limit, final Integer page) {
+        ComponentSearchVo componentSearchVo = new ComponentSearchVo();
+        List<CalendarComponentVo> calendarComponentVos = componentAttendService.searchWord(userId, word, page, limit + 1);
+        if (calendarComponentVos.size() <= limit) {
+            componentSearchVo.setFinished(true);
+            componentSearchVo.setComponents(calendarComponentVos);
+            return componentSearchVo;
+        }
+        calendarComponentVos.remove(limit.intValue());
+        componentSearchVo.setComponents(calendarComponentVos);
+        return componentSearchVo;
+    }
+
+    @Override
+    public CalendarComponentVo getComponentById(final Long userId, final Long componentId) {
+        Component component = super.getById(componentId);
+        if (component == null)
+            throw new SvrException(SvrResCode.CMS_COMPONENT_NOT_FOUND);
+
+        CalendarComponentVo calendarComponentVo = new CalendarComponentVo();
+        BeanUtils.copyProperties(component, calendarComponentVo);
+        Long calendarId = component.getCalendarId();
+        if (!String.valueOf(component.getCreatorMemberId()).equals(String.valueOf(SecurityUtils.getUserId()))) {
+            ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", componentId), Column.of("member_id", userId)));
+            if (attend == null)
+                throw new SvrException(SvrResCode.CMS_COMPONENT_ATTEND_EMPTY);
+            calendarId = attend.getAttendCalendarId();
+        }
+        MemberCalendar memberCalendar = memberCalendarService.get(Lists.newArrayList(Column.of("calendar_id", calendarId), Column.of("member_id", userId)));
+        if (memberCalendar == null)
+            throw new SvrException(SvrResCode.CMS_CALENDAR_NOT_FOUND);
+        calendarComponentVo.setColor(memberCalendar.getColor());
+        calendarComponentVo.setCalendarName(memberCalendar.getName());
+        return calendarComponentVo;
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -284,6 +370,36 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
         componentAttendService.saveBatch(componentAttends);
     }
 
+    /**
+     * 功能描述: <br>
+     * 〈封装按天查询日程〉
+     *
+     * @param comps
+     * @param componentListMap
+     * @return:void
+     * @since: 1.0.0
+     * @Author:Derek Xu
+     * @Date: 2022/1/24 18:10
+     */
+    private <T extends Component> void covertComponentMaps(List<T> comps, LinkedHashMap<String, List<T>> componentListMap) {
+        List<DateTime> dayRanges = Lists.newArrayList();
+        comps.stream().forEach(component -> {
+            dayRanges.clear();
+            if ("0".equals(component.getRepeatStatus())) {
+                dayRanges.addAll(DateHelper.getRangeDateList(component.getDtstart(), component.getDtend()));
+            } else {
+                dayRanges.addAll(DateHelper.getRepeatRangeDataList(component, SecurityUtils.getTimeZone()));
+            }
+            if (dayRanges.size() == 0) return;
+            for (int i = 0; i < dayRanges.size(); i++) {
+                final String formatDay = DateUtil.format(dayRanges.get(i), DateConstants.PATTERN_DATE);
+                if (!componentListMap.containsKey(formatDay)) {
+                    componentListMap.put(formatDay, Lists.newArrayList());
+                }
+                componentListMap.get(formatDay).add(component);
+            }
+        });
+    }
 
     /**
      * 功能描述: <br>

@@ -14,8 +14,8 @@ import cn.com.xuct.calendar.common.core.constant.GlobalConstants;
 import cn.com.xuct.calendar.common.core.utils.JsonUtils;
 import cn.com.xuct.calendar.common.core.res.AuthResCode;
 import cn.com.xuct.calendar.common.core.res.R;
+import jakarta.servlet.http.HttpServletResponse;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 

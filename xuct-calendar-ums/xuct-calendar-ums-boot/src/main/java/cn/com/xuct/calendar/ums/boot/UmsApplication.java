@@ -11,7 +11,7 @@
 package cn.com.xuct.calendar.ums.boot;
 
 import cn.com.xuct.calendar.common.db.dao.config.MybatisPlusConfig;
-import cn.com.xuct.calendar.common.http.annotation.EnableOkFeignAutoConfiguration;
+import cn.com.xuct.calendar.common.http.annotation.EnableAutoFeignClients;
 import cn.com.xuct.calendar.common.redis.annotation.EnableRedisAutoConfiguration;
 import cn.com.xuct.calendar.common.security.annotation.EnableOAuthResourceServer;
 import cn.com.xuct.calendar.common.imgurl.annotation.EnableImgUrlClient;
@@ -35,7 +35,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @EnableRedisAutoConfiguration
 @EnableApiDoc
-@EnableOkFeignAutoConfiguration
+@EnableAutoFeignClients
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableCaching

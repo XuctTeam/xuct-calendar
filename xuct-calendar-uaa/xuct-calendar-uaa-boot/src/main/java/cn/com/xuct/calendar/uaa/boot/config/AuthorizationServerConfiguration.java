@@ -30,6 +30,8 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
@@ -75,16 +77,13 @@ public class AuthorizationServerConfiguration {
                 .authorizationEndpoint(authorizationEndpoint -> authorizationEndpoint// 授权码端点个性化confirm页面
                         .consentPage(SecurityConstants.CUSTOM_CONSENT_PAGE_URI)));
 
-        RequestMatcher endpointsMatcher = authorizationServerConfigurer.getEndpointsMatcher();
-        DefaultSecurityFilterChain securityFilterChain = http.requestMatcher(endpointsMatcher)
-                .csrf(csrf -> csrf.ignoringRequestMatchers(endpointsMatcher))
-                .exceptionHandling(exceptions ->
-                        exceptions.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
-                )
-                .authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest().authenticated())
-                .apply(authorizationServerConfigurer.authorizationService(authorizationService)// redis存储token的实现
-                        .authorizationServerSettings(AuthorizationServerSettings.builder()
-                                .issuer(SecurityConstants.PROJECT_LICENSE).build()))
+        DefaultSecurityFilterChain securityFilterChain = http.authorizeHttpRequests(authorizeRequests -> {
+                    // 自定义接口、端点暴露
+                    authorizeRequests.requestMatchers("/token/**", "/actuator/**", "/css/**", "/error").permitAll();
+                    authorizeRequests.anyRequest().authenticated();
+                }).apply(authorizationServerConfigurer.authorizationService(authorizationService)// redis存储token的实现
+                        .authorizationServerSettings(
+                                AuthorizationServerSettings.builder().issuer(SecurityConstants.PROJECT_LICENSE).build()))
                 // 授权码登录的登录页个性化
                 .and().apply(new FormIdentityLoginConfigurer()).and().build();
 
@@ -149,5 +148,10 @@ public class AuthorizationServerConfiguration {
         http.authenticationProvider(resourceOwnerSmsAuthenticationProvider);
         // 处理 OAuth2ResourceOwnerWxAuthenticationToken
         http.authenticationProvider(resourceOwnerWxAuthenticationProvider);
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoderFactories() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 }

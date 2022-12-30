@@ -10,6 +10,8 @@
  */
 package cn.com.xuct.calendar.basic.services.service;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -19,8 +21,6 @@ import org.springframework.util.CollectionUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;

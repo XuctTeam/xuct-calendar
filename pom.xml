@@ -22,44 +22,44 @@
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <spring.boot.version>2.7.6</spring.boot.version>
+        <spring.boot.version>3.0.1</spring.boot.version>
 
         <!-- alibaba -->
-        <alibaba.cloud.version>2021.0.4.0</alibaba.cloud.version>
-        <spring.colud.version>2021.0.5</spring.colud.version>
+        <alibaba.cloud.version>2022.0.0.0-RC1</alibaba.cloud.version>
+        <spring.colud.version>2022.0.0</spring.colud.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
 
         <!--start-->
-        <utils.okhttp3.start.version>0.0.3-SNAPSHOT</utils.okhttp3.start.version>
-        <mybaties.plus.start.version>3.5.2</mybaties.plus.start.version>
+        <utils.okhttp3.start.version>0.0.4-SNAPSHOT</utils.okhttp3.start.version>
+        <mybaties.plus.start.version>3.5.3</mybaties.plus.start.version>
         <open.feign.start.version>11.9.1</open.feign.start.version>
+        <doc.openapi.start.version>2.0.2</doc.openapi.start.version>
         <!--lib-->
         <lib.jedis.version>3.9.0</lib.jedis.version>
         <lib.common.pool.version>2.11.1</lib.common.pool.version>
-        <lib.mybaties.plus.version>3.5.2</lib.mybaties.plus.version>
-        <lib.mysql.version>8.0.29</lib.mysql.version>
-        <lib.servlet.version>4.0.1</lib.servlet.version>
+        <lib.mysql.version>8.0.31</lib.mysql.version>
         <lib.nacos.client.version>2.2.0</lib.nacos.client.version>
         <lib.jedis.lock.version>1.0.0</lib.jedis.lock.version>
         <lib.caffeine.version>2.9.3</lib.caffeine.version>
-        <lib.google.prone.version>2.11.0</lib.google.prone.version>
-        <lib.jackson.version>20220320</lib.jackson.version>
-        <lib.authorization.server.verion>0.4.0</lib.authorization.server.verion>
+        <lib.google.prone.version>2.16</lib.google.prone.version>
+        <lib.json.version>20220924</lib.json.version>
+        <lib.authorization.server.verion>1.0.0</lib.authorization.server.verion>
+        <lib.cloud.gateway.server>4.0.0</lib.cloud.gateway.server>
         <!-- compiler-->
         <compiler.lombok.version>1.18.24</compiler.lombok.version>
         <compiler.openapi.version>1.6.14</compiler.openapi.version>
         <compiler.openapi.v3.annotations.version>2.2.7</compiler.openapi.v3.annotations.version>
         <compiler.knife4j.v4.version>4.0.0</compiler.knife4j.v4.version>
         <complier.jaxb.impl.version>3.0.2</complier.jaxb.impl.version>
-        <complier.log4j.version>1.7.32</complier.log4j.version>
         <complier.jaxb.runtime.version>2.3.5</complier.jaxb.runtime.version>
         <complier.boot.maven.version>2.7.5</complier.boot.maven.version>
         <!-- utils -->
-        <utils.hutool.version>5.8.8</utils.hutool.version>
+        <utils.common.io.version>2.11.0</utils.common.io.version>
+        <utils.hutool.version>5.8.11</utils.hutool.version>
         <utils.guava.version>31.1-jre</utils.guava.version>
         <utils.wxjava.version>4.4.0</utils.wxjava.version>
-        <utils.jackson.version>2.13.3</utils.jackson.version>
+        <utils.jackson.version>2.14.1</utils.jackson.version>
         <utils.nimbusds.jwt.version>9.23</utils.nimbusds.jwt.version>
         <utils.tencentcloud.version>4.0.11</utils.tencentcloud.version>
         <utils.biweekly.version>0.6.6</utils.biweekly.version>
@@ -113,11 +113,6 @@
                 <version>${lib.mysql.version}</version>
             </dependency>
             <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>${lib.servlet.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.github.ben-manes.caffeine</groupId>
                 <artifactId>caffeine</artifactId>
                 <version>${lib.caffeine.version}</version>
@@ -125,7 +120,7 @@
             <dependency>
                 <groupId>org.json</groupId>
                 <artifactId>json</artifactId>
-                <version>${lib.jackson.version}</version>
+                <version>${lib.json.version}</version>
             </dependency>
 
             <dependency>
@@ -133,12 +128,6 @@
                 <artifactId>lombok</artifactId>
                 <version>${compiler.lombok.version}</version>
                 <scope>provided</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${complier.log4j.version}</version>
             </dependency>
 
             <dependency>

@@ -5,8 +5,8 @@ import cn.com.xuct.calendar.common.security.serivces.OAuthUserDetailsService;
 import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
 import cn.com.xuct.calendar.common.web.utils.WebUtils;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.extra.servlet.ServletUtil;
 import cn.hutool.extra.spring.SpringUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
 import org.springframework.core.Ordered;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -25,7 +25,6 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.web.authentication.www.BasicAuthenticationConverter;
 import org.springframework.util.Assert;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
@@ -96,9 +95,8 @@ public class OAuthDaoAuthenticationProvider extends AbstractUserDetailsAuthentic
         prepareTimingAttackProtection();
         HttpServletRequest request = WebUtils.getRequest().orElseThrow((Supplier<Throwable>) () -> new InternalAuthenticationServiceException("web request is empty"));
 
-        Map<String, String> paramMap = ServletUtil.getParamMap(request);
-        String grantType = paramMap.get(OAuth2ParameterNames.GRANT_TYPE);
-        String clientId = paramMap.get(OAuth2ParameterNames.CLIENT_ID);
+        String grantType = WebUtils.getRequest().get().getParameter(OAuth2ParameterNames.GRANT_TYPE);
+        String clientId = WebUtils.getRequest().get().getParameter(OAuth2ParameterNames.CLIENT_ID);
 
         if (StrUtil.isBlank(clientId)) {
             clientId = basicConvert.convert(request).getName();

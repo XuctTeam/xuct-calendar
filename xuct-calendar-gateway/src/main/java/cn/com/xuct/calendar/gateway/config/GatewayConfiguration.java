@@ -2,12 +2,10 @@ package cn.com.xuct.calendar.gateway.config;
 
 import cn.com.xuct.calendar.gateway.filter.PasswordDecoderFilter;
 import cn.com.xuct.calendar.gateway.filter.RequestGlobalFilter;
-import cn.com.xuct.calendar.gateway.filter.SwaggerBasicGatewayFilter;
 import cn.com.xuct.calendar.gateway.filter.ValidateCodeGatewayFilter;
 import cn.com.xuct.calendar.gateway.handler.GlobalExceptionHandler;
 import cn.com.xuct.calendar.gateway.handler.ImageCodeHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,16 +26,9 @@ public class GatewayConfiguration {
 	}
 
 	@Bean
-	@ConditionalOnProperty(name = "swagger.basic.enabled")
-	public SwaggerBasicGatewayFilter swaggerBasicGatewayFilter(SpringDocConfiguration.SwaggerDocProperties swaggerProperties) {
-		return new SwaggerBasicGatewayFilter(swaggerProperties);
-	}
-
-	@Bean
 	public RequestGlobalFilter requestGlobalFilter() {
 		return new RequestGlobalFilter();
 	}
-
 
 	@Bean
 	public GlobalExceptionHandler globalExceptionHandler(ObjectMapper objectMapper) {

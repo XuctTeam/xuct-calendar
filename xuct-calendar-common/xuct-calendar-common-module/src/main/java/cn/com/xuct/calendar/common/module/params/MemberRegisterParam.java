@@ -17,7 +17,7 @@ import cn.com.xuct.calendar.common.module.params.data.MemberUserNameRegisterData
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**

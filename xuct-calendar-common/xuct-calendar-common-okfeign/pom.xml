@@ -34,7 +34,6 @@
         <dependency>
             <groupId>io.github.openfeign</groupId>
             <artifactId>feign-okhttp</artifactId>
-            <version>${open.feign.start.version}</version>
         </dependency>
         <!-- LB 扩展 -->
         <dependency>

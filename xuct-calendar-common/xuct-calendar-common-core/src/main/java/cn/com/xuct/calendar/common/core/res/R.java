@@ -15,6 +15,7 @@ import cn.com.xuct.calendar.common.core.constant.RConstants;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,7 +23,6 @@ import lombok.ToString;
 import org.slf4j.MDC;
 
 import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 
 /**
@@ -51,10 +51,10 @@ public class R<T> implements Serializable {
     @Schema(description = "承载数据")
     private T data;
 
-    @Schema(description = "返回消息", required = true)
+    @Schema(description = "返回消息")
     private String message;
 
-    @Schema(description = "请求key", required = false)
+    @Schema(description = "请求key")
     private String logKey;
 
     private R(IResultCode resultCode) {

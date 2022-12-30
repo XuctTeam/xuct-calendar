@@ -12,22 +12,23 @@ package cn.com.xuct.calendar.cms.boot.service.impl;
 
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAttend;
-import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
 import cn.com.xuct.calendar.cms.api.vo.CalendarAttendCountVo;
 import cn.com.xuct.calendar.cms.api.vo.CalendarComponentVo;
 import cn.com.xuct.calendar.cms.api.vo.ComponentAttendVo;
 import cn.com.xuct.calendar.cms.boot.mapper.ComponentAttendMapper;
 import cn.com.xuct.calendar.cms.boot.service.IComponentAttendService;
-import cn.com.xuct.calendar.cms.boot.service.IMemberCalendarService;
-import cn.com.xuct.calendar.common.core.vo.Column;
+import cn.com.xuct.calendar.common.core.res.R;
+import cn.com.xuct.calendar.common.core.res.RetOps;
 import cn.com.xuct.calendar.common.db.service.BaseServiceImpl;
+import cn.com.xuct.calendar.common.module.feign.PersonInfo;
+import cn.com.xuct.calendar.ums.oauth.client.MemberFeignClient;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -41,6 +42,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ComponentAttendServiceImpl extends BaseServiceImpl<ComponentAttendMapper, ComponentAttend> implements IComponentAttendService {
+
+    private final MemberFeignClient memberFeignClient;
 
     @Override
     public List<Component> listByCalendarId(final Long calendarId, final Long start, final Long end) {
@@ -91,5 +94,23 @@ public class ComponentAttendServiceImpl extends BaseServiceImpl<ComponentAttendM
     @Override
     public CalendarAttendCountVo statistics(final Long componentId) {
         return ((ComponentAttendMapper) super.getBaseMapper()).statistics(componentId);
+    }
+
+    @Override
+    public List<ComponentAttendVo> listByComponentId(Long componentId, Long creatorMemberId) {
+        List<ComponentAttend> members = this.listByComponentIdNoMemberId(creatorMemberId, componentId);
+        if (CollectionUtils.isEmpty(members)) return Lists.newArrayList();
+        R<List<PersonInfo>> memberInfoResult = memberFeignClient.listMemberByIds(members.stream().map(ComponentAttend::getMemberId).collect(Collectors.toList()));
+        List<PersonInfo> personInfos = RetOps.of(memberInfoResult).getData().orElse(Lists.newArrayList());
+        if (CollectionUtils.isEmpty(personInfos)) return Lists.newArrayList();
+        Map<Long, ComponentAttend> attendMap = members.stream().collect(Collectors.toMap(ComponentAttend::getMemberId, attend -> attend, (oldValue, newValue) -> newValue));
+        return memberInfoResult.getData().stream().map(info -> {
+            ComponentAttendVo attendVo = new ComponentAttendVo();
+            attendVo.setAvatar(info.getAvatar());
+            attendVo.setMemberId(String.valueOf(info.getUserId()));
+            attendVo.setName(info.getName());
+            attendVo.setStatus(attendMap.get(Long.valueOf(attendVo.getMemberId())).getStatus());
+            return attendVo;
+        }).collect(Collectors.toList());
     }
 }

@@ -12,8 +12,12 @@ package cn.com.xuct.calendar.cms.boot.service;
 
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAlarm;
+import cn.com.xuct.calendar.cms.api.vo.CalendarComponentVo;
+import cn.com.xuct.calendar.cms.api.vo.ComponentListVo;
+import cn.com.xuct.calendar.cms.api.vo.ComponentSearchVo;
 import cn.com.xuct.calendar.cms.boot.mapper.ComponentMapper;
 import cn.com.xuct.calendar.common.db.service.IBaseService;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 
 import java.util.List;
 
@@ -27,38 +31,17 @@ import java.util.List;
  */
 public interface IComponentService extends IBaseService<ComponentMapper, Component> {
 
-    /**
-     * 添加日程
-     *
-     * @param memberId
-     * @param calendarId
-     * @param memberIds
-     * @param component
-     * @param alarmType
-     * @param timeZone   用户时区
-     * @param alarmTimes
-     */
+    List<ComponentListVo> listDaysComponentByCalendar(final Long calendarId, final Long startDate, final Long endDate);
+
+    List<ComponentListVo> listDaysComponentByComponentId(final Long componentId);
+
+    ComponentSearchVo searchComponentPageByWord(final Long userId , final String word, final Integer limit, final Integer page);
+
+    CalendarComponentVo getComponentById(final Long userId , final Long componentId);
+
     List<ComponentAlarm> addComponent(final Long memberId, final String timeZone, final Long calendarId, final Component component, final List<String> memberIds, final String alarmType, final List<Integer> alarmTimes);
 
-    /**
-     * 更新日程
-     *
-     * @param oldCalendarId 原事件的日历ID
-     * @param memberId
-     * @param component
-     * @param alarmType
-     * @param alarmTimes
-     * @param change        是否有提醒更新
-     * @param timeZone      用户时区
-     * @return
-     */
     List<ComponentAlarm> updateComponent(final Long oldCalendarId, final Long memberId, final String timeZone, final Component component, final List<String> memberIds, final String alarmType, final List<Integer> alarmTimes, boolean change);
 
-    /**
-     * 删除日程
-     *
-     * @param memberId
-     * @param componentId
-     */
     List<Long> deleteByComponentId(final Long memberId, final Long componentId);
 }

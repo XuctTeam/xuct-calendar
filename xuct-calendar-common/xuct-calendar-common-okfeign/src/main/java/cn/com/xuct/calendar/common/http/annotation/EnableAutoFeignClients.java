@@ -10,11 +10,8 @@
  */
 package cn.com.xuct.calendar.common.http.annotation;
 
-import cn.com.xuct.calendar.common.http.config.DvaOkFeignAutoConfiguration;
-import org.springframework.cloud.openfeign.DvaFeignClientsRegistrar;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.cloud.openfeign.FeignClientsConfiguration;
-import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
 
@@ -30,8 +27,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @EnableFeignClients
-@Import({DvaOkFeignAutoConfiguration.class , DvaFeignClientsRegistrar.class})
-public @interface EnableOkFeignAutoConfiguration {
+public @interface EnableAutoFeignClients {
 
     /**
      * Alias for the {@link #basePackages()} attribute. Allows for more concise annotation

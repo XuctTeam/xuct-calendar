@@ -10,7 +10,8 @@
  */
 package cn.com.xuct.calendar.common.core.res;
 
-import javax.servlet.http.HttpServletResponse;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * 〈一句话功能简述〉<br>

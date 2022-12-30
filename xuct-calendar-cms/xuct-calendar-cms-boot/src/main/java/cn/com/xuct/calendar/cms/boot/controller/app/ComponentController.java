@@ -92,7 +92,6 @@ public class ComponentController {
     private final IComponentAttendService componentAttendService;
     private final IMemberCalendarService memberCalendarService;
     private final IComponentAttachmentService componentAttachmentService;
-
     private final MemberFeignClient memberFeignClient;
     private final BasicServicesFeignClient basicServicesFeignClient;
     private final RabbitmqOutChannel rabbitmqOutChannel;
@@ -101,78 +100,25 @@ public class ComponentController {
     @GetMapping("/list/calendar/days")
     public R<List<ComponentListVo>> listByCalendarId(@RequestParam("calendarId") String calendarId, @RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date start,
                                                      @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date end) {
-        List<Component> componentList = componentAttendService.listByCalendarId(Long.valueOf(calendarId), start.getTime(), end.getTime());
-        if (CollectionUtils.isEmpty(componentList)) return R.data(Lists.newArrayList());
-        LinkedHashMap<String, List<Component>> componentListMap = Maps.newLinkedHashMap();
-        this.covertComponentMaps(componentList, componentListMap);
-        List<ComponentListVo> componentListVos = Lists.newArrayList();
-        if (MapUtil.isEmpty(componentListMap)) return R.data(componentListVos);
-        ComponentListVo componentListVo = null;
-        for (String day : componentListMap.keySet()) {
-            componentListVo = new ComponentListVo();
-            componentListVo.setCalendarId(calendarId);
-            componentListVo.setDay(day);
-            componentListVo.setComponents(componentListMap.get(day));
-            componentListVos.add(componentListVo);
-        }
-        return R.data(componentListVos);
+        return R.data(componentService.listDaysComponentByCalendar(Long.valueOf(calendarId), start.getTime(), end.getTime()));
     }
 
     @Operation(summary = "通过ID查询日程-天分组")
     @GetMapping("/days/{id}")
     public R<List<ComponentListVo>> getComponentDaysById(@PathVariable("id") String id) {
-        Component component = componentService.getById(id);
-        if (component == null) throw new SvrException(SvrResCode.CMS_COMPONENT_NOT_FOUND);
-        final List<DateTime> dayRanges = "0".equals(component.getRepeatStatus()) ?
-                DateHelper.getRangeDateList(component.getDtstart(), component.getDtend()) : DateHelper.getRepeatRangeDataList(component, SecurityUtils.getTimeZone());
-        if (CollectionUtils.isEmpty(dayRanges)) throw new SvrException(SvrResCode.CMS_COMPONENT_DAY_LIST_EMPTY);
-        List<ComponentListVo> componentListVos = Lists.newArrayList();
-        ComponentListVo componentListVo = null;
-        for (int i = 0, j = dayRanges.size(); i < j; i++) {
-            componentListVo = new ComponentListVo();
-            componentListVo.setCalendarId(String.valueOf(component.getCalendarId()));
-            componentListVo.setDay(DateUtil.format(dayRanges.get(i), DateConstants.PATTERN_DATE));
-            componentListVo.getComponents().add(component);
-            componentListVos.add(componentListVo);
-        }
-        return R.data(componentListVos);
+        return R.data(componentService.listDaysComponentByComponentId(Long.valueOf(id)));
     }
-
 
     @Operation(summary = "通过关键字查询日程")
     @GetMapping("/list/search")
     public R<ComponentSearchVo> listBySearch(@RequestParam("word") String word, @RequestParam("limit") Integer limit, @RequestParam("page") Integer page) {
-        ComponentSearchVo componentSearchVo = new ComponentSearchVo();
-        List<CalendarComponentVo> calendarComponentVos = componentAttendService.searchWord(SecurityUtils.getUserId(), word, page, limit + 1);
-        if (calendarComponentVos.size() <= limit) {
-            componentSearchVo.setFinished(true);
-            componentSearchVo.setComponents(calendarComponentVos);
-            return R.data(componentSearchVo);
-        }
-        calendarComponentVos.remove(limit.intValue());
-        componentSearchVo.setComponents(calendarComponentVos);
-        return R.data(componentSearchVo);
+        return R.data(componentService.searchComponentPageByWord(SecurityUtils.getUserId(), word, limit, page));
     }
-
 
     @Operation(summary = "获取日程详情")
     @GetMapping("/{id}")
     public R<CalendarComponentVo> getComponentById(@PathVariable("id") String id) {
-        Component component = componentService.getById(id);
-        Assert.notNull(component, "事件不存在");
-        CalendarComponentVo calendarComponentVo = new CalendarComponentVo();
-        BeanUtils.copyProperties(component, calendarComponentVo);
-        Long calendarId = component.getCalendarId();
-        if (!String.valueOf(component.getCreatorMemberId()).equals(String.valueOf(SecurityUtils.getUserId()))) {
-            ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", id), Column.of("member_id", SecurityUtils.getUserId())));
-            Assert.notNull(attend, "邀请数据错误");
-            calendarId = attend.getAttendCalendarId();
-        }
-        MemberCalendar memberCalendar = memberCalendarService.get(Lists.newArrayList(Column.of("calendar_id", calendarId), Column.of("member_id", SecurityUtils.getUserId())));
-        Assert.notNull(memberCalendar, "日历不存在");
-        calendarComponentVo.setColor(memberCalendar.getColor());
-        calendarComponentVo.setCalendarName(memberCalendar.getName());
-        return R.data(calendarComponentVo);
+        return R.data(componentService.getComponentById(SecurityUtils.getUserId(), Long.valueOf(id)));
     }
 
     @Operation(summary = "新增或修改日程")
@@ -189,7 +135,8 @@ public class ComponentController {
             component = componentService.getById(param.getId());
             componentAlarmList = this.updateComponent(param, component);
         }
-        if (CollectionUtils.isEmpty(componentAlarmList)) return R.data(String.valueOf(component.getId()));
+        if (CollectionUtils.isEmpty(componentAlarmList))
+            return R.data(String.valueOf(component.getId()));
         ComponentAlarm componentAlarm = null;
         for (int i = 0, j = componentAlarmList.size(); i < j; i++) {
             componentAlarm = componentAlarmList.get(i);
@@ -234,20 +181,7 @@ public class ComponentController {
     @Operation(summary = "查询所有邀请人")
     @GetMapping("/attend/member")
     public R<List<ComponentAttendVo>> queryComponentAttend(@RequestParam("componentId") Long componentId, @RequestParam(value = "createMemberId", required = false) Long createMemberId) {
-        List<ComponentAttend> members = componentAttendService.listByComponentIdNoMemberId(createMemberId, componentId);
-        if (CollectionUtils.isEmpty(members)) return R.data(Lists.newArrayList());
-        R<List<PersonInfo>> memberInfoResult = memberFeignClient.listMemberByIds(members.stream().map(ComponentAttend::getMemberId).collect(Collectors.toList()));
-        List<PersonInfo> personInfos = RetOps.of(memberInfoResult).getData().orElse(Lists.newArrayList());
-        if (CollectionUtils.isEmpty(personInfos)) return R.data(Lists.newArrayList());
-        Map<Long, ComponentAttend> attendMap = members.stream().collect(Collectors.toMap(ComponentAttend::getMemberId, attend -> attend, (oldValue, newValue) -> newValue));
-        return R.data(memberInfoResult.getData().stream().map(info -> {
-            ComponentAttendVo attendVo = new ComponentAttendVo();
-            attendVo.setAvatar(info.getAvatar());
-            attendVo.setMemberId(String.valueOf(info.getUserId()));
-            attendVo.setName(info.getName());
-            attendVo.setStatus(attendMap.get(Long.valueOf(attendVo.getMemberId())).getStatus());
-            return attendVo;
-        }).collect(Collectors.toList()));
+        return R.data(componentAttendService.listByComponentId(componentId, createMemberId));
     }
 
     @Operation(summary = "获取邀请状态")
@@ -357,17 +291,6 @@ public class ComponentController {
         return R.data(shareVo);
     }
 
-
-    /**
-     * 功能描述: <b>r
-     * 〈新增日程〉
-     *
-     * @param
-     * @return:void
-     * @since: 1.0.0
-     * @Author:
-     * @Date: 2022/1/16 14:64
-     */
     private List<ComponentAlarm> insertComponent(ComponentAddParam param, Component component) {
         if (!param.getRepeatStatus().equals("0") && param.getRepeatUntil() == null)
             throw new SvrException(SvrResCode.CMS_COMPONENT_REPEAT_UNTIL_EMPTY);
@@ -375,17 +298,6 @@ public class ComponentController {
         return componentService.addComponent(SecurityUtils.getUserId(), SecurityUtils.getTimeZone(), Long.valueOf(param.getCalendarId()), component, param.getMemberIds(), param.getAlarmType(), param.getAlarmTimes());
     }
 
-    /**
-     * 功能描述: <br>
-     * 〈〉
-     *
-     * @param param
-     * @param component
-     * @return:java.util.List<cn.com.xuct.calendar.dao.entity.ComponentAlarm>
-     * @since: 1.0.0
-     * @Author:Derek Xu
-     * @Date: 2022/1/17 14:07
-     */
     private List<ComponentAlarm> updateComponent(ComponentAddParam param, Component component) {
         if (component == null) throw new SvrException(SvrResCode.CMS_COMPONENT_NOT_FOUND);
         if (!param.getRepeatStatus().equals("0") && param.getRepeatUntil() == null)
@@ -409,7 +321,6 @@ public class ComponentController {
         this.setComponent(param, component);
         return componentService.updateComponent(oldCalendarId, SecurityUtils.getUserId(), SecurityUtils.getTimeZone(), component, param.getMemberIds(), param.getAlarmType(), param.getAlarmTimes(), changed);
     }
-
 
     private void setComponent(ComponentAddParam param, Component component) {
         BeanUtils.copyProperties(param, component);
@@ -451,34 +362,5 @@ public class ComponentController {
         return true;
     }
 
-    /**
-     * 功能描述: <br>
-     * 〈封装按天查询日程〉
-     *
-     * @param comps
-     * @param componentListMap
-     * @return:void
-     * @since: 1.0.0
-     * @Author:Derek Xu
-     * @Date: 2022/1/24 18:10
-     */
-    private <T extends Component> void covertComponentMaps(List<T> comps, LinkedHashMap<String, List<T>> componentListMap) {
-        List<DateTime> dayRanges = Lists.newArrayList();
-        comps.stream().forEach(component -> {
-            dayRanges.clear();
-            if ("0".equals(component.getRepeatStatus())) {
-                dayRanges.addAll(DateHelper.getRangeDateList(component.getDtstart(), component.getDtend()));
-            } else {
-                dayRanges.addAll(DateHelper.getRepeatRangeDataList(component, SecurityUtils.getTimeZone()));
-            }
-            if (dayRanges.size() == 0) return;
-            for (int i = 0; i < dayRanges.size(); i++) {
-                final String formatDay = DateUtil.format(dayRanges.get(i), DateConstants.PATTERN_DATE);
-                if (!componentListMap.containsKey(formatDay)) {
-                    componentListMap.put(formatDay, Lists.newArrayList());
-                }
-                componentListMap.get(formatDay).add(component);
-            }
-        });
-    }
+
 }
