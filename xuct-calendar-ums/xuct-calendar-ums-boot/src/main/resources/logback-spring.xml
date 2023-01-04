@@ -18,7 +18,8 @@
 <configuration debug="false" scan="false">
     <springProperty scop="context" name="spring.application.name" source="spring.application.name" defaultValue=""/>
     <property name="logback.dir" value="/app/logs/${spring.application.name}"/>
-    <property name="logback.maxsize" value="50M"/> <!-- 日志文件大小 -->
+    <property name="logback.maxsize" value="15"/>
+    <property name="logback.filesize" value="50MB"/> <!-- 日志文件大小 -->
     <!-- 彩色日志格式 -->
     <property name="CONSOLE_LOG_PATTERN"
               value="${CONSOLE_LOG_PATTERN:-%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
@@ -43,10 +44,11 @@
             <onMismatch>DENY</onMismatch>
         </filter>
         <Prudent>true</Prudent>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${logback.dir}/%d{yyyyMM,aux}/%d{yyyy-MM-dd}-info.log
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <FileNamePattern>${logback.dir}/%d{yyyyMM,aux}/%d{yyyy-MM-dd}-info.%i.log
             </FileNamePattern>
             <MaxHistory>${logback.maxsize}</MaxHistory>
+            <maxFileSize>${logback.filesize}</maxFileSize>
         </rollingPolicy>
         <layout class="ch.qos.logback.classic.PatternLayout">
             <Pattern>%d{yyyy-MM-dd HH:mm:ss} -%msg%n</Pattern>
@@ -62,11 +64,12 @@
             <onMismatch>DENY</onMismatch>
         </filter>
         <Prudent>true</Prudent>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <FileNamePattern>
-                ${logback.dir}/%d{yyyyMM,aux}/%d{yyyy-MM-dd}-debug.log
+                ${logback.dir}/%d{yyyyMM,aux}/%d{yyyy-MM-dd}-debug.%i.log
             </FileNamePattern>
             <MaxHistory>${logback.maxsize}</MaxHistory>
+            <maxFileSize>${logback.filesize}</maxFileSize>
         </rollingPolicy>
         <layout class="ch.qos.logback.classic.PatternLayout">
             <Pattern>%d{yyyy-MM-dd HH:mm:ss} -%msg%n</Pattern>
@@ -84,11 +87,12 @@
             <onMatch>ACCEPT</onMatch>
             <onMismatch>DENY</onMismatch>
         </filter>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <FileNamePattern>
-                ${logback.dir}/%d{yyyyMM,aux}/%d{yyyy-MM-dd}-error.log
+                ${logback.dir}/%d{yyyyMM,aux}/%d{yyyy-MM-dd}-error.%i.log
             </FileNamePattern>
             <MaxHistory>${logback.maxsize}</MaxHistory>
+            <maxFileSize>${logback.filesize}</maxFileSize>
         </rollingPolicy>
         <layout class="ch.qos.logback.classic.PatternLayout">
             <Pattern>%d{yyyy-MM-dd HH:mm:ss} -%msg%n</Pattern>

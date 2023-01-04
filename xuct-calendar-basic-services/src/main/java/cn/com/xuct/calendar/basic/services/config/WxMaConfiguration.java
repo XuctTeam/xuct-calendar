@@ -13,7 +13,7 @@ package cn.com.xuct.calendar.basic.services.config;
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.api.impl.WxMaServiceImpl;
 import cn.binarywang.wx.miniapp.bean.WxMaKefuMessage;
-import cn.binarywang.wx.miniapp.config.impl.WxMaRedisConfigImpl;
+import cn.binarywang.wx.miniapp.config.impl.WxMaRedisBetterConfigImpl;
 import cn.binarywang.wx.miniapp.message.WxMaMessageHandler;
 import cn.binarywang.wx.miniapp.message.WxMaMessageRouter;
 import com.google.common.collect.Maps;
@@ -22,10 +22,11 @@ import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.bean.result.WxMediaUploadResult;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.error.WxRuntimeException;
+import me.chanjar.weixin.common.redis.RedisTemplateWxRedisOps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import redis.clients.jedis.JedisPool;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.io.File;
 import java.util.List;
@@ -45,19 +46,19 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(WxMaProperties.class)
 public class WxMaConfiguration {
     private final WxMaProperties properties;
-    private final JedisPool jedisPool;
 
     private static final Map<String, WxMaMessageRouter> routers = Maps.newHashMap();
     private static Map<String, WxMaService> maServices;
 
+    private final StringRedisTemplate stringRedisTemplate;
 
     @Autowired
-    public WxMaConfiguration(WxMaProperties properties, JedisPool jedisPool) {
+    public WxMaConfiguration(WxMaProperties properties, StringRedisTemplate stringRedisTemplate) {
         this.properties = properties;
-        this.jedisPool = jedisPool;
+        this.stringRedisTemplate = stringRedisTemplate;
     }
 
-    public  WxMaService getMaService(){
+    public WxMaService getMaService() {
         return WxMaConfiguration.getMaService(this.properties.getAppId());
     }
 
@@ -81,9 +82,10 @@ public class WxMaConfiguration {
             throw new WxRuntimeException("大哥，拜托先看下项目首页的说明（readme文件），添加下相关配置，注意别配错了！");
         }
 
+        RedisTemplateWxRedisOps redisOps = new RedisTemplateWxRedisOps(stringRedisTemplate);
         maServices = configs.stream()
                 .map(a -> {
-                    WxMaRedisConfigImpl config = new WxMaRedisConfigImpl(jedisPool);
+                    WxMaRedisBetterConfigImpl config = new WxMaRedisBetterConfigImpl(redisOps, "dva");
 //                WxMaDefaultConfigImpl config = new WxMaRedisConfigImpl(new JedisPool());
                     // 使用上面的配置时，需要同时引入jedis-lock的依赖，否则会报类无法找到的异常
                     config.setAppid(a.getAppid());
@@ -157,7 +159,6 @@ public class WxMaConfiguration {
         }
         return null;
     };
-
 
 
 }

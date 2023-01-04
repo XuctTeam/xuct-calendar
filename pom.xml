@@ -36,11 +36,10 @@
         <open.feign.start.version>11.9.1</open.feign.start.version>
         <doc.openapi.start.version>2.0.2</doc.openapi.start.version>
         <!--lib-->
-        <lib.jedis.version>3.9.0</lib.jedis.version>
+        <lib.jedis.version>4.3.1</lib.jedis.version>
         <lib.common.pool.version>2.11.1</lib.common.pool.version>
         <lib.mysql.version>8.0.31</lib.mysql.version>
         <lib.nacos.client.version>2.2.0</lib.nacos.client.version>
-        <lib.jedis.lock.version>1.0.0</lib.jedis.lock.version>
         <lib.caffeine.version>2.9.3</lib.caffeine.version>
         <lib.google.prone.version>2.16</lib.google.prone.version>
         <lib.json.version>20220924</lib.json.version>
@@ -92,16 +91,7 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <dependency>
-                <groupId>redis.clients</groupId>
-                <artifactId>jedis</artifactId>
-                <version>${lib.jedis.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-pool2</artifactId>
-                <version>${lib.common.pool.version}</version>
-            </dependency>
+
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-boot-starter</artifactId>

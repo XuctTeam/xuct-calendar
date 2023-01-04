@@ -104,28 +104,28 @@ public class GroupAppController {
     @Operation(summary = "添加/修改群组")
     @PostMapping
     public R<String> addGroup(@RequestBody @Validated GroupAddParam addParam) {
-        if (addParam.getId() != null) {
-            Group group = groupService.getById(addParam.getId());
-            if (group == null) return R.fail("群组不存在");
-            if (!String.valueOf(group.getMemberId()).equals(String.valueOf(SecurityUtils.getUserId())))
-                return R.fail("非群组管理员");
-            group.setName(addParam.getName());
-            if (StringUtils.hasLength(addParam.getImageUrl()) && !addParam.getImageUrl().equals(group.getImages())) {
-                group.setImages(addParam.getImageUrl());
-            } else if (StringUtils.hasLength(group.getImages()) && !StringUtils.hasLength(addParam.getImageUrl())) {
-                group.setImages(null);
-            }
-            if (StringUtils.hasLength(addParam.getPassword()))
-                group.setPassword(addParam.getPassword());
-            group.setPower(CommonPowerEnum.valueOf(addParam.getPower()));
-            group.setNum(addParam.getNum());
-            if (!StringUtils.hasLength(group.getNo())) {
-                group.setNo(RandomUtil.randomNumbers(8));
-            }
-            groupService.updateById(group);
+        if (addParam.getId() == null) {
+            groupService.addGroup(SecurityUtils.getUserId(), addParam.getName(), addParam.getPassword(), addParam.getImageUrl(), addParam.getPower(), addParam.getNum(), RandomUtil.randomNumbers(8));
             return R.status(true);
         }
-        groupService.addGroup(SecurityUtils.getUserId(), addParam.getName(), addParam.getPassword(), addParam.getImageUrl(), addParam.getPower(), addParam.getNum(), RandomUtil.randomNumbers(8));
+        Group group = groupService.getById(addParam.getId());
+        if (group == null) return R.fail("群组不存在");
+        if (!String.valueOf(group.getMemberId()).equals(String.valueOf(SecurityUtils.getUserId())))
+            return R.fail("非群组管理员");
+        group.setName(addParam.getName());
+        if (StringUtils.hasLength(addParam.getImageUrl()) && !addParam.getImageUrl().equals(group.getImages())) {
+            group.setImages(addParam.getImageUrl());
+        } else if (StringUtils.hasLength(group.getImages()) && !StringUtils.hasLength(addParam.getImageUrl())) {
+            group.setImages(null);
+        }
+        if (StringUtils.hasLength(addParam.getPassword()))
+            group.setPassword(addParam.getPassword());
+        group.setPower(CommonPowerEnum.valueOf(addParam.getPower()));
+        group.setNum(addParam.getNum());
+        if (!StringUtils.hasLength(group.getNo())) {
+            group.setNo(RandomUtil.randomNumbers(8));
+        }
+        groupService.updateById(group);
         return R.status(true);
     }
 

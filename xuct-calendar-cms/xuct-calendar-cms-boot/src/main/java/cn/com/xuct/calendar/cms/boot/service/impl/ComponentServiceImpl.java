@@ -253,7 +253,7 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
         componentAlarmService.update(updateAlarm, Column.of("component_id", component.getId()));
         //更新提醒时间
         component.setAlarmType(ComponentAlarmEnum.getByCode(alarmType));
-        if (alarmTimes.size() != 0) {
+        if (!CollectionUtils.isEmpty(alarmTimes)) {
             component.setAlarmTimes(ArrayUtil.join(alarmTimes.toArray(new Integer[alarmTimes.size()]), ","));
         }
         this.updateById(component);

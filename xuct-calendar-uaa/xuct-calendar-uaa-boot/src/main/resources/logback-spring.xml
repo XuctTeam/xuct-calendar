@@ -18,7 +18,8 @@
 <configuration debug="false" scan="false">
     <springProperty scop="context" name="spring.application.name" source="spring.application.name" defaultValue=""/>
     <property name="logback.dir" value="/app/logs/${spring.application.name}"/>
-    <property name="logback.maxsize" value="50M"/> <!-- 日志文件大小 -->
+    <property name="logback.maxsize" value="15"/>
+    <property name="logback.filesize" value="50MB"/> <!-- 日志文件大小 -->
     <!-- 彩色日志格式 -->
     <property name="CONSOLE_LOG_PATTERN"
               value="${CONSOLE_LOG_PATTERN:-%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
