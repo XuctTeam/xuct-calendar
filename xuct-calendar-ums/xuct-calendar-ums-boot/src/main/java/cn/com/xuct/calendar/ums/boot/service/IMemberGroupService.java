@@ -13,6 +13,7 @@ package cn.com.xuct.calendar.ums.boot.service;
 import cn.com.xuct.calendar.common.db.service.IBaseService;
 import cn.com.xuct.calendar.ums.api.dto.GroupMemberInfoDto;
 import cn.com.xuct.calendar.ums.api.entity.MemberGroup;
+import cn.com.xuct.calendar.ums.api.vo.GroupMemberPinYinVo;
 import cn.com.xuct.calendar.ums.boot.mapper.MemberGroupMapper;
 
 import java.util.List;
@@ -27,55 +28,19 @@ import java.util.List;
  */
 public interface IMemberGroupService extends IBaseService<MemberGroupMapper, MemberGroup> {
 
-    /**
-     * 群组内所有人
-     *
-     * @param memberId
-     * @return
-     */
-    List<GroupMemberInfoDto> list(final Long groupId, final Long memberId);
+    List<GroupMemberPinYinVo> listByPinYin(final Long groupId);
 
-    /**
-     * 查询群组下所有用户
-     *
-     * @param groupId
-     * @return
-     */
-    List<GroupMemberInfoDto> queryMembersByGroupId(Long groupId, final Long memberId);
+    List<GroupMemberInfoDto> listAllGroupMemberByMemberId(final Long memberId);
 
-    /**
-     * 通过会员id查询
-     *
-     * @param memberIds
-     * @return
-     */
-    List<GroupMemberInfoDto> queryMemberIds(List<Long> memberIds);
+    List<GroupMemberInfoDto> listByGroupIdAndNotMember(final Long groupId, final Long memberId);
 
-    /**
-     * 申请加入群组
-     *
-     * @param groupId
-     * @param groupName
-     * @param memberId
-     */
+    List<GroupMemberInfoDto> listByMemberIds(List<Long> memberIds);
+
     void applyJoinGroup(Long groupId, String groupName, Long groupCreateMemberId, Long memberId);
 
-
-    /**
-     * 通过群组删除用户
-     *
-     * @param groupId
-     */
     List<Long> deleteAllByGroupId(Long groupId);
 
-    /**
-     * 请离用户
-     *
-     * @param groupId
-     * @param memberId
-     */
     void leaveOut(Long groupId, Long memberId);
-
 
     GroupMemberInfoDto getGroupMember(final Long groupId, final Long memberId);
 }

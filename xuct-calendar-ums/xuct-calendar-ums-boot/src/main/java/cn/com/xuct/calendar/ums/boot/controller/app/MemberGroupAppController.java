@@ -11,7 +11,6 @@
 package cn.com.xuct.calendar.ums.boot.controller.app;
 
 import cn.com.xuct.calendar.common.core.res.R;
-import cn.com.xuct.calendar.common.core.utils.PinYinUtils;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.enums.GroupMemberStatusEnum;
 import cn.com.xuct.calendar.common.module.params.GroupApplyParam;
@@ -36,14 +35,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.TreeMap;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -67,44 +63,19 @@ public class MemberGroupAppController {
     @Operation(summary = "按拼音分组用户")
     @GetMapping("")
     public R<List<GroupMemberPinYinVo>> list(@RequestParam("groupId") Long groupId) {
-        List<GroupMemberInfoDto> memberInfoDtos = memberGroupService.list(groupId, SecurityUtils.getUserId());
-        if (CollectionUtils.isEmpty(memberInfoDtos)) return R.data(Lists.newArrayList());
-        TreeMap<String, List<GroupMemberInfoDto>> pinyinVos = new TreeMap<String, List<GroupMemberInfoDto>>(
-                new Comparator<String>() {
-                    public int compare(String obj1, String obj2) {
-                        // 降序排序
-                        return obj1.compareTo(obj2);
-                    }
-                });
-        memberInfoDtos.stream().forEach(x -> {
-            String first = PinYinUtils.first(x.getName());
-            if (!pinyinVos.containsKey(first)) {
-                pinyinVos.put(first, Lists.newArrayList(x));
-                return;
-            }
-            pinyinVos.get(first).add(x);
-        });
-        List<GroupMemberPinYinVo> groupMemberPinYinVos = Lists.newArrayList();
-        GroupMemberPinYinVo pinVo = null;
-        for (String pinyin : pinyinVos.keySet()) {
-            pinVo = new GroupMemberPinYinVo();
-            pinVo.setCharCode(pinyin);
-            pinVo.setMembers(pinyinVos.get(pinyin));
-            groupMemberPinYinVos.add(pinVo);
-        }
-        return R.data(groupMemberPinYinVos);
+        return R.data(memberGroupService.listByPinYin(groupId));
     }
 
     @Operation(summary = "通过群组查询")
     @GetMapping("/query")
     public R<List<GroupMemberInfoDto>> queryMembers(@RequestParam("groupId") Long groupId) {
-        return R.data(memberGroupService.queryMembersByGroupId(groupId, SecurityUtils.getUserId()));
+        return R.data(memberGroupService.listByGroupIdAndNotMember(groupId, SecurityUtils.getUserId()));
     }
 
     @Operation(summary = "通过ids查询")
     @PostMapping("/ids")
     public R<List<GroupMemberInfoDto>> queryMemberIds(@RequestBody GroupMemberIdsParam idsParam) {
-        return R.data(memberGroupService.queryMemberIds(idsParam.getIds()));
+        return R.data(memberGroupService.listByMemberIds(idsParam.getIds()));
     }
 
     @Operation(summary = "申请入群")

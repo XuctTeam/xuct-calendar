@@ -11,12 +11,13 @@
 package cn.com.xuct.calendar.ums.api.vo;
 
 import cn.com.xuct.calendar.ums.api.dto.GroupMemberInfoDto;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.List;
 
 /**
- * 〈一句话功能简述〉<br> 
+ * 〈一句话功能简述〉<br>
  * 〈〉
  *
  * @author Derek Xu
@@ -26,7 +27,9 @@ import java.util.List;
 @Data
 public class GroupMemberPinYinVo {
 
+    @Schema(description = "拼音首字母")
     private String charCode;
 
+    @Schema(description = "群组成员")
     private List<GroupMemberInfoDto> members;
 }

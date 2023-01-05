@@ -38,10 +38,11 @@ public class MemberMessage extends SuperEntity<MemberMessage> {
 
     private String title;
 
+    @Schema(description = "会员ID")
     @TableField("member_id")
     private Long memberId;
 
-    @Schema(title = "分类")
+    @Schema(description = "分类")
     private MemberMessageTypeEnum type;
 
     /* 类型 */
@@ -51,6 +52,7 @@ public class MemberMessage extends SuperEntity<MemberMessage> {
     @Schema(title = "状态", description = "0未读 1.已读")
     private Integer status;
 
+    @Schema(description = "消息结构体")
     @TableField(typeHandler = JsonObjectTypeHandler.class)
     @JsonSerialize(using = JsonObjectStdSerializer.class)
     private JSONObject content;

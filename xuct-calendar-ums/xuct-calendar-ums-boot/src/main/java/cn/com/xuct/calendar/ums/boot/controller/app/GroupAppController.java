@@ -20,6 +20,7 @@ import cn.com.xuct.calendar.ums.api.dto.GroupInfoDto;
 import cn.com.xuct.calendar.ums.api.dto.GroupMemberInfoDto;
 import cn.com.xuct.calendar.ums.api.dto.GroupSearchPageDto;
 import cn.com.xuct.calendar.ums.api.entity.Group;
+import cn.com.xuct.calendar.ums.api.vo.GroupMemberTreeVo;
 import cn.com.xuct.calendar.ums.boot.event.GroupDeleteEvent;
 import cn.com.xuct.calendar.ums.boot.service.IGroupService;
 import cn.hutool.core.util.RandomUtil;
@@ -55,7 +56,7 @@ public class GroupAppController {
     @Operation(summary = "获取用户所在群组")
     @GetMapping("")
     public R<List<GroupInfoDto>> list() {
-        return R.data(groupService.findGroupCountByMember(SecurityUtils.getUserId()));
+        return R.data(groupService.listGroupCountByMember(SecurityUtils.getUserId()));
     }
 
     @Operation(summary = "查询群组信息")
@@ -66,6 +67,12 @@ public class GroupAppController {
         if (!String.valueOf(SecurityUtils.getUserId()).equals(String.valueOf(groupInfoDto.getCreateMemberId())))
             groupInfoDto.setPassword(null);
         return R.data(groupInfoDto);
+    }
+
+    @Operation(summary = "查询用户的所有群组及组内所有成员")
+    @GetMapping("/tree")
+    public R<List<GroupMemberTreeVo>> listGroupTree() {
+        return R.data(groupService.listGroupTree(SecurityUtils.getUserId()));
     }
 
     @Operation(summary = "搜索群组")
@@ -80,7 +87,7 @@ public class GroupAppController {
         dateScope = StringUtils.hasLength(dateScope) ? dateScope : null;
         numCount = StringUtils.hasLength(numCount) ? numCount : null;
 
-        List<GroupInfoDto> groupInfoDtos = groupService.findGroupBySearchByPage(SecurityUtils.getUserId(), word, page, limit + 1, hasPass, dateScope, numCount);
+        List<GroupInfoDto> groupInfoDtos = groupService.pageGroupBySearch(SecurityUtils.getUserId(), word, page, limit + 1, hasPass, dateScope, numCount);
         if (groupInfoDtos.size() == limit + 1) {
             groupInfoDtos.remove(groupInfoDtos.size() - 1);
             groupSearchPageDto.setFinished(false);

@@ -10,6 +10,7 @@
  */
 package cn.com.xuct.calendar.common.module.vo;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 /**
@@ -23,10 +24,10 @@ import lombok.Data;
 @Data
 public class MemberPhoneAuthVo {
 
-    /* 是否存在 */
+    @Schema(description = "是否存在")
     private Boolean exist;
 
-    /* 是否需要合并 */
+    @Schema(description = "是否需要合并")
     private Boolean merge;
 
 

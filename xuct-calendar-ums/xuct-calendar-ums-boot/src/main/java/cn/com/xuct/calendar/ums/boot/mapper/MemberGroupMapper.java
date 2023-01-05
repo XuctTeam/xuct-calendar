@@ -35,7 +35,6 @@ public interface MemberGroupMapper extends BaseMapper<MemberGroup> {
      */
     List<GroupMemberInfoDto> list(@Param("groupId") Long groupId, @Param("memberId") Long memberId);
 
-
     /**
      * 查询组下所有用户
      *
@@ -51,6 +50,14 @@ public interface MemberGroupMapper extends BaseMapper<MemberGroup> {
      * @return
      */
     List<GroupMemberInfoDto> queryMembersByGroupId(@Param("groupId") Long groupId, @Param("memberId") Long memberId);
+
+    /**
+     * 查询用户下所有的群组及组内所有成员
+     *
+     * @param memberId
+     * @return
+     */
+    List<GroupMemberInfoDto> listAllGroupMemberByMemberId(@Param("memberId") Long memberId);
 
     /**
      * 通过id查询

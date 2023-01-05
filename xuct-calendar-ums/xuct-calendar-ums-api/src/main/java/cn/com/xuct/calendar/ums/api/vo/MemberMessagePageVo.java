@@ -11,6 +11,7 @@
 package cn.com.xuct.calendar.ums.api.vo;
 
 import cn.com.xuct.calendar.ums.api.entity.MemberMessage;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.List;
@@ -26,7 +27,9 @@ import java.util.List;
 @Data
 public class MemberMessagePageVo {
 
+    @Schema(description = "数据是否加载完成")
     private boolean finished = false;
 
+    @Schema(description = "消息集合")
     private List<MemberMessage> messages;
 }

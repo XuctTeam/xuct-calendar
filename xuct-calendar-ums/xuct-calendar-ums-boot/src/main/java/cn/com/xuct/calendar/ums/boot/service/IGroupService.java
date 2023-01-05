@@ -14,6 +14,7 @@ import cn.com.xuct.calendar.common.db.service.IBaseService;
 import cn.com.xuct.calendar.ums.api.dto.GroupInfoDto;
 import cn.com.xuct.calendar.ums.api.dto.GroupMemberInfoDto;
 import cn.com.xuct.calendar.ums.api.entity.Group;
+import cn.com.xuct.calendar.ums.api.vo.GroupMemberTreeVo;
 import cn.com.xuct.calendar.ums.boot.mapper.GroupMapper;
 
 import java.util.List;
@@ -28,70 +29,21 @@ import java.util.List;
  */
 public interface IGroupService extends IBaseService<GroupMapper, Group> {
 
-    /**
-     * 查询会员下组，包括人数
-     *
-     * @param memberId
-     * @return
-     */
-    List<GroupInfoDto> findGroupCountByMember(Long memberId);
+    List<GroupInfoDto> listGroupCountByMember(final Long memberId);
 
-    /**
-     * 查询群组下总数
-     *
-     * @param id
-     * @return
-     */
-    GroupInfoDto getGroupCountByGroupId(Long id);
+    List<GroupMemberTreeVo> listGroupTree(final Long memberId);
 
-    /**
-     * 关键字查询组
-     *
-     * @param word
-     * @return
-     */
-    List<GroupInfoDto> findGroupBySearchByPage(final Long memberId, final String word, final Integer page, final Integer limit, final String hasPass, final String dateScope, final String numCount);
+    GroupInfoDto getGroupCountByGroupId(final Long id);
 
-    /**
-     * 我申请的群组
-     *
-     * @param memberId
-     * @return
-     */
+    List<GroupInfoDto> pageGroupBySearch(final Long memberId, final String word, final Integer page, final Integer limit, final String hasPass, final String dateScope, final String numCount);
+
     List<GroupMemberInfoDto> mineApplyGroup(Long memberId);
 
-    /**
-     * 申请我的群组
-     *
-     * @param memberId
-     * @return
-     */
     List<GroupMemberInfoDto> applyMineGroup(Long memberId);
 
-    /**
-     * 添加组
-     *
-     * @param memberId
-     * @param name
-     * @param password
-     * @param imageUrl
-     * @param power
-     * @param num
-     * @param no       编号
-     */
     void addGroup(final Long memberId, final String name, final String password, final String imageUrl, final String power, final Integer num, final String no);
 
-    /**
-     * 解散群组
-     *
-     * @param id
-     */
     List<Long> deleteGroup(Long id);
 
-    /**
-     * 通过用户id删除所有分组
-     *
-     * @param memberId
-     */
     void removeAllGroupByMemberId(final Long memberId);
 }

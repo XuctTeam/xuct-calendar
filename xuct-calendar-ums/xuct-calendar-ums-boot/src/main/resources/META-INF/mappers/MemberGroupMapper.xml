@@ -58,4 +58,13 @@
           and mg.member_id = #{memberId}
     </select>
 
+    <select id="listAllGroupMemberByMemberId" resultType="cn.com.xuct.calendar.ums.api.dto.GroupMemberInfoDto">
+        select ss.name, g.member_id, ss.avatar, g.group_id
+        from sys_member_group g
+                 left join sys_member ss on g.member_id = ss.id
+            and g.status = 'NORMAL'
+        where group_id in
+              (select group_id from sys_member_group where status = 'NORMAL' and member_id = #{memberId})
+    </select>
+
 </mapper>

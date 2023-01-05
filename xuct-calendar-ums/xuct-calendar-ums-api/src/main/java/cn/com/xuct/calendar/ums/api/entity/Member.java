@@ -13,6 +13,7 @@ package cn.com.xuct.calendar.ums.api.entity;
 import cn.com.xuct.calendar.common.db.dao.base.SuperEntity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 /**
@@ -27,25 +28,19 @@ import lombok.Data;
 @TableName("sys_member")
 public class Member extends SuperEntity<Member> {
 
-
+    @Schema(description = "名称")
     private String name;
 
-    /**
-     * 头像
-     */
+    @Schema(description = "头像")
     private String avatar;
 
-    /**
-     * 状态 0正常 1冻结 2删除
-     */
+    @Schema(description = "状态 0正常 1冻结 2删除")
     private int status;
 
-    /* 时区 */
+    @Schema(description = "时区")
     @TableField("time_zone")
     private String timeZone = "east_8";
 
-    /**
-     * 组织
-     */
+    @Schema(description = "组织")
     private String organization;
 }
