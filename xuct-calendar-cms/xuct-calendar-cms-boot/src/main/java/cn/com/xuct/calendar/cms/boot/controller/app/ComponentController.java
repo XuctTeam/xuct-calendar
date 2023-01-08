@@ -125,7 +125,9 @@ public class ComponentController {
     @PostMapping
     public R<String> add(@Validated @RequestBody ComponentAddParam param) {
         MemberCalendar memberCalendar = memberCalendarService.get(Lists.newArrayList(Column.of("calendar_id", Long.valueOf(param.getCalendarId())), Column.of("member_id", SecurityUtils.getUserId())));
-        if (memberCalendar == null) throw new SvrException(SvrResCode.CMS_CALENDAR_NOT_FOUND);
+        if (memberCalendar == null) {
+            throw new SvrException(SvrResCode.CMS_CALENDAR_NOT_FOUND);
+        }
         List<ComponentAlarm> componentAlarmList = null;
         Component component = null;
         if (!StringUtils.hasText(param.getId())) {
@@ -135,8 +137,9 @@ public class ComponentController {
             component = componentService.getById(param.getId());
             componentAlarmList = this.updateComponent(param, component);
         }
-        if (CollectionUtils.isEmpty(componentAlarmList))
+        if (CollectionUtils.isEmpty(componentAlarmList)) {
             return R.data(String.valueOf(component.getId()));
+        }
         ComponentAlarm componentAlarm = null;
         for (int i = 0, j = componentAlarmList.size(); i < j; i++) {
             componentAlarm = componentAlarmList.get(i);
@@ -164,7 +167,9 @@ public class ComponentController {
         }
         List<Long> memberIds = componentService.deleteByComponentId(SecurityUtils.getUserId(), id);
         /* 1.推送日程删除消息 */
-        if (CollectionUtils.isEmpty(memberIds)) return R.status(true);
+        if (CollectionUtils.isEmpty(memberIds)) {
+            return R.status(true);
+        }
         SpringContextHolder.publishEvent(new ComponentDelEvent(this, component.getId(), component.getSummary(),
                 DateUtil.format(component.getDtstart(), DatePattern.NORM_DATETIME_FORMAT), component.getCreatorMemberId(), component.getLocation(), component.getRepeatStatus(), null, memberIds));
         return R.status(true);
@@ -174,7 +179,9 @@ public class ComponentController {
     @GetMapping("/attend/member/ids")
     public R<List<String>> queryComponentMemberIds(@RequestParam("componentId") Long componentId) {
         List<Long> memberIds = componentAttendService.listByComponentIdNoMemberId(SecurityUtils.getUserId(), componentId).stream().map(ComponentAttend::getMemberId).collect(Collectors.toList());
-        if (CollectionUtils.isEmpty(memberIds)) return R.data(Lists.newArrayList());
+        if (CollectionUtils.isEmpty(memberIds)) {
+            return R.data(Lists.newArrayList());
+        }
         return R.data(memberIds.stream().map(String::valueOf).collect(Collectors.toList()));
     }
 
@@ -246,7 +253,9 @@ public class ComponentController {
     public R<ComponentAttachment> upload(@RequestParam("file") MultipartFile file, @RequestParam("uuid") String uuid, @RequestParam(value = "componentId", required = false) Long componentId) throws IOException, FdfsClientException {
         Assert.isTrue(!(StringUtils.hasText(uuid) && componentId == null), "参数错误");
         Long count = componentAttachmentService.count(componentId != null ? Column.of("component_id", componentId) : Column.of("uuid", uuid));
-        if (count > uploadConfiguration.getMaxNumber()) return R.fail("已达到最大");
+        if (count > uploadConfiguration.getMaxNumber()) {
+            return R.fail("已达到最大");
+        }
         FdfsClient fdfsClient = new FdfsClient();
         String url = fdfsClient.upload(file, Maps.newHashMap());
         ComponentAttachment componentAttachment = new ComponentAttachment();
@@ -268,10 +277,14 @@ public class ComponentController {
     @GetMapping("/anno/share")
     public R<ComponentShareVo> getComponentInfo(@RequestParam("componentId") String componentId) {
         Component component = componentService.getById(componentId);
-        if (component == null) return R.fail("未找到事件");
+        if (component == null) {
+            return R.fail("未找到事件");
+        }
         ComponentShareVo shareVo = new ComponentShareVo();
         MemberCalendar memberCalendar = memberCalendarService.get(Lists.newArrayList(Column.of("member_id", component.getCreatorMemberId()), Column.of("calendar_id", component.getCalendarId())));
-        if (memberCalendar == null) return R.fail("未找到日历");
+        if (memberCalendar == null) {
+            return R.fail("未找到日历");
+        }
         BeanUtils.copyProperties(component, shareVo);
         shareVo.setColor(memberCalendar.getColor());
         shareVo.setCalendarName(memberCalendar.getName());
@@ -292,16 +305,20 @@ public class ComponentController {
     }
 
     private List<ComponentAlarm> insertComponent(ComponentAddParam param, Component component) {
-        if (!param.getRepeatStatus().equals("0") && param.getRepeatUntil() == null)
+        if (!"0".equals(param.getRepeatStatus()) && param.getRepeatUntil() == null){
             throw new SvrException(SvrResCode.CMS_COMPONENT_REPEAT_UNTIL_EMPTY);
+        }
         this.setComponent(param, component);
         return componentService.addComponent(SecurityUtils.getUserId(), SecurityUtils.getTimeZone(), Long.valueOf(param.getCalendarId()), component, param.getMemberIds(), param.getAlarmType(), param.getAlarmTimes());
     }
 
     private List<ComponentAlarm> updateComponent(ComponentAddParam param, Component component) {
-        if (component == null) throw new SvrException(SvrResCode.CMS_COMPONENT_NOT_FOUND);
-        if (!param.getRepeatStatus().equals("0") && param.getRepeatUntil() == null)
+        if (component == null){
+            throw new SvrException(SvrResCode.CMS_COMPONENT_NOT_FOUND);
+        }
+        if (!"0".equals(param.getRepeatStatus()) && param.getRepeatUntil() == null){
             throw new SvrException(SvrResCode.CMS_COMPONENT_REPEAT_UNTIL_EMPTY);
+        }
         boolean changed = false;
         Long oldCalendarId = component.getCalendarId();
         if (param.getDtstart().getTime() != component.getDtstart().getTime() ||
@@ -329,7 +346,7 @@ public class ComponentController {
         component.setEndTime(param.getDtend().getTime());
         component.setCreatorMemberId(SecurityUtils.getUserId());
         component.setStatus(CommonStatusEnum.NORMAL);
-        if (param.getRepeatStatus().equals("0")) {
+        if ("0".equals(param.getRepeatStatus())) {
             component.setRepeatType(ComponentRepeatTypeEnum.UNKNOWN);
         } else {
             component.setRepeatType(ComponentRepeatTypeEnum.getValueByValue(param.getRepeatType()));
@@ -355,10 +372,16 @@ public class ComponentController {
      * @Date: 2022/1/17 17:09
      */
     private boolean getRepeatUntilEquals(Date paramRepeatUntil, Date componentRepeatUntil) {
-        if (paramRepeatUntil == null && componentRepeatUntil == null) return true;
-        if (paramRepeatUntil == null && componentRepeatUntil != null || paramRepeatUntil != null && componentRepeatUntil == null)
+        if (paramRepeatUntil == null && componentRepeatUntil == null) {
+            return true;
+        }
+        if (paramRepeatUntil == null && componentRepeatUntil != null || paramRepeatUntil != null && componentRepeatUntil == null) {
             return false;
-        if (paramRepeatUntil.getTime() != componentRepeatUntil.getTime()) return false;
+        }
+
+        if (paramRepeatUntil.getTime() != componentRepeatUntil.getTime()) {
+            return false;
+        }
         return true;
     }
 

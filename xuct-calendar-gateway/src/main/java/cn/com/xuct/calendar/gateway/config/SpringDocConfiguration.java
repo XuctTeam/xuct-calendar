@@ -23,9 +23,12 @@ public class SpringDocConfiguration implements InitializingBean {
 
     private final SwaggerDocProperties swaggerProperties;
 
-    // TODO 从配置文件读取或者从gateway路由中读取
+    /**
+     * 从配置文件读取或者从gateway路由中读取
+     */
     @Override
     public void afterPropertiesSet() {
+
         Set<AbstractSwaggerUiConfigProperties.SwaggerUrl> swaggerUrlSet = new HashSet<>();
         for (String value : swaggerProperties.getServices().values()) {
             AbstractSwaggerUiConfigProperties.SwaggerUrl swaggerUrl = new AbstractSwaggerUiConfigProperties.SwaggerUrl();

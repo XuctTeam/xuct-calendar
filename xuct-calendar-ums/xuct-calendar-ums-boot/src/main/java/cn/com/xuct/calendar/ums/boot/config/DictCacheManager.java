@@ -77,9 +77,13 @@ public class DictCacheManager {
     public static Dict getDictByCode(String type, String code) {
         List<Dict> dicts = DictCacheManager.dictCache.get(type);
         System.out.println(dictCache.get("time_zone"));
-        if (CollectionUtils.isEmpty(dicts)) return null;
+        if (CollectionUtils.isEmpty(dicts)) {
+            return null;
+        }
         Dict dict = dicts.stream().filter(x -> x.getCode().equals(code)).findFirst().orElse(new Dict());
-        if (dict.getId() == null) return null;
+        if (dict.getId() == null) {
+            return null;
+        }
         return dict;
     }
 }

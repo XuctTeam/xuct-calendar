@@ -68,7 +68,9 @@ public class ComponentEventListener {
             memberMessage.setContent(content);
             memberMessageList.add(memberMessage);
         }
-        if (CollectionUtils.isEmpty(memberMessageList)) return;
+        if (CollectionUtils.isEmpty(memberMessageList)) {
+            return;
+        }
         memberMessageService.saveBatch(memberMessageList);
     }
 

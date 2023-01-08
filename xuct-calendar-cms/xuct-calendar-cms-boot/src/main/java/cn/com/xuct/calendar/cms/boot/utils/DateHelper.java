@@ -76,7 +76,9 @@ public class DateHelper {
         VEvent event = new VEvent();
         event.setDateStart(component.getDtstart());
         TimeZone timeZone = DateHelper.getTimeZone(timeZoneId, event.getDateStart());
-        if (timeZone == null) return Lists.newArrayList();
+        if (timeZone == null){
+            return Lists.newArrayList();
+        }
         CalendarFactory.parseRepeatDate(component, event);
         DateIterator it = event.getDateIterator(timeZone);
         List<DateTime> rangeList = Lists.newArrayList();

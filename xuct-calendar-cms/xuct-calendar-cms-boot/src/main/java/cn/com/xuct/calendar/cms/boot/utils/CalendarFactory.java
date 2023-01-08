@@ -130,7 +130,9 @@ public class CalendarFactory {
     }
 
     private static Set<Integer> formatRepeatBysetpos(final String repeatBysetpos) {
-        if (!StringUtils.hasLength(repeatBysetpos)) return Sets.newHashSet();
+        if (!StringUtils.hasLength(repeatBysetpos)) {
+            return Sets.newHashSet();
+        }
         return Stream.of(repeatBysetpos.split(",")).map(string -> {
             return Integer.parseInt(string);
         }).collect(Collectors.toSet());

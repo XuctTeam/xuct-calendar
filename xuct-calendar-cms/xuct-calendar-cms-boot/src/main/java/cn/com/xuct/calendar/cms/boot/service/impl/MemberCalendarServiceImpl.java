@@ -120,7 +120,9 @@ public class MemberCalendarServiceImpl extends BaseServiceImpl<MemberCalendarMap
     @Transactional(rollbackFor = Exception.class)
     public void mergeMemberCalendar(Long fromMemberId, Long memberId) {
         List<MemberCalendar> memberCalendars = this.find(Column.of("member_id", fromMemberId));
-        if (CollectionUtils.isEmpty(memberCalendars)) return;
+        if (CollectionUtils.isEmpty(memberCalendars)){
+            return;
+        }
         /* 1. 更新非主日历到新ID下 */
         List<MemberCalendar> notMajorCalendars = memberCalendars.stream().filter(calendar -> calendar.getMajor() == 0).collect(Collectors.toList());
         Date updateTime = new Date();
@@ -132,10 +134,13 @@ public class MemberCalendarServiceImpl extends BaseServiceImpl<MemberCalendarMap
         this.updateBatchById(notMajorCalendars);
         /*2. 更新邀请数据 */
         Optional<MemberCalendar> majorCalendarOpt = memberCalendars.stream().filter(calendar -> calendar.getMajor() == 1).findFirst();
-        if (!majorCalendarOpt.isPresent()) return;
+        if (!majorCalendarOpt.isPresent()) {
+            return;
+        }
         MemberCalendar currentMajorCalendar = this.get(Lists.newArrayList(Column.of("member_id", memberId), Column.of("major", 1)));
-        if (currentMajorCalendar == null)
+        if (currentMajorCalendar == null){
             throw new RuntimeException("member calendar service:: get current major calendar is null , member id = ".concat(String.valueOf(memberId)));
+        }
         /*3. 更新邀请日历*/
         componentAttendService.updateAttendCalendarId(majorCalendarOpt.get().getCalendarId(), currentMajorCalendar.getCalendarId());
         componentAttendService.updateAttendMarjoCalendarId(majorCalendarOpt.get().getCalendarId(), currentMajorCalendar.getCalendarId());

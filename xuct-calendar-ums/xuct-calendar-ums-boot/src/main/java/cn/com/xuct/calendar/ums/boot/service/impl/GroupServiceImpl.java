@@ -56,7 +56,9 @@ public class GroupServiceImpl extends BaseServiceImpl<GroupMapper, Group> implem
     @Override
     public List<GroupMemberTreeVo> listGroupTree(final Long memberId) {
         List<GroupMemberInfoDto> members = memberGroupService.listAllGroupMemberByMemberId(memberId);
-        if (CollectionUtils.isEmpty(members)) return Lists.newArrayList();
+        if (CollectionUtils.isEmpty(members)) {
+            return Lists.newArrayList();
+        }
         List<GroupMemberTreeVo> groupMemberTreeVos = Lists.newArrayList();
         List<String> groupIds = members.stream().map(GroupMemberInfoDto::getGroupId).collect(Collectors.toList());
         Map<Long, Group> groupMap = super.find(Column.in("id", groupIds)).stream().collect(Collectors.toMap(Group::getId, item -> item));

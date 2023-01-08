@@ -76,9 +76,13 @@ public class DictCacheManager {
      */
     public static Dict getDictByCode(String type, String code) {
         List<Dict> dictList = DictCacheManager.dictCache.get(type);
-        if (CollectionUtils.isEmpty(dictList)) return null;
+        if (CollectionUtils.isEmpty(dictList)){
+            return null;
+        }
         Dict dict = dictList.stream().filter(x -> x.getCode().equals(code)).findFirst().orElse(new Dict());
-        if (dict.getId() == null) return null;
+        if (dict.getId() == null){
+            return null;
+        }
         return dict;
     }
 

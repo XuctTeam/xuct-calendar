@@ -99,10 +99,14 @@ public class ComponentAttendServiceImpl extends BaseServiceImpl<ComponentAttendM
     @Override
     public List<ComponentAttendVo> listByComponentId(Long componentId, Long creatorMemberId) {
         List<ComponentAttend> members = this.listByComponentIdNoMemberId(creatorMemberId, componentId);
-        if (CollectionUtils.isEmpty(members)) return Lists.newArrayList();
+        if (CollectionUtils.isEmpty(members)) {
+            return Lists.newArrayList();
+        }
         R<List<PersonInfo>> memberInfoResult = memberFeignClient.listMemberByIds(members.stream().map(ComponentAttend::getMemberId).collect(Collectors.toList()));
         List<PersonInfo> personInfos = RetOps.of(memberInfoResult).getData().orElse(Lists.newArrayList());
-        if (CollectionUtils.isEmpty(personInfos)) return Lists.newArrayList();
+        if (CollectionUtils.isEmpty(personInfos)) {
+            return Lists.newArrayList();
+        }
         Map<Long, ComponentAttend> attendMap = members.stream().collect(Collectors.toMap(ComponentAttend::getMemberId, attend -> attend, (oldValue, newValue) -> newValue));
         return memberInfoResult.getData().stream().map(info -> {
             ComponentAttendVo attendVo = new ComponentAttendVo();

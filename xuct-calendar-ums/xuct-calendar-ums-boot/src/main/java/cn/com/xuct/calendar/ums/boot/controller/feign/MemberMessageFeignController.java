@@ -61,7 +61,9 @@ public class MemberMessageFeignController {
             memberMessage.setStatus(0);
             memberMessageList.add(memberMessage);
         }
-        if (CollectionUtils.isEmpty(memberMessageList)) return R.fail("保存失败");
+        if (CollectionUtils.isEmpty(memberMessageList)) {
+            return R.fail("保存失败");
+        }
         memberMessageService.saveBatch(memberMessageList);
         return R.status(true);
     }

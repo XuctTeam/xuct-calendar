@@ -46,7 +46,9 @@ public class UploadAppController {
     @Operation(summary = "上传图片")
     public R<UploadImageVo> uploadImage(@RequestParam MultipartFile file) {
         ImgUrlData imgUrlData = imgUrlClient.upload(FilesUtils.multipartFileToFile(file, "/temp", FilesUtils.contentTypeToFileSuffix(file.getContentType())));
-        if (imgUrlData == null) return R.fail("上传失败");
+        if (imgUrlData == null) {
+            return R.fail("上传失败");
+        }
         return R.data(UploadImageVo.builder().url(imgUrlData.getUrl()).width(imgUrlData.getImageWidth()).height(imgUrlData.getImageHeight())
                 .thumbnailUrl(imgUrlData.getThumbnailUrl())
                 .build());

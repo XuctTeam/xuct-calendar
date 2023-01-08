@@ -76,11 +76,15 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
     @Override
     public List<ComponentListVo> listDaysComponentByCalendar(Long calendarId, Long startDate, Long endDate) {
         List<Component> componentList = componentAttendService.listByCalendarId(Long.valueOf(calendarId), startDate, endDate);
-        if (CollectionUtils.isEmpty(componentList)) return Lists.newArrayList();
+        if (CollectionUtils.isEmpty(componentList)) {
+            return Lists.newArrayList();
+        }
         LinkedHashMap<String, List<Component>> componentListMap = Maps.newLinkedHashMap();
         this.covertComponentMaps(componentList, componentListMap);
         List<ComponentListVo> componentListVos = Lists.newArrayList();
-        if (MapUtil.isEmpty(componentListMap)) return componentListVos;
+        if (MapUtil.isEmpty(componentListMap)) {
+            return componentListVos;
+        }
         ComponentListVo componentListVo;
         for (String day : componentListMap.keySet()) {
             componentListVo = new ComponentListVo();
@@ -95,11 +99,13 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
     @Override
     public List<ComponentListVo> listDaysComponentByComponentId(Long componentId) {
         Component component = super.getById(componentId);
-        if (component == null)
+        if (component == null) {
             throw new SvrException(SvrResCode.CMS_COMPONENT_NOT_FOUND);
+        }
         final List<DateTime> dayRanges = "0".equals(component.getRepeatStatus()) ? DateHelper.getRangeDateList(component.getDtstart(), component.getDtend()) : DateHelper.getRepeatRangeDataList(component, SecurityUtils.getTimeZone());
-        if (CollectionUtils.isEmpty(dayRanges))
+        if (CollectionUtils.isEmpty(dayRanges)) {
             throw new SvrException(SvrResCode.CMS_COMPONENT_DAY_LIST_EMPTY);
+        }
         List<ComponentListVo> componentListVos = Lists.newArrayList();
         ComponentListVo componentListVo = null;
         for (int i = 0, j = dayRanges.size(); i < j; i++) {
@@ -129,21 +135,23 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
     @Override
     public CalendarComponentVo getComponentById(final Long userId, final Long componentId) {
         Component component = super.getById(componentId);
-        if (component == null)
+        if (component == null) {
             throw new SvrException(SvrResCode.CMS_COMPONENT_NOT_FOUND);
-
+        }
         CalendarComponentVo calendarComponentVo = new CalendarComponentVo();
         BeanUtils.copyProperties(component, calendarComponentVo);
         Long calendarId = component.getCalendarId();
         if (!String.valueOf(component.getCreatorMemberId()).equals(String.valueOf(SecurityUtils.getUserId()))) {
             ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", componentId), Column.of("member_id", userId)));
-            if (attend == null)
+            if (attend == null) {
                 throw new SvrException(SvrResCode.CMS_COMPONENT_ATTEND_EMPTY);
+            }
             calendarId = attend.getAttendCalendarId();
         }
         MemberCalendar memberCalendar = memberCalendarService.get(Lists.newArrayList(Column.of("calendar_id", calendarId), Column.of("member_id", userId)));
-        if (memberCalendar == null)
+        if (memberCalendar == null) {
             throw new SvrException(SvrResCode.CMS_CALENDAR_NOT_FOUND);
+        }
         calendarComponentVo.setColor(memberCalendar.getColor());
         calendarComponentVo.setCalendarName(memberCalendar.getName());
         return calendarComponentVo;
@@ -167,7 +175,9 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
         /* 增加邀请人数据 */
         this.addComponentAttends(memberId, calendarId, component, memberIds, false);
         /* 增加提醒数据 */
-        if (alarmType.equals(ComponentAlarmEnum.UNKNOWN.getCode())) return Lists.newArrayList();
+        if (alarmType.equals(ComponentAlarmEnum.UNKNOWN.getCode())) {
+            return Lists.newArrayList();
+        }
         return this.addAlarm(memberId, timeZone, calendarId, component, alarmTimes);
     }
 
@@ -257,7 +267,9 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
             component.setAlarmTimes(ArrayUtil.join(alarmTimes.toArray(new Integer[alarmTimes.size()]), ","));
         }
         this.updateById(component);
-        if (alarmType.equals(ComponentAlarmEnum.UNKNOWN.getCode())) return Lists.newArrayList();
+        if (alarmType.equals(ComponentAlarmEnum.UNKNOWN.getCode())) {
+            return Lists.newArrayList();
+        }
         return this.addAlarm(memberId, timeZone, component.getCalendarId(), component, alarmTimes);
     }
 
@@ -295,7 +307,9 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
         /* 更新参会人的邀请日历 */
         if (isNewCalendar) {
             List<Long> updateReduce = attends.stream().filter(item -> memberIds.contains(String.valueOf(item))).collect(Collectors.toList());
-            if (CollectionUtils.isEmpty(updateReduce)) return;
+            if (CollectionUtils.isEmpty(updateReduce)) {
+                return;
+            }
             componentAttendService.batchUpdateAttendMemberCalendarId(component.getId(), calendarId, updateReduce);
         }
     }
@@ -315,7 +329,9 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
      * @Date: 2022/1/20 22:40
      */
     private List<ComponentAlarm> addAlarm(final Long memberId, final String timeZone, final Long calendarId, Component component, final List<Integer> alarmTimes) {
-        if (CollectionUtils.isEmpty(alarmTimes)) return Lists.newArrayList();
+        if (CollectionUtils.isEmpty(alarmTimes)) {
+            return Lists.newArrayList();
+        }
         /* 不循环日程 */
         List<ComponentAlarm> componentAlarmList = null;
         if ("0".equals(component.getRepeatStatus())) {
@@ -390,7 +406,9 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
             } else {
                 dayRanges.addAll(DateHelper.getRepeatRangeDataList(component, SecurityUtils.getTimeZone()));
             }
-            if (dayRanges.size() == 0) return;
+            if (dayRanges.size() == 0){
+                return;
+            }
             for (int i = 0; i < dayRanges.size(); i++) {
                 final String formatDay = DateUtil.format(dayRanges.get(i), DateConstants.PATTERN_DATE);
                 if (!componentListMap.containsKey(formatDay)) {
@@ -422,7 +440,9 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
         for (int i = 0, j = alarmTimes.size(); i < j; i++) {
             Long trigger = alarmTimes.get(i) * 60 * 1000L;
             Long diff = diffTime - trigger;
-            if (diff < 0) continue;
+            if (diff < 0) {
+                continue;
+            }
             componentAlarm = this.getDefaultAlarm(memberId, calendarId, component.getId());
             componentAlarm.setTriggerSec(alarmTimes.get(i));
             componentAlarm.setAlarmTime(DateUtil.offsetMillisecond(now, Math.toIntExact(diff)));
@@ -448,7 +468,9 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
     private List<ComponentAlarm> repeatAlarm(final Long memberId, final String timeZone, final Long calendarId, Component component, List<Integer> alarmTimes) {
         List<DateTime> dateTimes = DateHelper.getRepeatRangeDataList(component, timeZone);
         List<ComponentAlarm> alarmDatas = Lists.newArrayList();
-        if (CollectionUtils.isEmpty(dateTimes)) return alarmDatas;
+        if (CollectionUtils.isEmpty(dateTimes)){
+            return alarmDatas;
+        }
         final DateTime now = DateUtil.date();
         DateTime repeatDate = null;
         ComponentAlarm componentAlarm = null;
@@ -459,7 +481,9 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
             for (int m = 0, n = dateTimes.size(); m < n; m++) {
                 repeatDate = dateTimes.get(m);
                 long nextTime = repeatDate.getTime() - now.getTime() - trigger;
-                if (nextTime < 0) continue;
+                if (nextTime < 0) {
+                    continue;
+                }
                 componentAlarm.setAlarmTime(DateUtil.offsetMillisecond(repeatDate, -Math.toIntExact(trigger)));
                 componentAlarm.setDelayTime(NumberUtil.compare(nextTime, rabbitmqConfiguration.getMaxDelay()) == -1 ? nextTime : rabbitmqConfiguration.getMaxDelay());
                 alarmDatas.add(componentAlarm);

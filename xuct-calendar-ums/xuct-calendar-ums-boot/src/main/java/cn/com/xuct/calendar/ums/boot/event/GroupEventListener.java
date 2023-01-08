@@ -71,7 +71,9 @@ public class GroupEventListener {
             memberMessage.setContent(jsonObject);
             memberMessages.add(memberMessage);
         }
-        if (CollectionUtils.isEmpty(memberMessages)) return;
+        if (CollectionUtils.isEmpty(memberMessages)){
+            return;
+        }
         memberMessageService.saveBatch(memberMessages);
     }
 

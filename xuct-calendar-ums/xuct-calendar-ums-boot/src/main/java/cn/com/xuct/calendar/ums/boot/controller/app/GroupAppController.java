@@ -64,8 +64,9 @@ public class GroupAppController {
     public R<GroupInfoDto> get(@RequestParam("id") Long id) {
         GroupInfoDto groupInfoDto = groupService.getGroupCountByGroupId(id);
         Assert.notNull(groupInfoDto, "查询结果为空");
-        if (!String.valueOf(SecurityUtils.getUserId()).equals(String.valueOf(groupInfoDto.getCreateMemberId())))
+        if (!String.valueOf(SecurityUtils.getUserId()).equals(String.valueOf(groupInfoDto.getCreateMemberId()))) {
             groupInfoDto.setPassword(null);
+        }
         return R.data(groupInfoDto);
     }
 
@@ -116,17 +117,21 @@ public class GroupAppController {
             return R.status(true);
         }
         Group group = groupService.getById(addParam.getId());
-        if (group == null) return R.fail("群组不存在");
-        if (!String.valueOf(group.getMemberId()).equals(String.valueOf(SecurityUtils.getUserId())))
+        if (group == null) {
+            return R.fail("群组不存在");
+        }
+        if (!String.valueOf(group.getMemberId()).equals(String.valueOf(SecurityUtils.getUserId()))) {
             return R.fail("非群组管理员");
+        }
         group.setName(addParam.getName());
         if (StringUtils.hasLength(addParam.getImageUrl()) && !addParam.getImageUrl().equals(group.getImages())) {
             group.setImages(addParam.getImageUrl());
         } else if (StringUtils.hasLength(group.getImages()) && !StringUtils.hasLength(addParam.getImageUrl())) {
             group.setImages(null);
         }
-        if (StringUtils.hasLength(addParam.getPassword()))
+        if (StringUtils.hasLength(addParam.getPassword())){
             group.setPassword(addParam.getPassword());
+        }
         group.setPower(CommonPowerEnum.valueOf(addParam.getPower()));
         group.setNum(addParam.getNum());
         if (!StringUtils.hasLength(group.getNo())) {
@@ -140,12 +145,16 @@ public class GroupAppController {
     @PostMapping("/delete")
     public R<String> deleteGroup(@RequestBody @Validated GroupDeleteParam param) {
         Group group = groupService.getById(param.getId());
-        if (group == null)
+        if (group == null){
             return R.fail("群组不存在");
-        if (!String.valueOf(group.getMemberId()).equals(String.valueOf(SecurityUtils.getUserId())))
+        }
+        if (!String.valueOf(group.getMemberId()).equals(String.valueOf(SecurityUtils.getUserId()))){
             return R.fail("非群组管理员");
+        }
         List<Long> memberIds = groupService.deleteGroup(param.getId());
-        if (CollectionUtils.isEmpty(memberIds)) return R.status(true);
+        if (CollectionUtils.isEmpty(memberIds)) {
+            return R.status(true);
+        }
         /* 发出结算群组消息 */
         SpringContextHolder.publishEvent(new GroupDeleteEvent(this, group.getName(), group.getId(), SecurityUtils.getUserId(), memberIds));
         return R.status(true);

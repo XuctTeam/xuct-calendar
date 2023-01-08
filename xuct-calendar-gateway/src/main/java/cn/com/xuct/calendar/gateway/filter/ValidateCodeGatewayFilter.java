@@ -130,10 +130,10 @@ public class ValidateCodeGatewayFilter extends AbstractGatewayFilterFactory<Obje
         }
         String key = "";
         switch (type) {
-            case 0:
-                break;
             case 1:
                 key = (clientId.equals(SecurityConstants.APP_GRANT_TYPE) ? RedisConstants.MEMBER_PHONE_LOGIN_CODE_KEY : "").concat(":").concat(randomStr);
+                break;
+            default:
                 break;
         }
 

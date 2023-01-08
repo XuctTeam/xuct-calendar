@@ -62,7 +62,7 @@ import java.util.Optional;
  * 〈〉
  *
  * @author Derek Xu
- * @create 2021/11/27
+ * @date  2021/11/27
  * @since 1.0.0
  */
 @Slf4j
@@ -91,7 +91,9 @@ public class MemberAppController {
     public R<MemberInfoVo> getAllInfo() {
         Long userId = SecurityUtils.getUserId();
         Member member = memberService.findMemberById(userId);
-        if (member == null) return R.fail("获取用户信息失败");
+        if (member == null) {
+            return R.fail("获取用户信息失败");
+        }
         MemberInfoVo memberInfoVo = new MemberInfoVo();
         memberInfoVo.setMember(member);
         List<MemberAuth> memberAuths = memberAuthService.find(Column.of("member_id", member.getId()));
@@ -105,7 +107,9 @@ public class MemberAppController {
     public R<Member> getBaseInfo() {
         Long userId = SecurityUtils.getUserId();
         Member member = memberService.findMemberById(userId);
-        if (member == null) return R.fail("获取用户信息失败");
+        if (member == null) {
+            return R.fail("获取用户信息失败");
+        }
         return R.data(member);
     }
 
@@ -140,7 +144,9 @@ public class MemberAppController {
     public R<Member> modifyName(@Validated @RequestBody MemberNameParam param) {
         Long userId = SecurityUtils.getUserId();
         Member member = memberService.findMemberById(userId);
-        if (member == null) return R.fail("获取用户信息失败");
+        if (member == null) {
+            return R.fail("获取用户信息失败");
+        }
         member.setName(param.getName());
         memberService.updateMember(member);
         /* 发送修改名称事件 */
@@ -152,7 +158,9 @@ public class MemberAppController {
     @GetMapping("/name")
     public R<String> getName(@RequestParam("memberId") Long memberId) {
         Member member = memberService.findMemberById(memberId);
-        if (member == null) return R.fail("获取用户信息失败");
+        if (member == null) {
+            return R.fail("获取用户信息失败");
+        }
         return R.data(member.getName());
     }
 
@@ -160,7 +168,9 @@ public class MemberAppController {
     @PostMapping("/avatar")
     public R<Member> modifyAvatar(@Validated @RequestBody MemberAvatarParam param) {
         Member member = memberService.findMemberById(SecurityUtils.getUserId());
-        if (member == null) return R.fail("获取用户信息失败");
+        if (member == null) {
+            return R.fail("获取用户信息失败");
+        }
         member.setAvatar(param.getAvatar());
         memberService.updateMember(member);
         return R.data(member);
@@ -171,9 +181,13 @@ public class MemberAppController {
     public R<String> getWxPhone(@RequestBody MemberGetPhoneParam getPhoneReq) {
         Long userId = SecurityUtils.getUserId();
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("member_id", userId), Column.of("identity_type", IdentityTypeEnum.open_id)));
-        if (memberAuth == null) throw new SvrException(SvrResCode.UMS_MEMBER_AUTH_TYPE_ERROR);
+        if (memberAuth == null) {
+            throw new SvrException(SvrResCode.UMS_MEMBER_AUTH_TYPE_ERROR);
+        }
         R<WxMaPhoneNumberInfo> wxMaPhoneNumberInfoR = basicServicesFeignClient.getPhoneNoInfo(WxUserPhoneFeignInfo.builder().code(getPhoneReq.getCode()).build());
-        if (wxMaPhoneNumberInfoR == null || !wxMaPhoneNumberInfoR.isSuccess()) return R.fail("查询微信失败");
+        if (wxMaPhoneNumberInfoR == null || !wxMaPhoneNumberInfoR.isSuccess()) {
+            return R.fail("查询微信失败");
+        }
         return R.data(wxMaPhoneNumberInfoR.getData().getPhoneNumber());
     }
 
@@ -218,9 +232,13 @@ public class MemberAppController {
         smsCodeValidateSupport.validateCode(2, String.valueOf(param.getPhone()), param.getCode());
         /* 2.校验登陆方式 */
         List<MemberAuth> memberAuths = memberAuthService.find(Lists.newArrayList(Column.of("member_id", userId)));
-        if (CollectionUtils.isEmpty(memberAuths) || memberAuths.size() == 1) return R.fail("仅存在唯一登陆方式");
+        if (CollectionUtils.isEmpty(memberAuths) || memberAuths.size() == 1) {
+            return R.fail("仅存在唯一登陆方式");
+        }
         Optional<MemberAuth> optPhoneAuth = memberAuths.stream().filter(x -> x.getIdentityType().equals(IdentityTypeEnum.phone)).findFirst();
-        if (!optPhoneAuth.isPresent()) return R.fail("未绑定手机");
+        if (!optPhoneAuth.isPresent()) {
+            return R.fail("未绑定手机");
+        }
         memberAuthService.removeById(optPhoneAuth.get().getId());
         return R.status(true);
     }
@@ -263,9 +281,13 @@ public class MemberAppController {
         smsCodeValidateSupport.validateCode(4, String.valueOf(param.getEmail()), param.getCode());
         /* 2.校验登陆方式 */
         List<MemberAuth> memberAuths = memberAuthService.find(Lists.newArrayList(Column.of("member_id", String.valueOf(SecurityUtils.getUserId()))));
-        if (CollectionUtils.isEmpty(memberAuths) || memberAuths.size() == 1) return R.fail("仅存在唯一登陆方式");
+        if (CollectionUtils.isEmpty(memberAuths) || memberAuths.size() == 1) {
+            return R.fail("仅存在唯一登陆方式");
+        }
         Optional<MemberAuth> optPhoneAuth = memberAuths.stream().filter(x -> x.getIdentityType().equals(IdentityTypeEnum.email)).findFirst();
-        if (!optPhoneAuth.isPresent()) return R.fail("未绑定邮箱");
+        if (!optPhoneAuth.isPresent()) {
+            return R.fail("未绑定邮箱");
+        }
         memberAuthService.removeById(optPhoneAuth.get().getId());
         return R.status(true);
     }
@@ -292,10 +314,16 @@ public class MemberAppController {
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", memberMergeParam.getPhone()), Column.of("identity_type", IdentityTypeEnum.phone)));
         Assert.notNull(memberAuth, "获取用户信息失败");
         R<Long> memberCalendarNumberR = calendarFeignClient.countCalendarNumberByMemberIds(CalendarCountFeignInfo.builder().memberIds(Lists.newArrayList(userId, memberAuth.getMemberId())).build(), SecurityConstants.FROM_IN);
-        if (memberCalendarNumberR == null || !memberCalendarNumberR.isSuccess()) return R.fail("获取用户日历失败");
-        if (memberCalendarNumberR.getData() > 5) return R.fail("超过最大日历数");
+        if (memberCalendarNumberR == null || !memberCalendarNumberR.isSuccess()) {
+            return R.fail("获取用户日历失败");
+        }
+        if (memberCalendarNumberR.getData() > 5) {
+            return R.fail("超过最大日历数");
+        }
         R<String> mergeCalendarR = calendarFeignClient.mergeCalendar(CalendarMergeDto.builder().fromMemberId(memberAuth.getMemberId()).memberId(userId).build(), SecurityConstants.FROM_IN);
-        if (mergeCalendarR == null || !mergeCalendarR.isSuccess()) return R.fail("合并日历失败");
+        if (mergeCalendarR == null || !mergeCalendarR.isSuccess()) {
+            return R.fail("合并日历失败");
+        }
         memberService.mergeMember(userId, memberAuth);
         /* 清除当前账号登录的缓存,避免合并和登录方式错误 */
         redisTemplate.delete(CacheConstants.USER_DETAILS.concat("::").concat(memberMergeParam.getPhone()));
@@ -315,13 +343,17 @@ public class MemberAppController {
         if (!authOpt.isPresent()) {
             authOpt = auths.stream().filter(auth -> auth.getIdentityType().equals(IdentityTypeEnum.email)).findFirst();
         }
-        if (!authOpt.isPresent()) return R.fail("修改密码失败");
+        if (!authOpt.isPresent()) {
+            return R.fail("修改密码失败");
+        }
         String redisKey =
                 (authOpt.get().getIdentityType().equals(IdentityTypeEnum.phone) ?
                         RedisConstants.MEMBER_FORGET_PASSWORD_PHONE_CODE_KEY : RedisConstants.MEMBER_FORGET_PASSWORD_EMAIL_CODE_KEY)
                         .concat(":").concat(authOpt.get().getUsername());
         Object redisVal = redisTemplate.opsForValue().get(redisKey);
-        if (redisVal == null || !String.valueOf(redisVal).equals(param.getCode())) return R.fail("修改密码失败");
+        if (redisVal == null || !String.valueOf(redisVal).equals(param.getCode())) {
+            return R.fail("修改密码失败");
+        }
         /* 此时删除redis的验证码缓存 */
         redisTemplate.delete(redisKey);
         String bcryptPassword = this.delegatingPassword(param.getPassword()).replace("{bcrypt}", "");
@@ -336,11 +368,15 @@ public class MemberAppController {
         Object redisVal = redisTemplate.opsForValue().get(param.getType() == 1 ?
                 RedisConstants.MEMBER_FORGET_PASSWORD_PHONE_CODE_KEY.concat(":").concat(param.getPhone()) :
                 RedisConstants.MEMBER_FORGET_PASSWORD_EMAIL_CODE_KEY.concat(":").concat(param.getEmail()));
-        if (redisVal == null || !String.valueOf(redisVal).equals(param.getCode())) return R.fail("验证码错误");
+        if (redisVal == null || !String.valueOf(redisVal).equals(param.getCode())) {
+            return R.fail("验证码错误");
+        }
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("identity_type", param.getType() == 1 ? IdentityTypeEnum.phone : IdentityTypeEnum.email),
                 Column.of("user_name", param.getType() == 1 ? param.getPhone() : param.getEmail())));
 
-        if (memberAuth == null) return R.fail("验证失败");
+        if (memberAuth == null) {
+            return R.fail("验证失败");
+        }
         return R.data(memberAuth.getMemberId().toString());
     }
 
@@ -350,9 +386,9 @@ public class MemberAppController {
         Assert.notNull(param.getFormType(), "注册信息错误");
         if (param.getFormType().equals(RegisterEnum.username) && param.getUsername() == null ||
                 param.getFormType().equals(RegisterEnum.phone) && param.getPhone() == null ||
-                param.getFormType().equals(RegisterEnum.email) && param.getEmail() == null)
+                param.getFormType().equals(RegisterEnum.email) && param.getEmail() == null) {
             return R.fail("注册信息错误");
-
+        }
         MemberRegisterDto registerDto = null;
         switch (param.getFormType()) {
             case username:
@@ -364,7 +400,9 @@ public class MemberAppController {
             case email:
                 registerDto = this.registerByPhoneOrEmail(null, param.getEmail().getEmail(), param.getEmail().getPassword(), param.getEmail().getCode());
         }
-        if (registerDto.getCode() == 0) return R.status(true);
+        if (registerDto.getCode() == 0) {
+            return R.status(true);
+        }
         return R.fail(registerDto.getCode(), registerDto.getMessage());
     }
 
@@ -375,11 +413,13 @@ public class MemberAppController {
     private MemberRegisterDto registerByUserName(final String username, final String password, final String randomStr, final String code) {
         String redisKey = RedisConstants.MEMBER_CAPTCHA_REGISTER_CODE_KEY.concat(randomStr);
         Object redisObj = redisTemplate.opsForValue().get(redisKey);
-        if (redisObj == null || !String.valueOf(redisObj).equals(code))
+        if (redisObj == null || !String.valueOf(redisObj).equals(code)) {
             return MemberRegisterDto.builder().code(1000).message("图形码错误").build();
+        }
         MemberAuth memberAuth = memberAuthService.get(Column.of("user_name", username));
-        if (memberAuth != null)
+        if (memberAuth != null) {
             return MemberRegisterDto.builder().code(2000).message("注册信息无效").build();
+        }
         String bcryptPassword = this.delegatingPassword(password).replace("{bcrypt}", "");
         Member member = memberService.saveMemberByUserName(username, bcryptPassword, DictCacheManager.getDictByCode(DictConstants.TIME_ZONE_TYPE, DictConstants.EAST_8_CODE).getValue());
         boolean remoteCreateCalendar = this.createCalendar(member);
@@ -395,14 +435,16 @@ public class MemberAppController {
         boolean isPhone = StringUtils.hasLength(phone);
         String redisKey = isPhone ? RedisConstants.MEMBER_PHONE_REGISTER_CODE_KEY.concat(":").concat(phone) : RedisConstants.MEMBER_EMAIL_REGISTER_CODE_KEY.concat(":").concat(email);
         Object redisObj = redisTemplate.opsForValue().get(redisKey);
-        if (redisObj == null || !String.valueOf(redisObj).equals(code))
+        if (redisObj == null || !String.valueOf(redisObj).equals(code)) {
             return MemberRegisterDto.builder().code(1000).message("验证码无效").build();
+        }
         List<Column> columns = isPhone ?
                 Lists.newArrayList(Column.of("user_name", phone), Column.of("identity_type", IdentityTypeEnum.phone)) :
                 Lists.newArrayList(Column.of("user_name", email), Column.of("identity_type", IdentityTypeEnum.email));
         MemberAuth memberAuth = memberAuthService.get(columns);
-        if (memberAuth != null)
+        if (memberAuth != null) {
             return MemberRegisterDto.builder().code(2000).message("注册信息无效").build();
+        }
         String bcryptPassword = this.delegatingPassword(password).replace("{bcrypt}", "");
         Member member = isPhone ?
                 memberService.saveMemberByPhone(phone, bcryptPassword, DictCacheManager.getDictByCode(DictConstants.TIME_ZONE_TYPE, DictConstants.EAST_8_CODE).getValue()) :
@@ -424,7 +466,9 @@ public class MemberAppController {
         calendarInitFeignInfo.setMemberId(member.getId());
         calendarInitFeignInfo.setMemberNickName(member.getName());
         R<String> remoteRes = calendarFeignClient.addCalendar(calendarInitFeignInfo, SecurityConstants.FROM_IN);
-        if (!remoteRes.isSuccess()) return false;
+        if (!remoteRes.isSuccess()){
+            return false;
+        }
         /* 添加注册消息到用户 */
         SpringContextHolder.publishEvent(new MemberEvent(this, member.getId(), member.getName(), 0));
         return true;

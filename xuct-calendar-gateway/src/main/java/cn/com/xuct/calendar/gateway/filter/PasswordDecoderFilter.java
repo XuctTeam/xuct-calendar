@@ -51,10 +51,15 @@ import java.util.Map;
 import java.util.function.Function;
 
 
+/**
+ * 密码解析拦截器
+ *
+ * @author Derek
+ */
 @Slf4j
 public class PasswordDecoderFilter extends AbstractGatewayFilterFactory<PasswordDecoderFilter.Config> {
 
-    private static final List<HttpMessageReader<?>> messageReaders = HandlerStrategies.withDefaults().messageReaders();
+    private static final List<HttpMessageReader<?>> MESSAG_EREADERS = HandlerStrategies.withDefaults().messageReaders();
 
     private static final String PASSWORD = "password";
 
@@ -83,10 +88,10 @@ public class PasswordDecoderFilter extends AbstractGatewayFilterFactory<Password
             // 3. 前端加密密文解密逻辑
             Class inClass = String.class;
             Class outClass = String.class;
-            ServerRequest serverRequest = ServerRequest.create(exchange, messageReaders);
+            ServerRequest serverRequest = ServerRequest.create(exchange, MESSAG_EREADERS);
 
             // 4. 解密生成新的报文
-            Mono<?> modifiedBody = serverRequest.bodyToMono(inClass).flatMap(decryptAES());
+            Mono<?> modifiedBody = serverRequest.bodyToMono(inClass).flatMap(decryptAes());
 
             BodyInserter bodyInserter = BodyInserters.fromPublisher(modifiedBody, outClass);
             HttpHeaders headers = new HttpHeaders();
@@ -103,7 +108,6 @@ public class PasswordDecoderFilter extends AbstractGatewayFilterFactory<Password
     }
 
 
-    //这个name方法 用来在yml配置中指定对应的过滤器名称
     @Override
     public String name() {
         return "PasswordDecoderFilter";
@@ -120,7 +124,7 @@ public class PasswordDecoderFilter extends AbstractGatewayFilterFactory<Password
      *
      * @return
      */
-    private Function decryptAES() {
+    private Function decryptAes() {
         return s -> {
             // 构建前端对应解密AES 因子
             AES aes = new AES(Mode.CFB, Padding.NoPadding,

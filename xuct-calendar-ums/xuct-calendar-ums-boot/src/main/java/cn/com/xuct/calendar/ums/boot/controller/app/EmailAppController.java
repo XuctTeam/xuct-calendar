@@ -61,7 +61,9 @@ public class EmailAppController {
     @PostMapping("/anno/forget")
     public R<String> forgetPasswordCode(@Validated @RequestBody EmailCodeParam param) {
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("identity_type", IdentityTypeEnum.email), Column.of("user_name", param.getEmail())));
-        if (memberAuth == null) return R.fail("用户未注册");
+        if (memberAuth == null) {
+            return R.fail("用户未注册");
+        }
         String code = this.bindEmail(param.getEmail(), param.getType());
         return basicServicesFeignClient.sendEmail(EmailFeignInfo.builder().subject("【楚日历】找回密码邮件")
                 .template("code")
