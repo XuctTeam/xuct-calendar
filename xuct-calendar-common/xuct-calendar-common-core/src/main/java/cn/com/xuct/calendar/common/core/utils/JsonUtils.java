@@ -45,10 +45,10 @@ import java.util.*;
  */
 public class JsonUtils {
 
-    private final static ObjectMapper objectMapper = customObjectMapper(new ObjectMapper());
+    private final static ObjectMapper OBJECT_MAPPER = customObjectMapper(new ObjectMapper());
 
     public static ObjectMapper getInstance() {
-        return objectMapper;
+        return OBJECT_MAPPER;
     }
 
 
@@ -61,7 +61,7 @@ public class JsonUtils {
      */
     public static String obj2json(Object obj) {
         try {
-            return objectMapper.writeValueAsString(obj);
+            return OBJECT_MAPPER.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -95,9 +95,9 @@ public class JsonUtils {
      * @throws Exception
      */
     public static <T> T json2pojo(String jsonString, Class<T> clazz) {
-        objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+        OBJECT_MAPPER.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
         try {
-            return objectMapper.readValue(jsonString, clazz);
+            return OBJECT_MAPPER.readValue(jsonString, clazz);
         } catch (Exception ee) {
             ee.printStackTrace();
         }
@@ -127,7 +127,7 @@ public class JsonUtils {
     public static <T> Map<String, T> json2map(String jsonString, Class<T> clazz) {
         Map<String, Map<String, Object>> map = null;
         try {
-            map = (Map<String, Map<String, Object>>) objectMapper.readValue(jsonString, new TypeReference<Map<String, T>>() {
+            map = (Map<String, Map<String, Object>>) OBJECT_MAPPER.readValue(jsonString, new TypeReference<Map<String, T>>() {
             });
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -148,7 +148,7 @@ public class JsonUtils {
      */
     public static Map<String, Object> json2mapDeeply(String json) {
         try {
-            return json2MapRecursion(json, objectMapper);
+            return json2MapRecursion(json, OBJECT_MAPPER);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -239,7 +239,7 @@ public class JsonUtils {
         JavaType javaType = getCollectionType(ArrayList.class, clazz);
         List<T> list = null;
         try {
-            list = (List<T>) objectMapper.readValue(jsonArrayStr, javaType);
+            list = (List<T>) OBJECT_MAPPER.readValue(jsonArrayStr, javaType);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -256,7 +256,7 @@ public class JsonUtils {
      * @since 1.0
      */
     public static JavaType getCollectionType(Class<?> collectionClass, Class<?>... elementClasses) {
-        return objectMapper.getTypeFactory().constructParametricType(collectionClass, elementClasses);
+        return OBJECT_MAPPER.getTypeFactory().constructParametricType(collectionClass, elementClasses);
     }
 
     /**
@@ -267,7 +267,7 @@ public class JsonUtils {
      * @return
      */
     public static <T> T map2pojo(Map map, Class<T> clazz) {
-        return objectMapper.convertValue(map, clazz);
+        return OBJECT_MAPPER.convertValue(map, clazz);
     }
 
     /**
@@ -278,7 +278,7 @@ public class JsonUtils {
      */
     public static String mapToJson(Map map) {
         try {
-            return objectMapper.writeValueAsString(map);
+            return OBJECT_MAPPER.writeValueAsString(map);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -293,7 +293,7 @@ public class JsonUtils {
      * @return
      */
     public static <T> T obj2pojo(Object obj, Class<T> clazz) {
-        return objectMapper.convertValue(obj, clazz);
+        return OBJECT_MAPPER.convertValue(obj, clazz);
     }
 
     /**
@@ -328,17 +328,17 @@ public class JsonUtils {
      * <br/>
      * 如果你还需要额外的增强配置可以这样使用：<br/>
      * <per>
-     * final ObjectMapper objectMapper = JacksonUtils.customObjectMapper(new ObjectMapper());
-     * objectMapper.setDateFormat(new SimpleDateFormat("YYYY-MM-dd"));
+     * final ObjectMapper OBJECT_MAPPER = JacksonUtils.customObjectMapper(new ObjectMapper());
+     * OBJECT_MAPPER.setDateFormat(new SimpleDateFormat("YYYY-MM-dd"));
      * </per>
      *
-     * @param objectMapper the object mapper
+     * @param OBJECT_MAPPER the object mapper
      * @return the object mapper
      * @author leigq
      * @date 2020 -07-24 11:14:28
      */
-    public static ObjectMapper customObjectMapper(ObjectMapper objectMapper) {
-        objectMapper
+    public static ObjectMapper customObjectMapper(ObjectMapper OBJECT_MAPPER) {
+        OBJECT_MAPPER
                 // 设置时区
                 .setTimeZone(TimeZone.getTimeZone("GMT+8"))
                 // Date 对象的格式，非 java8 时间
@@ -359,14 +359,14 @@ public class JsonUtils {
         javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer(DateConstants.DATE_FORMAT));
         javaTimeModule.addSerializer(LocalTime.class, new LocalTimeSerializer(DateConstants.TIME_FORMAT));
         /*注册模块*/
-        objectMapper
+        OBJECT_MAPPER
                 // Java8的时间兼容模块
                 .registerModule(javaTimeModule)
                 // Jdk8Module() -> 注册jdk8模块
                 .registerModule(new Jdk8Module())
                 // new ParameterNamesModule() ->
                 .registerModule(new ParameterNamesModule());
-        return objectMapper;
+        return OBJECT_MAPPER;
     }
 
 }

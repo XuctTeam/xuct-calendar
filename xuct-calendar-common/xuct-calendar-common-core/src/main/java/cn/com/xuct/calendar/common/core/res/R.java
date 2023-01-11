@@ -41,10 +41,10 @@ public class R<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Schema(description = "状态码", required = true)
+    @Schema(description = "状态码")
     private int code;
 
-    @Schema(description = "是否成功", required = true)
+    @Schema(description = "是否成功")
     private boolean success;
 
     @JsonSerialize(nullsUsing = JsonSerializer.None.class)

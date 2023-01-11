@@ -8,8 +8,11 @@ import org.springframework.util.Assert;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author Derek
+ */
 @RequiredArgsConstructor
-public class OAuthRedisOAuth2AuthorizationConsentService implements OAuth2AuthorizationConsentService {
+public class OAuthRedisOAuth2AuthorizationConsentServiceImpl implements OAuth2AuthorizationConsentService {
 
 	private final RedisTemplate<String, Object> redisTemplate;
 

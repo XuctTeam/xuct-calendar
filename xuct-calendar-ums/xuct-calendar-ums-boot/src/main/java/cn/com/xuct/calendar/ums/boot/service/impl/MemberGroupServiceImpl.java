@@ -75,7 +75,7 @@ public class MemberGroupServiceImpl extends BaseServiceImpl<MemberGroupMapper, M
 
     @Override
     public List<GroupMemberInfoDto> listAllGroupMemberByMemberId(Long memberId) {
-        return null;
+        return ((MemberGroupMapper) super.getBaseMapper()).listAllGroupMemberByMemberId(memberId);
     }
 
     @Override

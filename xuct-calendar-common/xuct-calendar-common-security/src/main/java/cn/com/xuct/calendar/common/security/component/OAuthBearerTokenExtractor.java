@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
  */
 public class OAuthBearerTokenExtractor implements BearerTokenResolver {
 
-	private static final Pattern authorizationPattern = Pattern.compile("^Bearer (?<token>[a-zA-Z0-9-:._~+/]+=*)$",
+	private static final Pattern AUTHORIZATION_PATTERN = Pattern.compile("^Bearer (?<token>[a-zA-Z0-9-:._~+/]+=*)$",
 			Pattern.CASE_INSENSITIVE);
 
 	private boolean allowFormEncodedBodyParameter = false;
@@ -84,7 +84,7 @@ public class OAuthBearerTokenExtractor implements BearerTokenResolver {
 		if (!StringUtils.startsWithIgnoreCase(authorization, "bearer")) {
 			return null;
 		}
-		Matcher matcher = authorizationPattern.matcher(authorization);
+		Matcher matcher = AUTHORIZATION_PATTERN.matcher(authorization);
 		if (!matcher.matches()) {
 			BearerTokenError error = BearerTokenErrors.invalidToken("Bearer token is malformed");
 			throw new OAuth2AuthenticationException(error);

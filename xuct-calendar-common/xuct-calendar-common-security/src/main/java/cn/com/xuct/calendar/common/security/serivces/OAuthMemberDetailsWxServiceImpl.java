@@ -59,7 +59,9 @@ public class OAuthMemberDetailsWxServiceImpl implements OAuthUserDetailsService 
     @SneakyThrows
     public UserDetails loadUserByUsername(String username) {
         WxUserName wxUserName = JsonUtils.json2pojo(username, WxUserName.class);
-        if (wxUserName == null) new UsernameNotFoundException("获取OpenId无效");
+        if (wxUserName == null){
+            new UsernameNotFoundException("获取OpenId无效");
+        }
         R<OpenIdInfo> openIdInfoR = memberFeignClient.getOpenInfo(wxUserName.getCode(), SecurityConstants.FROM_IN);
         OpenIdInfo openIdInfo = RetOps.of(openIdInfoR).getData().orElseThrow(() -> new UsernameNotFoundException("获取OpenId无效"));
         return this.getByOpenId(true, openIdInfo.getOpenId(), openIdInfo.getSessionKey(), wxUserName.getIv(), wxUserName.getEncryptedData());

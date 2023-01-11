@@ -65,6 +65,7 @@
             and g.status = 'NORMAL'
         where group_id in
               (select group_id from sys_member_group where status = 'NORMAL' and member_id = #{memberId})
+          and g.member_id &lt;&gt; #{memberId}
     </select>
 
 </mapper>

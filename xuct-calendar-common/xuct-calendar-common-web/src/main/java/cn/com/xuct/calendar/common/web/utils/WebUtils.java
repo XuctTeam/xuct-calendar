@@ -179,9 +179,13 @@ public class WebUtils extends org.springframework.web.util.WebUtils {
      */
     public String getHeaders(String name) {
         Optional<HttpServletRequest> requestOpt = getRequest();
-        if (!requestOpt.isPresent()) return null;
+        if (!requestOpt.isPresent()){
+            return null;
+        }
         Enumeration<String> header = requestOpt.get().getHeaders(name);
-        if (header.hasMoreElements()) return header.nextElement();
+        if (header.hasMoreElements()){
+            return header.nextElement();
+        }
         return null;
     }
 

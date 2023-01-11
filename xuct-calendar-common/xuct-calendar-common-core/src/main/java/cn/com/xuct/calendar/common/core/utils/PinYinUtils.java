@@ -30,7 +30,7 @@ public class PinYinUtils {
 
     @NonNull
     public static String first(@Nullable String str) {
-        if (str == null || str.equals("")) {
+        if (str == null || "".equals(str)) {
             return "#";
         }
         char ch = str.charAt(0);

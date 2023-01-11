@@ -59,7 +59,7 @@ public class FdfsClient {
     private int maxFileSize = 100 * 1000 * 1000;
 
 
-    private final static String groupName = "group1";
+    private final static String GROUPNAME = "group1";
 
     private StorageClient storageClient;
 
@@ -163,14 +163,14 @@ public class FdfsClient {
      */
     public String upload(MultipartFile file, Map<String, String> descriptions) throws FdfsClientException {
         if (file == null || file.isEmpty()) {
-            throw new FdfsClientException(ErrorCode.FILE_ISNULL.CODE, ErrorCode.FILE_ISNULL.MESSAGE);
+            throw new FdfsClientException(ErrorCode.FILE_ISNULL.code, ErrorCode.FILE_ISNULL.message);
         }
         String path = null;
         try {
             path = upload(file.getInputStream(), file.getOriginalFilename(), descriptions);
         } catch (IOException e) {
             e.printStackTrace();
-            throw new FdfsClientException(ErrorCode.FILE_ISNULL.CODE, ErrorCode.FILE_ISNULL.MESSAGE);
+            throw new FdfsClientException(ErrorCode.FILE_ISNULL.code, ErrorCode.FILE_ISNULL.message);
         }
         return path;
     }
@@ -186,7 +186,7 @@ public class FdfsClient {
      */
     public String upload(String filepath, Map<String, String> descriptions) throws FdfsClientException {
         if (!StringUtils.hasLength(filepath)) {
-            throw new FdfsClientException(ErrorCode.FILE_PATH_ISNULL.CODE, ErrorCode.FILE_PATH_ISNULL.MESSAGE);
+            throw new FdfsClientException(ErrorCode.FILE_PATH_ISNULL.code, ErrorCode.FILE_PATH_ISNULL.message);
         }
         File file = new File(filepath);
         String path = null;
@@ -199,7 +199,7 @@ public class FdfsClient {
             path = upload(is, filename, descriptions);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            throw new FdfsClientException(ErrorCode.FILE_NOT_EXIST.CODE, ErrorCode.FILE_NOT_EXIST.MESSAGE);
+            throw new FdfsClientException(ErrorCode.FILE_NOT_EXIST.code, ErrorCode.FILE_NOT_EXIST.message);
         }
 
         return path;
@@ -216,7 +216,7 @@ public class FdfsClient {
      */
     public String upload(String base64, String filename, Map<String, String> descriptions) throws FdfsClientException {
         if (!StringUtils.hasText(base64)) {
-            throw new FdfsClientException(ErrorCode.FILE_ISNULL.CODE, ErrorCode.FILE_ISNULL.MESSAGE);
+            throw new FdfsClientException(ErrorCode.FILE_ISNULL.code, ErrorCode.FILE_ISNULL.message);
         }
         return upload(new ByteArrayInputStream(Base64.decodeBase64(base64)), filename, descriptions);
     }
@@ -232,11 +232,11 @@ public class FdfsClient {
      */
     public String upload(InputStream is, String filename, Map<String, String> descriptions) throws FdfsClientException {
         if (is == null) {
-            throw new FdfsClientException(ErrorCode.FILE_ISNULL.CODE, ErrorCode.FILE_ISNULL.MESSAGE);
+            throw new FdfsClientException(ErrorCode.FILE_ISNULL.code, ErrorCode.FILE_ISNULL.message);
         }
         try {
             if (is.available() > maxFileSize) {
-                throw new FdfsClientException(ErrorCode.FILE_OUT_SIZE.CODE, ErrorCode.FILE_OUT_SIZE.MESSAGE);
+                throw new FdfsClientException(ErrorCode.FILE_OUT_SIZE.code, ErrorCode.FILE_OUT_SIZE.message);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -273,7 +273,7 @@ public class FdfsClient {
             String[] resData = storageClient.upload_file(fileBuff, suffix, nvps);
             path = resData[0].concat("/").concat(resData[1]);
             if (!StringUtils.hasLength(path)) {
-                throw new FdfsClientException(ErrorCode.FILE_UPLOAD_FAILED.CODE, ErrorCode.FILE_UPLOAD_FAILED.MESSAGE);
+                throw new FdfsClientException(ErrorCode.FILE_UPLOAD_FAILED.code, ErrorCode.FILE_UPLOAD_FAILED.message);
             }
             if (log.isDebugEnabled()) {
                 log.debug("upload file success, return path is {}", path);
@@ -282,9 +282,9 @@ public class FdfsClient {
             ee.printStackTrace();
             // 返还对象
             if (ee instanceof IOException) {
-                throw new FdfsClientException(ErrorCode.FILE_UPLOAD_FAILED.CODE, ErrorCode.FILE_UPLOAD_FAILED.MESSAGE);
+                throw new FdfsClientException(ErrorCode.FILE_UPLOAD_FAILED.code, ErrorCode.FILE_UPLOAD_FAILED.message);
             } else if (ee instanceof MyException) {
-                throw new FdfsClientException(ErrorCode.FILE_UPLOAD_FAILED.CODE, ErrorCode.FILE_UPLOAD_FAILED.MESSAGE);
+                throw new FdfsClientException(ErrorCode.FILE_UPLOAD_FAILED.code, ErrorCode.FILE_UPLOAD_FAILED.message);
             } else if (ee instanceof FdfsClientException) {
                 throw (FdfsClientException) ee;
             }
@@ -342,7 +342,7 @@ public class FdfsClient {
      */
     public void download(String filepath, String filename, OutputStream os, HttpServletResponse response) throws FdfsClientException {
         if (!StringUtils.hasText(filepath)) {
-            throw new FdfsClientException(ErrorCode.FILE_PATH_ISNULL.CODE, ErrorCode.FILE_PATH_ISNULL.MESSAGE);
+            throw new FdfsClientException(ErrorCode.FILE_PATH_ISNULL.code, ErrorCode.FILE_PATH_ISNULL.message);
         }
 
         filepath = toLocal(filepath);
@@ -358,10 +358,10 @@ public class FdfsClient {
         InputStream is = null;
         try {
             // 下载
-            byte[] fileByte = storageClient.download_file(groupName, filepath);
+            byte[] fileByte = storageClient.download_file(GROUPNAME, filepath);
 
             if (fileByte == null) {
-                throw new FdfsClientException(ErrorCode.FILE_NOT_EXIST.CODE, ErrorCode.FILE_NOT_EXIST.MESSAGE);
+                throw new FdfsClientException(ErrorCode.FILE_NOT_EXIST.code, ErrorCode.FILE_NOT_EXIST.message);
             }
 
             if (response != null) {
@@ -386,7 +386,7 @@ public class FdfsClient {
             e.printStackTrace();
         } catch (MyException e) {
             e.printStackTrace();
-            throw new FdfsClientException(ErrorCode.FILE_DOWNLOAD_FAILED.CODE, ErrorCode.FILE_DOWNLOAD_FAILED.MESSAGE);
+            throw new FdfsClientException(ErrorCode.FILE_DOWNLOAD_FAILED.code, ErrorCode.FILE_DOWNLOAD_FAILED.message);
         } finally {
             // 关闭流
             try {
@@ -411,21 +411,21 @@ public class FdfsClient {
      */
     public byte[] download(String filepath) throws FdfsClientException {
         if (!StringUtils.hasLength(filepath)) {
-            throw new FdfsClientException(ErrorCode.FILE_PATH_ISNULL.CODE, ErrorCode.FILE_PATH_ISNULL.MESSAGE);
+            throw new FdfsClientException(ErrorCode.FILE_PATH_ISNULL.code, ErrorCode.FILE_PATH_ISNULL.message);
         }
         InputStream is = null;
         byte[] fileByte = null;
         try {
-            fileByte = storageClient.download_file(groupName, filepath);
+            fileByte = storageClient.download_file(GROUPNAME, filepath);
 
             if (fileByte == null) {
-                throw new FdfsClientException(ErrorCode.FILE_NOT_EXIST.CODE, ErrorCode.FILE_NOT_EXIST.MESSAGE);
+                throw new FdfsClientException(ErrorCode.FILE_NOT_EXIST.code, ErrorCode.FILE_NOT_EXIST.message);
             }
         } catch (IOException e) {
             e.printStackTrace();
         } catch (MyException e) {
             e.printStackTrace();
-            throw new FdfsClientException(ErrorCode.FILE_DOWNLOAD_FAILED.CODE, ErrorCode.FILE_DOWNLOAD_FAILED.MESSAGE);
+            throw new FdfsClientException(ErrorCode.FILE_DOWNLOAD_FAILED.code, ErrorCode.FILE_DOWNLOAD_FAILED.message);
         }
         return fileByte;
     }
@@ -438,24 +438,24 @@ public class FdfsClient {
      */
     public int deleteFile(String filepath) throws FdfsClientException {
         if (!StringUtils.hasLength(filepath)) {
-            throw new FdfsClientException(ErrorCode.FILE_PATH_ISNULL.CODE, ErrorCode.FILE_PATH_ISNULL.MESSAGE);
+            throw new FdfsClientException(ErrorCode.FILE_PATH_ISNULL.code, ErrorCode.FILE_PATH_ISNULL.message);
         }
         int success = 0;
         try {
-            if (filepath.contains(groupName)) {
-                filepath = filepath.replace(groupName.concat("/"), "");
+            if (filepath.contains(GROUPNAME)) {
+                filepath = filepath.replace(GROUPNAME.concat("/"), "");
             }
-            success = storageClient.delete_file(groupName, filepath);
+            success = storageClient.delete_file(GROUPNAME, filepath);
             if (success != 0) {
-                throw new FdfsClientException(ErrorCode.FILE_DELETE_FAILED.CODE, ErrorCode.FILE_DELETE_FAILED.MESSAGE);
+                throw new FdfsClientException(ErrorCode.FILE_DELETE_FAILED.code, ErrorCode.FILE_DELETE_FAILED.message);
             }
         } catch (Exception e) {
             // 返还对象
             e.printStackTrace();
             if (e instanceof IOException) {
-                throw new FdfsClientException(ErrorCode.FILE_DOWNLOAD_FAILED.CODE, ErrorCode.FILE_DOWNLOAD_FAILED.MESSAGE);
+                throw new FdfsClientException(ErrorCode.FILE_DOWNLOAD_FAILED.code, ErrorCode.FILE_DOWNLOAD_FAILED.message);
             } else if (e instanceof MyException) {
-                throw new FdfsClientException(ErrorCode.FILE_DELETE_FAILED.CODE, ErrorCode.FILE_DELETE_FAILED.MESSAGE);
+                throw new FdfsClientException(ErrorCode.FILE_DELETE_FAILED.code, ErrorCode.FILE_DELETE_FAILED.message);
             } else if (e instanceof FdfsClientException) {
                 throw (FdfsClientException) e;
             }
@@ -481,7 +481,7 @@ public class FdfsClient {
     public Map<String, Object> getFileInfo(String filepath) throws FdfsClientException {
         FileInfo fileInfo = null;
         try {
-            fileInfo = storageClient.get_file_info(groupName, filepath);
+            fileInfo = storageClient.get_file_info(GROUPNAME, filepath);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (MyException e) {
@@ -502,10 +502,10 @@ public class FdfsClient {
      * @param filepath 文件路径
      * @return 文件描述信息
      */
-    public Map<String, Object> getFileDescriptions(String filepath) throws FdfsClientException {
+    public Map<String, Object> getFileDescriptions(String filepath)  {
         NameValuePair[] nvps = null;
         try {
-            nvps = storageClient.get_metadata(groupName, filepath);
+            nvps = storageClient.get_metadata(GROUPNAME, filepath);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (MyException e) {

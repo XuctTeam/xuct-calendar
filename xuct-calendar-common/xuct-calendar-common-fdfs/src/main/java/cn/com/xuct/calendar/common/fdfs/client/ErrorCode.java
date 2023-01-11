@@ -35,13 +35,13 @@ public enum ErrorCode {
     FILE_TYPE_ERROR_COMPRESS("error.file.type.compress", "压缩文件类型错误");
 
 
-    public String CODE;
+    public String code;
 
-    public String MESSAGE;
+    public String message;
 
-    ErrorCode(String CODE, String MESSAGE){
-        this.CODE = CODE;
-        this.MESSAGE = MESSAGE;
+    ErrorCode(String code, String message){
+        this.code = code;
+        this.message = message;
     }
 
 }

@@ -20,7 +20,7 @@ import cn.com.xuct.calendar.common.security.client.FeignClientConfiguration;
 import cn.com.xuct.calendar.common.security.component.ResourceServerAutoConfiguration;
 import cn.com.xuct.calendar.common.security.component.ResourceServerConfiguration;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
 import java.lang.annotation.*;
 
@@ -32,9 +32,9 @@ import java.lang.annotation.*;
  */
 @Documented
 @Inherited
+@EnableMethodSecurity
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 @Import({ ResourceServerAutoConfiguration.class, ResourceServerConfiguration.class, FeignClientConfiguration.class })
 public @interface EnableOAuthResourceServer {
 
