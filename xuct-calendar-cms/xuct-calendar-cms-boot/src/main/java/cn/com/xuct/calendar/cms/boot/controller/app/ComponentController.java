@@ -20,14 +20,12 @@ import cn.com.xuct.calendar.cms.boot.service.IComponentAttachmentService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentAttendService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentService;
 import cn.com.xuct.calendar.cms.boot.service.IMemberCalendarService;
-import cn.com.xuct.calendar.cms.boot.utils.DateHelper;
+import cn.com.xuct.calendar.cms.boot.utils.CmsConstant;
 import cn.com.xuct.calendar.cms.queue.event.ComponentDelEvent;
-import cn.com.xuct.calendar.common.core.constant.DateConstants;
 import cn.com.xuct.calendar.common.core.constant.RabbitmqConstants;
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
 import cn.com.xuct.calendar.common.core.exception.SvrException;
 import cn.com.xuct.calendar.common.core.res.R;
-import cn.com.xuct.calendar.common.core.res.RetOps;
 import cn.com.xuct.calendar.common.core.res.SvrResCode;
 import cn.com.xuct.calendar.common.core.utils.JsonUtils;
 import cn.com.xuct.calendar.common.core.vo.Column;
@@ -46,9 +44,7 @@ import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
 import cn.com.xuct.calendar.ums.oauth.client.MemberFeignClient;
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DatePattern;
-import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.map.MapUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import io.swagger.v3.oas.annotations.Operation;
@@ -66,9 +62,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -204,10 +198,7 @@ public class ComponentController {
     @Operation(summary = "邀请待定或接受")
     @PostMapping("/attend/status")
     public R<String> updateComponentAttendStatus(@RequestBody ComponentAttendParam param) {
-        ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", param.getComponentId()), Column.of("member_id", SecurityUtils.getUserId())));
-        Assert.notNull(attend, "邀请数据错误");
-        attend.setStatus(param.getStatus());
-        componentAttendService.updateById(attend);
+        componentAttendService.updateComponentAttendStatus(param.getComponentId(), SecurityUtils.getUserId(), param.getStatus());
         return R.status(true);
     }
 
@@ -223,14 +214,10 @@ public class ComponentController {
     @Operation(summary = "加入邀请")
     @PostMapping("/attend/accept")
     public R<String> acceptAttend(@RequestBody ComponentAttendParam param) {
-        Component component = componentService.getById(param.getComponentId());
         Long memberId = SecurityUtils.getUserId();
-        Assert.notNull(component, "事件不存在");
-        ComponentAttend attend = componentAttendService.get(Lists.newArrayList(Column.of("component_id", param.getComponentId()), Column.of("member_id", memberId)));
-        Assert.isNull(attend, "已加入邀请");
         MemberCalendar memberCalendar = memberCalendarService.get(Lists.newArrayList(Column.of("member_id", memberId), Column.of("major", 1)));
         Assert.notNull(memberCalendar, "查询主日历失败");
-        componentAttendService.acceptAttend(memberId, component.getCalendarId(), memberCalendar.getCalendarId(), param.getComponentId());
+        componentAttendService.acceptAttend(memberId, memberCalendar.getCalendarId(), memberCalendar.getCalendarId(), param.getComponentId());
         //TODO 增加加入邀请消息
         return R.status(true);
     }
@@ -244,8 +231,9 @@ public class ComponentController {
     @Operation(summary = "获取短链接")
     @GetMapping("/short")
     public R<String> getShortChain(@RequestParam("componentId") String componentId) {
-        return basicServicesFeignClient.shortChain(ShortChainFeignInfo.builder().url(domainConfiguration.getCalendar().concat("?componentId=").concat(componentId))
-                .type("calendar").expire(7200000L).build());
+        return basicServicesFeignClient.shortChain(ShortChainFeignInfo.builder()
+                .url(domainConfiguration.getCalendar().concat("?").concat("componentId=" + componentId))
+                .type(CmsConstant.ShortDomain.COMPONENT).expire(7200000L).build());
     }
 
     @Operation(summary = "上传附件")
@@ -305,7 +293,7 @@ public class ComponentController {
     }
 
     private List<ComponentAlarm> insertComponent(ComponentAddParam param, Component component) {
-        if (!"0".equals(param.getRepeatStatus()) && param.getRepeatUntil() == null){
+        if (!"0".equals(param.getRepeatStatus()) && param.getRepeatUntil() == null) {
             throw new SvrException(SvrResCode.CMS_COMPONENT_REPEAT_UNTIL_EMPTY);
         }
         this.setComponent(param, component);
@@ -313,10 +301,10 @@ public class ComponentController {
     }
 
     private List<ComponentAlarm> updateComponent(ComponentAddParam param, Component component) {
-        if (component == null){
+        if (component == null) {
             throw new SvrException(SvrResCode.CMS_COMPONENT_NOT_FOUND);
         }
-        if (!"0".equals(param.getRepeatStatus()) && param.getRepeatUntil() == null){
+        if (!"0".equals(param.getRepeatStatus()) && param.getRepeatUntil() == null) {
             throw new SvrException(SvrResCode.CMS_COMPONENT_REPEAT_UNTIL_EMPTY);
         }
         boolean changed = false;

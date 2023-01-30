@@ -70,8 +70,9 @@ public class WxMaProperties {
      */
     public String getAppId() {
 
-        if (CollectionUtils.isEmpty(configs)) return null;
+        if (CollectionUtils.isEmpty(configs)) {
+            return null;
+        }
         return this.configs.get(0).getAppid();
     }
-
 }

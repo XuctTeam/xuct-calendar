@@ -10,7 +10,10 @@
  */
 package cn.com.xuct.calendar.cms.boot.controller.app;
 
+import cn.com.xuct.calendar.cms.api.entity.Calendar;
 import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
+import cn.com.xuct.calendar.cms.api.vo.CalendarSharedVo;
+import cn.com.xuct.calendar.cms.boot.service.ICalendarService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentService;
 import cn.com.xuct.calendar.cms.boot.service.IMemberCalendarService;
 import cn.com.xuct.calendar.common.core.res.R;
@@ -44,10 +47,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CalendarController {
 
+    private final ICalendarService calendarService;
     private final IMemberCalendarService memberCalendarService;
-
     private final IComponentService componentService;
-
 
     @Operation(summary = "日历列表")
     @GetMapping("/list")
@@ -83,10 +85,7 @@ public class CalendarController {
     @Operation(summary = "更新日历显示状态")
     @PostMapping("/display/status")
     public R<String> updateDisplayStatus(@Validated @RequestBody CalendarUpdateDisplayStatusParam params) {
-        MemberCalendar memberCalendar = memberCalendarService.getById(params.getCalendarId());
-        Assert.notNull(memberCalendar, "未找到日历");
-        memberCalendar.setDisplay(params.getDisplay());
-        memberCalendarService.updateById(memberCalendar);
+        memberCalendarService.updateDisplayStatus(Long.valueOf(params.getCalendarId()), params.getDisplay());
         return R.status(true);
     }
 
@@ -113,5 +112,11 @@ public class CalendarController {
         }
         memberCalendarService.deleteCalendar(memberCalendar.getId(), calendarId);
         return R.status(true);
+    }
+
+    @Operation(summary = "日历分享")
+    @GetMapping("/shared")
+    public R<CalendarSharedVo> sharedInfo(@RequestParam("calendarId") Long calendarId) {
+        return R.data(calendarService.getCalendarShared(calendarId));
     }
 }

@@ -12,6 +12,7 @@ package cn.com.xuct.calendar.cms.boot.service;
 
 import cn.com.xuct.calendar.cms.api.dodo.MemberMarjoCalendarDo;
 import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
+import cn.com.xuct.calendar.cms.api.vo.CalendarSharedVo;
 import cn.com.xuct.calendar.cms.boot.mapper.MemberCalendarMapper;
 import cn.com.xuct.calendar.common.db.service.IBaseService;
 import cn.com.xuct.calendar.common.module.params.MemberCalendarUpdateParam;
@@ -52,12 +53,21 @@ public interface IMemberCalendarService extends IBaseService<MemberCalendarMappe
      */
     MemberCalendar getMemberCalendar(Long id);
 
+    /**
+     * 更新日历显示状态
+     *
+     * @param calendarId
+     * @param display
+     */
+    void updateDisplayStatus(final Long calendarId, final Integer display);
+
 
     /**
      * 新增日历
      *
      * @param memberId
      * @param memberCalendarUpdateParam
+     * @param major
      */
     void createMemberCalendar(Long memberId, MemberCalendarUpdateParam memberCalendarUpdateParam, final boolean major);
 
@@ -68,7 +78,6 @@ public interface IMemberCalendarService extends IBaseService<MemberCalendarMappe
      * @param createMemberName
      */
     void updateMemberCalendarName(Long createMemberId, String createMemberName);
-
 
     /**
      * 修改日历

@@ -26,7 +26,7 @@
 
         <!-- alibaba -->
         <alibaba.cloud.version>2022.0.0.0-RC1</alibaba.cloud.version>
-        <spring.colud.version>2022.0.0</spring.colud.version>
+        <spring.colud.version>2022.0.1</spring.colud.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
 
@@ -60,7 +60,7 @@
         <utils.wxjava.version>4.4.0</utils.wxjava.version>
         <utils.jackson.version>2.14.1</utils.jackson.version>
         <utils.nimbusds.jwt.version>9.23</utils.nimbusds.jwt.version>
-        <utils.tencentcloud.version>4.0.11</utils.tencentcloud.version>
+        <utils.tencentcloud.version>3.1.681</utils.tencentcloud.version>
         <utils.biweekly.version>0.6.6</utils.biweekly.version>
         <utils.okhttp3.version>4.9.3</utils.okhttp3.version>
         <utils.easy.captcha.version>2.2.2</utils.easy.captcha.version>

@@ -47,7 +47,7 @@ import java.util.stream.Collectors;
 public class WxMaConfiguration {
     private final WxMaProperties properties;
 
-    private static final Map<String, WxMaMessageRouter> routers = Maps.newHashMap();
+    private static final Map<String, WxMaMessageRouter> ROUTERS = Maps.newHashMap();
     private static Map<String, WxMaService> maServices;
 
     private final StringRedisTemplate stringRedisTemplate;
@@ -72,7 +72,7 @@ public class WxMaConfiguration {
     }
 
     public static WxMaMessageRouter getRouter(String appid) {
-        return routers.get(appid);
+        return ROUTERS.get(appid);
     }
 
     @PostConstruct
@@ -96,7 +96,7 @@ public class WxMaConfiguration {
 
                     WxMaService service = new WxMaServiceImpl();
                     service.setWxMaConfig(config);
-                    routers.put(a.getAppid(), this.newRouter(service));
+                    ROUTERS.put(a.getAppid(), this.newRouter(service));
                     return service;
                 }).collect(Collectors.toMap(s -> s.getWxMaConfig().getAppid(), a -> a));
     }

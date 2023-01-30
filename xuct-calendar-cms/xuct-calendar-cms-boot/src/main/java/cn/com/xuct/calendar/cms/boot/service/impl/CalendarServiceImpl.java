@@ -11,13 +11,16 @@
 package cn.com.xuct.calendar.cms.boot.service.impl;
 
 import cn.com.xuct.calendar.cms.api.entity.Calendar;
+import cn.com.xuct.calendar.cms.api.vo.CalendarSharedVo;
 import cn.com.xuct.calendar.cms.boot.mapper.CalendarMapper;
 import cn.com.xuct.calendar.cms.boot.service.ICalendarService;
+import cn.com.xuct.calendar.common.core.exception.SvrException;
+import cn.com.xuct.calendar.common.core.res.SvrResCode;
 import cn.com.xuct.calendar.common.db.service.BaseServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**
- * 〈一句话功能简述〉<br> 
+ * 〈一句话功能简述〉<br>
  * 〈〉
  *
  * @author Derek Xu
@@ -25,6 +28,14 @@ import org.springframework.stereotype.Service;
  * @since 1.0.0
  */
 @Service
-public class CalendarServiceImpl extends BaseServiceImpl<CalendarMapper , Calendar> implements ICalendarService {
+public class CalendarServiceImpl extends BaseServiceImpl<CalendarMapper, Calendar> implements ICalendarService {
 
+    @Override
+    public CalendarSharedVo getCalendarShared(Long calendarId) {
+        Calendar calendar = this.getById(calendarId);
+        if (calendar == null) {
+            throw new SvrException(SvrResCode.CMS_CALENDAR_NOT_FOUND);
+        }
+        return null;
+    }
 }

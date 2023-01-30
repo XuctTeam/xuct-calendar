@@ -67,7 +67,6 @@ import java.util.stream.Collectors;
 public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Component> implements IComponentService {
 
     private final IMemberCalendarService calendarService;
-
     private final IMemberCalendarService memberCalendarService;
     private final IComponentAttendService componentAttendService;
     private final IComponentAlarmService componentAlarmService;

@@ -11,10 +11,8 @@
 package cn.com.xuct.calendar.basic.services.controller;
 
 import cn.binarywang.wx.miniapp.api.WxMaMsgService;
-import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
-import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
-import cn.binarywang.wx.miniapp.bean.WxMaSubscribeMessage;
-import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
+import cn.binarywang.wx.miniapp.api.WxMaQrcodeService;
+import cn.binarywang.wx.miniapp.bean.*;
 import cn.com.xuct.calendar.basic.services.config.WxMaConfiguration;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.module.feign.req.WxSubscribeMessageFeignInfo;
@@ -31,6 +29,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -92,5 +91,13 @@ public class WxMaController {
             }
         });
         return R.status(true);
+    }
+
+    @Operation(summary = "获取小程序码")
+    @GetMapping("/qrcode")
+    public R<String> getMaQrCode(@RequestParam("scene") String scene, @RequestParam("page") String page, @RequestParam("envVersion") String envVersion, @RequestParam("width") Integer width) throws WxErrorException {
+        WxMaQrcodeService wxMaQrcodeService = wxMaConfiguration.getMaService().getQrcodeService();
+        byte[] qrBy = wxMaQrcodeService.createWxaCodeUnlimitBytes(scene, page, true, envVersion, width, true, new WxMaCodeLineColor("255", "255", "255"), true);
+        return R.data(new String(qrBy, StandardCharsets.UTF_8));
     }
 }

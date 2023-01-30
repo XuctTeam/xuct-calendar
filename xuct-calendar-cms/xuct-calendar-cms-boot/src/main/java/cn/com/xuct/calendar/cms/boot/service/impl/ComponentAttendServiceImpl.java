@@ -16,9 +16,13 @@ import cn.com.xuct.calendar.cms.api.vo.CalendarAttendCountVo;
 import cn.com.xuct.calendar.cms.api.vo.CalendarComponentVo;
 import cn.com.xuct.calendar.cms.api.vo.ComponentAttendVo;
 import cn.com.xuct.calendar.cms.boot.mapper.ComponentAttendMapper;
+import cn.com.xuct.calendar.cms.boot.mapper.ComponentMapper;
 import cn.com.xuct.calendar.cms.boot.service.IComponentAttendService;
+import cn.com.xuct.calendar.common.core.exception.SvrException;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.res.RetOps;
+import cn.com.xuct.calendar.common.core.res.SvrResCode;
+import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.db.service.BaseServiceImpl;
 import cn.com.xuct.calendar.common.module.feign.PersonInfo;
 import cn.com.xuct.calendar.ums.oauth.client.MemberFeignClient;
@@ -44,6 +48,7 @@ import java.util.stream.Collectors;
 public class ComponentAttendServiceImpl extends BaseServiceImpl<ComponentAttendMapper, ComponentAttend> implements IComponentAttendService {
 
     private final MemberFeignClient memberFeignClient;
+    private final ComponentMapper componentMapper;
 
     @Override
     public List<Component> listByCalendarId(final Long calendarId, final Long start, final Long end) {
@@ -72,13 +77,16 @@ public class ComponentAttendServiceImpl extends BaseServiceImpl<ComponentAttendM
 
     @Override
     public void acceptAttend(final Long memberId, final Long calendarId, final Long attendCalendarId, final Long componentId) {
-        ComponentAttend componentAttend = new ComponentAttend();
-        componentAttend.setComponentId(componentId);
-        componentAttend.setCalendarId(calendarId);
-        componentAttend.setAttendCalendarId(attendCalendarId);
-        componentAttend.setStatus(1);
-        componentAttend.setMemberId(memberId);
-        this.save(componentAttend);
+        Component component = componentMapper.selectById(componentId);
+        if(component == null){
+            throw  new SvrException(SvrResCode.CMS_COMPONENT_NOT_FOUND);
+        }
+        ComponentAttend attend = this.get(Lists.newArrayList(Column.of("component_id", componentId), Column.of("member_id", memberId)));
+        if(attend == null){
+            throw  new SvrException(SvrResCode.CMS_COMPONENT_ATTEND_EMPTY);
+        }
+        attend.setStatus(1);
+        this.updateById(attend);
     }
 
     @Override
@@ -116,5 +124,15 @@ public class ComponentAttendServiceImpl extends BaseServiceImpl<ComponentAttendM
             attendVo.setStatus(attendMap.get(Long.valueOf(attendVo.getMemberId())).getStatus());
             return attendVo;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public void updateComponentAttendStatus(Long componentId, Long userId , Integer status) {
+        ComponentAttend attend = this.get(Lists.newArrayList(Column.of("component_id", componentId), Column.of("member_id", userId)));
+        if(attend == null){
+            throw new SvrException(SvrResCode.CMS_COMPONENT_NOT_FOUND);
+        }
+        attend.setStatus(status);
+        this.updateById(attend);
     }
 }

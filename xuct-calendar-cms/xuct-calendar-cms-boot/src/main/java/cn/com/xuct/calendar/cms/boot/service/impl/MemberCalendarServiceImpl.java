@@ -18,6 +18,8 @@ import cn.com.xuct.calendar.cms.boot.mapper.MemberCalendarMapper;
 import cn.com.xuct.calendar.cms.boot.service.ICalendarService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentAttendService;
 import cn.com.xuct.calendar.cms.boot.service.IMemberCalendarService;
+import cn.com.xuct.calendar.common.core.exception.SvrException;
+import cn.com.xuct.calendar.common.core.res.SvrResCode;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.db.service.BaseServiceImpl;
 import cn.com.xuct.calendar.common.module.params.MemberCalendarUpdateParam;
@@ -65,6 +67,16 @@ public class MemberCalendarServiceImpl extends BaseServiceImpl<MemberCalendarMap
     @Override
     public MemberCalendar getMemberCalendar(Long id) {
         return ((MemberCalendarMapper) super.getBaseMapper()).getMemberCalendar(id);
+    }
+
+    @Override
+    public void updateDisplayStatus(final Long calendarId, final Integer display) {
+        MemberCalendar memberCalendar = this.getById(calendarId);
+        if (memberCalendar == null) {
+            throw new SvrException(SvrResCode.CMS_CALENDAR_NOT_FOUND);
+        }
+        memberCalendar.setDisplay(display);
+        this.updateById(memberCalendar);
     }
 
     @Override
@@ -120,7 +132,7 @@ public class MemberCalendarServiceImpl extends BaseServiceImpl<MemberCalendarMap
     @Transactional(rollbackFor = Exception.class)
     public void mergeMemberCalendar(Long fromMemberId, Long memberId) {
         List<MemberCalendar> memberCalendars = this.find(Column.of("member_id", fromMemberId));
-        if (CollectionUtils.isEmpty(memberCalendars)){
+        if (CollectionUtils.isEmpty(memberCalendars)) {
             return;
         }
         /* 1. 更新非主日历到新ID下 */
@@ -138,7 +150,7 @@ public class MemberCalendarServiceImpl extends BaseServiceImpl<MemberCalendarMap
             return;
         }
         MemberCalendar currentMajorCalendar = this.get(Lists.newArrayList(Column.of("member_id", memberId), Column.of("major", 1)));
-        if (currentMajorCalendar == null){
+        if (currentMajorCalendar == null) {
             throw new RuntimeException("member calendar service:: get current major calendar is null , member id = ".concat(String.valueOf(memberId)));
         }
         /*3. 更新邀请日历*/

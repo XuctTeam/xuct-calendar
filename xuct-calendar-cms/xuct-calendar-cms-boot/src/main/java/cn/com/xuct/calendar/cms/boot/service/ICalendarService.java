@@ -11,6 +11,7 @@
 package cn.com.xuct.calendar.cms.boot.service;
 
 import cn.com.xuct.calendar.cms.api.entity.Calendar;
+import cn.com.xuct.calendar.cms.api.vo.CalendarSharedVo;
 import cn.com.xuct.calendar.cms.boot.mapper.CalendarMapper;
 import cn.com.xuct.calendar.common.db.service.IBaseService;
 
@@ -24,5 +25,13 @@ import cn.com.xuct.calendar.common.db.service.IBaseService;
  */
 public interface ICalendarService extends IBaseService<CalendarMapper, Calendar> {
 
+
+    /**
+     * 获取日历共享信息
+     *
+     * @param calendarId
+     * @return
+     */
+    CalendarSharedVo getCalendarShared(final Long calendarId);
 
 }

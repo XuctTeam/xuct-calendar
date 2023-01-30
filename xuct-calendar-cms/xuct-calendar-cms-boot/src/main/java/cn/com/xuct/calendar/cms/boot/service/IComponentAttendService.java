@@ -47,7 +47,17 @@ public interface IComponentAttendService extends IBaseService<ComponentAttendMap
     void updateAttendCalendarId(final Long oldCalendarId, final Long newCalendarId);
 
     CalendarAttendCountVo statistics(final Long componentId);
-    List<ComponentAttendVo> listByComponentId(final Long componentId , final Long creatorMemberId);
+
+    List<ComponentAttendVo> listByComponentId(final Long componentId, final Long creatorMemberId);
+
+    /**
+     * 更新事件邀请状态
+     *
+     * @param componentId
+     * @param userId
+     * @param status      邀请状态
+     */
+    void updateComponentAttendStatus(final Long componentId, final Long userId, final Integer status);
 
 
 }
