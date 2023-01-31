@@ -21,6 +21,12 @@ package cn.com.xuct.calendar.cms.boot.utils;
 public interface CmsConstant {
 
 
+    public static class RepeatStatus {
+
+        public static final String NO_REPEAT = "0";
+    }
+
+
     public static class ShortDomain {
         public static final String CALENDAR  = "calendar";
 

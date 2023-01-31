@@ -15,10 +15,8 @@ import cn.com.xuct.calendar.common.module.feign.req.EmailFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.ShortChainFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.SmsCodeFeignInfo;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -31,15 +29,30 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "dav-basic-services", contextId = "basic-services")
 public interface BasicServicesFeignClient {
 
-    @GetMapping("/api/basic/uuid")
-    R<Long> uuid(@RequestParam("key") String key);
-
+    /**
+     * 发送短信
+     *
+     * @param smsCodeFeignInfo
+     * @return
+     */
     @PostMapping("/api/basic/v1/sms")
     R<String> smsCode(@RequestBody SmsCodeFeignInfo smsCodeFeignInfo);
 
+    /**
+     * 发送邮件
+     *
+     * @param emailFeignInfo
+     * @return
+     */
     @PostMapping("/api/basic/v1/email")
     R<String> emailCode(@RequestBody EmailFeignInfo emailFeignInfo);
 
+    /**
+     * 通过长链接获取对应的短链接
+     *
+     * @param shortChainFeignInfo
+     * @return
+     */
     @PostMapping("/api/basic/short/chain")
     R<String> shortChain(@RequestBody ShortChainFeignInfo shortChainFeignInfo);
 }

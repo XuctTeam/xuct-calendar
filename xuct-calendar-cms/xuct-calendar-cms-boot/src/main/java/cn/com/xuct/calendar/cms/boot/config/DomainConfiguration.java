@@ -11,10 +11,11 @@
 package cn.com.xuct.calendar.cms.boot.config;
 
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -30,7 +31,19 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "domain")
 public class DomainConfiguration {
 
-    private String calendar;
+    private List<Short> shortList;
 
     private String images;
+
+
+    @Data
+    public static class Short{
+
+        private String domain;
+
+        private String notFound;
+
+        private String type;
+    }
 }
+

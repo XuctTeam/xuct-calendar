@@ -63,6 +63,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -231,8 +232,13 @@ public class ComponentController {
     @Operation(summary = "获取短链接")
     @GetMapping("/short")
     public R<String> getShortChain(@RequestParam("componentId") String componentId) {
+
+        Optional<DomainConfiguration.Short> optionalShort = domainConfiguration.getShortList().stream().filter(x -> CmsConstant.ShortDomain.COMPONENT.equals(x.getType())).findAny();
+        if (!optionalShort.isPresent()) {
+            return R.status(false);
+        }
         return basicServicesFeignClient.shortChain(ShortChainFeignInfo.builder()
-                .url(domainConfiguration.getCalendar().concat("?").concat("componentId=" + componentId))
+                .url(optionalShort.get().getDomain().concat("?").concat("componentId=" + componentId))
                 .type(CmsConstant.ShortDomain.COMPONENT).expire(7200000L).build());
     }
 
@@ -293,7 +299,7 @@ public class ComponentController {
     }
 
     private List<ComponentAlarm> insertComponent(ComponentAddParam param, Component component) {
-        if (!"0".equals(param.getRepeatStatus()) && param.getRepeatUntil() == null) {
+        if (!CmsConstant.RepeatStatus.NO_REPEAT.equals(param.getRepeatStatus()) && param.getRepeatUntil() == null) {
             throw new SvrException(SvrResCode.CMS_COMPONENT_REPEAT_UNTIL_EMPTY);
         }
         this.setComponent(param, component);
@@ -304,7 +310,7 @@ public class ComponentController {
         if (component == null) {
             throw new SvrException(SvrResCode.CMS_COMPONENT_NOT_FOUND);
         }
-        if (!"0".equals(param.getRepeatStatus()) && param.getRepeatUntil() == null) {
+        if (!CmsConstant.RepeatStatus.NO_REPEAT.equals(param.getRepeatStatus()) && param.getRepeatUntil() == null) {
             throw new SvrException(SvrResCode.CMS_COMPONENT_REPEAT_UNTIL_EMPTY);
         }
         boolean changed = false;
@@ -334,7 +340,7 @@ public class ComponentController {
         component.setEndTime(param.getDtend().getTime());
         component.setCreatorMemberId(SecurityUtils.getUserId());
         component.setStatus(CommonStatusEnum.NORMAL);
-        if ("0".equals(param.getRepeatStatus())) {
+        if (CmsConstant.RepeatStatus.NO_REPEAT.equals(param.getRepeatStatus())) {
             component.setRepeatType(ComponentRepeatTypeEnum.UNKNOWN);
         } else {
             component.setRepeatType(ComponentRepeatTypeEnum.getValueByValue(param.getRepeatType()));

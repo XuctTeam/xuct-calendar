@@ -26,21 +26,33 @@ import lombok.Data;
 @TableName("cms_component_attachment")
 public class ComponentAttachment extends SuperEntity<ComponentAttachment> {
 
-    /* 事件ID */
+    /**
+     * 事件ID
+     */
     private Long componentId;
 
-    /* 后缀 */
+    /**
+     * 后缀
+     */
     private String suffix;
 
-    /* 路径 */
+    /**
+     * 路径
+     */
     private String path;
 
-    /* 文件名 */
+    /**
+     * 文件名
+     */
     private String fileName;
 
-    /* 访问地址 */
+    /**
+     * 访问地址
+     */
     private String domain;
 
-    /* uuid */
+    /**
+     * uuid
+     */
     private String uuid;
 }
