@@ -98,9 +98,16 @@ public interface IMemberCalendarService extends IBaseService<MemberCalendarMappe
 
     /**
      * 删除日历
-     *
      * @param memberCalendarId
      * @param calendarId
      */
     void deleteCalendar(Long memberCalendarId, Long calendarId);
+
+    /**
+     * 获取日历共享信息
+     * @param memberId
+     * @param calendarId
+     * @return
+     */
+    CalendarSharedVo getCalendarShared(final Long memberId , final Long calendarId);
 }

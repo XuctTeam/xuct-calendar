@@ -26,17 +26,17 @@ import java.util.List;
  * @since 1.0.0
  */
 @Data
-@RefreshScope
 @Configuration
 @ConfigurationProperties(prefix = "domain")
 public class DomainConfiguration {
 
-    private List<Short> shortList;
+    private List<Short> shortDomains;
 
     private String images;
 
 
     @Data
+
     public static class Short{
 
         private String domain;

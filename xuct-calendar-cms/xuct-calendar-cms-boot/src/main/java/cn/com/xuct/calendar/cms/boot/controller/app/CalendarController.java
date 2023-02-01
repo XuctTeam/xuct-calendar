@@ -10,7 +10,6 @@
  */
 package cn.com.xuct.calendar.cms.boot.controller.app;
 
-import cn.com.xuct.calendar.cms.api.entity.Calendar;
 import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
 import cn.com.xuct.calendar.cms.api.vo.CalendarSharedVo;
 import cn.com.xuct.calendar.cms.boot.service.ICalendarService;
@@ -117,6 +116,6 @@ public class CalendarController {
     @Operation(summary = "日历分享")
     @GetMapping("/shared")
     public R<CalendarSharedVo> sharedInfo(@RequestParam("calendarId") Long calendarId) {
-        return R.data(calendarService.getCalendarShared(calendarId));
+        return R.data(memberCalendarService.getCalendarShared(SecurityUtils.getUserId() , Long.valueOf(calendarId)));
     }
 }

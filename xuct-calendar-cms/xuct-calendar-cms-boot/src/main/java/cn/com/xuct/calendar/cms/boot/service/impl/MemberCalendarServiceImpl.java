@@ -13,15 +13,21 @@ package cn.com.xuct.calendar.cms.boot.service.impl;
 import cn.com.xuct.calendar.cms.api.dodo.MemberMarjoCalendarDo;
 import cn.com.xuct.calendar.cms.api.entity.Calendar;
 import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
+import cn.com.xuct.calendar.cms.api.feign.BasicServicesFeignClient;
+import cn.com.xuct.calendar.cms.api.vo.CalendarSharedVo;
+import cn.com.xuct.calendar.cms.boot.config.DomainConfiguration;
 import cn.com.xuct.calendar.cms.boot.mapper.ComponentMapper;
 import cn.com.xuct.calendar.cms.boot.mapper.MemberCalendarMapper;
 import cn.com.xuct.calendar.cms.boot.service.ICalendarService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentAttendService;
 import cn.com.xuct.calendar.cms.boot.service.IMemberCalendarService;
+import cn.com.xuct.calendar.cms.boot.utils.CmsConstant;
 import cn.com.xuct.calendar.common.core.exception.SvrException;
+import cn.com.xuct.calendar.common.core.res.RetOps;
 import cn.com.xuct.calendar.common.core.res.SvrResCode;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.db.service.BaseServiceImpl;
+import cn.com.xuct.calendar.common.module.feign.req.ShortChainFeignInfo;
 import cn.com.xuct.calendar.common.module.params.MemberCalendarUpdateParam;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
@@ -49,10 +55,12 @@ import java.util.stream.Collectors;
 public class MemberCalendarServiceImpl extends BaseServiceImpl<MemberCalendarMapper, MemberCalendar> implements IMemberCalendarService {
 
     private final ICalendarService calendarService;
-
     private final IComponentAttendService componentAttendService;
-
     private final ComponentMapper componentMapper;
+
+    private final BasicServicesFeignClient basicServicesFeignClient;
+
+    private final DomainConfiguration domainConfiguration;
 
     @Override
     public List<MemberCalendar> queryMemberCalendar(Long memberId) {
@@ -168,5 +176,31 @@ public class MemberCalendarServiceImpl extends BaseServiceImpl<MemberCalendarMap
     public void deleteCalendar(Long memberCalendarId, Long calendarId) {
         this.removeById(memberCalendarId);
         calendarService.removeById(calendarId);
+    }
+
+    @Override
+    public CalendarSharedVo getCalendarShared(final Long memberId, final Long calendarId) {
+        Calendar calendar = calendarService.getById(calendarId);
+        if (calendar == null) {
+            throw new SvrException(SvrResCode.CMS_CALENDAR_NOT_FOUND);
+        }
+        MemberCalendar memberCalendar = this.get(Lists.newArrayList(Column.of("calendar_id", calendarId), Column.of("member_id", memberId)));
+        if (memberCalendar == null) {
+            throw new SvrException(SvrResCode.CMS_CALENDAR_NOT_FOUND);
+        }
+        CalendarSharedVo calendarSharedVo = new CalendarSharedVo();
+
+        Optional<DomainConfiguration.Short> optionalShort = domainConfiguration.getShortDomains().stream().filter(x -> CmsConstant.ShortDomain.CALENDAR.equals(x.getType())).findAny();
+        if (!optionalShort.isPresent()) {
+            throw new SvrException(SvrResCode.CMS_SERVER_ERROR);
+        }
+        String domain = RetOps.of(basicServicesFeignClient.shortChain(ShortChainFeignInfo.builder()
+                .url(optionalShort.get().getDomain().concat("?calendarId=" + calendarId))
+                .type(CmsConstant.ShortDomain.CALENDAR).expire(7200000L).build())).getData().orElse(null);
+
+        calendarSharedVo.setShortUrl(domain);
+        calendarSharedVo.setId(calendarId);
+        calendarSharedVo.setName(memberCalendar.getName());
+        return calendarSharedVo;
     }
 }

@@ -10,7 +10,6 @@
  */
 package cn.com.xuct.calendar.basic.services.config;
 
-import cn.com.xuct.calendar.basic.services.config.data.ShortChainDomainData;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -33,16 +32,26 @@ import java.util.List;
 @ConfigurationProperties(prefix = "domain")
 public class ShortChainDomainConfiguration {
 
-    private List<ShortChainDomainData> list = Lists.newArrayList();
+    private List<ShortDomain> shortDomains = Lists.newArrayList();
+
+    @Data
+    public static class ShortDomain {
+        private String domain;
+
+        private String notFound;
+
+        private String type;
+    }
+
 
     public String getNotFound(String domain) {
-        return list.stream().filter(item ->
+        return shortDomains.stream().filter(item ->
                 item.getDomain().replace("http://", "").replace("https://", "")
-                        .equals(domain)).findFirst().orElse(new ShortChainDomainData()).getNotFound();
+                        .equals(domain)).findFirst().orElse(new ShortDomain()).getNotFound();
     }
 
     public String getDomain(String type) {
-        return list.stream().filter(item -> item.getType().equals(type)).findFirst().orElse(new ShortChainDomainData()).getDomain();
+        return shortDomains.stream().filter(item -> item.getType().equals(type)).findFirst().orElse(new ShortDomain()).getDomain();
     }
 
 }

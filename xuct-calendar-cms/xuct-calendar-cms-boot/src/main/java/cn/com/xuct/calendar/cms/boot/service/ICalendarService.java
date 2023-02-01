@@ -25,13 +25,4 @@ import cn.com.xuct.calendar.common.db.service.IBaseService;
  */
 public interface ICalendarService extends IBaseService<CalendarMapper, Calendar> {
 
-
-    /**
-     * 获取日历共享信息
-     *
-     * @param calendarId
-     * @return
-     */
-    CalendarSharedVo getCalendarShared(final Long calendarId);
-
 }
