@@ -43,4 +43,8 @@
         where 1 = 1
           and calendar_id = #{oldCalendarId}
     </update>
+
+    <select id="countByCalendarId" resultType="java.lang.Long">
+         select count(*) from cms_component where 1=1 and calendar_id = #{calendarId}
+    </select>
 </mapper>

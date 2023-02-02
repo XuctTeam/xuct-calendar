@@ -34,6 +34,11 @@ public enum SvrResCode implements IResultCode {
     CMS_COMPONENT_NOT_FOUND(6102, "日程不存在"),
     CMS_COMPONENT_DAY_LIST_EMPTY(6103, "日程查询日期为空"),
     CMS_COMPONENT_ATTEND_EMPTY(6104 , "邀请参与者为空"),
+
+    CMS_CALENDAR_MAJOR_CALENDAR_ENABLE_DELETE(6105, "主日历不能删除"),
+
+    CMS_COMPONENT_HAS_EVENT(6106, "日历下含有事件"),
+
     BASIC_SERVER_ERROR(7000, "服务平台异常"),
     BASIC_METHOD_NOT_SUPPORT_ERROR(7001, "请求不允许");
 

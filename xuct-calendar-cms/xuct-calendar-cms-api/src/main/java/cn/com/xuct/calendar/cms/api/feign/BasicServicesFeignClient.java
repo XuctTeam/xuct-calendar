@@ -53,6 +53,6 @@ public interface BasicServicesFeignClient {
      * @param shortChainFeignInfo
      * @return
      */
-    @PostMapping("/api/basic/short/chain")
+    @PostMapping("/api/basic/v1/short/chain")
     R<String> shortChain(@RequestBody ShortChainFeignInfo shortChainFeignInfo);
 }

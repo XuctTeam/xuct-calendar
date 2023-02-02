@@ -42,7 +42,7 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @Tag(name = "【基础服务】短链接口")
 @RequiredArgsConstructor
-@RequestMapping("/api/basic/short/chain")
+@RequestMapping("/api/basic/v1/short/chain")
 public class ShortChainController {
 
     private final ShortChainDomainConfiguration domainConfiguration;

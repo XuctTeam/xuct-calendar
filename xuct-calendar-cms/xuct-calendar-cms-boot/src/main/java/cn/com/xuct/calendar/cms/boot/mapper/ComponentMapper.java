@@ -45,4 +45,12 @@ public interface ComponentMapper extends BaseMapper<Component> {
      * @param newCalendarId
      */
     void updateCalendarIdByCalendarId(@Param("oldCalendarId") Long oldCalendarId, @Param("newCalendarId") Long newCalendarId);
+
+    /**
+     * 获取日历下事件总数
+     *
+     * @param calendarId
+     * @return
+     */
+    Long countByCalendarId(@Param("calendarId") Long calendarId);
 }

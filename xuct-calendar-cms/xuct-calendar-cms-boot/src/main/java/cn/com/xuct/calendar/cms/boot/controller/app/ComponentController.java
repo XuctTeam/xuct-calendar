@@ -232,7 +232,6 @@ public class ComponentController {
     @Operation(summary = "获取短链接")
     @GetMapping("/short")
     public R<String> getShortChain(@RequestParam("componentId") String componentId) {
-
         Optional<DomainConfiguration.Short> optionalShort = domainConfiguration.getShortDomains().stream().filter(x -> CmsConstant.ShortDomain.COMPONENT.equals(x.getType())).findAny();
         if (!optionalShort.isPresent()) {
             return R.status(false);

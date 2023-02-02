@@ -66,7 +66,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Component> implements IComponentService {
 
-    private final IMemberCalendarService calendarService;
     private final IMemberCalendarService memberCalendarService;
     private final IComponentAttendService componentAttendService;
     private final IComponentAlarmService componentAlarmService;
@@ -361,7 +360,7 @@ public class ComponentServiceImpl extends BaseServiceImpl<ComponentMapper, Compo
         ComponentAttend componentAttend = null;
         MemberMarjoCalendarDo calendarDo = null;
         if (!CollectionUtils.isEmpty(memberIds)) {
-            List<MemberMarjoCalendarDo> memberMarjoCalendarDos = calendarService.queryMarjoCalendarIds(memberIds);
+            List<MemberMarjoCalendarDo> memberMarjoCalendarDos = memberCalendarService.queryMarjoCalendarIds(memberIds);
             for (int i = 0, j = memberMarjoCalendarDos.size(); i < j; i++) {
                 calendarDo = memberMarjoCalendarDos.get(i);
                 componentAttend = new ComponentAttend();

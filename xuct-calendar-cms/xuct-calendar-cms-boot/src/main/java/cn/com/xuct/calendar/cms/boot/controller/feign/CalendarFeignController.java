@@ -10,6 +10,7 @@
  */
 package cn.com.xuct.calendar.cms.boot.controller.feign;
 
+import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
 import cn.com.xuct.calendar.cms.boot.config.DictCacheManager;
 import cn.com.xuct.calendar.cms.boot.service.IMemberCalendarService;
 import cn.com.xuct.calendar.common.core.constant.DictConstants;
@@ -23,10 +24,13 @@ import cn.com.xuct.calendar.common.security.annotation.Inner;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -79,7 +83,11 @@ public class CalendarFeignController {
     @Operation(summary = "日历合并")
     @PostMapping("/merge")
     public R<String> mergeCalendar(@RequestBody CalendarMergeDto calendarMergeDto) {
-        memberCalendarService.mergeMemberCalendar(calendarMergeDto.getFromMemberId(), calendarMergeDto.getMemberId());
+        List<MemberCalendar> memberCalendars = memberCalendarService.find(Column.of("member_id", calendarMergeDto.getFromMemberId()));
+        if (CollectionUtils.isEmpty(memberCalendars)) {
+            return R.status(false);
+        }
+        memberCalendarService.mergeMemberCalendar(calendarMergeDto.getFromMemberId(), calendarMergeDto.getMemberId() , memberCalendars);
         return R.status(true);
     }
 }

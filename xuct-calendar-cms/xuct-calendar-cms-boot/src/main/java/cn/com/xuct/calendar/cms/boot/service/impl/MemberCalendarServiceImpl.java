@@ -34,7 +34,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -55,12 +54,10 @@ import java.util.stream.Collectors;
 public class MemberCalendarServiceImpl extends BaseServiceImpl<MemberCalendarMapper, MemberCalendar> implements IMemberCalendarService {
 
     private final ICalendarService calendarService;
+    private final BasicServicesFeignClient basicServicesFeignClient;
+    private final DomainConfiguration domainConfiguration;
     private final IComponentAttendService componentAttendService;
     private final ComponentMapper componentMapper;
-
-    private final BasicServicesFeignClient basicServicesFeignClient;
-
-    private final DomainConfiguration domainConfiguration;
 
     @Override
     public List<MemberCalendar> queryMemberCalendar(Long memberId) {
@@ -138,11 +135,7 @@ public class MemberCalendarServiceImpl extends BaseServiceImpl<MemberCalendarMap
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void mergeMemberCalendar(Long fromMemberId, Long memberId) {
-        List<MemberCalendar> memberCalendars = this.find(Column.of("member_id", fromMemberId));
-        if (CollectionUtils.isEmpty(memberCalendars)) {
-            return;
-        }
+    public void mergeMemberCalendar(Long fromMemberId, Long memberId ,final List<MemberCalendar> memberCalendars) {
         /* 1. 更新非主日历到新ID下 */
         List<MemberCalendar> notMajorCalendars = memberCalendars.stream().filter(calendar -> calendar.getMajor() == 0).collect(Collectors.toList());
         Date updateTime = new Date();
@@ -157,15 +150,16 @@ public class MemberCalendarServiceImpl extends BaseServiceImpl<MemberCalendarMap
         if (!majorCalendarOpt.isPresent()) {
             return;
         }
+        MemberCalendar memberCalendar = majorCalendarOpt.get();
         MemberCalendar currentMajorCalendar = this.get(Lists.newArrayList(Column.of("member_id", memberId), Column.of("major", 1)));
         if (currentMajorCalendar == null) {
             throw new RuntimeException("member calendar service:: get current major calendar is null , member id = ".concat(String.valueOf(memberId)));
         }
         /*3. 更新邀请日历*/
-        componentAttendService.updateAttendCalendarId(majorCalendarOpt.get().getCalendarId(), currentMajorCalendar.getCalendarId());
-        componentAttendService.updateAttendMarjoCalendarId(majorCalendarOpt.get().getCalendarId(), currentMajorCalendar.getCalendarId());
+        componentAttendService.updateAttendCalendarId(memberCalendar.getCalendarId(), currentMajorCalendar.getCalendarId());
+        componentAttendService.updateAttendMarjoCalendarId(memberCalendar.getCalendarId(), currentMajorCalendar.getCalendarId());
         /*4. 更新事件的日历 */
-        componentMapper.updateCalendarIdByCalendarId(majorCalendarOpt.get().getCalendarId(), currentMajorCalendar.getCalendarId());
+        componentMapper.updateCalendarIdByCalendarId(memberCalendar.getCalendarId(), currentMajorCalendar.getCalendarId());
         /*5. 删除日历 */
         this.removeById(majorCalendarOpt.get().getId());
         calendarService.delete(Column.of("id", majorCalendarOpt.get().getCalendarId()));
@@ -173,8 +167,25 @@ public class MemberCalendarServiceImpl extends BaseServiceImpl<MemberCalendarMap
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteCalendar(Long memberCalendarId, Long calendarId) {
-        this.removeById(memberCalendarId);
+    public void deleteCalendar(final Long memberId, Long calendarId) {
+        MemberCalendar memberCalendar = this.get(Lists.newArrayList(Column.of("member_id", memberId), Column.of("calendar_id", calendarId)));
+        if (memberCalendar == null) {
+            throw new SvrException(SvrResCode.CMS_CALENDAR_NOT_FOUND);
+        }
+        if (memberCalendar.getMajor() == 1) {
+            throw new SvrException(SvrResCode.CMS_CALENDAR_MAJOR_CALENDAR_ENABLE_DELETE);
+        }
+        /* 不是自己创建创建 则删除对应关系 */
+        if (!memberCalendar.getCreateMemberId().toString().equals(memberId.toString())) {
+            this.removeById(memberCalendar.getId());
+            return;
+        }
+        /* 是自己日历，则查询日历下事件 */
+        Long existComponentNumber = componentMapper.countByCalendarId(calendarId);
+        if (existComponentNumber > 0) {
+            throw new SvrException(SvrResCode.CMS_COMPONENT_HAS_EVENT);
+        }
+        this.removeById(memberCalendar.getId());
         calendarService.removeById(calendarId);
     }
 

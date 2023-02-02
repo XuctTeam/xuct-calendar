@@ -13,14 +13,11 @@ package cn.com.xuct.calendar.cms.boot.controller.app;
 import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
 import cn.com.xuct.calendar.cms.api.vo.CalendarSharedVo;
 import cn.com.xuct.calendar.cms.boot.service.ICalendarService;
-import cn.com.xuct.calendar.cms.boot.service.IComponentService;
 import cn.com.xuct.calendar.cms.boot.service.IMemberCalendarService;
 import cn.com.xuct.calendar.common.core.res.R;
-import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.params.CalendarUpdateDisplayStatusParam;
 import cn.com.xuct.calendar.common.module.params.MemberCalendarUpdateParam;
 import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
-import com.google.common.collect.Lists;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -46,9 +43,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CalendarController {
 
-    private final ICalendarService calendarService;
+
     private final IMemberCalendarService memberCalendarService;
-    private final IComponentService componentService;
+
 
     @Operation(summary = "日历列表")
     @GetMapping("/list")
@@ -91,25 +88,7 @@ public class CalendarController {
     @Operation(summary = "删除日历")
     @DeleteMapping
     public R<String> delete(@RequestParam("calendarId") Long calendarId) {
-        Long userId = SecurityUtils.getUserId();
-        MemberCalendar memberCalendar = memberCalendarService.get(Lists.newArrayList(Column.of("member_id", userId), Column.of("calendar_id", calendarId)));
-        if (memberCalendar == null) {
-            return R.fail("未找到日历");
-        }
-        if (memberCalendar.getMajor() == 1) {
-            return R.fail("主日历无法删除");
-        }
-        /* 不是自己创建创建 则删除对应关系 */
-        if (!memberCalendar.getCreateMemberId().toString().equals(userId.toString())) {
-            memberCalendarService.removeById(memberCalendar.getId());
-            return R.status(true);
-        }
-        /* 是自己日历，则查询日历下事件 */
-        Long existComponentNumber = componentService.count(Column.of("calendar_id", calendarId));
-        if (existComponentNumber > 0) {
-            return R.fail("日历下包含事件");
-        }
-        memberCalendarService.deleteCalendar(memberCalendar.getId(), calendarId);
+        memberCalendarService.deleteCalendar(SecurityUtils.getUserId() , calendarId);
         return R.status(true);
     }
 
