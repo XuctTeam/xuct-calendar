@@ -10,11 +10,12 @@
  */
 package cn.com.xuct.calendar.basic.services.controller;
 
-import cn.binarywang.wx.miniapp.api.WxMaMsgService;
-import cn.binarywang.wx.miniapp.api.WxMaQrcodeService;
-import cn.binarywang.wx.miniapp.bean.*;
-import cn.com.xuct.calendar.basic.services.config.WxMaConfiguration;
+import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
+import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
+import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
+import cn.com.xuct.calendar.basic.services.service.WxMaService;
 import cn.com.xuct.calendar.common.core.res.R;
+import cn.com.xuct.calendar.common.module.feign.req.WxQrCodeInfo;
 import cn.com.xuct.calendar.common.module.feign.req.WxSubscribeMessageFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.WxUserInfoFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.WxUserPhoneFeignInfo;
@@ -23,15 +24,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
-import org.springframework.beans.BeanUtils;
 import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -48,12 +45,12 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/basic/v1/wx/ma")
 public class WxMaController {
 
-    private final WxMaConfiguration wxMaConfiguration;
+    private final WxMaService wxMaService;
 
     @Operation(summary = "获取登陆SESSION")
     @GetMapping("/getSessionInfo")
     public R<WxMaJscode2SessionResult> getSessionInfo(@RequestParam("code") String code) throws WxErrorException {
-        WxMaJscode2SessionResult session = wxMaConfiguration.getMaService().getUserService().getSessionInfo(code);
+        WxMaJscode2SessionResult session = wxMaService.getSessionInfo(code);
         return session == null ? R.fail("查询session失败") : R.data(session);
     }
 
@@ -61,43 +58,27 @@ public class WxMaController {
     @PostMapping("/getUserInfo")
     public R<WxMaUserInfo> getUserInfo(@Validated @RequestBody WxUserInfoFeignInfo wxUserInfoFeignInfo) {
         Assert.notNull(wxUserInfoFeignInfo.getSessionKey(), "sessionKey must be empty");
-        WxMaUserInfo wxMaUserInfo = wxMaConfiguration.getMaService().getUserService().getUserInfo(wxUserInfoFeignInfo.getSessionKey(), wxUserInfoFeignInfo.getEncryptedData(), wxUserInfoFeignInfo.getIv());
+        WxMaUserInfo wxMaUserInfo = wxMaService.getUserInfo(wxUserInfoFeignInfo.getSessionKey() , wxUserInfoFeignInfo.getEncryptedData(), wxUserInfoFeignInfo.getIv());
         return wxMaUserInfo == null ? R.fail("查询微信失败") : R.data(wxMaUserInfo);
     }
 
     @Operation(summary = "获取用户电话")
     @PostMapping("/getPhoneNoInfo")
     public R<WxMaPhoneNumberInfo> getPhoneNoInfo(@Validated @RequestBody WxUserPhoneFeignInfo wxUserPhoneFeignInfo) throws WxErrorException {
-        WxMaPhoneNumberInfo wxMaPhoneNumberInfo = wxMaConfiguration.getMaService().getUserService().getNewPhoneNoInfo(wxUserPhoneFeignInfo.getCode());
+        WxMaPhoneNumberInfo wxMaPhoneNumberInfo = wxMaService.getPhoneNoInfo(wxUserPhoneFeignInfo.getCode());
         return wxMaPhoneNumberInfo == null ? R.fail("查询微信失败") : R.data(wxMaPhoneNumberInfo);
     }
 
     @Operation(summary = "发送订阅消息")
     @PostMapping("/sendSubscribeMsg")
     public R<String> sendSubscribeMsg(@Validated @RequestBody List<WxSubscribeMessageFeignInfo> subscribeMessageFeignInfo) {
-        WxMaMsgService wxMaMsgService = wxMaConfiguration.getMaService().getMsgService();
-        subscribeMessageFeignInfo.stream().forEach(wxSubscribeReq -> {
-            WxMaSubscribeMessage wxMaSubscribeMessage = new WxMaSubscribeMessage();
-            BeanUtils.copyProperties(wxSubscribeReq, wxMaSubscribeMessage);
-            if (!CollectionUtils.isEmpty(wxSubscribeReq.getData())) {
-                wxMaSubscribeMessage.setData(wxSubscribeReq.getData().stream().map(x -> {
-                    return new WxMaSubscribeMessage.MsgData(x.getName(), x.getName());
-                }).collect(Collectors.toList()));
-            }
-            try {
-                wxMaMsgService.sendSubscribeMsg(wxMaSubscribeMessage);
-            } catch (WxErrorException e) {
-                log.error("wx miniapp controller:: send subscribe message error , to user = {}", wxSubscribeReq.getToUser());
-            }
-        });
+        wxMaService.sendSubscribeMsg(subscribeMessageFeignInfo);
         return R.status(true);
     }
 
     @Operation(summary = "获取小程序码")
-    @GetMapping("/qrcode")
-    public R<String> getMaQrCode(@RequestParam("scene") String scene, @RequestParam("page") String page, @RequestParam("envVersion") String envVersion, @RequestParam("width") Integer width) throws WxErrorException {
-        WxMaQrcodeService wxMaQrcodeService = wxMaConfiguration.getMaService().getQrcodeService();
-        byte[] qrBy = wxMaQrcodeService.createWxaCodeUnlimitBytes(scene, page, true, envVersion, width, true, new WxMaCodeLineColor("255", "255", "255"), true);
-        return R.data(new String(qrBy, StandardCharsets.UTF_8));
+    @PostMapping("/qrcode")
+    public R<String> getMaQrCode(@Validated @RequestBody WxQrCodeInfo wxQrCodeInfo) throws WxErrorException {
+        return R.data(wxMaService.getQrCode(wxQrCodeInfo.getScene(), wxQrCodeInfo.getPage(), wxQrCodeInfo.getEnvVersion(), wxQrCodeInfo.getWidth()));
     }
 }

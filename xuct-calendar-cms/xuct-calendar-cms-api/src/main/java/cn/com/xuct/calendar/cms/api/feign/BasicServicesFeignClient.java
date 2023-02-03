@@ -14,6 +14,7 @@ import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.module.feign.req.EmailFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.ShortChainFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.SmsCodeFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.req.WxQrCodeInfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,7 +32,6 @@ public interface BasicServicesFeignClient {
 
     /**
      * 发送短信
-     *
      * @param smsCodeFeignInfo
      * @return
      */
@@ -40,7 +40,6 @@ public interface BasicServicesFeignClient {
 
     /**
      * 发送邮件
-     *
      * @param emailFeignInfo
      * @return
      */
@@ -49,10 +48,17 @@ public interface BasicServicesFeignClient {
 
     /**
      * 通过长链接获取对应的短链接
-     *
      * @param shortChainFeignInfo
      * @return
      */
     @PostMapping("/api/basic/v1/short/chain")
     R<String> shortChain(@RequestBody ShortChainFeignInfo shortChainFeignInfo);
+
+    /**
+     * 获取微信分享二维码
+     * @param wxQrCodeInfo
+     * @return
+     */
+    @PostMapping("/api/basic/v1/wx/ma/qrcode")
+    R<String> getMaQrCode(@RequestBody WxQrCodeInfo wxQrCodeInfo);
 }

@@ -28,6 +28,7 @@ import cn.com.xuct.calendar.common.core.res.SvrResCode;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.db.service.BaseServiceImpl;
 import cn.com.xuct.calendar.common.module.feign.req.ShortChainFeignInfo;
+import cn.com.xuct.calendar.common.module.feign.req.WxQrCodeInfo;
 import cn.com.xuct.calendar.common.module.params.MemberCalendarUpdateParam;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
@@ -135,7 +136,7 @@ public class MemberCalendarServiceImpl extends BaseServiceImpl<MemberCalendarMap
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void mergeMemberCalendar(Long fromMemberId, Long memberId ,final List<MemberCalendar> memberCalendars) {
+    public void mergeMemberCalendar(Long fromMemberId, Long memberId, final List<MemberCalendar> memberCalendars) {
         /* 1. 更新非主日历到新ID下 */
         List<MemberCalendar> notMajorCalendars = memberCalendars.stream().filter(calendar -> calendar.getMajor() == 0).collect(Collectors.toList());
         Date updateTime = new Date();
@@ -207,7 +208,9 @@ public class MemberCalendarServiceImpl extends BaseServiceImpl<MemberCalendarMap
         }
         String domain = RetOps.of(basicServicesFeignClient.shortChain(ShortChainFeignInfo.builder()
                 .url(optionalShort.get().getDomain().concat("?calendarId=" + calendarId))
-                .type(CmsConstant.ShortDomain.CALENDAR).expire(7200000L).build())).getData().orElse(null);
+                .type(CmsConstant.ShortDomain.CALENDAR).expire(7200000L).build())).getData().orElseThrow();
+
+        String qrCode =  RetOps.of(basicServicesFeignClient.getMaQrCode(WxQrCodeInfo.builder().scene("1").page("/pages/index").envVersion("123").width(200).build())).getData().orElse(null);
 
         calendarSharedVo.setShortUrl(domain);
         calendarSharedVo.setId(calendarId);

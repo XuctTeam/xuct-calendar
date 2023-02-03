@@ -34,12 +34,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(value = WxErrorException.class)
     @ResponseBody
     public R<String> wxErrorExceptionHandler(WxErrorException e) {
         log.error("微信访问异常！原因是：{}", e.getMessage());
-        return R.fail(SvrResCode.UMS_WX_ERROR, e.getMessage());
+        return R.fail(e.getError().getErrorCode(), e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
