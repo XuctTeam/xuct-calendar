@@ -56,6 +56,7 @@
         <!-- utils -->
         <utils.common.io.version>2.11.0</utils.common.io.version>
         <utils.hutool.version>5.8.11</utils.hutool.version>
+        <utils.google.zxing.version>3.5.1</utils.google.zxing.version>
         <utils.guava.version>31.1-jre</utils.guava.version>
         <utils.wxjava.version>4.4.0</utils.wxjava.version>
         <utils.jackson.version>2.14.1</utils.jackson.version>
@@ -124,6 +125,11 @@
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-all</artifactId>
                 <version>${utils.hutool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.zxing</groupId>
+                <artifactId>core</artifactId>
+                <version>${utils.google.zxing.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>

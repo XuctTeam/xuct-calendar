@@ -16,6 +16,7 @@ import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
 import cn.com.xuct.calendar.cms.api.feign.BasicServicesFeignClient;
 import cn.com.xuct.calendar.cms.api.vo.CalendarSharedVo;
 import cn.com.xuct.calendar.cms.boot.config.DomainConfiguration;
+import cn.com.xuct.calendar.cms.boot.config.WxMaConfiguration;
 import cn.com.xuct.calendar.cms.boot.mapper.ComponentMapper;
 import cn.com.xuct.calendar.cms.boot.mapper.MemberCalendarMapper;
 import cn.com.xuct.calendar.cms.boot.service.ICalendarService;
@@ -28,8 +29,9 @@ import cn.com.xuct.calendar.common.core.res.SvrResCode;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.db.service.BaseServiceImpl;
 import cn.com.xuct.calendar.common.module.feign.req.ShortChainFeignInfo;
-import cn.com.xuct.calendar.common.module.feign.req.WxQrCodeInfo;
 import cn.com.xuct.calendar.common.module.params.MemberCalendarUpdateParam;
+import cn.hutool.extra.qrcode.QrCodeUtil;
+import cn.hutool.extra.qrcode.QrConfig;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,6 +61,8 @@ public class MemberCalendarServiceImpl extends BaseServiceImpl<MemberCalendarMap
     private final DomainConfiguration domainConfiguration;
     private final IComponentAttendService componentAttendService;
     private final ComponentMapper componentMapper;
+
+    private final WxMaConfiguration wxMaConfiguration;
 
     @Override
     public List<MemberCalendar> queryMemberCalendar(Long memberId) {
@@ -210,11 +214,17 @@ public class MemberCalendarServiceImpl extends BaseServiceImpl<MemberCalendarMap
                 .url(optionalShort.get().getDomain().concat("?calendarId=" + calendarId))
                 .type(CmsConstant.ShortDomain.CALENDAR).expire(7200000L).build())).getData().orElseThrow();
 
-        String qrCode =  RetOps.of(basicServicesFeignClient.getMaQrCode(WxQrCodeInfo.builder().scene("1").page("/pages/index").envVersion("123").width(200).build())).getData().orElse(null);
+//        String qrCode = RetOps.of(basicServicesFeignClient.getMaQrCode(WxQrCodeInfo.builder()
+//                .scene("1")
+//                .page(wxMaConfiguration.getShare().getCalendarPage())
+//                .envVersion(wxMaConfiguration.getEnvVersion())
+//                .width(Integer.parseInt(wxMaConfiguration.getQrWidth())).build())).getData().orElse(null);
+        String qrCode = QrCodeUtil.generateAsBase64("test", new QrConfig(), "png");
 
         calendarSharedVo.setShortUrl(domain);
         calendarSharedVo.setId(calendarId);
         calendarSharedVo.setName(memberCalendar.getName());
+        calendarSharedVo.setQr(qrCode);
         return calendarSharedVo;
     }
 }
