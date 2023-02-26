@@ -78,7 +78,7 @@ public class OAuthMemberDetailsServiceImpl implements OAuthUserDetailsService {
      */
     @Override
     public boolean support(String clientId, String grantType) {
-        return SecurityConstants.APP_GRANT_TYPE.equals(clientId);
+        return SecurityConstants.CLIENT_ID_APP.equals(clientId);
     }
 
     @Override

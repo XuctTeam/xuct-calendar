@@ -1,4 +1,4 @@
-package cn.com.xuct.calendar.uaa.boot.support.app;
+package cn.com.xuct.calendar.uaa.boot.support.phone;
 
 import cn.com.xuct.calendar.uaa.boot.support.base.OAuth2ResourceOwnerBaseAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -11,10 +11,10 @@ import java.util.Set;
  * @author lengleng
  * @description 短信登录token信息
  */
-public class OAuth2ResourceOwnerAppAuthenticationToken extends OAuth2ResourceOwnerBaseAuthenticationToken {
+public class OAuth2ResourceOwnerPhoneAuthenticationToken extends OAuth2ResourceOwnerBaseAuthenticationToken {
 
-	public OAuth2ResourceOwnerAppAuthenticationToken(AuthorizationGrantType authorizationGrantType,
-													 Authentication clientPrincipal, Set<String> scopes, Map<String, Object> additionalParameters) {
+	public OAuth2ResourceOwnerPhoneAuthenticationToken(AuthorizationGrantType authorizationGrantType,
+													   Authentication clientPrincipal, Set<String> scopes, Map<String, Object> additionalParameters) {
 		super(authorizationGrantType, clientPrincipal, scopes, additionalParameters);
 	}
 

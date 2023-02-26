@@ -11,6 +11,7 @@
 package cn.com.xuct.calendar.gateway.handler;
 
 import cn.com.xuct.calendar.common.core.constant.CacheConstants;
+import cn.com.xuct.calendar.common.core.constant.GlobalConstants;
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
 import com.pig4cloud.captcha.ArithmeticCaptcha;
@@ -23,6 +24,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.util.FastByteArrayOutputStream;
+import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.HandlerFunction;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -66,10 +68,17 @@ public class ImageCodeHandler implements HandlerFunction<ServerResponse> {
         System.out.println("验证码 = " + text);
         // 保存验证码信息
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        if (imgType.isPresent()) {
-            randomStr.ifPresent(s -> redisTemplate.opsForValue().set(
-                    (imgType.get().equals(REGISTER_IMG) ? RedisConstants.MEMBER_CAPTCHA_REGISTER_CODE_KEY : CacheConstants.DEFAULT_LOGIN_CODE_KEY)
-                            .concat(s), text, SecurityConstants.CODE_TIME, TimeUnit.SECONDS));
+        if (imgType.isPresent() && randomStr.isPresent() && StringUtils.hasLength(randomStr.get())) {
+            String redisKey = "";
+            switch (imgType.get()){
+                case REGISTER_IMG:
+                    redisKey = RedisConstants.MEMBER_CAPTCHA_REGISTER_CODE_KEY;
+                    break;
+                default:
+                    redisKey = CacheConstants.DEFAULT_LOGIN_CODE_KEY;
+            }
+            final String finalRedisKey = redisKey.concat(GlobalConstants.COLON);
+            randomStr.ifPresent(s -> redisTemplate.opsForValue().set(finalRedisKey.concat(s), text, SecurityConstants.CODE_TIME, TimeUnit.SECONDS));
         }
         // 转换流信息写出
         FastByteArrayOutputStream os = new FastByteArrayOutputStream();

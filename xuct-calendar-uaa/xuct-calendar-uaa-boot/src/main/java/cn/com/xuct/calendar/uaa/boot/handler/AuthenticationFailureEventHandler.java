@@ -47,11 +47,11 @@ public class AuthenticationFailureEventHandler implements AuthenticationFailureH
         Map<String, String[]> params = request.getParameterMap();
         if (params.containsKey(SecurityConstants.GRANT_TYPE)) {
             String grantTypes = request.getParameter(SecurityConstants.GRANT_TYPE);
-            if (SecurityConstants.WX_GRANT_TYPE.equals(grantTypes)) {
-                //TODO:: 微信记录code
-            } else {
-                String username = request.getParameter(OAuth2ParameterNames.USERNAME);
-            }
+//            if (SecurityConstants..equals(grantTypes)) {
+//                //TODO:: 微信记录code
+//            } else {
+//                String username = request.getParameter(OAuth2ParameterNames.USERNAME);
+//            }
         }
         sendErrorResponse(response, exception);
     }

@@ -42,4 +42,7 @@ public interface GlobalConstants {
      */
     String CONTENT_TYPE = "application/json; charset=utf-8";
 
+
+    String COLON = ":";
+
 }

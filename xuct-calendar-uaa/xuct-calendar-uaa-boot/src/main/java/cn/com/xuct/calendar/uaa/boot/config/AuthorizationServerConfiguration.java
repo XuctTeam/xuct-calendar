@@ -14,13 +14,13 @@ import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
 import cn.com.xuct.calendar.uaa.boot.handler.AuthenticationFailureEventHandler;
 import cn.com.xuct.calendar.uaa.boot.handler.AuthenticationSuccessEventHandler;
 import cn.com.xuct.calendar.uaa.boot.support.CustomeOAuth2AccessTokenGenerator;
-import cn.com.xuct.calendar.uaa.boot.support.app.OAuth2ResourceOwnerAppAuthenticationConverter;
-import cn.com.xuct.calendar.uaa.boot.support.app.OAuth2ResourceOwnerAppAuthenticationProvider;
 import cn.com.xuct.calendar.uaa.boot.support.core.CustomizerOAuth2TokenCustomizer;
 import cn.com.xuct.calendar.uaa.boot.support.core.FormIdentityLoginConfigurer;
 import cn.com.xuct.calendar.uaa.boot.support.core.OAuthDaoAuthenticationProvider;
 import cn.com.xuct.calendar.uaa.boot.support.password.OAuth2ResourceOwnerPasswordAuthenticationConverter;
 import cn.com.xuct.calendar.uaa.boot.support.password.OAuth2ResourceOwnerPasswordAuthenticationProvider;
+import cn.com.xuct.calendar.uaa.boot.support.phone.OAuth2ResourceOwnerPhoneAuthenticationConverter;
+import cn.com.xuct.calendar.uaa.boot.support.phone.OAuth2ResourceOwnerPhoneAuthenticationProvider;
 import cn.com.xuct.calendar.uaa.boot.support.wx.OAuth2ResourceOwnerWxAuthenticationConverter;
 import cn.com.xuct.calendar.uaa.boot.support.wx.OAuth2ResourceOwnerWxAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
@@ -42,8 +42,6 @@ import org.springframework.security.oauth2.server.authorization.web.authenticati
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationConverter;
-import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import java.util.Arrays;
 
@@ -101,7 +99,7 @@ public class AuthorizationServerConfiguration {
     private AuthenticationConverter accessTokenRequestConverter() {
         return new DelegatingAuthenticationConverter(Arrays.asList(
                 new OAuth2ResourceOwnerPasswordAuthenticationConverter(),
-                new OAuth2ResourceOwnerAppAuthenticationConverter(),
+                new OAuth2ResourceOwnerPhoneAuthenticationConverter(),
                 new OAuth2ResourceOwnerWxAuthenticationConverter(),
                 new OAuth2RefreshTokenAuthenticationConverter(),
                 new OAuth2ClientCredentialsAuthenticationConverter(),
@@ -137,7 +135,7 @@ public class AuthorizationServerConfiguration {
 
         OAuth2ResourceOwnerPasswordAuthenticationProvider resourceOwnerPasswordAuthenticationProvider = new OAuth2ResourceOwnerPasswordAuthenticationProvider(authenticationManager, authorizationService, oAuth2TokenGenerator());
 
-        OAuth2ResourceOwnerAppAuthenticationProvider resourceOwnerSmsAuthenticationProvider = new OAuth2ResourceOwnerAppAuthenticationProvider(authenticationManager, authorizationService, oAuth2TokenGenerator());
+        OAuth2ResourceOwnerPhoneAuthenticationProvider resourceOwnerPhoneAuthenticationProvider = new OAuth2ResourceOwnerPhoneAuthenticationProvider(authenticationManager, authorizationService, oAuth2TokenGenerator());
 
         OAuth2ResourceOwnerWxAuthenticationProvider resourceOwnerWxAuthenticationProvider = new OAuth2ResourceOwnerWxAuthenticationProvider(authenticationManager, authorizationService, oAuth2TokenGenerator());
         // 处理 UsernamePasswordAuthenticationToken
@@ -145,7 +143,7 @@ public class AuthorizationServerConfiguration {
         // 处理 OAuth2ResourceOwnerPasswordAuthenticationToken
         http.authenticationProvider(resourceOwnerPasswordAuthenticationProvider);
         // 处理 OAuth2ResourceOwnerSmsAuthenticationToken
-        http.authenticationProvider(resourceOwnerSmsAuthenticationProvider);
+        http.authenticationProvider(resourceOwnerPhoneAuthenticationProvider);
         // 处理 OAuth2ResourceOwnerWxAuthenticationToken
         http.authenticationProvider(resourceOwnerWxAuthenticationProvider);
     }

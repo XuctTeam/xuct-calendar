@@ -81,7 +81,7 @@ public class OAuthMemberDetailsWxServiceImpl implements OAuthUserDetailsService 
      */
     @Override
     public boolean support(String clientId, String grantType) {
-        return SecurityConstants.WX_GRANT_TYPE.equals(clientId);
+        return SecurityConstants.WX_GRANT_TYPE.equals(grantType);
     }
 
     @Override

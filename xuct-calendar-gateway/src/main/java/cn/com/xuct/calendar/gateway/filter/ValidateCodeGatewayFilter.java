@@ -16,7 +16,8 @@
 
 package cn.com.xuct.calendar.gateway.filter;
 
-import cn.com.xuct.calendar.common.core.constant.RedisConstants;
+import cn.com.xuct.calendar.common.core.constant.CacheConstants;
+import cn.com.xuct.calendar.common.core.constant.GlobalConstants;
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
 import cn.com.xuct.calendar.common.core.exception.ValidateCodeException;
 import cn.com.xuct.calendar.common.core.res.R;
@@ -38,7 +39,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.util.StringUtils;
 import reactor.core.publisher.Mono;
 
 /**
@@ -70,21 +70,17 @@ public class ValidateCodeGatewayFilter extends AbstractGatewayFilterFactory<Obje
 
             // 刷新token，手机号登录（也可以这里进行校验） 直接向下执行
             String grantType = request.getQueryParams().getFirst("grant_type");
-            if (StrUtil.equals(SecurityConstants.REFRESH_TOKEN, grantType)) {
-                return chain.filter(exchange);
-            }
-            // 移动端密码登录 不需要验证
-            String loginType = request.getQueryParams().getFirst(SecurityConstants.APP_LOGIN_TYPE_PARAM);
-            if (StringUtils.hasLength(loginType) && loginType.equals(SecurityConstants.PASSWORD_PARAM)) {
+            if (StrUtil.equals(SecurityConstants.REFRESH_TOKEN, grantType) || StrUtil.equals(SecurityConstants.PHONE_GRANT_TYPE, grantType)) {
                 return chain.filter(exchange);
             }
             String clientId = WebUtils.getClientId(request);
             /* 忽略客户端 直接向下执行 */
             boolean isIgnoreClient = configProperties.getIgnoreClients().contains(clientId);
+            if (isIgnoreClient) {
+                return chain.filter(exchange);
+            }
             try {
-                if (!isIgnoreClient) {
-                    checkCode(request, clientId);
-                }
+                checkCode(request, clientId);
             } catch (Exception e) {
                 ServerHttpResponse response = exchange.getResponse();
                 response.setStatusCode(HttpStatus.PRECONDITION_REQUIRED);
@@ -116,32 +112,21 @@ public class ValidateCodeGatewayFilter extends AbstractGatewayFilterFactory<Obje
     @SneakyThrows
     private void checkCode(ServerHttpRequest request, String clientId) {
         String code = request.getQueryParams().getFirst("code");
-        int type = 0;
         if (CharSequenceUtil.isBlank(code)) {
             throw new ValidateCodeException("验证码不能为空");
         }
         String randomStr = request.getQueryParams().getFirst("randomStr");
         if (CharSequenceUtil.isBlank(randomStr)) {
             randomStr = request.getQueryParams().getFirst(SecurityConstants.PHONE_PARAM);
-            type = 1;
         }
         if (CharSequenceUtil.isBlank(randomStr)) {
             throw new ValidateCodeException("验证信息错误");
         }
-        String key = "";
-        switch (type) {
-            case 1:
-                key = (clientId.equals(SecurityConstants.APP_GRANT_TYPE) ? RedisConstants.MEMBER_PHONE_LOGIN_CODE_KEY : "").concat(":").concat(randomStr);
-                break;
-            default:
-                break;
-        }
-
+        String key = CacheConstants.DEFAULT_LOGIN_CODE_KEY.concat(GlobalConstants.COLON).concat(randomStr);
         Object codeObj = redisTemplate.opsForValue().get(key);
         if (ObjectUtil.isEmpty(codeObj) || !code.equals(codeObj)) {
             throw new ValidateCodeException("验证码无效或已过期");
         }
         redisTemplate.delete(key);
     }
-
 }
