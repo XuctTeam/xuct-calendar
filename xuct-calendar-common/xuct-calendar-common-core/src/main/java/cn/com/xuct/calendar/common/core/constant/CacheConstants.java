@@ -32,12 +32,4 @@ public interface CacheConstants {
      */
     String CLIENT_DETAILS_KEY = "security::client_details";
 
-
-    /**
-     * 验证码前缀
-     */
-    String DEFAULT_LOGIN_CODE_KEY = "security::login::code";
-
-
-
 }

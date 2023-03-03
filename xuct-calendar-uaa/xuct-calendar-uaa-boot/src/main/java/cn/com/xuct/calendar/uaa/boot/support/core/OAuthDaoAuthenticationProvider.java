@@ -69,11 +69,11 @@ public class OAuthDaoAuthenticationProvider extends AbstractUserDetailsAuthentic
     @SuppressWarnings("deprecation")
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
 
-//        // app 模式不用校验密码
-//        String grantType = WebUtils.getRequest().get().getParameter(OAuth2ParameterNames.GRANT_TYPE);
-//        if (StrUtil.equals(SecurityConstants.PHONE_GRANT_TYPE, grantType)){
-//            return;
-//        }
+       // phone 模式不用校验密码
+        String grantType = WebUtils.getRequest().get().getParameter(OAuth2ParameterNames.GRANT_TYPE);
+        if (StrUtil.equals(SecurityConstants.PHONE_GRANT_TYPE, grantType)){
+            return;
+        }
         if (authentication.getCredentials() == null) {
             this.logger.debug("Failed to authenticate since no credentials provided");
             throw new BadCredentialsException(this.messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));

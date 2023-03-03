@@ -10,7 +10,6 @@
  */
 package cn.com.xuct.calendar.gateway.handler;
 
-import cn.com.xuct.calendar.common.core.constant.CacheConstants;
 import cn.com.xuct.calendar.common.core.constant.GlobalConstants;
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
@@ -75,7 +74,7 @@ public class ImageCodeHandler implements HandlerFunction<ServerResponse> {
                     redisKey = RedisConstants.MEMBER_CAPTCHA_REGISTER_CODE_KEY;
                     break;
                 default:
-                    redisKey = CacheConstants.DEFAULT_LOGIN_CODE_KEY;
+                    redisKey = RedisConstants.DEFAULT_LOGIN_CODE_KEY;
             }
             final String finalRedisKey = redisKey.concat(GlobalConstants.COLON);
             randomStr.ifPresent(s -> redisTemplate.opsForValue().set(finalRedisKey.concat(s), text, SecurityConstants.CODE_TIME, TimeUnit.SECONDS));

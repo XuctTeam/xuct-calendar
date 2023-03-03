@@ -21,37 +21,62 @@ package cn.com.xuct.calendar.common.core.constant;
 public interface RedisConstants {
 
 
-    /* 短信验证码 */
-    public static final String MEMBER_PHONE_LOGIN_CODE_KEY = "member::login::sms:code:";
 
-    /* 注册图形验证码 */
+    /**
+     * 验证码前缀
+     */
+    public static final String DEFAULT_LOGIN_CODE_KEY = "security::login::code";
+
+    public static final String MEMBER_PHONE_CODE_PUBLIC_KEY = "member::phone::code::key:";
+
+    /**
+     * 注册图形验证码
+     */
     public static final String MEMBER_CAPTCHA_REGISTER_CODE_KEY = "member::register::captcha:code:";
 
-    /* 注册短信验证码 */
+    /**
+     * 注册短信验证码
+     */
     public static final String MEMBER_PHONE_REGISTER_CODE_KEY = "member::register::phone:code:";
 
-    /* 注册邮箱验证码 */
+    /**
+     * 注册邮箱验证码
+     */
     public static final String MEMBER_EMAIL_REGISTER_CODE_KEY = "member::register::email:code:";
 
-    /* 手机号绑定 */
+    /**
+     * 手机号绑定
+     */
     public static final String MEMBER_BIND_PHONE_CODE_KEY = "member::bind::phone::sms:code:";
 
-    /* 手机号解绑 */
+    /**
+     * 手机号解绑
+     */
     public static final String MEMBER_UNBIND_PHONE_CODE_KEY = "member::unbind::phone::sms:code:";
 
-    /* 邮箱绑定 */
+    /**
+     * 邮箱绑定
+     */
     public static final String MEMBER_BIND_EMAIL_CODE_KEY = "member::bind::email::sms:code:";
 
-    /* 邮箱解绑 */
+    /**
+     * 邮箱解绑
+     */
     public static final String MEMBER_UNBIND_EMAIL_CODE_KEY = "member::unbind::email::sms:code:";
 
-    /* 手机号忘记密码 */
+    /**
+     * 手机号忘记密码
+     */
     public static final String MEMBER_FORGET_PASSWORD_PHONE_CODE_KEY = "member::forget::password::phone::code:";
 
-    /* 邮箱忘记密码 */
+    /**
+     * 邮箱忘记密码
+     */
     public static final String MEMBER_FORGET_PASSWORD_EMAIL_CODE_KEY = "member::forget::password::email::code:";
 
-    /* 短链接与长链接对应关系 */
+    /**
+     * 短链接与长链接对应关系
+     */
     public static final String BASIC_SHORT_URL_KEY = "basic::short::url:";
 
 }

@@ -10,17 +10,18 @@
  */
 package cn.com.xuct.calendar.ums.boot.controller.app;
 
+import cn.com.xuct.calendar.common.core.constant.DateConstants;
+import cn.com.xuct.calendar.common.core.constant.GlobalConstants;
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.enums.IdentityTypeEnum;
 import cn.com.xuct.calendar.common.module.params.SmsSendParam;
-import cn.com.xuct.calendar.common.security.annotation.Inner;
 import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
-import cn.com.xuct.calendar.ums.api.entity.Member;
 import cn.com.xuct.calendar.ums.api.entity.MemberAuth;
 import cn.com.xuct.calendar.ums.api.feign.BasicServicesFeignClient;
 import cn.com.xuct.calendar.ums.boot.service.IMemberAuthService;
+import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.RandomUtil;
 import com.google.common.collect.Lists;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,11 +30,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -57,13 +57,31 @@ public class SmsAppController {
 
     private final IMemberAuthService memberAuthService;
 
+    @Operation(summary = "【非登录】发送短信认证Key")
+    @GetMapping("/anno/publicKey")
+    public R<Map> publicKey(@RequestParam("randomStr") String randomStr) {
+        String key = UUID.randomUUID().toString(true);
+        redisTemplate.opsForValue().set(RedisConstants.MEMBER_PHONE_CODE_PUBLIC_KEY.concat(GlobalConstants.COLON).concat(randomStr), key, DateConstants.TWO_MINUTES_SECONDS, TimeUnit.SECONDS);
+        return R.data(new HashMap<String,String>(2){{
+            put("key", key);
+            put("randomStr" , randomStr);
+        }});
+    }
+
     @Operation(summary = "【非登录】登录短信")
     @PostMapping("/anno/login")
     public R<String> loginSmsCode(@Validated @RequestBody SmsSendParam param) {
+        String publicRedisKey = RedisConstants.MEMBER_PHONE_CODE_PUBLIC_KEY.concat(GlobalConstants.COLON).concat(param.getRandomStr());
+        Object publicKey = redisTemplate.opsForValue().get(publicRedisKey) ;
+        if(publicKey == null || !String.valueOf(publicKey).equals(param.getKey())){
+            return R.fail("验证码无效!");
+        }
         String code = this.sendBindCode(param.getPhone(), param.getType());
+        redisTemplate.delete(publicRedisKey);
         //basicServicesFeignClient.smsCode(SmsCodeFeignInfo.builder().phones(Lists.newArrayList(param.getPhone())).code(code).template("login").build());
         return R.status(true);
     }
+
     @Operation(summary = "【非登录】注册短信")
     @PostMapping("/anno/register")
     public R<String> registerSmsCode(@Validated @RequestBody SmsSendParam param) {
@@ -71,11 +89,14 @@ public class SmsAppController {
         //basicServicesFeignClient.smsCode(SmsCodeFeignInfo.builder().phones(Lists.newArrayList(param.getPhone())).code(code).template("login").build());
         return R.status(true);
     }
+
     @Operation(summary = "【非登录】密码找回")
     @PostMapping("/anno/forget")
     public R<String> forgetPasswordCode(@Validated @RequestBody SmsSendParam param) {
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("identity_type", IdentityTypeEnum.phone), Column.of("user_name", param.getPhone())));
-        if (memberAuth == null) return R.fail("用户未注册");
+        if (memberAuth == null){
+            return R.fail("用户未注册");
+        }
         String code = this.sendBindCode(param.getPhone(), param.getType());
         return R.status(true);
     }
@@ -99,7 +120,7 @@ public class SmsAppController {
         String key = null;
         switch (type) {
             case 0:
-                key = RedisConstants.MEMBER_PHONE_LOGIN_CODE_KEY;
+                key = RedisConstants.DEFAULT_LOGIN_CODE_KEY;
                 break;
             case 1:
                 key = RedisConstants.MEMBER_PHONE_REGISTER_CODE_KEY;
@@ -115,7 +136,7 @@ public class SmsAppController {
                 break;
         }
         String code = RandomUtil.randomNumbers(6);
-        redisTemplate.opsForValue().set(key.concat(userId).concat(":").concat(phone), code, 60 * 10, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(key.concat(userId).concat(GlobalConstants.COLON).concat(phone), code, 60 * 10, TimeUnit.SECONDS);
         return code;
     }
 }

@@ -40,9 +40,6 @@ public class OAuth2ResourceOwnerPhoneAuthenticationConverter
 
     /**
      * 校验扩展参数
-     * 1. loginType = phone 不需要校验密码
-     * 2. loginType = password 需要校验密码
-     *
      * @param request 参数列表
      */
     @Override
@@ -52,20 +49,5 @@ public class OAuth2ResourceOwnerPhoneAuthenticationConverter
         if (!StringUtils.hasText(phone) || parameters.get(SecurityConstants.PHONE_PARAM).size() != 1) {
             OAuth2EndpointUtils.throwError(OAuth2ErrorCodes.INVALID_REQUEST, SecurityConstants.PHONE_PARAM, OAuth2EndpointUtils.ACCESS_TOKEN_REQUEST_ERROR_URI);
         }
-//        String loginType = parameters.getFirst(SecurityConstants.APP_LOGIN_TYPE_PARAM);
-//        if (!StringUtils.hasText(loginType))
-//            OAuth2EndpointUtils.throwError(OAuth2ErrorCodes.INVALID_REQUEST, SecurityConstants.APP_LOGIN_TYPE_PARAM, OAuth2EndpointUtils.ACCESS_TOKEN_REQUEST_ERROR_URI);
-//        if (loginType.equals(SecurityConstants.PHONE_PARAM)) {
-//
-//            return;
-//        }
-//        String username = parameters.getFirst(SecurityConstants.USER_NAME_PARAM);
-//        if (!StringUtils.hasText(username) || parameters.get(OAuth2ParameterNames.USERNAME).size() != 1)
-//            OAuth2EndpointUtils.throwError(OAuth2ErrorCodes.INVALID_REQUEST, OAuth2ParameterNames.USERNAME, OAuth2EndpointUtils.ACCESS_TOKEN_REQUEST_ERROR_URI);
-//
-//        String password = parameters.getFirst(SecurityConstants.PASSWORD_PARAM);
-//        if (loginType.equals(AuthorizationGrantType.PASSWORD.getValue()) && !StringUtils.hasText(password))
-//            OAuth2EndpointUtils.throwError(OAuth2ErrorCodes.INVALID_REQUEST, SecurityConstants.PASSWORD_PARAM, OAuth2EndpointUtils.ACCESS_TOKEN_REQUEST_ERROR_URI);
-
     }
 }

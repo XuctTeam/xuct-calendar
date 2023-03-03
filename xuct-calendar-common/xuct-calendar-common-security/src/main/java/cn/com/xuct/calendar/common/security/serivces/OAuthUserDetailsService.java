@@ -72,6 +72,11 @@ public interface OAuthUserDetailsService extends UserDetailsService, Ordered {
                 true, true, true, StrUtil.equals(personInfo.getStatus().toString(), GlobalConstants.STATUS_YES), authorities);
     }
 
+    /**
+     * 默认查询用户方法
+     * @param oAuthUser
+     * @return
+     */
     default UserDetails loadUserByUser(OAuthUser oAuthUser) {
         return this.loadUserByUsername(oAuthUser.getUsername());
     }

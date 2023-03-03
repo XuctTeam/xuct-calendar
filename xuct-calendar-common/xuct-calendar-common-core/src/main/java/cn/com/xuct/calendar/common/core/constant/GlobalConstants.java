@@ -45,4 +45,6 @@ public interface GlobalConstants {
 
     String COLON = ":";
 
+    String COMMA = ",";
+
 }

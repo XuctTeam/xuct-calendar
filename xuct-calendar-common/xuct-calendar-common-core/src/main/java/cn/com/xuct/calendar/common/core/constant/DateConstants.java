@@ -34,14 +34,19 @@ public class DateConstants {
     public static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern(DateConstants.PATTERN_DATE);
     public static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern(DateConstants.PATTERN_TIME);
 
-
-
-
-
-    /* 一天 */
+    /**
+     * 一天
+     */
     public static final Long DAY_SECONDS = 1000 * 60 * 60 * 24L;
 
-    /* 一小时 */
+    /**
+     * 1小时
+     */
     public static final Long HOUR_SECONDS = 1000 * 60L * 60;
+
+    /**
+     *  2分钟
+     */
+    public static final Long TWO_MINUTES_SECONDS = 60 * 2L;
 
 }

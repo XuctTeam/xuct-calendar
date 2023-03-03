@@ -18,6 +18,7 @@ package cn.com.xuct.calendar.gateway.filter;
 
 import cn.com.xuct.calendar.common.core.constant.CacheConstants;
 import cn.com.xuct.calendar.common.core.constant.GlobalConstants;
+import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
 import cn.com.xuct.calendar.common.core.exception.ValidateCodeException;
 import cn.com.xuct.calendar.common.core.res.R;
@@ -70,7 +71,7 @@ public class ValidateCodeGatewayFilter extends AbstractGatewayFilterFactory<Obje
 
             // 刷新token，手机号登录（也可以这里进行校验） 直接向下执行
             String grantType = request.getQueryParams().getFirst("grant_type");
-            if (StrUtil.equals(SecurityConstants.REFRESH_TOKEN, grantType) || StrUtil.equals(SecurityConstants.PHONE_GRANT_TYPE, grantType)) {
+            if (StrUtil.equals(SecurityConstants.REFRESH_TOKEN, grantType)) {
                 return chain.filter(exchange);
             }
             String clientId = WebUtils.getClientId(request);
@@ -80,7 +81,7 @@ public class ValidateCodeGatewayFilter extends AbstractGatewayFilterFactory<Obje
                 return chain.filter(exchange);
             }
             try {
-                checkCode(request, clientId);
+                checkCode(request);
             } catch (Exception e) {
                 ServerHttpResponse response = exchange.getResponse();
                 response.setStatusCode(HttpStatus.PRECONDITION_REQUIRED);
@@ -110,7 +111,7 @@ public class ValidateCodeGatewayFilter extends AbstractGatewayFilterFactory<Obje
     }
 
     @SneakyThrows
-    private void checkCode(ServerHttpRequest request, String clientId) {
+    private void checkCode(ServerHttpRequest request) {
         String code = request.getQueryParams().getFirst("code");
         if (CharSequenceUtil.isBlank(code)) {
             throw new ValidateCodeException("验证码不能为空");
@@ -122,7 +123,7 @@ public class ValidateCodeGatewayFilter extends AbstractGatewayFilterFactory<Obje
         if (CharSequenceUtil.isBlank(randomStr)) {
             throw new ValidateCodeException("验证信息错误");
         }
-        String key = CacheConstants.DEFAULT_LOGIN_CODE_KEY.concat(GlobalConstants.COLON).concat(randomStr);
+        String key = RedisConstants.DEFAULT_LOGIN_CODE_KEY.concat(GlobalConstants.COLON).concat(randomStr);
         Object codeObj = redisTemplate.opsForValue().get(key);
         if (ObjectUtil.isEmpty(codeObj) || !code.equals(codeObj)) {
             throw new ValidateCodeException("验证码无效或已过期");

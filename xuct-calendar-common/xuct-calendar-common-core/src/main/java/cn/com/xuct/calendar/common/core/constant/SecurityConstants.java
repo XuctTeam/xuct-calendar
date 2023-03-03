@@ -22,16 +22,24 @@ public interface SecurityConstants {
 
     String CLIENT_ID = "client_id";
 
-    /* 电话扩展验证方式  */
+    /**
+     * 电话扩展验证方式
+     */
     String PHONE_GRANT_TYPE = "phone";
 
-    /* 微信扩展验证方式 */
+    /**
+     * 微信扩展验证方式
+     */
     String WX_GRANT_TYPE  = "wx";
 
-    /* client为app时多校验方式 */
+    /**
+     * client为app时多校验方式
+     */
     String CLIENT_ID_APP = "app";
 
-    /* token刷新验证方式 */
+    /**
+     * token刷新验证方式
+     */
     String REFRESH_TOKEN_GRANT_TYPE = "refresh_token";
 
     /**
