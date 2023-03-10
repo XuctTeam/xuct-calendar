@@ -22,7 +22,7 @@
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <spring.boot.version>3.0.3</spring.boot.version>
+        <spring.boot.version>3.0.4</spring.boot.version>
 
         <!-- alibaba -->
         <alibaba.cloud.version>2022.0.0.0-RC1</alibaba.cloud.version>
@@ -36,7 +36,6 @@
         <open.feign.start.version>11.9.1</open.feign.start.version>
         <doc.openapi.start.version>2.0.2</doc.openapi.start.version>
         <!--lib-->
-        <lib.jedis.version>4.3.1</lib.jedis.version>
         <lib.common.pool.version>2.11.1</lib.common.pool.version>
         <lib.mysql.version>8.0.32</lib.mysql.version>
         <lib.nacos.client.version>2.2.0</lib.nacos.client.version>
