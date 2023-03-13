@@ -41,9 +41,9 @@ import java.util.regex.Pattern;
  */
 @Data
 @Slf4j
-@ConditionalOnProperty(prefix = "security.sms.csrf", name = "enable", havingValue = "true")
-@WebFilter(filterName = "smsPublicKeyRefererFilter", urlPatterns = "/api/app/v1/sms/anno/publicKey")
-public class SmsPublicKeyRefererFilter implements Filter {
+@ConditionalOnProperty(prefix = "security.public.key.csrf", name = "enable", havingValue = "true")
+@WebFilter(filterName = "publicKeyRefererFilter", urlPatterns = "/api/app/v1/anno/public/*")
+public class PublicKeyRefererFilter implements Filter {
 
 
     /**
@@ -54,13 +54,13 @@ public class SmsPublicKeyRefererFilter implements Filter {
     /**
      * 是否启用
      */
-    @Value("${security.sms.csrf.enable:false}")
+    @Value("${security.public.key.csrf.enable:false}")
     private boolean enable = true;
 
     /**
      * 忽略的URL
      */
-    @Value("${security.sms.csrf.excludes:}")
+    @Value("${security.public.key.csrf.excludes:}")
     private String excludes;
 
     @Override

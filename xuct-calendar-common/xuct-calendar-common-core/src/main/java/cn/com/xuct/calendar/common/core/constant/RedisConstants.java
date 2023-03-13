@@ -29,6 +29,8 @@ public interface RedisConstants {
 
     public static final String MEMBER_PHONE_CODE_PUBLIC_KEY = "member::phone::code::key:";
 
+    public static final String MEMBER_PHONE_RANDOM_CODE_KEY = "member::phone::random::code::key:";
+
     /**
      * 注册图形验证码
      */

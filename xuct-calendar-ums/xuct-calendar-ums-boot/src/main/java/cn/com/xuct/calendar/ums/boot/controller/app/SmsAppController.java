@@ -57,16 +57,6 @@ public class SmsAppController {
 
     private final IMemberAuthService memberAuthService;
 
-    @Operation(summary = "【非登录】发送短信认证Key")
-    @GetMapping("/anno/publicKey")
-    public R<Map> publicKey(@RequestParam("randomStr") String randomStr) {
-        String key = UUID.randomUUID().toString(true);
-        redisTemplate.opsForValue().set(RedisConstants.MEMBER_PHONE_CODE_PUBLIC_KEY.concat(GlobalConstants.COLON).concat(randomStr), key, DateConstants.TWO_MINUTES_SECONDS, TimeUnit.SECONDS);
-        return R.data(new HashMap<String,String>(2){{
-            put("key", key);
-            put("randomStr" , randomStr);
-        }});
-    }
 
     @Operation(summary = "【非登录】登录短信")
     @PostMapping("/anno/login")
