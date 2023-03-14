@@ -36,4 +36,10 @@ public class EmailCodeParam {
     @Schema(title = "类型", description = "1.邮箱注册  2.忘记密码  3.绑定邮箱 4.解绑邮箱")
     private Integer type;
 
+    @Schema(description = "客户端认证PublicKey", example = "8308103983")
+    private String key;
+
+    @Schema(description = "客户端随机字符串", example = "8308103983")
+    private String randomStr;
+
 }

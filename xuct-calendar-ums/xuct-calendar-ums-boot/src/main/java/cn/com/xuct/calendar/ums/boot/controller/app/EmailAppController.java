@@ -10,6 +10,7 @@
  */
 package cn.com.xuct.calendar.ums.boot.controller.app;
 
+import cn.com.xuct.calendar.common.core.constant.GlobalConstants;
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.vo.Column;
@@ -53,13 +54,17 @@ public class EmailAppController {
 
     private final BasicServicesFeignClient basicServicesFeignClient;
 
-    private final RedisTemplate<String, Object> stringRedisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     private final IMemberAuthService memberAuthService;
 
     @Operation(summary = "【非登录】密码找回")
     @PostMapping("/anno/forget")
     public R<String> forgetPasswordCode(@Validated @RequestBody EmailCodeParam param) {
+        String publicKey = this.validatePublicKey(param.getRandomStr() , param.getKey());
+        if(publicKey == null){
+            return R.fail("验证码错误");
+        }
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("identity_type", IdentityTypeEnum.email), Column.of("user_name", param.getEmail())));
         if (memberAuth == null) {
             return R.fail("用户未注册");
@@ -112,6 +117,15 @@ public class EmailAppController {
         return R.fail("发送错误");
     }
 
+    private String validatePublicKey(String randomStr, String key){
+        String publicRedisKey = RedisConstants.DEFAULT_PUBLIC_CODE_KEY.concat(GlobalConstants.COLON).concat(randomStr);
+        Object publicKey = redisTemplate.opsForValue().get(publicRedisKey) ;
+        if(publicKey == null || !String.valueOf(publicKey).equals(key)){
+            return null;
+        }
+        return publicRedisKey;
+    }
+
     private String bindEmail(final String email, final Integer type) {
         String userId = "";
         if (type == 3 || type == 4) {
@@ -133,7 +147,7 @@ public class EmailAppController {
                 break;
         }
         String code = RandomUtil.randomNumbers(6);
-        stringRedisTemplate.opsForValue().set(key.concat(userId).concat(":").concat(email), code, 60 * 10, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(key.concat(userId).concat(":").concat(email), code, 60 * 10, TimeUnit.SECONDS);
         return code;
     }
 }

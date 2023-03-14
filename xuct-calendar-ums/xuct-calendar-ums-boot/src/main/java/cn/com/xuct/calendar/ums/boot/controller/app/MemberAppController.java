@@ -41,6 +41,7 @@ import cn.com.xuct.calendar.ums.boot.event.MemberEvent;
 import cn.com.xuct.calendar.ums.boot.service.IMemberAuthService;
 import cn.com.xuct.calendar.ums.boot.service.IMemberService;
 import cn.com.xuct.calendar.ums.boot.support.SmsCodeValidateSupport;
+import cn.hutool.core.lang.Validator;
 import com.google.common.collect.Lists;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -62,7 +63,7 @@ import java.util.Optional;
  * 〈〉
  *
  * @author Derek Xu
- * @date  2021/11/27
+ * @date 2021/11/27
  * @since 1.0.0
  */
 @Slf4j
@@ -365,15 +366,12 @@ public class MemberAppController {
     @Operation(summary = "【非登录】找回密码验证")
     @PostMapping("/anno/forget/check")
     public R<String> forgetPasswordCheckCode(@Validated @RequestBody ForgetPasswordParam param) {
-        Object redisVal = redisTemplate.opsForValue().get(param.getType() == 1 ?
-                RedisConstants.MEMBER_FORGET_PASSWORD_PHONE_CODE_KEY.concat(":").concat(param.getPhone()) :
-                RedisConstants.MEMBER_FORGET_PASSWORD_EMAIL_CODE_KEY.concat(":").concat(param.getEmail()));
+        boolean isEmail =  Validator.isEmail(param.getUsername());
+        Object redisVal = redisTemplate.opsForValue().get((!isEmail ? RedisConstants.MEMBER_FORGET_PASSWORD_PHONE_CODE_KEY : RedisConstants.MEMBER_FORGET_PASSWORD_EMAIL_CODE_KEY).concat(":").concat(param.getUsername()));
         if (redisVal == null || !String.valueOf(redisVal).equals(param.getCode())) {
             return R.fail("验证码错误");
         }
-        MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("identity_type", param.getType() == 1 ? IdentityTypeEnum.phone : IdentityTypeEnum.email),
-                Column.of("user_name", param.getType() == 1 ? param.getPhone() : param.getEmail())));
-
+        MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("identity_type", !isEmail ? IdentityTypeEnum.phone : IdentityTypeEnum.email), Column.of("user_name", param.getUsername())));
         if (memberAuth == null) {
             return R.fail("验证失败");
         }
@@ -466,7 +464,7 @@ public class MemberAppController {
         calendarInitFeignInfo.setMemberId(member.getId());
         calendarInitFeignInfo.setMemberNickName(member.getName());
         R<String> remoteRes = calendarFeignClient.addCalendar(calendarInitFeignInfo, SecurityConstants.FROM_IN);
-        if (!remoteRes.isSuccess()){
+        if (!remoteRes.isSuccess()) {
             return false;
         }
         /* 添加注册消息到用户 */

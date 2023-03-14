@@ -32,9 +32,9 @@ public class SmsSendParam implements Serializable {
     @Schema(description = "0.登录 1.手机注册  2.忘记密码  3.绑定手机 4.解绑手机", example = "1")
     private Integer type;
 
-    @Schema(description = "发送验证码key", example = "8308103983")
+    @Schema(description = "客户端认证PublicKey", example = "8308103983")
     private String key;
 
-    @Schema(description = "客户端随机验证码", example = "8308103983")
+    @Schema(description = "客户端随机字符串", example = "8308103983")
     private String randomStr;
 }

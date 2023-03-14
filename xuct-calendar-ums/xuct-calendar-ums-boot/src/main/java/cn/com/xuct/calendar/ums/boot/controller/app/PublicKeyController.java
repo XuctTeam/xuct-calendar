@@ -14,7 +14,6 @@ import cn.com.xuct.calendar.common.core.constant.DateConstants;
 import cn.com.xuct.calendar.common.core.constant.GlobalConstants;
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.res.R;
-import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.RandomUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -41,31 +40,20 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @RestController
 @Tag(name = "【移动端】公共PublicKey接口")
-@RequestMapping("/api/app/v1/anno/public")
+@RequestMapping("/api/app/v1/anno/public/key")
 @RequiredArgsConstructor
 public class PublicKeyController {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
-    @Operation(summary = "【非登录】发送短信认证Key")
-    @GetMapping("/key")
+    @Operation(summary = "【非登录】获取客户端认证Key")
+    @GetMapping
     public R<Map> publicKey(@RequestParam("randomStr") String randomStr) {
-        String key = UUID.randomUUID().toString(true);
-        redisTemplate.opsForValue().set(RedisConstants.MEMBER_PHONE_CODE_PUBLIC_KEY.concat(GlobalConstants.COLON).concat(randomStr), key, DateConstants.TWO_MINUTES_SECONDS, TimeUnit.SECONDS);
+        String key = RandomUtil.randomNumbers(5);
+        redisTemplate.opsForValue().set(RedisConstants.DEFAULT_PUBLIC_CODE_KEY.concat(GlobalConstants.COLON).concat(randomStr), key, DateConstants.TWO_MINUTES_SECONDS, TimeUnit.SECONDS);
         return R.data(new HashMap<String,String>(2){{
             put("key", key);
             put("randomStr" , randomStr);
-        }});
-    }
-
-    @Operation(summary = "【非登录】获取随机验证码")
-    @GetMapping("/random/code")
-    public R<Map> publicCode(@RequestParam("phone") String phone) {
-        String randomCode = RandomUtil.randomNumbers(5);
-        redisTemplate.opsForValue().set(RedisConstants.MEMBER_PHONE_RANDOM_CODE_KEY.concat(GlobalConstants.COLON).concat(phone), randomCode, DateConstants.TWO_MINUTES_SECONDS, TimeUnit.SECONDS);
-        return R.data(new HashMap<String,String>(2){{
-            put("phone", phone);
-            put("randomCode" , randomCode);
         }});
     }
 }

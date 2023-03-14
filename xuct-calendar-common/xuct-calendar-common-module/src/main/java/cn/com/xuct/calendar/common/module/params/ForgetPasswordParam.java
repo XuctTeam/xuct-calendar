@@ -26,16 +26,12 @@ import jakarta.validation.constraints.NotNull;
 @Data
 public class ForgetPasswordParam {
 
-    @Schema(title = "邮箱")
-    private String email;
 
+    @NotNull
     @Schema(title = "电话")
-    private String phone;
+    private String username;
 
+    @NotNull
     @Schema(title = "验证码")
     private String code;
-
-    @Schema(title = "验证类型")
-    @NotNull
-    private Integer type;
 }
