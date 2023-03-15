@@ -72,6 +72,9 @@ public class MemberGroupAppController {
         return R.data(memberGroupService.listByGroupIdAndNotMember(groupId, SecurityUtils.getUserId()));
     }
 
+
+
+
     @Operation(summary = "通过ids查询")
     @PostMapping("/ids")
     public R<List<GroupMemberInfoDto>> queryMemberIds(@RequestBody GroupMemberIdsParam idsParam) {

@@ -11,10 +11,7 @@
 package cn.com.xuct.calendar.ums.boot.controller.app;
 
 import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
-import cn.com.xuct.calendar.common.core.constant.CacheConstants;
-import cn.com.xuct.calendar.common.core.constant.DictConstants;
-import cn.com.xuct.calendar.common.core.constant.RedisConstants;
-import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
+import cn.com.xuct.calendar.common.core.constant.*;
 import cn.com.xuct.calendar.common.core.enums.PasswordEncoderTypeEnum;
 import cn.com.xuct.calendar.common.core.exception.SvrException;
 import cn.com.xuct.calendar.common.core.res.R;
@@ -35,6 +32,7 @@ import cn.com.xuct.calendar.ums.api.entity.Member;
 import cn.com.xuct.calendar.ums.api.entity.MemberAuth;
 import cn.com.xuct.calendar.ums.api.feign.BasicServicesFeignClient;
 import cn.com.xuct.calendar.ums.api.feign.CalendarFeignClient;
+import cn.com.xuct.calendar.ums.api.vo.MemberFindPassCheckVo;
 import cn.com.xuct.calendar.ums.api.vo.MemberInfoVo;
 import cn.com.xuct.calendar.ums.boot.config.DictCacheManager;
 import cn.com.xuct.calendar.ums.boot.event.MemberEvent;
@@ -42,6 +40,7 @@ import cn.com.xuct.calendar.ums.boot.service.IMemberAuthService;
 import cn.com.xuct.calendar.ums.boot.service.IMemberService;
 import cn.com.xuct.calendar.ums.boot.support.SmsCodeValidateSupport;
 import cn.hutool.core.lang.Validator;
+import cn.hutool.core.util.RandomUtil;
 import com.google.common.collect.Lists;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -57,6 +56,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -333,6 +333,23 @@ public class MemberAppController {
         return R.status(true);
     }
 
+    @Operation(summary = "【非登录】找回密码验证")
+    @PostMapping("/anno/forget/check")
+    public R<MemberFindPassCheckVo> forgetPasswordCheckCode(@Validated @RequestBody ForgetPasswordParam param) {
+        boolean isEmail = Validator.isEmail(param.getUsername());
+        Object redisVal = redisTemplate.opsForValue().get((!isEmail ? RedisConstants.MEMBER_FORGET_PASSWORD_PHONE_CODE_KEY : RedisConstants.MEMBER_FORGET_PASSWORD_EMAIL_CODE_KEY).concat(":").concat(param.getUsername()));
+        if (redisVal == null || !String.valueOf(redisVal).equals(param.getCode())) {
+            return R.fail("验证码错误");
+        }
+        MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("identity_type", !isEmail ? IdentityTypeEnum.phone : IdentityTypeEnum.email), Column.of("user_name", param.getUsername())));
+        if (memberAuth == null) {
+            return R.fail("验证失败");
+        }
+        String code = RandomUtil.randomNumbers(5);
+        redisTemplate.opsForValue().set(RedisConstants.MEMBER_FORGET_CHECK_CODE_KEY.concat(String.valueOf(memberAuth.getMemberId())), code, DateConstants.TWO_MINUTES_SECONDS, TimeUnit.SECONDS);
+        return R.data(MemberFindPassCheckVo.builder().memberId(memberAuth.getMemberId().toString()).code(code).build());
+    }
+
     @Operation(summary = "【非登录】找回密码更新")
     @PostMapping("/anno/forget/modify")
     public R<String> forgetPasswordModify(@Validated @RequestBody ForgetModifyParam param) {
@@ -347,10 +364,7 @@ public class MemberAppController {
         if (!authOpt.isPresent()) {
             return R.fail("修改密码失败");
         }
-        String redisKey =
-                (authOpt.get().getIdentityType().equals(IdentityTypeEnum.phone) ?
-                        RedisConstants.MEMBER_FORGET_PASSWORD_PHONE_CODE_KEY : RedisConstants.MEMBER_FORGET_PASSWORD_EMAIL_CODE_KEY)
-                        .concat(":").concat(authOpt.get().getUsername());
+        String redisKey = RedisConstants.MEMBER_FORGET_CHECK_CODE_KEY.concat(String.valueOf(param.getMemberId()));
         Object redisVal = redisTemplate.opsForValue().get(redisKey);
         if (redisVal == null || !String.valueOf(redisVal).equals(param.getCode())) {
             return R.fail("修改密码失败");
@@ -361,21 +375,6 @@ public class MemberAppController {
         auths.forEach(auth -> auth.setPassword(bcryptPassword));
         memberAuthService.saveOrUpdateBatch(auths);
         return R.status(true);
-    }
-
-    @Operation(summary = "【非登录】找回密码验证")
-    @PostMapping("/anno/forget/check")
-    public R<String> forgetPasswordCheckCode(@Validated @RequestBody ForgetPasswordParam param) {
-        boolean isEmail =  Validator.isEmail(param.getUsername());
-        Object redisVal = redisTemplate.opsForValue().get((!isEmail ? RedisConstants.MEMBER_FORGET_PASSWORD_PHONE_CODE_KEY : RedisConstants.MEMBER_FORGET_PASSWORD_EMAIL_CODE_KEY).concat(":").concat(param.getUsername()));
-        if (redisVal == null || !String.valueOf(redisVal).equals(param.getCode())) {
-            return R.fail("验证码错误");
-        }
-        MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("identity_type", !isEmail ? IdentityTypeEnum.phone : IdentityTypeEnum.email), Column.of("user_name", param.getUsername())));
-        if (memberAuth == null) {
-            return R.fail("验证失败");
-        }
-        return R.data(memberAuth.getMemberId().toString());
     }
 
     @Operation(summary = "【非登录】用户注册")

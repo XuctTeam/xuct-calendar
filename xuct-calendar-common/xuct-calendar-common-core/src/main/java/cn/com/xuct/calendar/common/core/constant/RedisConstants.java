@@ -21,6 +21,8 @@ package cn.com.xuct.calendar.common.core.constant;
 public interface RedisConstants {
 
 
+    public static final String COLON = ":";
+
 
     /**
      * 验证码前缀
@@ -74,6 +76,11 @@ public interface RedisConstants {
      * 邮箱忘记密码
      */
     public static final String MEMBER_FORGET_PASSWORD_EMAIL_CODE_KEY = "member::forget::password::email::code:";
+
+    /**
+     * 找回密码返回认证key
+     */
+    public static final String MEMBER_FORGET_CHECK_CODE_KEY = "member::forget::password::check:code:";
 
     /**
      * 短链接与长链接对应关系
