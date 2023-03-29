@@ -38,7 +38,7 @@
         <!--lib-->
         <lib.common.pool.version>2.11.1</lib.common.pool.version>
         <lib.mysql.version>8.0.32</lib.mysql.version>
-        <lib.nacos.client.version>2.2.0</lib.nacos.client.version>
+        <lib.nacos.client.version>2.2.1</lib.nacos.client.version>
         <lib.caffeine.version>3.1.4</lib.caffeine.version>
         <lib.google.prone.version>2.18.0</lib.google.prone.version>
         <lib.json.version>20220924</lib.json.version>
