@@ -22,11 +22,11 @@
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <spring.boot.version>3.0.4</spring.boot.version>
+        <spring.boot.version>3.0.5</spring.boot.version>
 
         <!-- alibaba -->
         <alibaba.cloud.version>2022.0.0.0-RC1</alibaba.cloud.version>
-        <spring.colud.version>2022.0.1</spring.colud.version>
+        <spring.colud.version>2022.0.2</spring.colud.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
 
@@ -42,7 +42,7 @@
         <lib.caffeine.version>3.1.4</lib.caffeine.version>
         <lib.google.prone.version>2.18.0</lib.google.prone.version>
         <lib.json.version>20220924</lib.json.version>
-        <lib.authorization.server.verion>1.0.0</lib.authorization.server.verion>
+        <lib.authorization.server.verion>1.0.1</lib.authorization.server.verion>
         <lib.cloud.gateway.server>4.0.3</lib.cloud.gateway.server>
         <!-- compiler-->
         <compiler.lombok.version>1.18.26</compiler.lombok.version>
