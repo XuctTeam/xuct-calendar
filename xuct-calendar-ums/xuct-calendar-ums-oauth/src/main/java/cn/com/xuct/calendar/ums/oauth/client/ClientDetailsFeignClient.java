@@ -27,9 +27,16 @@ import org.springframework.web.bind.annotation.RequestHeader;
  * @create 2022/9/2
  * @since 1.0.0
  */
-@FeignClient(contextId = "oauth-client", value = ServiceNameConstants.UMS_SERVICE )
+@FeignClient(contextId = "oauth-client", value = ServiceNameConstants.UMS_SERVICE)
 public interface ClientDetailsFeignClient {
 
+    /**
+     * 根据客户端id 查询客户端信息
+     *
+     * @param clientId 客户 端id
+     * @param from     请求来源
+     * @return R
+     */
     @GetMapping("/api/feign/v1/oauth/client/{clientId}")
-    R<OAuthDetailsDto> getClientDetailsById(@PathVariable("clientId") String clientId , @RequestHeader(SecurityConstants.FROM) String from);
+    R<OAuthDetailsDto> getClientDetailsById(@PathVariable("clientId") String clientId, @RequestHeader(SecurityConstants.FROM) String from);
 }

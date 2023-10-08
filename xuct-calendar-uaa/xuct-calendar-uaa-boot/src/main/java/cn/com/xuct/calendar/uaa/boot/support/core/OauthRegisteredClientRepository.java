@@ -34,7 +34,7 @@ import java.util.Optional;
  */
 @Component
 @RequiredArgsConstructor
-public class OAuthRegisteredClientRepository implements RegisteredClientRepository {
+public class OauthRegisteredClientRepository implements RegisteredClientRepository {
 
     /**
      * 刷新令牌有效期默认 30 填
@@ -45,7 +45,7 @@ public class OAuthRegisteredClientRepository implements RegisteredClientReposito
      * 请求令牌有效期默认 12 小时
      */
     private final static int accessTokenValiditySeconds = 60 * 60 * 12;
-    
+
 
     private final ClientDetailsFeignClient clientDetailsFeignClient;
 
@@ -59,9 +59,7 @@ public class OAuthRegisteredClientRepository implements RegisteredClientReposito
      * @param registeredClient the {@link RegisteredClient}
      */
     @Override
-    public void save(RegisteredClient registeredClient) {
-        throw new UnsupportedOperationException();
-    }
+    public void save(RegisteredClient registeredClient) {}
 
     /**
      * Returns the registered client identified by the provided {@code id}, or
@@ -92,7 +90,7 @@ public class OAuthRegisteredClientRepository implements RegisteredClientReposito
     @Cacheable(value = CacheConstants.CLIENT_DETAILS_KEY, key = "#clientId", unless = "#result == null")
     public RegisteredClient findByClientId(String clientId) {
         OAuthDetailsDto clientDetails = RetOps.of(clientDetailsFeignClient.getClientDetailsById(clientId, SecurityConstants.FROM_IN)).getData()
-                .orElseThrow(() -> new OAuth2AuthorizationCodeRequestAuthenticationException( new OAuth2Error(AuthResCode.CLIENT_AUTHENTICATION_FAILED.getMessage()), null));
+                .orElseThrow(() -> new OAuth2AuthorizationCodeRequestAuthenticationException(new OAuth2Error(AuthResCode.CLIENT_AUTHENTICATION_FAILED.getMessage()), null));
         RegisteredClient.Builder builder = RegisteredClient.withId(clientDetails.getClientId()).clientId(clientDetails.getClientId())
                 .clientSecret(SecurityConstants.NOOP + clientDetails.getClientSecret())
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC);

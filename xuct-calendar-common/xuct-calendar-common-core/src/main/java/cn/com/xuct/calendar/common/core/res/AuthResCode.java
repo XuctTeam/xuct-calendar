@@ -23,7 +23,9 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 public enum AuthResCode implements IResultCode {
 
-
+    /**
+     * 用户不存在
+     */
     USER_NOT_EXIST(HttpServletResponse.SC_BAD_REQUEST, "用户不存在"),
 
     USERNAME_OR_PASSWORD_ERROR(HttpServletResponse.SC_BAD_REQUEST, "用户名或密码错误"),

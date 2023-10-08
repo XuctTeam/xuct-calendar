@@ -20,16 +20,18 @@ package cn.com.xuct.calendar.common.core.constant;
  */
 public interface CacheConstants {
 
+    String APP = "calendar";
+
 
     /**
      * 用户信息缓存
      */
-    String USER_DETAILS = "security::user_details";
+    String USER_DETAILS = APP + "::security::user_details";
 
 
     /**
      * oauth 客户端信息
      */
-    String CLIENT_DETAILS_KEY = "security::client_details";
+    String CLIENT_DETAILS_KEY = APP + "::security::client_details";
 
 }
