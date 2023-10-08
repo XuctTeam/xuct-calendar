@@ -54,9 +54,8 @@ public abstract class OAuth2ResourceOwnerBaseAuthenticationProvider<T extends OA
     /**
      * Constructs an {@code OAuth2AuthorizationCodeAuthenticationProvider} using the
      * provided parameters.
-     *
      * @param authorizationService the authorization service
-     * @param tokenGenerator       the token generator
+     * @param tokenGenerator the token generator
      * @since 0.2.3
      */
     public OAuth2ResourceOwnerBaseAuthenticationProvider(AuthenticationManager authenticationManager,
@@ -82,7 +81,6 @@ public abstract class OAuth2ResourceOwnerBaseAuthenticationProvider<T extends OA
 
     /**
      * 当前provider是否支持此令牌类型
-     *
      * @param authentication
      * @return
      */
@@ -91,7 +89,6 @@ public abstract class OAuth2ResourceOwnerBaseAuthenticationProvider<T extends OA
 
     /**
      * 当前的请求客户端是否支持此模式
-     *
      * @param registeredClient
      */
     public abstract void checkClient(RegisteredClient registeredClient);
@@ -99,7 +96,6 @@ public abstract class OAuth2ResourceOwnerBaseAuthenticationProvider<T extends OA
     /**
      * Performs authentication with the same contract as
      * {@link AuthenticationManager#authenticate(Authentication)} .
-     *
      * @param authentication the authentication request object.
      * @return a fully authenticated object including credentials. May return
      * <code>null</code> if the <code>AuthenticationProvider</code> is unable to support
@@ -113,7 +109,8 @@ public abstract class OAuth2ResourceOwnerBaseAuthenticationProvider<T extends OA
 
         T resouceOwnerBaseAuthentication = (T) authentication;
 
-        OAuth2ClientAuthenticationToken clientPrincipal = getAuthenticatedClientElseThrowInvalidClient(resouceOwnerBaseAuthentication);
+        OAuth2ClientAuthenticationToken clientPrincipal = getAuthenticatedClientElseThrowInvalidClient(
+                resouceOwnerBaseAuthentication);
 
         RegisteredClient registeredClient = clientPrincipal.getRegisteredClient();
         checkClient(registeredClient);
@@ -127,8 +124,9 @@ public abstract class OAuth2ResourceOwnerBaseAuthenticationProvider<T extends OA
                 }
             }
             authorizedScopes = new LinkedHashSet<>(resouceOwnerBaseAuthentication.getScopes());
-        } else {
-            throw new ScopeException(OAuth2ErrorCodesExpand.SCOPE_IS_EMPTY);
+        }
+        else {
+            authorizedScopes = new LinkedHashSet<>();
         }
 
         Map<String, Object> reqParameters = resouceOwnerBaseAuthentication.getAdditionalParameters();
@@ -138,7 +136,8 @@ public abstract class OAuth2ResourceOwnerBaseAuthenticationProvider<T extends OA
 
             LOGGER.debug("got usernamePasswordAuthenticationToken=" + usernamePasswordAuthenticationToken);
 
-            Authentication usernamePasswordAuthentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+            Authentication usernamePasswordAuthentication = authenticationManager
+                    .authenticate(usernamePasswordAuthenticationToken);
 
             // @formatter:off
             DefaultOAuth2TokenContext.Builder tokenContextBuilder = DefaultOAuth2TokenContext.builder()
@@ -151,7 +150,8 @@ public abstract class OAuth2ResourceOwnerBaseAuthenticationProvider<T extends OA
             // @formatter:on
 
             OAuth2Authorization.Builder authorizationBuilder = OAuth2Authorization
-                    .withRegisteredClient(registeredClient).principalName(usernamePasswordAuthentication.getName())
+                    .withRegisteredClient(registeredClient)
+                    .principalName(usernamePasswordAuthentication.getName())
                     .authorizationGrantType(AuthorizationGrantType.PASSWORD)
                     // 0.4.0 新增的方法
                     .authorizedScopes(authorizedScopes);
@@ -175,7 +175,8 @@ public abstract class OAuth2ResourceOwnerBaseAuthenticationProvider<T extends OA
                         // 0.4.0 新增的方法
                         .authorizedScopes(authorizedScopes)
                         .attribute(Principal.class.getName(), usernamePasswordAuthentication);
-            } else {
+            }
+            else {
                 authorizationBuilder.id(accessToken.getTokenValue()).accessToken(accessToken);
             }
 
@@ -189,11 +190,13 @@ public abstract class OAuth2ResourceOwnerBaseAuthenticationProvider<T extends OA
                     Instant issuedAt = Instant.now();
                     Instant expiresAt = issuedAt.plus(registeredClient.getTokenSettings().getRefreshTokenTimeToLive());
                     refreshToken = new OAuth2RefreshToken(this.refreshTokenGenerator.get(), issuedAt, expiresAt);
-                } else {
+                }
+                else {
                     tokenContext = tokenContextBuilder.tokenType(OAuth2TokenType.REFRESH_TOKEN).build();
                     OAuth2Token generatedRefreshToken = this.tokenGenerator.generate(tokenContext);
                     if (!(generatedRefreshToken instanceof OAuth2RefreshToken)) {
-                        OAuth2Error error = new OAuth2Error(OAuth2ErrorCodes.SERVER_ERROR, "The token generator failed to generate the refresh token.", ERROR_URI);
+                        OAuth2Error error = new OAuth2Error(OAuth2ErrorCodes.SERVER_ERROR,
+                                "The token generator failed to generate the refresh token.", ERROR_URI);
                         throw new OAuth2AuthenticationException(error);
                     }
                     refreshToken = (OAuth2RefreshToken) generatedRefreshToken;
@@ -202,11 +205,16 @@ public abstract class OAuth2ResourceOwnerBaseAuthenticationProvider<T extends OA
             }
 
             OAuth2Authorization authorization = authorizationBuilder.build();
-            this.authorizationService.save(authorization);
-            LOGGER.debug("returning OAuth2AccessTokenAuthenticationToken");
-            return new OAuth2AccessTokenAuthenticationToken(registeredClient, clientPrincipal, accessToken, refreshToken, Objects.requireNonNull(authorization.getAccessToken().getClaims()));
 
-        } catch (Exception ex) {
+            this.authorizationService.save(authorization);
+
+            LOGGER.debug("returning OAuth2AccessTokenAuthenticationToken");
+
+            return new OAuth2AccessTokenAuthenticationToken(registeredClient, clientPrincipal, accessToken,
+                    refreshToken, Objects.requireNonNull(authorization.getAccessToken().getClaims()));
+
+        }
+        catch (Exception ex) {
             LOGGER.error("problem in authenticate", ex);
             throw oAuth2AuthenticationException(authentication, (AuthenticationException) ex);
         }
@@ -215,8 +223,7 @@ public abstract class OAuth2ResourceOwnerBaseAuthenticationProvider<T extends OA
 
     /**
      * 登录异常转换为oauth2异常
-     *
-     * @param authentication          身份验证
+     * @param authentication 身份验证
      * @param authenticationException 身份验证异常
      * @return {@link OAuth2AuthenticationException}
      */
@@ -224,7 +231,7 @@ public abstract class OAuth2ResourceOwnerBaseAuthenticationProvider<T extends OA
                                                                         AuthenticationException authenticationException) {
         if (authenticationException instanceof UsernameNotFoundException) {
             return new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodesExpand.USERNAME_NOT_FOUND,
-                    this.messages.getMessage("JdbcDaoImpl.notFound", new Object[]{authentication.getName()},
+                    this.messages.getMessage("JdbcDaoImpl.notFound", new Object[] { authentication.getName() },
                             "Username {0} not found"),
                     ""));
         }
@@ -259,14 +266,19 @@ public abstract class OAuth2ResourceOwnerBaseAuthenticationProvider<T extends OA
         return new OAuth2AuthenticationException(OAuth2ErrorCodesExpand.UN_KNOW_LOGIN_ERROR);
     }
 
-    private OAuth2ClientAuthenticationToken getAuthenticatedClientElseThrowInvalidClient(Authentication authentication) {
+    private OAuth2ClientAuthenticationToken getAuthenticatedClientElseThrowInvalidClient(
+            Authentication authentication) {
+
         OAuth2ClientAuthenticationToken clientPrincipal = null;
+
         if (OAuth2ClientAuthenticationToken.class.isAssignableFrom(authentication.getPrincipal().getClass())) {
             clientPrincipal = (OAuth2ClientAuthenticationToken) authentication.getPrincipal();
         }
+
         if (clientPrincipal != null && clientPrincipal.isAuthenticated()) {
             return clientPrincipal;
         }
+
         throw new OAuth2AuthenticationException(OAuth2ErrorCodes.INVALID_CLIENT);
     }
 }

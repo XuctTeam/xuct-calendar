@@ -45,52 +45,47 @@ public class CustomeOAuth2AccessTokenGenerator implements OAuth2TokenGenerator<O
 		Instant expiresAt = issuedAt.plus(registeredClient.getTokenSettings().getAccessTokenTimeToLive());
 
 		// @formatter:off
-        OAuth2TokenClaimsSet.Builder claimsBuilder = OAuth2TokenClaimsSet.builder();
-        if (StringUtils.hasText(issuer)) {
-            claimsBuilder.issuer(issuer);
-        }
-        claimsBuilder
-                .subject(context.getPrincipal().getName())
-                .audience(Collections.singletonList(registeredClient.getClientId()))
-                .issuedAt(issuedAt)
-                .expiresAt(expiresAt)
-                .notBefore(issuedAt)
-                .id(UUID.randomUUID().toString());
-        if (!CollectionUtils.isEmpty(context.getAuthorizedScopes())) {
-            claimsBuilder.claim(OAuth2ParameterNames.SCOPE, context.getAuthorizedScopes());
-        }
-        // @formatter:on
+		OAuth2TokenClaimsSet.Builder claimsBuilder = OAuth2TokenClaimsSet.builder();
+		if (StringUtils.hasText(issuer)) {
+			claimsBuilder.issuer(issuer);
+		}
+		claimsBuilder
+				.subject(context.getPrincipal().getName())
+				.audience(Collections.singletonList(registeredClient.getClientId()))
+				.issuedAt(issuedAt)
+				.expiresAt(expiresAt)
+				.notBefore(issuedAt)
+				.id(UUID.randomUUID().toString());
+		if (!CollectionUtils.isEmpty(context.getAuthorizedScopes())) {
+			claimsBuilder.claim(OAuth2ParameterNames.SCOPE, context.getAuthorizedScopes());
+		}
+		// @formatter:on
 
 		if (this.accessTokenCustomizer != null) {
 			// @formatter:off
-            OAuth2TokenClaimsContext.Builder accessTokenContextBuilder = OAuth2TokenClaimsContext.with(claimsBuilder)
-                    .registeredClient(context.getRegisteredClient())
-                    .principal(context.getPrincipal())
+			OAuth2TokenClaimsContext.Builder accessTokenContextBuilder = OAuth2TokenClaimsContext.with(claimsBuilder)
+					.registeredClient(context.getRegisteredClient())
+					.principal(context.getPrincipal())
 					.authorizationServerContext(context.getAuthorizationServerContext())
-                    .authorizedScopes(context.getAuthorizedScopes())
-                    .tokenType(context.getTokenType())
-                    .authorizationGrantType(context.getAuthorizationGrantType());
-            if (context.getAuthorization() != null) {
-                accessTokenContextBuilder.authorization(context.getAuthorization());
-            }
-            if (context.getAuthorizationGrant() != null) {
-                accessTokenContextBuilder.authorizationGrant(context.getAuthorizationGrant());
-            }
-            // @formatter:on
+					.authorizedScopes(context.getAuthorizedScopes())
+					.tokenType(context.getTokenType())
+					.authorizationGrantType(context.getAuthorizationGrantType());
+			if (context.getAuthorization() != null) {
+				accessTokenContextBuilder.authorization(context.getAuthorization());
+			}
+			if (context.getAuthorizationGrant() != null) {
+				accessTokenContextBuilder.authorizationGrant(context.getAuthorizationGrant());
+			}
+			// @formatter:on
 
 			OAuth2TokenClaimsContext accessTokenContext = accessTokenContextBuilder.build();
 			this.accessTokenCustomizer.customize(accessTokenContext);
 		}
 
 		OAuth2TokenClaimsSet accessTokenClaimsSet = claimsBuilder.build();
-
-		// 组装key token:client:username:uuid
-		String key = String.format("%s::%s::%s", SecurityContextHolder.getContext().getAuthentication().getPrincipal(),
-				context.getPrincipal().getName(), UUID.randomUUID());
-
-		return new OAuth2AccessTokenClaims(OAuth2AccessToken.TokenType.BEARER, key,
-				accessTokenClaimsSet.getIssuedAt(), accessTokenClaimsSet.getExpiresAt(), context.getAuthorizedScopes(),
-				accessTokenClaimsSet.getClaims());
+		return new CustomeOAuth2AccessTokenGenerator.OAuth2AccessTokenClaims(OAuth2AccessToken.TokenType.BEARER,
+				UUID.randomUUID().toString(), accessTokenClaimsSet.getIssuedAt(), accessTokenClaimsSet.getExpiresAt(),
+				context.getAuthorizedScopes(), accessTokenClaimsSet.getClaims());
 	}
 
 	/**
@@ -110,7 +105,7 @@ public class CustomeOAuth2AccessTokenGenerator implements OAuth2TokenGenerator<O
 		private final Map<String, Object> claims;
 
 		private OAuth2AccessTokenClaims(TokenType tokenType, String tokenValue, Instant issuedAt, Instant expiresAt,
-				Set<String> scopes, Map<String, Object> claims) {
+										Set<String> scopes, Map<String, Object> claims) {
 			super(tokenType, tokenValue, issuedAt, expiresAt, scopes);
 			this.claims = claims;
 		}

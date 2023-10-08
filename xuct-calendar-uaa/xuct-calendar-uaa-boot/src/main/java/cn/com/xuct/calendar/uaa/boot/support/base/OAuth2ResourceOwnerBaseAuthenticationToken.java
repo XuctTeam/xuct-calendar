@@ -30,8 +30,8 @@ public abstract class OAuth2ResourceOwnerBaseAuthenticationToken extends Abstrac
 	private final Map<String, Object> additionalParameters;
 
 	public OAuth2ResourceOwnerBaseAuthenticationToken(AuthorizationGrantType authorizationGrantType,
-                                                      Authentication clientPrincipal, @Nullable Set<String> scopes,
-                                                      @Nullable Map<String, Object> additionalParameters) {
+													  Authentication clientPrincipal, @Nullable Set<String> scopes,
+													  @Nullable Map<String, Object> additionalParameters) {
 		super(Collections.emptyList());
 		Assert.notNull(authorizationGrantType, "authorizationGrantType cannot be null");
 		Assert.notNull(clientPrincipal, "clientPrincipal cannot be null");

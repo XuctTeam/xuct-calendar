@@ -30,6 +30,7 @@ public class CustomizerOAuth2TokenCustomizer implements OAuth2TokenCustomizer<OA
             return;
         }
         OAuthUser oAuthUser = (OAuthUser) context.getPrincipal().getPrincipal();
+        claims.claim(SecurityConstants.DETAILS_USER_ID, oAuthUser.getId());
         claims.claim(SecurityConstants.DETAILS_USER_NAME, oAuthUser.getUsername());
         claims.claim(SecurityConstants.DETAILS_USER_TIMEZONE, oAuthUser.getTimeZone());
     }

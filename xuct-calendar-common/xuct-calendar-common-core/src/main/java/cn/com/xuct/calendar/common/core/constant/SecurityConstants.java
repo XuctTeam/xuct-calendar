@@ -83,6 +83,9 @@ public interface SecurityConstants {
      */
     String DETAILS_USER = "user_info";
 
+
+    String DETAILS_USER_ID = "user_id";
+
     /**
      * 用户id
      */

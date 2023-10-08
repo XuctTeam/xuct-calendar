@@ -52,6 +52,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -120,10 +121,11 @@ public class TokenEndpoint {
     @DeleteMapping("/logout")
     public R<Boolean> logout(@RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authHeader) {
         if (StrUtil.isBlank(authHeader)) {
-            return R.status(false);
+            return R.fail("退出失败，token 为空");
         }
+
         String tokenValue = authHeader.replace(OAuth2AccessToken.TokenType.BEARER.getValue(), StrUtil.EMPTY).trim();
-        return R.status(this.deleteUser(tokenValue));
+        return removeToken(tokenValue);
     }
 
     /**
@@ -139,6 +141,7 @@ public class TokenEndpoint {
             httpResponse.setStatusCode(HttpStatus.UNAUTHORIZED);
             this.authenticationFailureHandler.onAuthenticationFailure(request, response,
                     new InvalidBearerTokenException(OAuth2ErrorCodesExpand.TOKEN_MISSING));
+            return;
         }
         OAuth2Authorization authorization = authorizationService.findByToken(token, OAuth2TokenType.ACCESS_TOKEN);
 
@@ -146,6 +149,7 @@ public class TokenEndpoint {
         if (authorization == null || authorization.getAccessToken() == null) {
             this.authenticationFailureHandler.onAuthenticationFailure(request, response,
                     new InvalidBearerTokenException(OAuth2ErrorCodesExpand.INVALID_BEARER_TOKEN));
+            return;
         }
 
         Map<String, Object> claims = authorization.getAccessToken().getClaims();
@@ -162,27 +166,22 @@ public class TokenEndpoint {
     @Inner
     @DeleteMapping("/{token}")
     public R<Boolean> removeToken(@PathVariable("token") String token) {
-        return R.status(this.deleteUser(token));
-    }
-
-    private boolean deleteUser(String token) {
         OAuth2Authorization authorization = authorizationService.findByToken(token, OAuth2TokenType.ACCESS_TOKEN);
         if (authorization == null) {
-            return false;
+            return R.status(false);
         }
 
         OAuth2Authorization.Token<OAuth2AccessToken> accessToken = authorization.getAccessToken();
         if (accessToken == null || StrUtil.isBlank(accessToken.getToken().getTokenValue())) {
-            return false;
+            return R.status(false);
         }
-        // 清空用户信息
-        cacheManager.getCache(CacheConstants.USER_DETAILS).evict(authorization.getPrincipalName());
-
+        // 清空用户信息（立即删除）
+        Objects.requireNonNull(cacheManager.getCache(CacheConstants.USER_DETAILS)).evictIfPresent(authorization.getPrincipalName());
         // 清空access token
         authorizationService.remove(authorization);
         // 处理自定义退出事件，保存相关日志
-        SpringContextHolder.publishEvent(new LogoutSuccessEvent(new PreAuthenticatedAuthenticationToken(authorization.getPrincipalName(), authorization.getRegisteredClientId())));
-        return true;
+        SpringContextHolder.publishEvent(new LogoutSuccessEvent(new PreAuthenticatedAuthenticationToken(
+                authorization.getPrincipalName(), authorization.getRegisteredClientId())));
+        return R.status(true);
     }
-
 }

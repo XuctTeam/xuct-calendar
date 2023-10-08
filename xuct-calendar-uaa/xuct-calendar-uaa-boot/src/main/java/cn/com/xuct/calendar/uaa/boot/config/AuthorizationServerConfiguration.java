@@ -42,6 +42,7 @@ import org.springframework.security.oauth2.server.authorization.web.authenticati
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationConverter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.util.Arrays;
 
@@ -62,11 +63,9 @@ public class AuthorizationServerConfiguration {
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
-
         OAuth2AuthorizationServerConfigurer authorizationServerConfigurer = new OAuth2AuthorizationServerConfigurer();
 
-        http.apply(authorizationServerConfigurer
-                .tokenEndpoint((tokenEndpoint) -> {// 个性化认证授权端点
+        http.apply(authorizationServerConfigurer.tokenEndpoint((tokenEndpoint) -> {// 个性化认证授权端点
                     tokenEndpoint.accessTokenRequestConverter(accessTokenRequestConverter()) // 注入自定义的授权认证Converter
                             .accessTokenResponseHandler(new AuthenticationSuccessEventHandler()) // 登录成功处理器
                             .errorResponseHandler(new AuthenticationFailureEventHandler());// 登录失败处理器
@@ -75,15 +74,20 @@ public class AuthorizationServerConfiguration {
                 .authorizationEndpoint(authorizationEndpoint -> authorizationEndpoint// 授权码端点个性化confirm页面
                         .consentPage(SecurityConstants.CUSTOM_CONSENT_PAGE_URI)));
 
-        DefaultSecurityFilterChain securityFilterChain = http.authorizeHttpRequests(authorizeRequests -> {
+        AntPathRequestMatcher[] requestMatchers = new AntPathRequestMatcher[]{
+                AntPathRequestMatcher.antMatcher("/token/**"), AntPathRequestMatcher.antMatcher("/actuator/**"),
+                AntPathRequestMatcher.antMatcher("/css/**"), AntPathRequestMatcher.antMatcher("/error")};
+
+        http.authorizeHttpRequests(authorizeRequests -> {
                     // 自定义接口、端点暴露
-                    authorizeRequests.requestMatchers("/token/**", "/actuator/**", "/css/**", "/error").permitAll();
+                    authorizeRequests.requestMatchers(requestMatchers).permitAll();
                     authorizeRequests.anyRequest().authenticated();
-                }).apply(authorizationServerConfigurer.authorizationService(authorizationService)// redis存储token的实现
+                })
+                .apply(authorizationServerConfigurer.authorizationService(authorizationService)// redis存储token的实现
                         .authorizationServerSettings(
-                                AuthorizationServerSettings.builder().issuer(SecurityConstants.PROJECT_LICENSE).build()))
-                // 授权码登录的登录页个性化
-                .and().apply(new FormIdentityLoginConfigurer()).and().build();
+                                AuthorizationServerSettings.builder().issuer(SecurityConstants.PROJECT_LICENSE).build()));
+        http.apply(new FormIdentityLoginConfigurer());
+        DefaultSecurityFilterChain securityFilterChain = http.build();
 
         // 注入自定义授权模式实现
         addCustomOAuth2GrantAuthenticationProvider(http);
@@ -107,7 +111,6 @@ public class AuthorizationServerConfiguration {
                 new OAuth2AuthorizationCodeRequestAuthenticationConverter()));
     }
 
-
     /**
      * 令牌生成规则实现 </br>
      * client:username:uuid
@@ -121,6 +124,7 @@ public class AuthorizationServerConfiguration {
         accessTokenGenerator.setAccessTokenCustomizer(new CustomizerOAuth2TokenCustomizer());
         return new DelegatingOAuth2TokenGenerator(accessTokenGenerator, new OAuth2RefreshTokenGenerator());
     }
+
 
     /**
      * 注入授权模式实现提供方

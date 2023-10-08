@@ -63,33 +63,37 @@ public class OAuthDaoAuthenticationProvider extends AbstractUserDetailsAuthentic
         setPasswordEncoder(PasswordEncoderFactories.createDelegatingPasswordEncoder());
     }
 
-    
-
     @Override
-    @SuppressWarnings("deprecation")
-    protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
+    protected void additionalAuthenticationChecks(UserDetails userDetails,
+                                                  UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
 
-       // phone 模式不用校验密码
+        // app 模式不用校验密码
         String grantType = WebUtils.getRequest().get().getParameter(OAuth2ParameterNames.GRANT_TYPE);
-        if (StrUtil.equals(SecurityConstants.PHONE_GRANT_TYPE, grantType)){
+        if (StrUtil.equals(SecurityConstants.PHONE_PARAM, grantType)) {
             return;
         }
+
         if (authentication.getCredentials() == null) {
             this.logger.debug("Failed to authenticate since no credentials provided");
-            throw new BadCredentialsException(this.messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
+            throw new BadCredentialsException(this.messages
+                    .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
         }
         String presentedPassword = authentication.getCredentials().toString();
         if (!this.passwordEncoder.matches(presentedPassword, userDetails.getPassword())) {
             this.logger.debug("Failed to authenticate since password does not match stored value");
-            throw new BadCredentialsException(this.messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
+            throw new BadCredentialsException(this.messages
+                    .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
         }
     }
 
     @SneakyThrows
     @Override
+
     protected final UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) {
         prepareTimingAttackProtection();
-        HttpServletRequest request = WebUtils.getRequest().orElseThrow((Supplier<Throwable>) () -> new InternalAuthenticationServiceException("web request is empty"));
+        HttpServletRequest request = WebUtils.getRequest()
+                .orElseThrow(
+                        (Supplier<Throwable>) () -> new InternalAuthenticationServiceException("web request is empty"));
 
         String grantType = WebUtils.getRequest().get().getParameter(OAuth2ParameterNames.GRANT_TYPE);
         String clientId = WebUtils.getRequest().get().getParameter(OAuth2ParameterNames.CLIENT_ID);
@@ -97,17 +101,25 @@ public class OAuthDaoAuthenticationProvider extends AbstractUserDetailsAuthentic
         if (StrUtil.isBlank(clientId)) {
             clientId = basicConvert.convert(request).getName();
         }
-        Map<String, OAuthUserDetailsService> userDetailsServiceMap = SpringContextHolder.getBeansOfType(OAuthUserDetailsService.class);
-        String finalClientId = clientId;
-        Optional<OAuthUserDetailsService> optional = userDetailsServiceMap.values().stream().filter(service -> service.support(finalClientId, grantType)).max(Comparator.comparingInt(Ordered::getOrder));
 
-        if (!optional.isPresent()) {
+        Map<String, OAuthUserDetailsService> userDetailsServiceMap = SpringUtil
+                .getBeansOfType(OAuthUserDetailsService.class);
+
+        String finalClientId = clientId;
+        Optional<OAuthUserDetailsService> optional = userDetailsServiceMap.values()
+                .stream()
+                .filter(service -> service.support(finalClientId, grantType))
+                .max(Comparator.comparingInt(Ordered::getOrder));
+
+        if (optional.isEmpty()) {
             throw new InternalAuthenticationServiceException("UserDetailsService error , not register");
         }
+
         try {
             UserDetails loadedUser = optional.get().loadUserByUsername(username);
             if (loadedUser == null) {
-                throw new InternalAuthenticationServiceException("UserDetailsService returned null, which is an interface contract violation");
+                throw new InternalAuthenticationServiceException(
+                        "UserDetailsService returned null, which is an interface contract violation");
             }
             return loadedUser;
         } catch (UsernameNotFoundException ex) {
@@ -123,7 +135,8 @@ public class OAuthDaoAuthenticationProvider extends AbstractUserDetailsAuthentic
     @Override
     protected Authentication createSuccessAuthentication(Object principal, Authentication authentication,
                                                          UserDetails user) {
-        boolean upgradeEncoding = this.userDetailsPasswordService != null && this.passwordEncoder.upgradeEncoding(user.getPassword());
+        boolean upgradeEncoding = this.userDetailsPasswordService != null
+                && this.passwordEncoder.upgradeEncoding(user.getPassword());
         if (upgradeEncoding) {
             String presentedPassword = authentication.getCredentials().toString();
             String newPassword = this.passwordEncoder.encode(presentedPassword);
