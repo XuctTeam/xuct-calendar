@@ -16,7 +16,7 @@ import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.res.RetOps;
 import cn.com.xuct.calendar.common.security.annotation.Inner;
 import cn.com.xuct.calendar.common.security.excpetion.OAuthClientException;
-import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
+import cn.com.xuct.calendar.common.core.utils.SpringContextHolder;
 import cn.com.xuct.calendar.uaa.boot.handler.AuthenticationFailureEventHandler;
 import cn.com.xuct.calendar.uaa.boot.utils.OAuth2EndpointUtils;
 import cn.com.xuct.calendar.uaa.boot.utils.OAuth2ErrorCodesExpand;

@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import org.json.JSONObject;
 
@@ -30,6 +31,7 @@ import org.json.JSONObject;
  * @create 2022/2/17
  * @since 1.0.0
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Accessors(chain = true)
 @TableName(value = "sys_member_message", autoResultMap = true)
@@ -45,7 +47,6 @@ public class MemberMessage extends SuperEntity<MemberMessage> {
     @Schema(description = "分类")
     private MemberMessageTypeEnum type;
 
-    /* 类型 */
     @Schema(title = "类型", description = "type=EVENT:0.新建邀请 1.更新邀请 2.事件删除 3.事件提醒 type=GROUP 0申请入组 1申请同意 2申请不同意 3.撤回申请 4.主动离开 5.踢出群组 6.群组删除 type=SYSTEM:0")
     private Integer operation;
 

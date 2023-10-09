@@ -12,6 +12,8 @@ package cn.com.xuct.calendar.uaa.boot.handler;
 
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
 import cn.com.xuct.calendar.common.core.res.R;
+import cn.com.xuct.calendar.common.core.utils.MsgUtils;
+import cn.hutool.core.util.StrUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -53,12 +55,28 @@ public class AuthenticationFailureEventHandler implements AuthenticationFailureH
 //                String username = request.getParameter(OAuth2ParameterNames.USERNAME);
 //            }
         }
-        sendErrorResponse(response, exception);
+        sendErrorResponse(request, response, exception);
     }
 
-    private void sendErrorResponse(HttpServletResponse response, AuthenticationException exception) throws IOException {
+    private void sendErrorResponse(HttpServletRequest request, HttpServletResponse response,
+                                   AuthenticationException exception) throws IOException {
         ServletServerHttpResponse httpResponse = new ServletServerHttpResponse(response);
         httpResponse.setStatusCode(HttpStatus.UNAUTHORIZED);
-        this.errorHttpResponseConverter.write(R.fail(exception.getLocalizedMessage()), MediaType.APPLICATION_JSON, httpResponse);
+        String errorMessage;
+
+        if (exception instanceof OAuth2AuthenticationException authorizationException) {
+            errorMessage = StrUtil.isBlank(authorizationException.getError().getDescription())
+                    ? authorizationException.getError().getErrorCode()
+                    : authorizationException.getError().getDescription();
+        } else {
+            errorMessage = exception.getLocalizedMessage();
+        }
+
+        // 手机号登录
+        String grantType = request.getParameter(OAuth2ParameterNames.GRANT_TYPE);
+        if (SecurityConstants.PHONE_GRANT_TYPE.equals(grantType)) {
+            errorMessage = MsgUtils.getSecurityMessage("AbstractUserDetailsAuthenticationProvider.smsBadCredentials");
+        }
+        this.errorHttpResponseConverter.write(R.fail(errorMessage), MediaType.APPLICATION_JSON, httpResponse);
     }
 }

@@ -19,11 +19,12 @@ package cn.com.xuct.calendar.common.security.component;
 import cn.com.xuct.calendar.common.core.constant.GlobalConstants;
 import cn.com.xuct.calendar.common.core.constant.RConstants;
 import cn.com.xuct.calendar.common.core.res.R;
-import cn.com.xuct.calendar.common.core.utils.JsonUtils;
 import cn.hutool.http.HttpStatus;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -31,7 +32,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
@@ -44,10 +44,13 @@ import java.io.PrintWriter;
 @RequiredArgsConstructor
 public class ResourceAuthExceptionEntryPoint implements AuthenticationEntryPoint {
 
+    private final ObjectMapper objectMapper;
+
 
     private final MessageSource messageSource;
 
     @Override
+    @SneakyThrows
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) {
         response.setCharacterEncoding(GlobalConstants.UTF8);
@@ -64,14 +67,8 @@ public class ResourceAuthExceptionEntryPoint implements AuthenticationEntryPoint
             response.setStatus(org.springframework.http.HttpStatus.FAILED_DEPENDENCY.value());
             result.setMessage(this.messageSource.getMessage("OAuth2ResourceOwnerBaseAuthenticationProvider.tokenExpired", null, LocaleContextHolder.getLocale()));
         }
-        String jsonResult = JsonUtils.obj2json(result);
-        try {
-            PrintWriter printWriter = response.getWriter();
-            printWriter.write(jsonResult);
-            printWriter.close();
-        } catch (IOException ee) {
-            log.error("resource exception:: write error , ee = {}", ee.getMessage());
-        }
+        PrintWriter printWriter = response.getWriter();
+        printWriter.append(objectMapper.writeValueAsString(result));
+        printWriter.close();
     }
-
 }

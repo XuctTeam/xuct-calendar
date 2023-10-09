@@ -16,7 +16,7 @@ import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.enums.IdentityTypeEnum;
 import cn.com.xuct.calendar.common.module.feign.req.ComponentNotifyFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.EmailFeignInfo;
-import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
+import cn.com.xuct.calendar.common.core.utils.SpringContextHolder;
 import cn.com.xuct.calendar.ums.api.entity.Member;
 import cn.com.xuct.calendar.ums.api.entity.MemberAuth;
 import cn.com.xuct.calendar.ums.api.feign.BasicServicesFeignClient;

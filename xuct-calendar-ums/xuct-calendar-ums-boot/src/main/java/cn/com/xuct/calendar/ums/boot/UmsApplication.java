@@ -16,7 +16,7 @@ import cn.com.xuct.calendar.common.redis.annotation.EnableRedisAutoConfiguration
 import cn.com.xuct.calendar.common.security.annotation.EnableOAuthResourceServer;
 import cn.com.xuct.calendar.common.imgurl.annotation.EnableImgUrlClient;
 import cn.com.xuct.calendar.common.swagger.annotation.EnableApiDoc;
-import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
+import cn.com.xuct.calendar.common.core.utils.SpringContextHolder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;

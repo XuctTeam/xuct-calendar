@@ -18,7 +18,7 @@ import cn.com.xuct.calendar.common.module.params.GroupJoinParam;
 import cn.com.xuct.calendar.common.module.params.GroupLeaveParam;
 import cn.com.xuct.calendar.common.module.params.GroupMemberIdsParam;
 import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
-import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
+import cn.com.xuct.calendar.common.core.utils.SpringContextHolder;
 import cn.com.xuct.calendar.ums.api.dto.GroupInfoDto;
 import cn.com.xuct.calendar.ums.api.dto.GroupMemberInfoDto;
 import cn.com.xuct.calendar.ums.api.entity.Group;

@@ -40,7 +40,7 @@ import cn.com.xuct.calendar.common.module.params.ComponentAddParam;
 import cn.com.xuct.calendar.common.module.params.ComponentAttendParam;
 import cn.com.xuct.calendar.common.security.serivces.OAuthUser;
 import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
-import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
+import cn.com.xuct.calendar.common.core.utils.SpringContextHolder;
 import cn.com.xuct.calendar.ums.oauth.client.MemberFeignClient;
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DatePattern;

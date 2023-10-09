@@ -10,9 +10,9 @@
  */
 package cn.com.xuct.calendar.basic.services.service;
 
-import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -49,32 +49,29 @@ public class MailService {
      * @param to       收件人
      * @param subject  邮件主题
      * @param params   html格式的邮件内容
-     * @param template
+     * @param template 模板名称
      */
+    @SneakyThrows
     public void sendTemplate(String from, List<String> to, List<String> cc, String subject, Map<String, Object> params, String template) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-        try {
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-            helper.setSubject(subject);
-            helper.setFrom(from);
-            helper.setTo(to.toArray(new String[to.size()]));
-            helper.setSentDate(new Date());
-            if (!CollectionUtils.isEmpty(cc)) {
-                helper.setCc(cc.toArray(new String[cc.size()]));
-            }
-            // 这里引入的是Template的Context
-            Context context = new Context();
-            // 设置模板中的变量
-            for (String key : params.keySet()) {
-                context.setVariable(key, params.get(key));
-            }
-            // 第一个参数为模板的名称
-            String process = templateEngine.process(template, context);
-            // 第二个参数true表示这是一个html文本
-            helper.setText(process, true);
-            javaMailSender.send(mimeMessage);
-        } catch (MessagingException e) {
-            e.printStackTrace();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+        helper.setSubject(subject);
+        helper.setFrom(from);
+        helper.setTo(to.toArray(new String[0]));
+        helper.setSentDate(new Date());
+        if (!CollectionUtils.isEmpty(cc)) {
+            helper.setCc(cc.toArray(new String[0]));
         }
+        // 这里引入的是Template的Context
+        Context context = new Context();
+        // 设置模板中的变量
+        for (String key : params.keySet()) {
+            context.setVariable(key, params.get(key));
+        }
+        // 第一个参数为模板的名称
+        String process = templateEngine.process(template, context);
+        // 第二个参数true表示这是一个html文本
+        helper.setText(process, true);
+        javaMailSender.send(mimeMessage);
     }
 }

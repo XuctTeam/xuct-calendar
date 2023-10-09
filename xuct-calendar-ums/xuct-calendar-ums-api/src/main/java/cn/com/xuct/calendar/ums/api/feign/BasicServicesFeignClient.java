@@ -34,21 +34,57 @@ import java.util.List;
 @FeignClient(name = "dav-basic-services", contextId = "basic-services")
 public interface BasicServicesFeignClient {
 
+    /**
+     * 发送短信验证码
+     *
+     * @param smsCodeFeignInfo 短信验证码信息
+     * @return String
+     */
     @PostMapping("/api/basic/v1/sms")
     R<String> smsCode(@RequestBody SmsCodeFeignInfo smsCodeFeignInfo);
 
+    /**
+     * 发送邮件
+     *
+     * @param emailFeignInfo 邮件信息
+     * @return String
+     */
     @PostMapping("/api/basic/v1/email")
     R<String> sendEmail(@RequestBody EmailFeignInfo emailFeignInfo);
 
+    /**
+     * 获取微信小程序的session信息
+     *
+     * @param code 微信小程序的code
+     * @return WxMaJscode2SessionResult
+     */
     @GetMapping("/api/basic/v1/wx/ma/getSessionInfo")
     R<WxMaJscode2SessionResult> getSessionInfo(@RequestParam("code") String code);
 
+    /**
+     * 获取微信小程序的用户信息
+     *
+     * @param wxUserInfoFeignInfo 微信用户信息
+     * @return WxMaUserInfo
+     */
     @PostMapping("/api/basic/v1/wx/ma/getUserInfo")
     R<WxMaUserInfo> getUserInfo(@RequestBody WxUserInfoFeignInfo wxUserInfoFeignInfo);
 
+    /**
+     * 获取微信小程序的手机号信息
+     *
+     * @param wxUserPhoneFeignInfo 微信用户手机号信息
+     * @return WxMaPhoneNumberInfo
+     */
     @PostMapping("/api/basic/v1/wx/ma/getPhoneNoInfo")
     R<WxMaPhoneNumberInfo> getPhoneNoInfo(@RequestBody WxUserPhoneFeignInfo wxUserPhoneFeignInfo);
 
+    /**
+     * 发送订阅消息
+     *
+     * @param wxSubscribeMessageFeignInfos 订阅消息信息
+     * @return String
+     */
     @PostMapping("/api/basic/v1/wx/ma/sendSubscribeMsg")
     R<String> sendSubscribeMsg(@RequestBody List<WxSubscribeMessageFeignInfo> wxSubscribeMessageFeignInfos);
 }

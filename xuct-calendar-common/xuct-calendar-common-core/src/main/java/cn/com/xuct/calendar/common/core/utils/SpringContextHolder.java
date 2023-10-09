@@ -8,7 +8,7 @@
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package cn.com.xuct.calendar.common.web.utils;
+package cn.com.xuct.calendar.common.core.utils;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

@@ -15,7 +15,7 @@ import cn.com.xuct.calendar.common.module.enums.CommonPowerEnum;
 import cn.com.xuct.calendar.common.module.params.GroupAddParam;
 import cn.com.xuct.calendar.common.module.params.GroupDeleteParam;
 import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
-import cn.com.xuct.calendar.common.web.utils.SpringContextHolder;
+import cn.com.xuct.calendar.common.core.utils.SpringContextHolder;
 import cn.com.xuct.calendar.ums.api.dto.GroupInfoDto;
 import cn.com.xuct.calendar.ums.api.dto.GroupMemberInfoDto;
 import cn.com.xuct.calendar.ums.api.dto.GroupSearchPageDto;

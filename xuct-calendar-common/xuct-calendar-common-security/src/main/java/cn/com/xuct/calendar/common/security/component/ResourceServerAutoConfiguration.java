@@ -16,6 +16,7 @@
 
 package cn.com.xuct.calendar.common.security.component;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
@@ -58,8 +59,9 @@ public class ResourceServerAutoConfiguration {
      * @return ResourceAuthExceptionEntryPoint
      */
     @Bean
-    public ResourceAuthExceptionEntryPoint resourceAuthExceptionEntryPoint(MessageSource securityMessageSource) {
-        return new ResourceAuthExceptionEntryPoint(securityMessageSource);
+    public ResourceAuthExceptionEntryPoint resourceAuthExceptionEntryPoint(ObjectMapper objectMapper,
+                                                                           MessageSource securityMessageSource) {
+        return new ResourceAuthExceptionEntryPoint(objectMapper, securityMessageSource);
     }
 
     /**
