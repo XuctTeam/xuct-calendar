@@ -3,7 +3,7 @@ package cn.com.xuct.calendar.uaa.boot.support.wx;
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
 import cn.com.xuct.calendar.common.core.utils.JsonUtils;
 import cn.com.xuct.calendar.common.security.beans.WxUserName;
-import cn.com.xuct.calendar.uaa.boot.support.base.OAuth2ResourceOwnerBaseAuthenticationProvider;
+import cn.com.xuct.calendar.uaa.boot.support.base.BaseOauth2ResourceOwnerBaseAuthenticationProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,10 +26,10 @@ import java.util.Map;
  * <p>
  * 短信登录的核心处理
  */
-public class OAuth2ResourceOwnerWxAuthenticationProvider
-        extends OAuth2ResourceOwnerBaseAuthenticationProvider<OAuth2ResourceOwnerWxAuthenticationToken> {
+public class BaseOauth2ResourceOwnerWxAuthenticationProvider
+        extends BaseOauth2ResourceOwnerBaseAuthenticationProvider<BaseOauth2ResourceOwnerWxAuthenticationToken> {
 
-    private static final Logger LOGGER = LogManager.getLogger(OAuth2ResourceOwnerWxAuthenticationProvider.class);
+    private static final Logger LOGGER = LogManager.getLogger(BaseOauth2ResourceOwnerWxAuthenticationProvider.class);
 
     /**
      * Constructs an {@code OAuth2AuthorizationCodeAuthenticationProvider} using the
@@ -40,15 +40,15 @@ public class OAuth2ResourceOwnerWxAuthenticationProvider
      * @param tokenGenerator        the token generator
      * @since 0.2.3
      */
-    public OAuth2ResourceOwnerWxAuthenticationProvider(AuthenticationManager authenticationManager,
-                                                       OAuth2AuthorizationService authorizationService,
-                                                       OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator) {
+    public BaseOauth2ResourceOwnerWxAuthenticationProvider(AuthenticationManager authenticationManager,
+                                                           OAuth2AuthorizationService authorizationService,
+                                                           OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator) {
         super(authenticationManager, authorizationService, tokenGenerator);
     }
 
     @Override
     public boolean supports(Class<?> authentication) {
-        boolean supports = OAuth2ResourceOwnerWxAuthenticationToken.class.isAssignableFrom(authentication);
+        boolean supports = BaseOauth2ResourceOwnerWxAuthenticationToken.class.isAssignableFrom(authentication);
         LOGGER.debug("supports authentication=" + authentication + " returning " + supports);
         return supports;
     }

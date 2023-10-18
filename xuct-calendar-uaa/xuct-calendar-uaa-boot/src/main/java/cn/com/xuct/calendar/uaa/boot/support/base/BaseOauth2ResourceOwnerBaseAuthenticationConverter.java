@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  * <p>
  * 自定义模式认证转换器
  */
-public abstract class OAuth2ResourceOwnerBaseAuthenticationConverter<T extends OAuth2ResourceOwnerBaseAuthenticationToken> implements AuthenticationConverter {
+public abstract class BaseOauth2ResourceOwnerBaseAuthenticationConverter<T extends BaseOauth2ResourceOwnerBaseAuthenticationToken> implements AuthenticationConverter {
 
     /**
      * 是否支持此convert

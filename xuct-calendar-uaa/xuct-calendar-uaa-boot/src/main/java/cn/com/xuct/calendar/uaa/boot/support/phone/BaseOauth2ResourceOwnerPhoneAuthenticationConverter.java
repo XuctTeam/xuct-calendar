@@ -1,7 +1,7 @@
 package cn.com.xuct.calendar.uaa.boot.support.phone;
 
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
-import cn.com.xuct.calendar.uaa.boot.support.base.OAuth2ResourceOwnerBaseAuthenticationConverter;
+import cn.com.xuct.calendar.uaa.boot.support.base.BaseOauth2ResourceOwnerBaseAuthenticationConverter;
 import cn.com.xuct.calendar.uaa.boot.utils.OAuth2EndpointUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.Authentication;
@@ -19,8 +19,8 @@ import java.util.Set;
  * <p>
  * 短信登录转换器
  */
-public class OAuth2ResourceOwnerPhoneAuthenticationConverter
-        extends OAuth2ResourceOwnerBaseAuthenticationConverter<OAuth2ResourceOwnerPhoneAuthenticationToken> {
+public class BaseOauth2ResourceOwnerPhoneAuthenticationConverter
+        extends BaseOauth2ResourceOwnerBaseAuthenticationConverter<BaseOauth2ResourceOwnerPhoneAuthenticationToken> {
 
     /**
      * 是否支持此convert
@@ -34,8 +34,8 @@ public class OAuth2ResourceOwnerPhoneAuthenticationConverter
     }
 
     @Override
-    public OAuth2ResourceOwnerPhoneAuthenticationToken buildToken(Authentication clientPrincipal, Set requestedScopes, Map additionalParameters) {
-        return new OAuth2ResourceOwnerPhoneAuthenticationToken(new AuthorizationGrantType(SecurityConstants.PHONE_GRANT_TYPE), clientPrincipal, requestedScopes, additionalParameters);
+    public BaseOauth2ResourceOwnerPhoneAuthenticationToken buildToken(Authentication clientPrincipal, Set requestedScopes, Map additionalParameters) {
+        return new BaseOauth2ResourceOwnerPhoneAuthenticationToken(new AuthorizationGrantType(SecurityConstants.PHONE_GRANT_TYPE), clientPrincipal, requestedScopes, additionalParameters);
     }
 
     /**

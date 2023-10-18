@@ -1,6 +1,7 @@
-package cn.com.xuct.calendar.uaa.boot.support.password;
+package cn.com.xuct.calendar.uaa.boot.support.phone;
 
-import cn.com.xuct.calendar.uaa.boot.support.base.OAuth2ResourceOwnerBaseAuthenticationProvider;
+import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
+import cn.com.xuct.calendar.uaa.boot.support.base.BaseOauth2ResourceOwnerBaseAuthenticationProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -9,7 +10,6 @@ import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
 import org.springframework.security.oauth2.core.OAuth2Token;
-import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
@@ -17,13 +17,15 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 import java.util.Map;
 
 /**
- * @author jumuning
- * @description 处理用户名密码授权
+ * @author lengleng
+ * @date date
+ * <p>
+ * 短信登录的核心处理
  */
-public class OAuth2ResourceOwnerPasswordAuthenticationProvider
-        extends OAuth2ResourceOwnerBaseAuthenticationProvider<OAuth2ResourceOwnerPasswordAuthenticationToken> {
+public class BaseOauth2ResourceOwnerPhoneAuthenticationProvider
+        extends BaseOauth2ResourceOwnerBaseAuthenticationProvider<BaseOauth2ResourceOwnerPhoneAuthenticationToken> {
 
-    private static final Logger LOGGER = LogManager.getLogger(OAuth2ResourceOwnerPasswordAuthenticationProvider.class);
+    private static final Logger LOGGER = LogManager.getLogger(BaseOauth2ResourceOwnerPhoneAuthenticationProvider.class);
 
     /**
      * Constructs an {@code OAuth2AuthorizationCodeAuthenticationProvider} using the
@@ -34,22 +36,15 @@ public class OAuth2ResourceOwnerPasswordAuthenticationProvider
      * @param tokenGenerator        the token generator
      * @since 0.2.3
      */
-    public OAuth2ResourceOwnerPasswordAuthenticationProvider(AuthenticationManager authenticationManager,
-                                                             OAuth2AuthorizationService authorizationService,
-                                                             OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator) {
+    public BaseOauth2ResourceOwnerPhoneAuthenticationProvider(AuthenticationManager authenticationManager,
+                                                              OAuth2AuthorizationService authorizationService,
+                                                              OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator) {
         super(authenticationManager, authorizationService, tokenGenerator);
     }
 
     @Override
-    public UsernamePasswordAuthenticationToken buildToken(Map<String, Object> reqParameters) {
-        String username = (String) reqParameters.get(OAuth2ParameterNames.USERNAME);
-        String password = (String) reqParameters.get(OAuth2ParameterNames.PASSWORD);
-        return new UsernamePasswordAuthenticationToken(username, password);
-    }
-
-    @Override
     public boolean supports(Class<?> authentication) {
-        boolean supports = OAuth2ResourceOwnerPasswordAuthenticationToken.class.isAssignableFrom(authentication);
+        boolean supports = BaseOauth2ResourceOwnerPhoneAuthenticationToken.class.isAssignableFrom(authentication);
         LOGGER.debug("supports authentication=" + authentication + " returning " + supports);
         return supports;
     }
@@ -57,9 +52,14 @@ public class OAuth2ResourceOwnerPasswordAuthenticationProvider
     @Override
     public void checkClient(RegisteredClient registeredClient) {
         assert registeredClient != null;
-        if (!registeredClient.getAuthorizationGrantTypes().contains(AuthorizationGrantType.PASSWORD)) {
+        if (!registeredClient.getAuthorizationGrantTypes().contains(new AuthorizationGrantType(SecurityConstants.PHONE_GRANT_TYPE))) {
             throw new OAuth2AuthenticationException(OAuth2ErrorCodes.UNAUTHORIZED_CLIENT);
         }
     }
 
+    @Override
+    public UsernamePasswordAuthenticationToken buildToken(Map<String, Object> reqParameters) {
+        String phone = (String) reqParameters.get(SecurityConstants.PHONE_PARAM);
+        return new UsernamePasswordAuthenticationToken(phone , "");
+    }
 }

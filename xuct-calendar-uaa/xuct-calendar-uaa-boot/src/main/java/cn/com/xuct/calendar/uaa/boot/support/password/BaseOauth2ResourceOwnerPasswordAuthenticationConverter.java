@@ -1,6 +1,6 @@
 package cn.com.xuct.calendar.uaa.boot.support.password;
 
-import cn.com.xuct.calendar.uaa.boot.support.base.OAuth2ResourceOwnerBaseAuthenticationConverter;
+import cn.com.xuct.calendar.uaa.boot.support.base.BaseOauth2ResourceOwnerBaseAuthenticationConverter;
 import cn.com.xuct.calendar.uaa.boot.utils.OAuth2EndpointUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.Authentication;
@@ -19,8 +19,8 @@ import java.util.Set;
  *
  * 密码认证转换器
  */
-public class OAuth2ResourceOwnerPasswordAuthenticationConverter
-		extends OAuth2ResourceOwnerBaseAuthenticationConverter<OAuth2ResourceOwnerPasswordAuthenticationToken> {
+public class BaseOauth2ResourceOwnerPasswordAuthenticationConverter
+		extends BaseOauth2ResourceOwnerBaseAuthenticationConverter<BaseOauth2ResourceOwnerPasswordAuthenticationToken> {
 
 	/**
 	 * 支持密码模式
@@ -32,9 +32,9 @@ public class OAuth2ResourceOwnerPasswordAuthenticationConverter
 	}
 
 	@Override
-	public OAuth2ResourceOwnerPasswordAuthenticationToken buildToken(Authentication clientPrincipal,
-			Set requestedScopes, Map additionalParameters) {
-		return new OAuth2ResourceOwnerPasswordAuthenticationToken(AuthorizationGrantType.PASSWORD, clientPrincipal,
+	public BaseOauth2ResourceOwnerPasswordAuthenticationToken buildToken(Authentication clientPrincipal,
+																		 Set requestedScopes, Map additionalParameters) {
+		return new BaseOauth2ResourceOwnerPasswordAuthenticationToken(AuthorizationGrantType.PASSWORD, clientPrincipal,
 				requestedScopes, additionalParameters);
 	}
 

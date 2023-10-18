@@ -33,10 +33,10 @@ import java.util.function.Supplier;
  * @author jumuning
  * @description 处理自定义授权
  */
-public abstract class OAuth2ResourceOwnerBaseAuthenticationProvider<T extends OAuth2ResourceOwnerBaseAuthenticationToken>
+public abstract class BaseOauth2ResourceOwnerBaseAuthenticationProvider<T extends BaseOauth2ResourceOwnerBaseAuthenticationToken>
         implements AuthenticationProvider {
 
-    private static final Logger LOGGER = LogManager.getLogger(OAuth2ResourceOwnerBaseAuthenticationProvider.class);
+    private static final Logger LOGGER = LogManager.getLogger(BaseOauth2ResourceOwnerBaseAuthenticationProvider.class);
 
     private static final String ERROR_URI = "https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.2.1";
 
@@ -58,9 +58,9 @@ public abstract class OAuth2ResourceOwnerBaseAuthenticationProvider<T extends OA
      * @param tokenGenerator the token generator
      * @since 0.2.3
      */
-    public OAuth2ResourceOwnerBaseAuthenticationProvider(AuthenticationManager authenticationManager,
-                                                         OAuth2AuthorizationService authorizationService,
-                                                         OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator) {
+    public BaseOauth2ResourceOwnerBaseAuthenticationProvider(AuthenticationManager authenticationManager,
+                                                             OAuth2AuthorizationService authorizationService,
+                                                             OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator) {
         Assert.notNull(authorizationService, "authorizationService cannot be null");
         Assert.notNull(tokenGenerator, "tokenGenerator cannot be null");
         this.authenticationManager = authenticationManager;

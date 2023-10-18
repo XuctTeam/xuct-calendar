@@ -17,12 +17,12 @@ import cn.com.xuct.calendar.uaa.boot.support.CustomeOAuth2AccessTokenGenerator;
 import cn.com.xuct.calendar.uaa.boot.support.core.CustomizerOAuth2TokenCustomizer;
 import cn.com.xuct.calendar.uaa.boot.support.core.FormIdentityLoginConfigurer;
 import cn.com.xuct.calendar.uaa.boot.support.core.OAuthDaoAuthenticationProvider;
-import cn.com.xuct.calendar.uaa.boot.support.password.OAuth2ResourceOwnerPasswordAuthenticationConverter;
-import cn.com.xuct.calendar.uaa.boot.support.password.OAuth2ResourceOwnerPasswordAuthenticationProvider;
-import cn.com.xuct.calendar.uaa.boot.support.phone.OAuth2ResourceOwnerPhoneAuthenticationConverter;
-import cn.com.xuct.calendar.uaa.boot.support.phone.OAuth2ResourceOwnerPhoneAuthenticationProvider;
-import cn.com.xuct.calendar.uaa.boot.support.wx.OAuth2ResourceOwnerWxAuthenticationConverter;
-import cn.com.xuct.calendar.uaa.boot.support.wx.OAuth2ResourceOwnerWxAuthenticationProvider;
+import cn.com.xuct.calendar.uaa.boot.support.password.BaseOauth2ResourceOwnerPasswordAuthenticationConverter;
+import cn.com.xuct.calendar.uaa.boot.support.password.BaseOauth2ResourceOwnerPasswordAuthenticationProvider;
+import cn.com.xuct.calendar.uaa.boot.support.phone.BaseOauth2ResourceOwnerPhoneAuthenticationConverter;
+import cn.com.xuct.calendar.uaa.boot.support.phone.BaseOauth2ResourceOwnerPhoneAuthenticationProvider;
+import cn.com.xuct.calendar.uaa.boot.support.wx.BaseOauth2ResourceOwnerWxAuthenticationConverter;
+import cn.com.xuct.calendar.uaa.boot.support.wx.BaseOauth2ResourceOwnerWxAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -102,9 +102,9 @@ public class AuthorizationServerConfiguration {
      */
     private AuthenticationConverter accessTokenRequestConverter() {
         return new DelegatingAuthenticationConverter(Arrays.asList(
-                new OAuth2ResourceOwnerPasswordAuthenticationConverter(),
-                new OAuth2ResourceOwnerPhoneAuthenticationConverter(),
-                new OAuth2ResourceOwnerWxAuthenticationConverter(),
+                new BaseOauth2ResourceOwnerPasswordAuthenticationConverter(),
+                new BaseOauth2ResourceOwnerPhoneAuthenticationConverter(),
+                new BaseOauth2ResourceOwnerWxAuthenticationConverter(),
                 new OAuth2RefreshTokenAuthenticationConverter(),
                 new OAuth2ClientCredentialsAuthenticationConverter(),
                 new OAuth2AuthorizationCodeAuthenticationConverter(),
@@ -137,11 +137,11 @@ public class AuthorizationServerConfiguration {
         AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
         OAuth2AuthorizationService authorizationService = http.getSharedObject(OAuth2AuthorizationService.class);
 
-        OAuth2ResourceOwnerPasswordAuthenticationProvider resourceOwnerPasswordAuthenticationProvider = new OAuth2ResourceOwnerPasswordAuthenticationProvider(authenticationManager, authorizationService, oAuth2TokenGenerator());
+        BaseOauth2ResourceOwnerPasswordAuthenticationProvider resourceOwnerPasswordAuthenticationProvider = new BaseOauth2ResourceOwnerPasswordAuthenticationProvider(authenticationManager, authorizationService, oAuth2TokenGenerator());
 
-        OAuth2ResourceOwnerPhoneAuthenticationProvider resourceOwnerPhoneAuthenticationProvider = new OAuth2ResourceOwnerPhoneAuthenticationProvider(authenticationManager, authorizationService, oAuth2TokenGenerator());
+        BaseOauth2ResourceOwnerPhoneAuthenticationProvider resourceOwnerPhoneAuthenticationProvider = new BaseOauth2ResourceOwnerPhoneAuthenticationProvider(authenticationManager, authorizationService, oAuth2TokenGenerator());
 
-        OAuth2ResourceOwnerWxAuthenticationProvider resourceOwnerWxAuthenticationProvider = new OAuth2ResourceOwnerWxAuthenticationProvider(authenticationManager, authorizationService, oAuth2TokenGenerator());
+        BaseOauth2ResourceOwnerWxAuthenticationProvider resourceOwnerWxAuthenticationProvider = new BaseOauth2ResourceOwnerWxAuthenticationProvider(authenticationManager, authorizationService, oAuth2TokenGenerator());
         // 处理 UsernamePasswordAuthenticationToken
         http.authenticationProvider(new OAuthDaoAuthenticationProvider());
         // 处理 OAuth2ResourceOwnerPasswordAuthenticationToken
