@@ -13,9 +13,10 @@ package cn.com.xuct.calendar.ums.api.entity;
 import cn.com.xuct.calendar.common.db.dao.base.SuperEntity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import javax.validation.constraints.NotBlank;
 
 /**
  * 〈一句话功能简述〉<br> 
@@ -25,9 +26,10 @@ import javax.validation.constraints.NotBlank;
  * @create 2022/9/2
  * @since 1.0.0
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @TableName("sys_oauth_client_details")
-public class OAuthClientDetails extends SuperEntity<OAuthClientDetails> {
+public class OauthClientDetails extends SuperEntity<OauthClientDetails> {
 
     /**
      * 客户端ID

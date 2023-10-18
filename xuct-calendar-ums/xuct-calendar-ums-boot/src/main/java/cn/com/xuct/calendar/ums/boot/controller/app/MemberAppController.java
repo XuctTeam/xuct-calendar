@@ -11,6 +11,8 @@
 package cn.com.xuct.calendar.ums.boot.controller.app;
 
 import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
+import cn.com.xuct.calendar.basic.api.client.BasicServicesFeignClient;
+import cn.com.xuct.calendar.cms.api.feign.CmsFeignClient;
 import cn.com.xuct.calendar.common.core.constant.*;
 import cn.com.xuct.calendar.common.core.enums.PasswordEncoderTypeEnum;
 import cn.com.xuct.calendar.common.core.exception.SvrException;
@@ -30,8 +32,6 @@ import cn.com.xuct.calendar.common.core.utils.SpringContextHolder;
 import cn.com.xuct.calendar.ums.api.dto.MemberRegisterDto;
 import cn.com.xuct.calendar.ums.api.entity.Member;
 import cn.com.xuct.calendar.ums.api.entity.MemberAuth;
-import cn.com.xuct.calendar.ums.api.feign.BasicServicesFeignClient;
-import cn.com.xuct.calendar.ums.api.feign.CalendarFeignClient;
 import cn.com.xuct.calendar.ums.api.vo.MemberFindPassCheckVo;
 import cn.com.xuct.calendar.ums.api.vo.MemberInfoVo;
 import cn.com.xuct.calendar.ums.boot.config.DictCacheManager;
@@ -83,7 +83,7 @@ public class MemberAppController {
 
     private final BasicServicesFeignClient basicServicesFeignClient;
 
-    private final CalendarFeignClient calendarFeignClient;
+    private final CmsFeignClient cmsFeignClient;
 
     private final RedisTemplate<String, Object> redisTemplate;
 
@@ -98,7 +98,7 @@ public class MemberAppController {
         MemberInfoVo memberInfoVo = new MemberInfoVo();
         memberInfoVo.setMember(member);
         List<MemberAuth> memberAuths = memberAuthService.find(Column.of("member_id", member.getId()));
-        memberAuths.stream().forEach(item -> item.setPassword(null));
+        memberAuths.forEach(item -> item.setPassword(null));
         memberInfoVo.setAuths(memberAuths);
         return R.data(memberInfoVo);
     }
@@ -119,7 +119,7 @@ public class MemberAppController {
     public R<List<MemberAuth>> auths() {
         Long userId = SecurityUtils.getUserId();
         List<MemberAuth> memberAuths = memberAuthService.find(Column.of("member_id", userId));
-        memberAuths.stream().forEach(item -> item.setPassword(null));
+        memberAuths.forEach(item -> item.setPassword(null));
         return R.data(memberAuths);
     }
 
@@ -135,7 +135,7 @@ public class MemberAppController {
         Long userId = SecurityUtils.getUserId();
         String password = this.delegatingPassword(param.getPassword()).replace("{bcrypt}", "");
         List<MemberAuth> memberAuths = memberAuthService.find(Column.of("member_id", userId));
-        memberAuths.stream().forEach(item -> item.setPassword(password));
+        memberAuths.forEach(item -> item.setPassword(password));
         memberAuthService.updateBatchById(memberAuths, memberAuths.size());
         return R.status(true);
     }
@@ -237,7 +237,7 @@ public class MemberAppController {
             return R.fail("仅存在唯一登陆方式");
         }
         Optional<MemberAuth> optPhoneAuth = memberAuths.stream().filter(x -> x.getIdentityType().equals(IdentityTypeEnum.phone)).findFirst();
-        if (!optPhoneAuth.isPresent()) {
+        if (optPhoneAuth.isEmpty()) {
             return R.fail("未绑定手机");
         }
         memberAuthService.removeById(optPhoneAuth.get().getId());
@@ -314,14 +314,14 @@ public class MemberAppController {
         Long userId = SecurityUtils.getUserId();
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("user_name", memberMergeParam.getPhone()), Column.of("identity_type", IdentityTypeEnum.phone)));
         Assert.notNull(memberAuth, "获取用户信息失败");
-        R<Long> memberCalendarNumberR = calendarFeignClient.countCalendarNumberByMemberIds(CalendarCountFeignInfo.builder().memberIds(Lists.newArrayList(userId, memberAuth.getMemberId())).build(), SecurityConstants.FROM_IN);
+        R<Long> memberCalendarNumberR = cmsFeignClient.countCalendarNumberByMemberIds(CalendarCountFeignInfo.builder().memberIds(Lists.newArrayList(userId, memberAuth.getMemberId())).build(), SecurityConstants.FROM_IN);
         if (memberCalendarNumberR == null || !memberCalendarNumberR.isSuccess()) {
             return R.fail("获取用户日历失败");
         }
         if (memberCalendarNumberR.getData() > 5) {
             return R.fail("超过最大日历数");
         }
-        R<String> mergeCalendarR = calendarFeignClient.mergeCalendar(CalendarMergeDto.builder().fromMemberId(memberAuth.getMemberId()).memberId(userId).build(), SecurityConstants.FROM_IN);
+        R<String> mergeCalendarR = cmsFeignClient.mergeCalendar(CalendarMergeDto.builder().fromMemberId(memberAuth.getMemberId()).memberId(userId).build(), SecurityConstants.FROM_IN);
         if (mergeCalendarR == null || !mergeCalendarR.isSuccess()) {
             return R.fail("合并日历失败");
         }
@@ -358,12 +358,10 @@ public class MemberAppController {
         List<MemberAuth> auths = memberAuthService.find(Column.of("member_id", param.getMemberId()));
         Assert.notEmpty(auths, "修改密码失败");
         Optional<MemberAuth> authOpt = auths.stream().filter(auth -> auth.getIdentityType().equals(IdentityTypeEnum.phone)).findFirst();
-        if (!authOpt.isPresent()) {
-            authOpt = auths.stream().filter(auth -> auth.getIdentityType().equals(IdentityTypeEnum.email)).findFirst();
-        }
-        if (!authOpt.isPresent()) {
+        if (authOpt.isEmpty()) {
             return R.fail("修改密码失败");
         }
+        authOpt = auths.stream().filter(auth -> auth.getIdentityType().equals(IdentityTypeEnum.email)).findFirst();
         String redisKey = RedisConstants.MEMBER_FORGET_CHECK_CODE_KEY.concat(String.valueOf(param.getMemberId()));
         Object redisVal = redisTemplate.opsForValue().get(redisKey);
         if (redisVal == null || !String.valueOf(redisVal).equals(param.getCode())) {
@@ -386,17 +384,15 @@ public class MemberAppController {
                 param.getFormType().equals(RegisterEnum.email) && param.getEmail() == null) {
             return R.fail("注册信息错误");
         }
-        MemberRegisterDto registerDto = null;
-        switch (param.getFormType()) {
-            case username:
-                registerDto = this.registerByUserName(param.getUsername().getUsername(), param.getUsername().getPassword(), param.getUsername().getRandomStr(), param.getUsername().getCaptcha());
-                break;
-            case phone:
-                registerDto = this.registerByPhoneOrEmail(param.getPhone().getPhone(), null, param.getPhone().getPassword(), param.getPhone().getCode());
-                break;
-            case email:
-                registerDto = this.registerByPhoneOrEmail(null, param.getEmail().getEmail(), param.getEmail().getPassword(), param.getEmail().getCode());
-        }
+        MemberRegisterDto registerDto = switch (param.getFormType()) {
+            case username ->
+                    this.registerByUserName(param.getUsername().getUsername(), param.getUsername().getPassword(), param.getUsername().getRandomStr(), param.getUsername().getCaptcha());
+            case phone ->
+                    this.registerByPhoneOrEmail(param.getPhone().getPhone(), null, param.getPhone().getPassword(), param.getPhone().getCode());
+            case email ->
+                    this.registerByPhoneOrEmail(null, param.getEmail().getEmail(), param.getEmail().getPassword(), param.getEmail().getCode());
+            default -> throw new SvrException(SvrResCode.PARAM_ERROR);
+        };
         if (registerDto.getCode() == 0) {
             return R.status(true);
         }
@@ -462,7 +458,7 @@ public class MemberAppController {
         CalendarInitFeignInfo calendarInitFeignInfo = new CalendarInitFeignInfo();
         calendarInitFeignInfo.setMemberId(member.getId());
         calendarInitFeignInfo.setMemberNickName(member.getName());
-        R<String> remoteRes = calendarFeignClient.addCalendar(calendarInitFeignInfo, SecurityConstants.FROM_IN);
+        R<String> remoteRes = cmsFeignClient.addCalendar(calendarInitFeignInfo, SecurityConstants.FROM_IN);
         if (!remoteRes.isSuccess()) {
             return false;
         }

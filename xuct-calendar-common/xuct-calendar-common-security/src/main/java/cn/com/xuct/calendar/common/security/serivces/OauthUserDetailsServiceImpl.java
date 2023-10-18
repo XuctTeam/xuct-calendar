@@ -29,6 +29,8 @@ import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Objects;
+
 /**
  * 用户详细信息
  *
@@ -37,7 +39,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Slf4j
 @Primary
 @RequiredArgsConstructor
-public class OAuthUserDetailsServiceImpl implements OAuthUserDetailsService {
+public class OauthUserDetailsServiceImpl implements OauthUserDetailsService {
 
     private final UserFeignClient userFeignClient;
 
@@ -47,14 +49,14 @@ public class OAuthUserDetailsServiceImpl implements OAuthUserDetailsService {
      * 用户名密码登录
      *
      * @param username 用户名
-     * @return
+     * @return UserDetails
      */
     @Override
     @SneakyThrows
     public UserDetails loadUserByUsername(String username) {
         Cache cache = cacheManager.getCache(CacheConstants.USER_DETAILS);
 		if (cache != null && cache.get(username) != null) {
-			return (OAuthUser) cache.get(username).get();
+			return (OauthUser) Objects.requireNonNull(cache.get(username)).get();
 		}
         R<UserInfo> result = userFeignClient.info(username, SecurityConstants.FROM_IN);
         UserDetails userDetails = getUserDetails(result, false);

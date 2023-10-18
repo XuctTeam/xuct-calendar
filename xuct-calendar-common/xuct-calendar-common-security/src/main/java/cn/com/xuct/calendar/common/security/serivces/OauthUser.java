@@ -27,7 +27,7 @@ import java.util.Map;
  * @create 2022/9/2
  * @since 1.0.0
  */
-public class OAuthUser extends User implements OAuth2AuthenticatedPrincipal {
+public class OauthUser extends User implements OAuth2AuthenticatedPrincipal {
 
     /**
      * 用户ID
@@ -42,7 +42,7 @@ public class OAuthUser extends User implements OAuth2AuthenticatedPrincipal {
     private String timeZone;
 
 
-    public OAuthUser(Long id, String username, String password, String name, String timeZone, boolean enabled,
+    public OauthUser(Long id, String username, String password, String name, String timeZone, boolean enabled,
                      boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked,
                      Collection<? extends GrantedAuthority> authorities) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);

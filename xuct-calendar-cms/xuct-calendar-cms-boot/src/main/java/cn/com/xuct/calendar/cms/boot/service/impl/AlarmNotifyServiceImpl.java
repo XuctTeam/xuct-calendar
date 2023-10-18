@@ -13,7 +13,6 @@ package cn.com.xuct.calendar.cms.boot.service.impl;
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAlarm;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAttend;
-import cn.com.xuct.calendar.cms.api.feign.UmsComponentFeignClient;
 import cn.com.xuct.calendar.cms.boot.config.RabbitmqConfiguration;
 import cn.com.xuct.calendar.cms.boot.handler.RabbitmqOutChannel;
 import cn.com.xuct.calendar.cms.boot.service.IAlarmNotifyService;
@@ -25,6 +24,7 @@ import cn.com.xuct.calendar.common.core.utils.JsonUtils;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.dto.AlarmInfoDto;
 import cn.com.xuct.calendar.common.module.feign.req.ComponentNotifyFeignInfo;
+import cn.com.xuct.calendar.ums.api.feign.UmsFeignClient;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
@@ -58,7 +58,7 @@ public class AlarmNotifyServiceImpl implements IAlarmNotifyService {
 
     private final RabbitmqConfiguration rabbitmqConfiguration;
 
-    private final UmsComponentFeignClient umsComponentFeignClient;
+    private final UmsFeignClient umsFeignClient;
 
     private final RabbitmqOutChannel rabbitmqOutChannel;
 
@@ -79,7 +79,7 @@ public class AlarmNotifyServiceImpl implements IAlarmNotifyService {
                 .type(Integer.parseInt(component.getAlarmType().getCode()))
                 .ids(componentAttendList.stream().map(ComponentAttend::getMemberId).collect(Collectors.toList()))
                 .build();
-        umsComponentFeignClient.notifyAlarm(componentNotifyFeignInfo);
+        umsFeignClient.notifyAlarm(componentNotifyFeignInfo);
     }
 
     @Async("taskExecutor")

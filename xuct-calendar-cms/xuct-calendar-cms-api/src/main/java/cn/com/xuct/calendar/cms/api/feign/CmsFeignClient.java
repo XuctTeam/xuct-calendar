@@ -8,7 +8,7 @@
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package cn.com.xuct.calendar.ums.api.feign;
+package cn.com.xuct.calendar.cms.api.feign;
 
 
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
@@ -20,7 +20,6 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.service.annotation.HttpExchange;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -31,7 +30,7 @@ import org.springframework.web.service.annotation.HttpExchange;
  * @since 1.0.0
  */
 @FeignClient(name = "dav-cms", contextId = "cms")
-public interface CalendarFeignClient {
+public interface CmsFeignClient {
 
     /**
      * 新增日历

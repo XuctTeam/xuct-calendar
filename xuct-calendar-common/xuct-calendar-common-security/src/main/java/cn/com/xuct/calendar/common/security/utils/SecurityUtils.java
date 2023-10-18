@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.common.security.utils;
 
-import cn.com.xuct.calendar.common.security.serivces.OAuthUser;
+import cn.com.xuct.calendar.common.security.serivces.OauthUser;
 import cn.hutool.core.util.StrUtil;
 import lombok.experimental.UtilityClass;
 import org.springframework.security.core.Authentication;
@@ -44,10 +44,10 @@ public class SecurityUtils {
     /**
      * 获取用户
      */
-    public OAuthUser getUser(Authentication authentication) {
+    public OauthUser getUser(Authentication authentication) {
         Object principal = authentication.getPrincipal();
-        if (principal instanceof OAuthUser) {
-            return (OAuthUser) principal;
+        if (principal instanceof OauthUser) {
+            return (OauthUser) principal;
         }
         return null;
     }

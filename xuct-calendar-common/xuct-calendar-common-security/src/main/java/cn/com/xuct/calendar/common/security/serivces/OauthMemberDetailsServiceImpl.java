@@ -37,7 +37,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Slf4j
 @Primary
 @RequiredArgsConstructor
-public class OAuthMemberDetailsServiceImpl implements OAuthUserDetailsService {
+public class OauthMemberDetailsServiceImpl implements OauthUserDetailsService {
 
     private final MemberFeignClient memberFeignClient;
 
@@ -54,7 +54,7 @@ public class OAuthMemberDetailsServiceImpl implements OAuthUserDetailsService {
     public UserDetails loadUserByUsername(String username) {
         Cache cache = cacheManager.getCache(CacheConstants.USER_DETAILS);
         if (cache != null && cache.get(username) != null) {
-            return (OAuthUser) cache.get(username).get();
+            return (OauthUser) cache.get(username).get();
         }
         R<UserInfo> result = memberFeignClient.loadMemberByUserName(username, SecurityConstants.FROM_IN);
         UserDetails userDetails = getUserDetails(result, true);
@@ -82,7 +82,7 @@ public class OAuthMemberDetailsServiceImpl implements OAuthUserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUser(OAuthUser oAuthUser) {
+    public UserDetails loadUserByUser(OauthUser oAuthUser) {
         return this.loadUserByUsername(oAuthUser.getUsername());
     }
 }

@@ -34,7 +34,9 @@ public class Group extends SuperEntity<Group> {
 
     private String no;
 
-    /* 编号 */
+    /**
+     * 编号
+     */
     @TableField(value = "images", updateStrategy = FieldStrategy.IGNORED)
     private String images;
 

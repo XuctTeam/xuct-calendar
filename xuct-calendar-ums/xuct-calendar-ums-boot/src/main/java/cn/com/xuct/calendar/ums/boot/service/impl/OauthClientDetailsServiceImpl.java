@@ -11,7 +11,7 @@
 package cn.com.xuct.calendar.ums.boot.service.impl;
 
 import cn.com.xuct.calendar.common.db.service.BaseServiceImpl;
-import cn.com.xuct.calendar.ums.api.entity.OAuthClientDetails;
+import cn.com.xuct.calendar.ums.api.entity.OauthClientDetails;
 import cn.com.xuct.calendar.ums.boot.mapper.OAuthClientDetailsMapper;
 import cn.com.xuct.calendar.ums.boot.service.IOAuthClientDetailsService;
 import org.springframework.stereotype.Service;
@@ -25,6 +25,6 @@ import org.springframework.stereotype.Service;
  * @since 1.0.0
  */
 @Service
-public class OauthClientDetailsServiceImpl extends BaseServiceImpl<OAuthClientDetailsMapper, OAuthClientDetails> implements IOAuthClientDetailsService {
+public class OauthClientDetailsServiceImpl extends BaseServiceImpl<OAuthClientDetailsMapper, OauthClientDetails> implements IOAuthClientDetailsService {
 
 }

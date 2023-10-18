@@ -10,6 +10,7 @@
  */
 package cn.com.xuct.calendar.ums.boot.controller.app;
 
+import cn.com.xuct.calendar.basic.api.client.BasicServicesFeignClient;
 import cn.com.xuct.calendar.common.core.constant.GlobalConstants;
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.res.R;
@@ -19,7 +20,6 @@ import cn.com.xuct.calendar.common.module.feign.req.EmailFeignInfo;
 import cn.com.xuct.calendar.common.module.params.EmailCodeParam;
 import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
 import cn.com.xuct.calendar.ums.api.entity.MemberAuth;
-import cn.com.xuct.calendar.ums.api.feign.BasicServicesFeignClient;
 import cn.com.xuct.calendar.ums.boot.service.IMemberAuthService;
 import cn.hutool.core.util.RandomUtil;
 import com.google.common.collect.Lists;
@@ -61,8 +61,8 @@ public class EmailAppController {
     @Operation(summary = "【非登录】密码找回")
     @PostMapping("/anno/forget")
     public R<String> forgetPasswordCode(@Validated @RequestBody EmailCodeParam param) {
-        String publicKey = this.validatePublicKey(param.getRandomStr() , param.getKey());
-        if(publicKey == null){
+        String publicKey = this.validatePublicKey(param.getRandomStr(), param.getKey());
+        if (publicKey == null) {
             return R.fail("验证码错误");
         }
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("identity_type", IdentityTypeEnum.email), Column.of("user_name", param.getEmail())));
@@ -117,10 +117,10 @@ public class EmailAppController {
         return R.fail("发送错误");
     }
 
-    private String validatePublicKey(String randomStr, String key){
+    private String validatePublicKey(String randomStr, String key) {
         String publicRedisKey = RedisConstants.DEFAULT_PUBLIC_CODE_KEY.concat(GlobalConstants.COLON).concat(randomStr);
-        Object publicKey = redisTemplate.opsForValue().get(publicRedisKey) ;
-        if(publicKey == null || !String.valueOf(publicKey).equals(key)){
+        Object publicKey = redisTemplate.opsForValue().get(publicRedisKey);
+        if (publicKey == null || !String.valueOf(publicKey).equals(key)) {
             return null;
         }
         return publicRedisKey;
@@ -131,21 +131,13 @@ public class EmailAppController {
         if (type == 3 || type == 4) {
             userId = String.valueOf(SecurityUtils.getUserId());
         }
-        String key = "";
-        switch (type) {
-            case 1:
-                key = RedisConstants.MEMBER_EMAIL_REGISTER_CODE_KEY;
-                break;
-            case 2:
-                key = RedisConstants.MEMBER_FORGET_PASSWORD_EMAIL_CODE_KEY;
-                break;
-            case 3:
-                key = RedisConstants.MEMBER_BIND_EMAIL_CODE_KEY;
-                break;
-            case 4:
-                key = RedisConstants.MEMBER_UNBIND_EMAIL_CODE_KEY;
-                break;
-        }
+        String key = switch (type) {
+            case 1 -> RedisConstants.MEMBER_EMAIL_REGISTER_CODE_KEY;
+            case 2 -> RedisConstants.MEMBER_FORGET_PASSWORD_EMAIL_CODE_KEY;
+            case 3 -> RedisConstants.MEMBER_BIND_EMAIL_CODE_KEY;
+            case 4 -> RedisConstants.MEMBER_UNBIND_EMAIL_CODE_KEY;
+            default -> throw new IllegalArgumentException("非法参数");
+        };
         String code = RandomUtil.randomNumbers(6);
         redisTemplate.opsForValue().set(key.concat(userId).concat(":").concat(email), code, 60 * 10, TimeUnit.SECONDS);
         return code;

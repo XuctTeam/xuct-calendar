@@ -10,8 +10,8 @@
  */
 package cn.com.xuct.calendar.cms.boot.controller.app;
 
+import cn.com.xuct.calendar.basic.api.client.BasicServicesFeignClient;
 import cn.com.xuct.calendar.cms.api.entity.*;
-import cn.com.xuct.calendar.cms.api.feign.BasicServicesFeignClient;
 import cn.com.xuct.calendar.cms.api.vo.*;
 import cn.com.xuct.calendar.cms.boot.config.DomainConfiguration;
 import cn.com.xuct.calendar.cms.boot.config.UploadConfiguration;
@@ -38,7 +38,7 @@ import cn.com.xuct.calendar.common.module.feign.PersonInfo;
 import cn.com.xuct.calendar.common.module.feign.req.ShortChainFeignInfo;
 import cn.com.xuct.calendar.common.module.params.ComponentAddParam;
 import cn.com.xuct.calendar.common.module.params.ComponentAttendParam;
-import cn.com.xuct.calendar.common.security.serivces.OAuthUser;
+import cn.com.xuct.calendar.common.security.serivces.OauthUser;
 import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
 import cn.com.xuct.calendar.common.core.utils.SpringContextHolder;
 import cn.com.xuct.calendar.ums.oauth.client.MemberFeignClient;
@@ -285,7 +285,7 @@ public class ComponentController {
         if (memberFeignInfoR != null && memberFeignInfoR.isSuccess()) {
             shareVo.setCreateMemberName(memberFeignInfoR.getData().getName());
         }
-        OAuthUser authUser = SecurityUtils.getUser(SecurityUtils.getAuthentication());
+        OauthUser authUser = SecurityUtils.getUser(SecurityUtils.getAuthentication());
         if (authUser == null) {
             shareVo.setAttend(false);
             return R.data(shareVo);

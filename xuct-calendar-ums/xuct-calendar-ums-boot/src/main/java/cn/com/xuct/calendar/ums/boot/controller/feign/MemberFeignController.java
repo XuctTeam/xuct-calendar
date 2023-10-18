@@ -12,6 +12,8 @@ package cn.com.xuct.calendar.ums.boot.controller.feign;
 
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaUserInfo;
+import cn.com.xuct.calendar.basic.api.client.BasicServicesFeignClient;
+import cn.com.xuct.calendar.cms.api.feign.CmsFeignClient;
 import cn.com.xuct.calendar.common.core.constant.DictConstants;
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
 import cn.com.xuct.calendar.common.core.exception.SvrException;
@@ -29,8 +31,6 @@ import cn.com.xuct.calendar.common.security.annotation.Inner;
 import cn.com.xuct.calendar.common.core.utils.SpringContextHolder;
 import cn.com.xuct.calendar.ums.api.entity.Member;
 import cn.com.xuct.calendar.ums.api.entity.MemberAuth;
-import cn.com.xuct.calendar.ums.api.feign.BasicServicesFeignClient;
-import cn.com.xuct.calendar.ums.api.feign.CalendarFeignClient;
 import cn.com.xuct.calendar.ums.boot.config.DictCacheManager;
 import cn.com.xuct.calendar.ums.boot.event.MemberEvent;
 import cn.com.xuct.calendar.ums.boot.service.IMemberAuthService;
@@ -65,7 +65,7 @@ public class MemberFeignController {
 
     private final IMemberAuthService memberAuthService;
 
-    private final CalendarFeignClient calendarFeignClient;
+    private final CmsFeignClient calendarFeignClient;
 
     private final BasicServicesFeignClient basicServicesFeignClient;
 

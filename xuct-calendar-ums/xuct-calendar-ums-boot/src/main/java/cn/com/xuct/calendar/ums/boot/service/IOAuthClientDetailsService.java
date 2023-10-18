@@ -11,7 +11,7 @@
 package cn.com.xuct.calendar.ums.boot.service;
 
 import cn.com.xuct.calendar.common.db.service.IBaseService;
-import cn.com.xuct.calendar.ums.api.entity.OAuthClientDetails;
+import cn.com.xuct.calendar.ums.api.entity.OauthClientDetails;
 import cn.com.xuct.calendar.ums.boot.mapper.OAuthClientDetailsMapper;
 
 /**
@@ -22,6 +22,6 @@ import cn.com.xuct.calendar.ums.boot.mapper.OAuthClientDetailsMapper;
  * @create 2022/9/2
  * @since 1.0.0
  */
-public interface IOAuthClientDetailsService extends IBaseService<OAuthClientDetailsMapper, OAuthClientDetails> {
+public interface IOAuthClientDetailsService extends IBaseService<OAuthClientDetailsMapper, OauthClientDetails> {
 
 }

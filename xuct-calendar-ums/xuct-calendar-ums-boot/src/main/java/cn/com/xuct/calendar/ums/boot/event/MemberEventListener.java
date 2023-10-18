@@ -10,11 +10,11 @@
  */
 package cn.com.xuct.calendar.ums.boot.event;
 
+import cn.com.xuct.calendar.cms.api.feign.CmsFeignClient;
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
-import cn.com.xuct.calendar.common.module.feign.req.CalendarInitFeignInfo;
 import cn.com.xuct.calendar.common.module.enums.MemberMessageTypeEnum;
+import cn.com.xuct.calendar.common.module.feign.req.CalendarInitFeignInfo;
 import cn.com.xuct.calendar.ums.api.entity.MemberMessage;
-import cn.com.xuct.calendar.ums.api.feign.CalendarFeignClient;
 import cn.com.xuct.calendar.ums.boot.service.IMemberMessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +36,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class MemberEventListener {
 
-    private final CalendarFeignClient calendarFeignClient;
+    private final CmsFeignClient calendarFeignClient;
 
     private final IMemberMessageService memberMessageService;
 
@@ -46,7 +46,7 @@ public class MemberEventListener {
         CalendarInitFeignInfo calendarInitFeignInfo = new CalendarInitFeignInfo();
         calendarInitFeignInfo.setMemberId(nameEvent.getMemberId());
         calendarInitFeignInfo.setMemberNickName(nameEvent.getName());
-        calendarFeignClient.updateMemberCalendarName(calendarInitFeignInfo , SecurityConstants.FROM_IN);
+        calendarFeignClient.updateMemberCalendarName(calendarInitFeignInfo, SecurityConstants.FROM_IN);
     }
 
     @Async
@@ -70,6 +70,8 @@ public class MemberEventListener {
                 break;
             case 3:
                 title = event.getName() + "合并账号";
+                break;
+            default:
                 break;
         }
         memberMessage.setTitle(title);

@@ -10,7 +10,7 @@
  */
 package cn.com.xuct.calendar.ums.boot.mapper;
 
-import cn.com.xuct.calendar.ums.api.entity.OAuthClientDetails;
+import cn.com.xuct.calendar.ums.api.entity.OauthClientDetails;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -21,6 +21,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @create 2022/9/2
  * @since 1.0.0
  */
-public interface OAuthClientDetailsMapper extends BaseMapper<OAuthClientDetails> {
+public interface OAuthClientDetailsMapper extends BaseMapper<OauthClientDetails> {
 
 }

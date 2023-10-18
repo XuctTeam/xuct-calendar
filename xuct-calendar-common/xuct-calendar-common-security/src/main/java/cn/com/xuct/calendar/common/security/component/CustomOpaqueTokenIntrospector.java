@@ -1,7 +1,7 @@
 package cn.com.xuct.calendar.common.security.component;
 
-import cn.com.xuct.calendar.common.security.serivces.OAuthUser;
-import cn.com.xuct.calendar.common.security.serivces.OAuthUserDetailsService;
+import cn.com.xuct.calendar.common.security.serivces.OauthUser;
+import cn.com.xuct.calendar.common.security.serivces.OauthUserDetailsService;
 import cn.hutool.extra.spring.SpringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,22 +46,22 @@ public class CustomOpaqueTokenIntrospector implements OpaqueTokenIntrospector {
             return new ClientCredentialsOAuth2AuthenticatedPrincipal(oldAuthorization.getAttributes(), AuthorityUtils.NO_AUTHORITIES, oldAuthorization.getPrincipalName());
         }
 
-        Map<String, OAuthUserDetailsService> userDetailsServiceMap = SpringUtil.getBeansOfType(OAuthUserDetailsService.class);
+        Map<String, OauthUserDetailsService> userDetailsServiceMap = SpringUtil.getBeansOfType(OauthUserDetailsService.class);
 
-        Optional<OAuthUserDetailsService> optional = userDetailsServiceMap.values().stream().filter(service -> service.support(Objects.requireNonNull(oldAuthorization).getRegisteredClientId(), oldAuthorization.getAuthorizationGrantType().getValue())).max(Comparator.comparingInt(Ordered::getOrder));
+        Optional<OauthUserDetailsService> optional = userDetailsServiceMap.values().stream().filter(service -> service.support(Objects.requireNonNull(oldAuthorization).getRegisteredClientId(), oldAuthorization.getAuthorizationGrantType().getValue())).max(Comparator.comparingInt(Ordered::getOrder));
         UserDetails userDetails = null;
         try {
             Object principal = Objects.requireNonNull(oldAuthorization).getAttributes().get(Principal.class.getName());
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = (UsernamePasswordAuthenticationToken) principal;
             Object tokenPrincipal = usernamePasswordAuthenticationToken.getPrincipal();
-            userDetails = optional.get().loadUserByUser((OAuthUser)tokenPrincipal);
+            userDetails = optional.get().loadUserByUser((OauthUser)tokenPrincipal);
         } catch (UsernameNotFoundException notFoundException) {
             log.warn("用户不不存在 {}", notFoundException.getLocalizedMessage());
             throw notFoundException;
         } catch (Exception ex) {
             log.error("资源服务器 introspect Token error {}", ex.getLocalizedMessage());
         }
-        return (OAuthUser) userDetails;
+        return (OauthUser) userDetails;
     }
 
 }

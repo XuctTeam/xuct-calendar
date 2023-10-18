@@ -10,6 +10,7 @@
  */
 package cn.com.xuct.calendar.ums.boot.controller.app;
 
+import cn.com.xuct.calendar.basic.api.client.BasicServicesFeignClient;
 import cn.com.xuct.calendar.common.core.constant.GlobalConstants;
 import cn.com.xuct.calendar.common.core.constant.RedisConstants;
 import cn.com.xuct.calendar.common.core.res.R;
@@ -18,7 +19,6 @@ import cn.com.xuct.calendar.common.module.enums.IdentityTypeEnum;
 import cn.com.xuct.calendar.common.module.params.SmsSendParam;
 import cn.com.xuct.calendar.common.security.utils.SecurityUtils;
 import cn.com.xuct.calendar.ums.api.entity.MemberAuth;
-import cn.com.xuct.calendar.ums.api.feign.BasicServicesFeignClient;
 import cn.com.xuct.calendar.ums.boot.service.IMemberAuthService;
 import cn.hutool.core.util.RandomUtil;
 import com.google.common.collect.Lists;
@@ -60,8 +60,8 @@ public class SmsAppController {
     @Operation(summary = "【非登录】登录短信")
     @PostMapping("/anno/login")
     public R<String> loginSmsCode(@Validated @RequestBody SmsSendParam param) {
-        String publicRedisKey = this.validatePublicKey(param.getRandomStr() , param.getKey());
-        if(publicRedisKey == null){
+        String publicRedisKey = this.validatePublicKey(param.getRandomStr(), param.getKey());
+        if (publicRedisKey == null) {
             return R.fail("验证码无效!");
         }
         String code = this.sendBindCode(param.getPhone(), param.getType());
@@ -81,12 +81,12 @@ public class SmsAppController {
     @Operation(summary = "【非登录】密码找回")
     @PostMapping("/anno/forget")
     public R<String> forgetPasswordCode(@Validated @RequestBody SmsSendParam param) {
-        String publicRedisKey = this.validatePublicKey(param.getRandomStr() , param.getKey());
-        if(publicRedisKey == null){
+        String publicRedisKey = this.validatePublicKey(param.getRandomStr(), param.getKey());
+        if (publicRedisKey == null) {
             return R.fail("验证码无效!");
         }
         MemberAuth memberAuth = memberAuthService.get(Lists.newArrayList(Column.of("identity_type", IdentityTypeEnum.phone), Column.of("user_name", param.getPhone())));
-        if (memberAuth == null){
+        if (memberAuth == null) {
             return R.fail("用户未注册");
         }
         this.sendBindCode(param.getPhone(), param.getType());
@@ -105,10 +105,10 @@ public class SmsAppController {
         return R.status(true);
     }
 
-    private String validatePublicKey(String randomStr, String key){
+    private String validatePublicKey(String randomStr, String key) {
         String publicRedisKey = RedisConstants.DEFAULT_PUBLIC_CODE_KEY.concat(GlobalConstants.COLON).concat(randomStr);
-        Object publicKey = redisTemplate.opsForValue().get(publicRedisKey) ;
-        if(publicKey == null || !String.valueOf(publicKey).equals(key)){
+        Object publicKey = redisTemplate.opsForValue().get(publicRedisKey);
+        if (publicKey == null || !String.valueOf(publicKey).equals(key)) {
             return null;
         }
         return publicRedisKey;
@@ -136,8 +136,11 @@ public class SmsAppController {
             case 4:
                 key = RedisConstants.MEMBER_UNBIND_PHONE_CODE_KEY;
                 break;
+            default:
+                break;
         }
         String code = RandomUtil.randomNumbers(6);
+        assert key != null;
         redisTemplate.opsForValue().set(key.concat(userId).concat(GlobalConstants.COLON).concat(phone), code, 60 * 10, TimeUnit.SECONDS);
         return code;
     }

@@ -10,16 +10,16 @@
  */
 package cn.com.xuct.calendar.ums.boot.controller.feign;
 
+import cn.com.xuct.calendar.basic.api.client.BasicServicesFeignClient;
 import cn.com.xuct.calendar.common.core.enums.ColumnEnum;
 import cn.com.xuct.calendar.common.core.res.R;
+import cn.com.xuct.calendar.common.core.utils.SpringContextHolder;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.module.enums.IdentityTypeEnum;
 import cn.com.xuct.calendar.common.module.feign.req.ComponentNotifyFeignInfo;
 import cn.com.xuct.calendar.common.module.feign.req.EmailFeignInfo;
-import cn.com.xuct.calendar.common.core.utils.SpringContextHolder;
 import cn.com.xuct.calendar.ums.api.entity.Member;
 import cn.com.xuct.calendar.ums.api.entity.MemberAuth;
-import cn.com.xuct.calendar.ums.api.feign.BasicServicesFeignClient;
 import cn.com.xuct.calendar.ums.boot.event.AlarmNotifyEvent;
 import cn.com.xuct.calendar.ums.boot.event.ComponentDelEvent;
 import cn.com.xuct.calendar.ums.boot.service.IMemberAuthService;
@@ -104,9 +104,7 @@ public class ComponentFeignController {
         }
         /*2. 邮件 发送一封并添加抄送 */
         if (componentNotifyFeignInfo.getType() == 2) {
-            List<String> tos = memberAuths.stream().map(auth -> {
-                return auth.getUsername();
-            }).collect(Collectors.toList());
+            List<String> tos = memberAuths.stream().map(MemberAuth::getUsername).collect(Collectors.toList());
             basicServicesFeignClient.sendEmail(EmailFeignInfo.builder().subject("事件提醒").tos(tos).template("alarm").params(new HashMap<>() {{
                 put("summary", componentNotifyFeignInfo.getSummary());
                 put("start_date", componentNotifyFeignInfo.getStartDate());

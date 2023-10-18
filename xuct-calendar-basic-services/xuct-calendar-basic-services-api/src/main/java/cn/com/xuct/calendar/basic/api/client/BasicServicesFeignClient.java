@@ -8,7 +8,7 @@
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package cn.com.xuct.calendar.ums.api.feign;
+package cn.com.xuct.calendar.basic.api.client;
 
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
@@ -35,22 +35,38 @@ import java.util.List;
 public interface BasicServicesFeignClient {
 
     /**
-     * 发送短信验证码
-     *
-     * @param smsCodeFeignInfo 短信验证码信息
+     * 发送短信
+     * @param smsCodeFeignInfo 短信信息
      * @return String
      */
     @PostMapping("/api/basic/v1/sms")
     R<String> smsCode(@RequestBody SmsCodeFeignInfo smsCodeFeignInfo);
 
+
     /**
      * 发送邮件
-     *
      * @param emailFeignInfo 邮件信息
      * @return String
      */
     @PostMapping("/api/basic/v1/email")
     R<String> sendEmail(@RequestBody EmailFeignInfo emailFeignInfo);
+
+    /**
+     * 通过长链接获取对应的短链接
+     * @param shortChainFeignInfo 长链接信息
+     * @return String
+     */
+    @PostMapping("/api/basic/v1/short/chain")
+    R<String> shortChain(@RequestBody ShortChainFeignInfo shortChainFeignInfo);
+
+    /**
+     * 获取微信分享二维码
+     * @param wxQrCodeInfo 微信二维码信息
+     * @return String
+     */
+    @PostMapping("/api/basic/v1/wx/ma/qrcode")
+    R<String> getMaQrCode(@RequestBody WxQrCodeInfo wxQrCodeInfo);
+
 
     /**
      * 获取微信小程序的session信息

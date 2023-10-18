@@ -43,7 +43,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 @Slf4j
 @Primary
 @RequiredArgsConstructor
-public class OAuthMemberDetailsWxServiceImpl implements OAuthUserDetailsService {
+public class OauthMemberDetailsWxServiceImpl implements OauthUserDetailsService {
 
     private final MemberFeignClient memberFeignClient;
 
@@ -85,14 +85,14 @@ public class OAuthMemberDetailsWxServiceImpl implements OAuthUserDetailsService 
     }
 
     @Override
-    public UserDetails loadUserByUser(OAuthUser oAuthUser) {
+    public UserDetails loadUserByUser(OauthUser oAuthUser) {
         return this.getByOpenId(false, oAuthUser.getUsername(), null, null, null);
     }
 
     private UserDetails getByOpenId(final Boolean login, final String openId, final String sessionKey, final String iv, final String encryptedData) {
         Cache cache = cacheManager.getCache(CacheConstants.USER_DETAILS);
         if (cache != null && cache.get(openId) != null) {
-            return (OAuthUser) cache.get(openId).get();
+            return (OauthUser) cache.get(openId).get();
         }
         R<UserInfo> result = memberFeignClient.loadMemberByOpenId(WxUserInfoFeignInfo.builder().login(login).openId(openId).sessionKey(sessionKey).iv(iv)
                 .encryptedData(encryptedData).build(), SecurityConstants.FROM_IN);

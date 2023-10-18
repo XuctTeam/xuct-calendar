@@ -10,10 +10,10 @@
  */
 package cn.com.xuct.calendar.cms.boot.service.impl;
 
+import cn.com.xuct.calendar.basic.api.client.BasicServicesFeignClient;
 import cn.com.xuct.calendar.cms.api.dodo.MemberMarjoCalendarDo;
 import cn.com.xuct.calendar.cms.api.entity.Calendar;
 import cn.com.xuct.calendar.cms.api.entity.MemberCalendar;
-import cn.com.xuct.calendar.cms.api.feign.BasicServicesFeignClient;
 import cn.com.xuct.calendar.cms.api.vo.CalendarSharedVo;
 import cn.com.xuct.calendar.cms.boot.config.DomainConfiguration;
 import cn.com.xuct.calendar.cms.boot.config.WxMaConfiguration;
@@ -152,7 +152,7 @@ public class MemberCalendarServiceImpl extends BaseServiceImpl<MemberCalendarMap
         this.updateBatchById(notMajorCalendars);
         /*2. 更新邀请数据 */
         Optional<MemberCalendar> majorCalendarOpt = memberCalendars.stream().filter(calendar -> calendar.getMajor() == 1).findFirst();
-        if (!majorCalendarOpt.isPresent()) {
+        if (majorCalendarOpt.isEmpty()) {
             return;
         }
         MemberCalendar memberCalendar = majorCalendarOpt.get();
@@ -207,7 +207,7 @@ public class MemberCalendarServiceImpl extends BaseServiceImpl<MemberCalendarMap
         CalendarSharedVo calendarSharedVo = new CalendarSharedVo();
 
         Optional<DomainConfiguration.Short> optionalShort = domainConfiguration.getShortDomains().stream().filter(x -> CmsConstant.ShortDomain.CALENDAR.equals(x.getType())).findAny();
-        if (!optionalShort.isPresent()) {
+        if (optionalShort.isEmpty()) {
             throw new SvrException(SvrResCode.CMS_SERVER_ERROR);
         }
         String domain = RetOps.of(basicServicesFeignClient.shortChain(ShortChainFeignInfo.builder()

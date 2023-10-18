@@ -1,7 +1,7 @@
 package cn.com.xuct.calendar.uaa.boot.support.core;
 
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
-import cn.com.xuct.calendar.common.security.serivces.OAuthUserDetailsService;
+import cn.com.xuct.calendar.common.security.serivces.OauthUserDetailsService;
 import cn.com.xuct.calendar.common.web.utils.WebUtils;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
@@ -101,11 +101,11 @@ public class OAuthDaoAuthenticationProvider extends AbstractUserDetailsAuthentic
             clientId = basicConvert.convert(request).getName();
         }
 
-        Map<String, OAuthUserDetailsService> userDetailsServiceMap = SpringUtil
-                .getBeansOfType(OAuthUserDetailsService.class);
+        Map<String, OauthUserDetailsService> userDetailsServiceMap = SpringUtil
+                .getBeansOfType(OauthUserDetailsService.class);
 
         String finalClientId = clientId;
-        Optional<OAuthUserDetailsService> optional = userDetailsServiceMap.values()
+        Optional<OauthUserDetailsService> optional = userDetailsServiceMap.values()
                 .stream()
                 .filter(service -> service.support(finalClientId, grantType))
                 .max(Comparator.comparingInt(Ordered::getOrder));

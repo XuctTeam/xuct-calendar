@@ -15,6 +15,7 @@ import cn.com.xuct.calendar.common.db.dao.base.SuperEntity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -24,6 +25,7 @@ import lombok.Data;
  * @create 2022/2/7
  * @since 1.0.0
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @TableName("sys_member_group")
 public class MemberGroup extends SuperEntity<MemberGroup> {
@@ -34,7 +36,9 @@ public class MemberGroup extends SuperEntity<MemberGroup> {
     @TableField("member_id")
     private Long memberId;
 
-    /*0 正常 1申请中 */
+    /**
+     * 0 正常 1申请中
+     */
     private GroupMemberStatusEnum status;
 
 }

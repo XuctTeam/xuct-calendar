@@ -13,6 +13,7 @@ package cn.com.xuct.calendar.ums.api.entity;
 import cn.com.xuct.calendar.common.db.dao.base.SuperEntity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 〈一句话功能简述〉<br>
@@ -22,6 +23,7 @@ import lombok.Data;
  * @create 2021/12/6
  * @since 1.0.0
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @TableName("sys_dict")
 public class Dict extends SuperEntity<Dict> {

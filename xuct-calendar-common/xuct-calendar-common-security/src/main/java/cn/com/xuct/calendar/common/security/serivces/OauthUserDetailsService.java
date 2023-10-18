@@ -25,7 +25,7 @@ import java.util.Set;
  * @author lengleng
  * @date 2021/12/21
  */
-public interface OAuthUserDetailsService extends UserDetailsService, Ordered {
+public interface OauthUserDetailsService extends UserDetailsService, Ordered {
 
     /**
      * 是否支持此客户端校验
@@ -67,7 +67,7 @@ public interface OAuthUserDetailsService extends UserDetailsService, Ordered {
         if (personInfo.getStatus() != 0) {
             throw new DisabledException("该账户已被禁用!");
         }
-        return new OAuthUser(personInfo.getUserId(), personInfo.getUsername(), SecurityConstants.BCRYPT + personInfo.getPassword(),
+        return new OauthUser(personInfo.getUserId(), personInfo.getUsername(), SecurityConstants.BCRYPT + personInfo.getPassword(),
                 personInfo.getName(), personInfo.getTimeZone(),
                 true, true, true, StrUtil.equals(personInfo.getStatus().toString(), GlobalConstants.STATUS_YES), authorities);
     }
@@ -77,7 +77,7 @@ public interface OAuthUserDetailsService extends UserDetailsService, Ordered {
      * @param oAuthUser
      * @return
      */
-    default UserDetails loadUserByUser(OAuthUser oAuthUser) {
+    default UserDetails loadUserByUser(OauthUser oAuthUser) {
         return this.loadUserByUsername(oAuthUser.getUsername());
     }
 }

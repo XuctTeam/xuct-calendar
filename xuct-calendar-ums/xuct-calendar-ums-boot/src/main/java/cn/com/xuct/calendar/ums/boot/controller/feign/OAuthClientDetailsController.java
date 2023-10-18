@@ -13,7 +13,7 @@ package cn.com.xuct.calendar.ums.boot.controller.feign;
 import cn.com.xuct.calendar.common.core.res.R;
 import cn.com.xuct.calendar.common.core.vo.Column;
 import cn.com.xuct.calendar.common.security.annotation.Inner;
-import cn.com.xuct.calendar.ums.api.entity.OAuthClientDetails;
+import cn.com.xuct.calendar.ums.api.entity.OauthClientDetails;
 import cn.com.xuct.calendar.ums.boot.service.IOAuthClientDetailsService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +49,7 @@ public class OAuthClientDetailsController {
      */
     @Inner
     @GetMapping("/{clientId}")
-    public R<OAuthClientDetails> getByClientId(@PathVariable String clientId) {
+    public R<OauthClientDetails> getByClientId(@PathVariable String clientId) {
         return R.data(authClientDetailsService.get(Column.of("client_id", clientId)));
     }
 }

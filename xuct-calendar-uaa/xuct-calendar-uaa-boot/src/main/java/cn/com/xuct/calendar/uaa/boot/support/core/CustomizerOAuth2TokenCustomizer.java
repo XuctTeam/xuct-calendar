@@ -1,7 +1,7 @@
 package cn.com.xuct.calendar.uaa.boot.support.core;
 
 import cn.com.xuct.calendar.common.core.constant.SecurityConstants;
-import cn.com.xuct.calendar.common.security.serivces.OAuthUser;
+import cn.com.xuct.calendar.common.security.serivces.OauthUser;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenClaimsContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenClaimsSet;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
@@ -29,7 +29,7 @@ public class CustomizerOAuth2TokenCustomizer implements OAuth2TokenCustomizer<OA
         if (SecurityConstants.CLIENT_CREDENTIALS.equals(context.getAuthorizationGrantType().getValue())) {
             return;
         }
-        OAuthUser oAuthUser = (OAuthUser) context.getPrincipal().getPrincipal();
+        OauthUser oAuthUser = (OauthUser) context.getPrincipal().getPrincipal();
         claims.claim(SecurityConstants.DETAILS_USER_ID, oAuthUser.getId());
         claims.claim(SecurityConstants.DETAILS_USER_NAME, oAuthUser.getUsername());
         claims.claim(SecurityConstants.DETAILS_USER_TIMEZONE, oAuthUser.getTimeZone());

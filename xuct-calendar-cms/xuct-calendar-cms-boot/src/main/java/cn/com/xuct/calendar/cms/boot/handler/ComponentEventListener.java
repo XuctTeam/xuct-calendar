@@ -12,7 +12,6 @@ package cn.com.xuct.calendar.cms.boot.handler;
 
 import cn.com.xuct.calendar.cms.api.entity.Component;
 import cn.com.xuct.calendar.cms.api.entity.ComponentAlarm;
-import cn.com.xuct.calendar.cms.api.feign.UmsComponentFeignClient;
 import cn.com.xuct.calendar.cms.boot.service.IAlarmNotifyService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentAlarmService;
 import cn.com.xuct.calendar.cms.boot.service.IComponentService;
@@ -22,6 +21,7 @@ import cn.com.xuct.calendar.common.core.utils.JsonUtils;
 import cn.com.xuct.calendar.common.module.dto.AlarmInfoDto;
 import cn.com.xuct.calendar.common.module.enums.CommonStatusEnum;
 import cn.com.xuct.calendar.common.module.feign.req.ComponentNotifyFeignInfo;
+import cn.com.xuct.calendar.ums.api.feign.UmsFeignClient;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +52,7 @@ public class ComponentEventListener {
 
     private final IAlarmNotifyService alarmNotifyService;
 
-    private final UmsComponentFeignClient umsComponentFeignClient;
+    private final UmsFeignClient umsFeignClient;
 
     /**
      * 功能描述: <br>
@@ -76,7 +76,7 @@ public class ComponentEventListener {
                 .createMemberId(delEvent.getCreateMemberId())
                 .ids(delEvent.getIds())
                 .build();
-        umsComponentFeignClient.deleteComponent(componentNotifyFeignInfo);
+        umsFeignClient.deleteComponent(componentNotifyFeignInfo);
     }
 
     /**
